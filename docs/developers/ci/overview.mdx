@@ -15,7 +15,7 @@ import SupportedTools from '/snippets/developers/ci/supported-tools.mdx';
 
 Miru supports continuous integration (CI) to automate various tasks, such as the creation of [releases](/docs/learn/releases/create) and their associated schemas.
 
-CI pipelines leverage the [Miru CLI](/docs/references/cli/intro) to programmatically execute any CLI commands, which accepts API keys for authentication. 
+CI pipelines leverage the [Miru CLI](/docs/references/cli/intro) to programmatically execute any CLI commands, which accept an API key for authentication. 
 
 Since the Miru CLI is the engine behind CI tasks, any tasks supported by the CLI can easily be automated in your CI pipeline.
 
@@ -23,7 +23,7 @@ Since the Miru CLI is the engine behind CI tasks, any tasks supported by the CLI
 
 <SupportedTools />
 
-## Authentication
+## API key authentication
 
 When used in your CI pipeline, the CLI can be authenticated using an API key. Simply export the `MIRU_API_KEY` environment variable.
 
@@ -33,4 +33,8 @@ export MIRU_API_KEY=<your-api-key>
 
 To create an API key for your CI pipeline, follow the instructions in the [API keys](/docs/admin/apikeys#create-an-api-key) section.
 
-To determine the scopes to give the API key, consult the documentation for the task you want to automate. For example, if you want to create a release, see the [create release](/docs/learn/releases/ci) documentation for the required scopes.
+## API key scopes
+
+To determine the scopes to give an API key, find the CLI command you want to execute in the [CLI Reference](/docs/references/cli/intro) and consult its **API key scopes** section.
+
+For example, if you want to execute the `miru release create` command in CI, visit the create release command's [API key scopes](/docs/references/cli/release-create#api-key-scopes) section.

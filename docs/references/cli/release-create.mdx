@@ -7,6 +7,7 @@ import Annotations from "/snippets/references/cli/releases/create/schema-annotat
 import CuePackages from "/snippets/references/cli/releases/create/cue-packages.mdx";
 import PushNewSchemas from "/snippets/references/cli/releases/create/new-schemas.mdx";
 import PushExistingSchemas from "/snippets/references/cli/releases/create/existing-schemas.mdx";
+import Scopes from "/snippets/references/cli/releases/create/scopes.mdx";
 
 Create a release along with its associated git commit and schemas in Miru. 
 
@@ -15,6 +16,8 @@ Both the git commit and the schemas associated with the release are created idem
 Similarly, if the provided schemas do not yet exist in Miru, they are created. If they already exist, they are not recreated and no error is returned.
 
 Git commits are identified by their SHA while schemas are identified by their content. Schemas with equivalent content are considered identical in Miru (even if the comments, spacing, or other formatting is different).
+
+For a more detailed guide on creating releases, visit the [create releases](/docs/learn/releases/create) documentation.
 
 ### Requirements
 
@@ -29,6 +32,10 @@ Git commits are identified by their SHA while schemas are identified by their co
 **Flags**
 
 <Flags />
+
+### API key scopes
+
+<Scopes />
 
 ### Schema Annotations
 

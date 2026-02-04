@@ -76,7 +76,6 @@
                 "pages": [
                   "docs/learn/releases/overview",
                   "docs/learn/releases/create",
-                  "docs/learn/releases/ci",
                   "docs/learn/releases/manage",
                   "docs/learn/releases/staging-area",
                   "docs/learn/releases/deployment-history"

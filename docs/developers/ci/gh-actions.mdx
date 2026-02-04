@@ -4,7 +4,6 @@ title: "GitHub Actions"
 
 import {Framed} from '/snippets/components/framed.jsx';
 import {Warning} from '/snippets/components/warning.jsx';
-import CreateRelease from '/snippets/releases/create/gh-actions.mdx';
 
 <Framed 
 background="https://assets.mirurobotics.com/docs/v03/images/developers/background.jpeg" 
@@ -20,7 +19,7 @@ Miru provides an official action for installing the Miru CLI. You can find it on
 
 Since the CLI is still in beta, we highly recommend [pinning to a minor version](#pin-a-minor-version) to avoid breaking changes. Changes within a minor version are guaranteed to be backwards compatible.
 
-You can find the CLI version changelog in the [developer changelog](/docs/changelogs/developers).
+You can find the CLI changelog in the [developer changelog](/docs/changelogs/developers).
 
 ### Basic usage
 
@@ -73,24 +72,6 @@ steps:
       version: 'v0.9.0'
 ```
 
-### Use the installed version in subsequent steps
-
-If you need to use the installed version in subsequent steps, you can use the `id` input to store the version in an output.
-
-```yaml
-steps:
-  - uses: actions/checkout@v6
-
-  - name: Setup Miru CLI
-    # this is the id referenced in the next step 
-    # (e.g. steps.<id>.outputs.version)
-    id: miru 
-    uses: mirurobotics/setup-miru@v0.1
-
-  - name: Print installed version
-    run: echo "Installed Miru CLI ${{ steps.miru.outputs.version }}"
-```
-
 ## Inputs
 
 <ParamField path="version" type="string">
@@ -112,12 +93,51 @@ This action supports the following runner environments:
 | OS | Architecture |
 |----|--------------|
 | Linux | x86_64, arm64 |
-| macOS | x86_64 (Intel), arm64 (Apple Silicon) |
 
-<Warning> Windows runners are not currently supported. </Warning>
+<Warning> Windows and macOS runners are not currently supported. </Warning>
 
 ## Example
 
 ### Create a release
 
-<CreateRelease />
+The following GitHub Actions workflow creates a release when a tag is pushed to the repository. 
+
+To use the workflow, place it in the `.github/workflows` directory of your repository (e.g., `.github/workflows/create-miru-release.yml`).
+
+```yaml .github/workflows/create-miru-release.yml
+name: Create Miru Release
+
+on:
+  push:
+    tags: 
+      - '*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Miru CLI
+        uses: mirurobotics/setup-miru@v0.1
+        with:
+          version: 'v0.9'
+
+      - name: Create the release
+        env:
+          MIRU_API_KEY: ${{ secrets.MIRU_API_KEY }}
+        run: |
+          miru release create \
+            --version "${{ github.ref_name }}" \
+            --schemas ./schemas
+```
+
+**CLI command**
+
+The `--version` flag is used to specify the release's `version`, which is the tag pushed to the repository in this example. The `--schemas` flag is used to specify the directory containing the schemas to include in the release. 
+
+For a comprehensive guide on creating releases, visit the [create releases](/docs/learn/releases/create) documentation. For a concise reference of the CLI command, visit the [CLI Reference](/docs/references/cli/release-create).
+
+**API key scopes**
+
+The API key scopes required to create a release are listed in the create release command's [API key scopes](/docs/references/cli/release-create#api-key-scopes) section.
