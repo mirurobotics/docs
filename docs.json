@@ -87,23 +87,23 @@
             "group": "Developers",
             "pages": [
               {
-                "group": "Agent",
+                "group": "Miru Agent",
                 "pages": [
                   "docs/developers/agent/overview",
                   "docs/developers/agent/install",
-                  "docs/developers/agent/agent-api",
                   "docs/developers/agent/commands"
                 ]
               },
+              "docs/developers/agent-api",
               "docs/developers/cli",
-              "docs/developers/server-side-api",
               {
                 "group": "Continuous Integration",
                 "pages": [
                   "docs/developers/ci/overview",
                   "docs/developers/ci/gh-actions"
                 ]
-              }
+              },
+              "docs/developers/server-side-api"
             ]
           },
           {
