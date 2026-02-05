@@ -13,7 +13,7 @@ innerRadius="8px 0 0 0"
 outerRadius="10px"
 />
 
-Miru provides an official action for installing the Miru CLI. You can find it on GitHub at [mirurobotics/setup-miru](https://github.com/mirurobotics/setup-miru).
+Miru provides an official action for installing the Miru CLI. You can find it on GitHub at [mirurobotics/setup-cli](https://github.com/mirurobotics/setup-cli).
 
 ## Usage
 
@@ -30,7 +30,7 @@ steps:
   - uses: actions/checkout@v6
 
   - name: Setup Miru CLI
-    uses: mirurobotics/setup-miru@v0.1
+    uses: mirurobotics/setup-cli@v0.2
     with:
       version: 'v0.9'
 
@@ -53,7 +53,7 @@ steps:
   - uses: actions/checkout@v6
 
   - name: Setup Miru CLI (latest v0.9.x)
-    uses: mirurobotics/setup-miru@v0.1
+    uses: mirurobotics/setup-cli@v0.2
     with:
       version: 'v0.9'
 ```
@@ -67,7 +67,7 @@ steps:
   - uses: actions/checkout@v6
 
   - name: Setup Miru CLI
-    uses: mirurobotics/setup-miru@v0.1
+    uses: mirurobotics/setup-cli@v0.2
     with:
       version: 'v0.9.0'
 ```
@@ -119,7 +119,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Setup Miru CLI
-        uses: mirurobotics/setup-miru@v0.1
+        uses: mirurobotics/setup-cli@v0.2
         with:
           version: 'v0.9'
 
