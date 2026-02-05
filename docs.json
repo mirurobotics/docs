@@ -232,7 +232,6 @@
   "navbar": {
     "links": [
       {
-        "type": "button",
         "label": "Dashboard",
         "href": "https://app.mirurobotics.com/login"
       }
