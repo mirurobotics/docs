@@ -6,13 +6,13 @@ info:
     name: MIT
     url: https://opensource.org/licenses/MIT
 servers:
-  - url: http://localhost/v1
-    description: localhost
+- url: http://localhost/v1
+  description: localhost
 paths:
   /health:
     get:
       tags:
-        - Agent
+      - Agent
       summary: Health
       description: Retrieve the health of the agent.
       responses:
@@ -23,17 +23,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/HealthResponse'
       x-codeSamples:
-        - lang: Python
-          source: |-
-            from miru_agent_sdk import Miru
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/health
+      - lang: Python
+        source: |-
+          from miru_agent_sdk import Miru
 
-            client = Miru()
-            response = client.agent.health()
-            print(response.status)
+          client = Miru()
+          response = client.agent.health()
+          print(response.status)
   /version:
     get:
       tags:
-        - Agent
+      - Agent
       summary: Version
       description: Retrieve the version of the agent.
       responses:
@@ -44,23 +49,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
       x-codeSamples:
-        - lang: Python
-          source: |-
-            from miru_agent_sdk import Miru
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/version
+      - lang: Python
+        source: |-
+          from miru_agent_sdk import Miru
 
-            client = Miru()
-            response = client.agent.version()
-            print(response.commit)
+          client = Miru()
+          response = client.agent.version()
+          print(response.commit)
   /config_instances/deployed:
     get:
       x-hidden: true
       tags:
-        - Config Instances
+      - Config Instances
       summary: Retrieve the deployed config instance
       operationId: getDeployedConfigInstance
       parameters:
-        - $ref: '#/components/parameters/config_schema_digest'
-        - $ref: '#/components/parameters/config_type_slug'
+      - $ref: '#/components/parameters/config_schema_digest'
+      - $ref: '#/components/parameters/config_type_slug'
       responses:
         '200':
           description: Successfully retrieved the config instance.
@@ -68,11 +78,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigInstance'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/config_instances/deployed
   /config_schemas/hash/serialized:
     post:
       x-hidden: true
       tags:
-        - Config Schemas
+      - Config Schemas
       summary: Hash a serialized config schema
       operationId: hashConfigSchemaSerialized
       requestBody:
@@ -88,10 +104,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SchemaDigestResponse'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request POST \
+            --url http://localhost/v1/config_schemas/hash/serialized
   /device:
     get:
       tags:
-        - Devices
+      - Devices
       summary: Get
       description: Retrieve the device.
       operationId: getDevice
@@ -103,17 +125,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/Device'
       x-codeSamples:
-        - lang: Python
-          source: |-
-            from miru_agent_sdk import Miru
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/device
+      - lang: Python
+        source: |-
+          from miru_agent_sdk import Miru
 
-            client = Miru()
-            device = client.device.retrieve()
-            print(device.id)
+          client = Miru()
+          device = client.device.retrieve()
+          print(device.id)
   /device/sync:
     post:
       tags:
-        - Devices
+      - Devices
       summary: Sync
       description: Manually force a device sync with the edits made in the dashboard.
       operationId: syncDevice
@@ -125,18 +152,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/SyncDeviceResponse'
       x-codeSamples:
-        - lang: Python
-          source: |-
-            from miru_agent_sdk import Miru
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request POST \
+            --url http://localhost/v1/device/sync
+      - lang: Python
+        source: |-
+          from miru_agent_sdk import Miru
 
-            client = Miru()
-            response = client.device.sync()
-            print(response.code)
+          client = Miru()
+          response = client.device.sync()
+          print(response.code)
   /example-error:
     get:
       x-hidden: true
       tags:
-        - Errors
+      - Errors
       summary: Get an error
       operationId: getError
       responses:
@@ -146,12 +178,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/example-error
 components:
   schemas:
     HealthResponse:
       type: object
       required:
-        - status
+      - status
       properties:
         status:
           type: string
@@ -160,8 +198,8 @@ components:
     VersionResponse:
       type: object
       required:
-        - version
-        - commit
+      - version
+      - commit
       properties:
         version:
           type: string
@@ -173,109 +211,91 @@ components:
           example: a1b2c3d4
     ConfigInstanceTargetStatus:
       type: string
-      description: >
+      description: |
         Desired state of the config instance.
-
         - Created: config instance is created and can be deployed in the future
-
         - Deployed: config instance is available for consumption on the device
-
-        - Removed: config instance is available for historical reference but cannot be deployed and is not
-        active on the device
+        - Removed: config instance is available for historical reference but cannot be deployed and is not active on the device
       enum:
-        - created
-        - deployed
-        - removed
+      - created
+      - deployed
+      - removed
       x-enum-varnames:
-        - CONFIG_INSTANCE_TARGET_STATUS_CREATED
-        - CONFIG_INSTANCE_TARGET_STATUS_DEPLOYED
-        - CONFIG_INSTANCE_TARGET_STATUS_REMOVED
+      - CONFIG_INSTANCE_TARGET_STATUS_CREATED
+      - CONFIG_INSTANCE_TARGET_STATUS_DEPLOYED
+      - CONFIG_INSTANCE_TARGET_STATUS_REMOVED
     ConfigInstanceActivityStatus:
       type: string
-      description: >
+      description: |
         Last known activity state of the config instance.
-
         - Created: config instance has been created and can be deployed in the future
-
-        - Queued: config instance is waiting to be received by the device; will be deployed as soon as the
-        device is online
-
+        - Queued: config instance is waiting to be received by the device; will be deployed as soon as the device is online
         - Deployed: config instance is currently available for consumption on the device
-
-        - Removed: the config instance is available for historical reference but cannot be deployed and is not
-        active on the device
+        - Removed: the config instance is available for historical reference but cannot be deployed and is not active on the device
       enum:
-        - created
-        - queued
-        - deployed
-        - removed
+      - created
+      - queued
+      - deployed
+      - removed
       x-enum-varnames:
-        - CONFIG_INSTANCE_ACTIVITY_STATUS_CREATED
-        - CONFIG_INSTANCE_ACTIVITY_STATUS_QUEUED
-        - CONFIG_INSTANCE_ACTIVITY_STATUS_DEPLOYED
-        - CONFIG_INSTANCE_ACTIVITY_STATUS_REMOVED
+      - CONFIG_INSTANCE_ACTIVITY_STATUS_CREATED
+      - CONFIG_INSTANCE_ACTIVITY_STATUS_QUEUED
+      - CONFIG_INSTANCE_ACTIVITY_STATUS_DEPLOYED
+      - CONFIG_INSTANCE_ACTIVITY_STATUS_REMOVED
     ConfigInstanceErrorStatus:
       type: string
-      description: >
+      description: |
         Last known error state of the config instance deployment.
-
         - None: there are no errors with the config instance deployment
-
-        - Retrying: an error has been encountered and the agent is attempting to try again to reach the target
-        status
-
-        - Failed: a fatal error has been encountered; the config instance is archived and (if deployed)
-        removed from the device
+        - Retrying: an error has been encountered and the agent is attempting to try again to reach the target status
+        - Failed: a fatal error has been encountered; the config instance is archived and (if deployed) removed from the device
       enum:
-        - none
-        - failed
-        - retrying
+      - none
+      - failed
+      - retrying
       x-enum-varnames:
-        - CONFIG_INSTANCE_ERROR_STATUS_NONE
-        - CONFIG_INSTANCE_ERROR_STATUS_FAILED
-        - CONFIG_INSTANCE_ERROR_STATUS_RETRYING
+      - CONFIG_INSTANCE_ERROR_STATUS_NONE
+      - CONFIG_INSTANCE_ERROR_STATUS_FAILED
+      - CONFIG_INSTANCE_ERROR_STATUS_RETRYING
     ConfigInstanceStatus:
       type: string
-      description: >
-        This status merges the 'activity_status' and 'error_status' fields, with error states taking
-        precedence over activity states when errors are present. For example, if the activity status is
-        'deployed' but the error status is 'failed', the status is 'failed'. However, if the error status is
-        'none' and the activity status is 'deployed', the status is 'deployed'.
+      description: |
+        This status merges the 'activity_status' and 'error_status' fields, with error states taking precedence over activity states when errors are present. For example, if the activity status is 'deployed' but the error status is 'failed', the status is 'failed'. However, if the error status is 'none' and the activity status is 'deployed', the status is 'deployed'.
       enum:
-        - created
-        - queued
-        - deployed
-        - removed
-        - failed
-        - retrying
+      - created
+      - queued
+      - deployed
+      - removed
+      - failed
+      - retrying
       x-enum-varnames:
-        - CONFIG_INSTANCE_STATUS_CREATED
-        - CONFIG_INSTANCE_STATUS_QUEUED
-        - CONFIG_INSTANCE_STATUS_DEPLOYED
-        - CONFIG_INSTANCE_STATUS_REMOVED
-        - CONFIG_INSTANCE_STATUS_FAILED
-        - CONFIG_INSTANCE_STATUS_RETRYING
+      - CONFIG_INSTANCE_STATUS_CREATED
+      - CONFIG_INSTANCE_STATUS_QUEUED
+      - CONFIG_INSTANCE_STATUS_DEPLOYED
+      - CONFIG_INSTANCE_STATUS_REMOVED
+      - CONFIG_INSTANCE_STATUS_FAILED
+      - CONFIG_INSTANCE_STATUS_RETRYING
     BaseConfigInstance:
       title: Base Config Instance
       type: object
       required:
-        - object
-        - id
-        - target_status
-        - activity_status
-        - error_status
-        - status
-        - relative_filepath
-        - created_at
-        - updated_at
-        - device_id
-        - config_schema_id
-        - config_type_id
+      - object
+      - id
+      - target_status
+      - activity_status
+      - error_status
+      - status
+      - relative_filepath
+      - created_at
+      - updated_at
+      - device_id
+      - config_schema_id
+      - config_type_id
       properties:
         object:
           type: string
           enum:
-            - config_instance
+          - config_instance
           example: config_instance
         id:
           type: string
@@ -292,8 +312,7 @@ components:
         relative_filepath:
           type: string
           example: /v1/motion-control.json
-          description: >-
-            The file path to deploy the config instance relative to `/srv/miru/config_instances`.
+          description: The file path to deploy the config instance relative to `/srv/miru/config_instances`.
             `v1/motion-control.json` would deploy to `/srv/miru/config_instances/v1/motion-control.json`.
         created_at:
           type: string
@@ -312,44 +331,46 @@ components:
         config_schema_id:
           type: string
           example: cfg_sch_123
-          description: ID of the config schema which the config instance must adhere to.
+          description: ID of the config schema which the config instance must adhere
+            to.
         config_type_id:
           type: string
           example: cfg_type_123
-          description: ID of the config type which the config instance (and its schema) is a part of.
+          description: ID of the config type which the config instance (and its schema)
+            is a part of.
     ConfigInstance:
       allOf:
-        - $ref: '#/components/schemas/BaseConfigInstance'
-        - type: object
-          required:
-            - content
-          properties:
-            content:
-              type: object
-              description: The configuration values associated with the config instance
-              example:
-                enable_autonomy: true
-                enable_remote_control: false
-                max_payload_kg: 8.5
-                preferred_speed_mode: normal
-                emergency_stop_sensitivity: 0.9
-                telemetry:
-                  upload_interval_sec: 45
-                  heartbeat_interval_sec: 15
+      - $ref: '#/components/schemas/BaseConfigInstance'
+      - type: object
+        required:
+        - content
+        properties:
+          content:
+            type: object
+            description: The configuration values associated with the config instance
+            example:
+              enable_autonomy: true
+              enable_remote_control: false
+              max_payload_kg: 8.5
+              preferred_speed_mode: normal
+              emergency_stop_sensitivity: 0.9
+              telemetry:
+                upload_interval_sec: 45
+                heartbeat_interval_sec: 15
     HashSerializedConfigSchemaFormat:
       type: string
       enum:
-        - json
-        - yaml
+      - json
+      - yaml
       x-enum-varnames:
-        - HASH_SERIALIZED_CONFIG_SCHEMA_FORMAT_JSON
-        - HASH_SERIALIZED_CONFIG_SCHEMA_FORMAT_YAML
+      - HASH_SERIALIZED_CONFIG_SCHEMA_FORMAT_JSON
+      - HASH_SERIALIZED_CONFIG_SCHEMA_FORMAT_YAML
     HashSchemaSerializedRequest:
       title: Hash Schema Serialized Request
       type: object
       required:
-        - format
-        - schema
+      - format
+      - schema
       properties:
         format:
           $ref: '#/components/schemas/HashSerializedConfigSchemaFormat'
@@ -357,13 +378,12 @@ components:
         schema:
           type: string
           format: byte
-          example: >-
-            ewogICIkc2NoZW1hIjogImh0dHBzOi8vanNvbi1zY2hlbWEub3JnL2RyYWZ0LzIwMjAtMTIvc2NoZW1hIiwKICAidHlwZSI6ICJvYmplY3QiLAogICJwcm9wZXJ0aWVzIjogewogICAgImRldmljZV9pZCI6IHsKICAgICAgInR5cGUiOiAic3RyaW5nIgogICAgfSwKICAgICJzcGVlZCI6IHsKICAgICAgInR5cGUiOiAiaW50ZWdlciIsCiAgICAgICJtaW5pbXVtIjogMSwKICAgICAgImRlZmF1bHQiOiAxMAogICAgfQogIH0sCiAgInJlcXVpcmVkIjogWyJkZXZpY2VfaWQiLCAic3BlZWQiXQp9
+          example: ewogICIkc2NoZW1hIjogImh0dHBzOi8vanNvbi1zY2hlbWEub3JnL2RyYWZ0LzIwMjAtMTIvc2NoZW1hIiwKICAidHlwZSI6ICJvYmplY3QiLAogICJwcm9wZXJ0aWVzIjogewogICAgImRldmljZV9pZCI6IHsKICAgICAgInR5cGUiOiAic3RyaW5nIgogICAgfSwKICAgICJzcGVlZCI6IHsKICAgICAgInR5cGUiOiAiaW50ZWdlciIsCiAgICAgICJtaW5pbXVtIjogMSwKICAgICAgImRlZmF1bHQiOiAxMAogICAgfQogIH0sCiAgInJlcXVpcmVkIjogWyJkZXZpY2VfaWQiLCAic3BlZWQiXQp9
     SchemaDigestResponse:
       title: Schema Digest Response
       type: object
       required:
-        - digest
+      - digest
       properties:
         digest:
           type: string
@@ -375,27 +395,27 @@ components:
         - Online: The miru agent is connected
         - Offline: The miru agent is disconnected (e.g. network issues, device is powered off, etc.)
       enum:
-        - online
-        - offline
+      - online
+      - offline
       x-enum-varnames:
-        - DEVICE_STATUS_ONLINE
-        - DEVICE_STATUS_OFFLINE
+      - DEVICE_STATUS_ONLINE
+      - DEVICE_STATUS_OFFLINE
     Device:
       title: Device
       type: object
       required:
-        - object
-        - id
-        - name
-        - status
-        - last_synced_at
-        - last_connected_at
-        - last_disconnected_at
+      - object
+      - id
+      - name
+      - status
+      - last_synced_at
+      - last_connected_at
+      - last_disconnected_at
       properties:
         object:
           type: string
           enum:
-            - device
+          - device
           example: device
         id:
           type: string
@@ -416,33 +436,35 @@ components:
           type: string
           format: date-time
           example: '2021-01-01T00:00:00Z'
-          description: Timestamp of the last successful connection event with the backend.
+          description: Timestamp of the last successful connection event with the
+            backend.
         last_disconnected_at:
           type: string
           format: date-time
           example: '2021-01-01T00:00:00Z'
-          description: Timestamp of the last successful disconnection event with the backend.
+          description: Timestamp of the last successful disconnection event with the
+            backend.
     SyncDeviceResult:
       type: string
       description: The result of attempting to sync the device.
       enum:
-        - success
-        - network_connection_error
-        - in_cooldown
+      - success
+      - network_connection_error
+      - in_cooldown
       x-enum-varnames:
-        - SYNC_DEVICE_RESULT_SUCCESS
-        - SYNC_DEVICE_RESULT_NETWORK_CONNECTION_ERROR
-        - SYNC_DEVICE_RESULT_IN_COOLDOWN
+      - SYNC_DEVICE_RESULT_SUCCESS
+      - SYNC_DEVICE_RESULT_NETWORK_CONNECTION_ERROR
+      - SYNC_DEVICE_RESULT_IN_COOLDOWN
     SyncDeviceResponse:
       title: Sync Device Response
       type: object
       required:
-        - code
-        - message
-        - last_synced_at
-        - last_attempted_sync_at
-        - in_cooldown
-        - cooldown_ends_at
+      - code
+      - message
+      - last_synced_at
+      - last_attempted_sync_at
+      - in_cooldown
+      - cooldown_ends_at
       properties:
         code:
           $ref: '#/components/schemas/SyncDeviceResult'
@@ -472,10 +494,10 @@ components:
     Error:
       type: object
       required:
-        - code
-        - params
-        - message
-        - debug_message
+      - code
+      - params
+      - message
+      - debug_message
       properties:
         code:
           type: string
@@ -493,7 +515,7 @@ components:
     ErrorResponse:
       type: object
       required:
-        - error
+      - error
       properties:
         error:
           $ref: '#/components/schemas/Error'
