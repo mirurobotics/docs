@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "almond",
+  "theme": "maple",
   "name": "Miru",
   "colors": {
     "primary": "#059669",
@@ -19,9 +19,9 @@
     "weight": 450
   },
   "navigation": {
-    "tabs": [
+    "products": [
       {
-        "tab": "Documentation",
+        "product": "Documentation",
         "groups": [
           {
             "group": "Getting started",
@@ -87,7 +87,7 @@
             "group": "Developers",
             "pages": [
               {
-                "group": "Miru Agent",
+                "group": "Agent",
                 "pages": [
                   "docs/developers/agent/overview",
                   "docs/developers/agent/install",
@@ -97,7 +97,7 @@
               "docs/developers/agent-api",
               "docs/developers/cli",
               {
-                "group": "Continuous Integration",
+                "group": "CI/CD",
                 "pages": [
                   "docs/developers/ci/overview",
                   "docs/developers/ci/gh-actions"
@@ -126,93 +126,123 @@
         ]
       },
       {
-        "tab": "References",
-        "menu": [
-          {
-            "item": "Server-Side API",
-            "groups": [
-              {
-                "group": "Server-Side API",
-                "pages": [
-                  "docs/references/server-side-api/intro",
-                  "docs/references/server-side-api/authn",
-                  "docs/references/server-side-api/query-params/filtering",
-                  "docs/references/server-side-api/query-params/sorting",
-                  "docs/references/server-side-api/query-params/pagination",
-                  "docs/references/server-side-api/query-params/expansions"
-                ]
-              },
-              {
-                "group": "SDKs",
-                "pages": [
-                  "docs/references/server-side-api/sdks/overview",
-                  "docs/references/server-side-api/sdks/python"
-                ]
-              },
-              {
-                "group": "Endpoints",
-                "openapi": {
-                  "source": "api/server-api.stainless.yaml",
-                  "directory": "docs/references/server-side-api/endpoints"
-                }
-              }
-            ]
-          },
-          {
-            "item": "Agent API",
-            "groups": [
-              {
-                "group": "Agent API",
-                "pages": [
-                  "docs/references/agent-api/intro",
-                  "docs/references/agent-api/authn"
-                ]
-              },
-              {
-                "group": "SDKs",
-                "pages": [
-                  "docs/references/agent-api/sdks/overview",
-                  "docs/references/agent-api/sdks/python"
-                ]
-              },
-              {
-                "group": "Endpoints",
-                "openapi": {
-                  "source": "api/agent-api.stainless.yaml",
-                  "directory": "docs/references/agent-api/endpoints"
-                }
-              }
-            ]
-          },
-          {
-            "item": "CLI Commands",
-            "groups": [
-              {
-                "group": "CLI",
-                "pages": [
-                  "docs/references/cli/intro",
-                  "docs/references/cli/install",
-                  "docs/references/cli/login"
-                ]
-              },
-              {
-                "group": "Releases",
-                "pages": [
-                  "docs/references/cli/release-create"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Changelog",
+        "product": "Changelog",
         "groups": [
           {
             "group": "Changelog",
             "pages": [
               "docs/changelogs/product",
               "docs/changelogs/developers"
+            ]
+          }
+        ]
+      },
+      {
+        "product": "Server-Side API Reference",
+        "dropdowns": [
+          {
+            "dropdown": "2025-08-01",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": [
+                  "docs/references/server-side-api/2025-08-01/intro",
+                  "docs/references/server-side-api/2025-08-01/authn",
+                  "docs/references/server-side-api/2025-08-01/query-params/filtering",
+                  "docs/references/server-side-api/2025-08-01/query-params/sorting",
+                  "docs/references/server-side-api/2025-08-01/query-params/pagination",
+                  "docs/references/server-side-api/2025-08-01/query-params/expansions"
+                ]
+              },
+              {
+                "group": "SDKs",
+                "pages": [
+                  "docs/references/server-side-api/2025-08-01/sdks/overview",
+                  "docs/references/server-side-api/2025-08-01/sdks/python"
+                ]
+              },
+              {
+                "group": "Endpoints",
+                "openapi": {
+                  "source": "api/server-api.stainless.yaml",
+                  "directory": "docs/references/server-side-api/2025-08-01/endpoints"
+                }
+              }
+            ]
+          },
+          {
+            "dropdown": "2026-03-01",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": [
+                  "docs/references/server-side-api/2026-03-01/intro",
+                  "docs/references/server-side-api/2026-03-01/authn",
+                  "docs/references/server-side-api/2026-03-01/query-params/filtering",
+                  "docs/references/server-side-api/2026-03-01/query-params/sorting",
+                  "docs/references/server-side-api/2026-03-01/query-params/pagination",
+                  "docs/references/server-side-api/2026-03-01/query-params/expansions"
+                ]
+              },
+              {
+                "group": "SDKs",
+                "pages": [
+                  "docs/references/server-side-api/2026-03-01/sdks/overview",
+                  "docs/references/server-side-api/2026-03-01/sdks/python"
+                ]
+              },
+              {
+                "group": "Endpoints",
+                "openapi": {
+                  "source": "api/server-api.stainless.yaml",
+                  "directory": "docs/references/server-side-api/2026-03-01/endpoints"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "product": "Agent API Reference",
+        "groups": [
+          {
+            "group": "Agent API",
+            "pages": [
+              "docs/references/agent-api/intro",
+              "docs/references/agent-api/authn"
+            ]
+          },
+          {
+            "group": "SDKs",
+            "pages": [
+              "docs/references/agent-api/sdks/overview",
+              "docs/references/agent-api/sdks/python"
+            ]
+          },
+          {
+            "group": "Endpoints",
+            "openapi": {
+              "source": "api/agent-api.stainless.yaml",
+              "directory": "docs/references/agent-api/endpoints"
+            }
+          }
+        ]
+      },
+      {
+        "product": "CLI Reference",
+        "groups": [
+          {
+            "group": "CLI",
+            "pages": [
+              "docs/references/cli/intro",
+              "docs/references/cli/install",
+              "docs/references/cli/login"
+            ]
+          },
+          {
+            "group": "Releases",
+            "pages": [
+              "docs/references/cli/release-create"
             ]
           }
         ]
