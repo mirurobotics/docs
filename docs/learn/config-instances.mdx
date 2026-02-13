@@ -3,7 +3,7 @@ title: "Config instances"
 ---
 
 import ConfigInstanceDef from '/snippets/definitions/config-instance.mdx';
-import {MutableBadge, ImmutableBadge, NullableBadge} from '/snippets/components/badges.jsx';
+import {MutableBadge, ImmutableBadge} from '/snippets/components/badges.jsx';
 import {Framed} from '/snippets/components/framed.jsx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v03/images/config-instances/background.jpeg" image="https://assets.mirurobotics.com/docs/v03/images/config-instances/header:panel.png" borderWidth="28px 56px 0 0" innerRadius="0 8px 0 0" />
@@ -11,69 +11,6 @@ import {Framed} from '/snippets/components/framed.jsx';
 <ConfigInstanceDef />
 
 ## Properties
-
-<ParamField path="target status" type="enum">
-  <MutableBadge />
-
-  The desired state of the config instance, inherited from its [owner](/docs/learn/config-instances#owners-and-origins) deployment.
-
-  Visit the deployment's [target status](/docs/learn/deployments#target-status) for more information.
-
-  Allowed values: 
-  - `staged`
-  - `deployed`
-  - `removed`
-
-</ParamField>
-
-<ParamField path="activity status" type="string">
-  <MutableBadge />
-
-  The last known activity state of the config instance, inherited from its [owner](/docs/learn/config-instances#owners-and-origins) deployment.
-
-  Visit the deployment's [activity status](/docs/learn/deployments#activity-status) for more information.
-
-  Allowed values: 
-  - `staged`
-  - `needs_review`
-  - `queued`
-  - `deployed`
-  - `removing`
-  - `archived`
-
-</ParamField>
-
-<ParamField path="error status" type="string">
-  <MutableBadge />
-
-  The last known error state of the config instance, inherited from its [owner](/docs/learn/config-instances#owners-and-origins) deployment.
-
-  Visit the deployment's [error status](/docs/learn/deployments#error-status) for more information.
-
-  Allowed values: 
-  - `none`
-  - `failed`
-  - `retrying`
-
-</ParamField>
-
-<ParamField path="status" type="string">
-  <MutableBadge />
-
-  This property merges the `activity status` and `error status` fields, with error states taking precedence over activity states when errors are present.
-
-  Below are examples of status values for different activities and error states.
-
-  | Activity Status | Error Status | Status     |
-  | --------------- | ------------ | ---------- |
-  | `staged`        | `none`       | `staged`   |
-  | `deployed`      | `none`       | `deployed` |
-  | `queued`        | `retrying`   | `retrying` |
-  | `removed`       | `failed`     | `failed`   |
-
-  Enum: `staged`, `needs_review`, `queued`, `deployed`, `removing`, `archived`, `failed`, `retrying`
-</ParamField>
-
 <ParamField path="content" type="object">
   <ImmutableBadge />
 
@@ -90,18 +27,6 @@ import {Framed} from '/snippets/components/framed.jsx';
   Examples: `/v1/motion-control.json`, `/safety.json`
 </ParamField>
 
-<ParamField path="parent" type="Config Instance">
-  <ImmutableBadge />
-
-  {' '}
-
-  <NullableBadge />
-
-  The config instance that this config instance was patched from.
-
-  Examples: `CFG-Cpa13`
-</ParamField>
-
 <ParamField path="config schema" type="Config Schema">
   <ImmutableBadge />
 
@@ -110,108 +35,6 @@ import {Framed} from '/snippets/components/framed.jsx';
   Example: `SCH-FmoDN`
 </ParamField>
 
-<ParamField path="device" type="Device">
-  <ImmutableBadge />
-
-  The device to which the config instance is deployed.
-
-  Examples: `Sojourner`, `Johnny Test`, `Robot 11`
-</ParamField>
-
-<ParamField path="origin" type="Deployment">
-  <ImmutableBadge />
-
-  The [deployment](/docs/learn/deployments#properties) with which the config instance was created.
-
-  Visit the [origin](/docs/learn/config-instances#owners-and-origins) section for more information.
-
-  Example: `DPL-123`
-</ParamField>
-
-<ParamField path="owner" type="Deployment">
-  <MutableBadge />
-
-  The [deployment](/docs/learn/deployments#properties) that a config instance currently belongs to.
-
-  Visit the [owner](/docs/learn/config-instances#owners-and-origins) section for more information.
-
-  Example: `DPL-123`
-</ParamField>
-
 ## File formats
 
 Currently, config instances only support JSON. However, support for more formats, including YAML and JSON-C, is coming soon!
-
-## Owners and origins
-
-Config instances are created and used as part of a [deployment](/docs/learn/deployments). Each config instance has two key deployment relationships:
-
-- **Origin** - the deployment with which the config instance was created
-- **Owner** - the deployment that a config instance currently belongs to
-
-These concepts are best explained via example.
-
-**Initial Deployment**
-
-Let's say our application has three config types: `Mobility`, `Perception`, and `Safety`.
-
-We create an initial deployment, `DPL-MT3Ec`. The deployment contains config instances `CFG-K9xF6`, `CFG-BrM1v`, and `CFG-9ai6A` which are instantiations of `Mobility`, `Perception`, and `Safety` respectively.
-
-![](https://assets.mirurobotics.com/docs/v03/images/config-instances/ownership:step1.png)
-
-Since all configs are brand new, all three config instances' owners and origins are `DPL-MT3Ec`.
-
-| Instance                   | Owner         | Origin        |
-| -------------------------- | ------------- | ------------- |
-| **CFG-K9xF6 (Mobility)**   | **DPL-MT3Ec** | **DPL-MT3Ec** |
-| **CFG-BrM1v (Perception)** | **DPL-MT3Ec** | **DPL-MT3Ec** |
-| **CFG-9ai6A (Safety)**     | **DPL-MT3Ec** | **DPL-MT3Ec** |
-
-**Mobility Edit**
-
-After our initial deployment, we decided to make an edit to the `Mobility` config instance, creating `DPL-8Xerr` to replace `DPL-MT3Ec`.
-
-![](https://assets.mirurobotics.com/docs/v03/images/config-instances/ownership:step2.png)
-
-Since no edits were made to the `Perception` or `Safety` instances, `DPL-8Xerr` reuses the `Perception` and `Safety` configs from `DPL-MT3Ec`. As such, the total number of config instances only increases from three to four.
-
-| Instance                   | Owner         | Origin        |
-| -------------------------- | ------------- | ------------- |
-| **CFG-K9xF6 (Mobility)**   | **DPL-MT3Ec** | **DPL-MT3Ec** |
-| **CFG-BrM1v (Perception)** | **DPL-8Xerr** | **DPL-MT3Ec** |
-| **CFG-9ai6A (Safety)**     | **DPL-8Xerr** | **DPL-MT3Ec** |
-| **CFG-6jrCj (Mobility)**   | **DPL-8Xerr** | **DPL-8Xerr** |
-
-The new `Mobility` config instance, `CFG-6jrCj`, has an owner and origin of `DPL-8Xerr` since it was created with that deployment.
-
-The old `Mobility` config instance is removed and retains its owner as `DPL-MT3Ec`.
-
-Finally, since `DPL-8Xerr` reuses the `Perception` and `Safety` instances from `DPL-MT3Ec`, `CFG-BrM1v` and `CFG-9ai6A` have their ownership transferred to `DPL-8Xerr`.
-
-**Safety Edit**
-
-Some more time passes, and we need to make another edit. This time we edit the `Safety` config instance, creating `DPL-8jVBY` to replace `DPL-8Xerr`.
-
-![](https://assets.mirurobotics.com/docs/v03/images/config-instances/ownership:step3.png)
-
-Since no edits were made to the `Mobility` or `Perception` instances, `DPL-8jVBY` reuses the config instances from `DPL-8Xerr` for those config types. The total number of config instances thus increases from four to five.
-
-| Instance                   | Owner         | Origin        |
-| -------------------------- | ------------- | ------------- |
-| **CFG-K9xF6 (Mobility)**   | **DPL-MT3Ec** | **DPL-MT3Ec** |
-| **CFG-BrM1v (Perception)** | **DPL-8Xerr** | **DPL-MT3Ec** |
-| **CFG-9ai6A (Safety)**     | **DPL-8jVBY** | **DPL-MT3Ec** |
-| **CFG-6jrCj (Mobility)**   | **DPL-8jVBY** | **DPL-8Xerr** |
-| **CFG-2kQ1b (Safety)**     | **DPL-8jVBY** | **DPL-8jVBY** |
-
-The new `Safety` config instance, `CFG-2kQ1b`, has an owner and origin of `DPL-8jVBY` since it was created with that deployment.
-
-The old `Safety` config instance is removed and retains its owner as `DPL-8Xerr`.
-
-Finally, the other two config instances have their ownership transferred to `DPL-8jVBY`.
-
-**Conclusion**
-
-Owners and origins help maintain an accurate record of a device's configuration changes. Instead of unnecessarily creating new config instances for every config type on each edit, new instances are only created when the config type is edited.
-
-Origins and owners make it easy to track the initial deployment that created the config instance, as well as the current deployment that the config instance belongs to.
