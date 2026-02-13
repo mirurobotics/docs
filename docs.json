@@ -125,18 +125,7 @@
           }
         ]
       },
-      {
-        "product": "Changelog",
-        "groups": [
-          {
-            "group": "Changelog",
-            "pages": [
-              "docs/changelogs/product",
-              "docs/changelogs/developers"
-            ]
-          }
-        ]
-      },
+
       {
         "product": "Server-Side API Reference",
         "dropdowns": [
@@ -246,6 +235,18 @@
             ]
           }
         ]
+      },
+      {
+        "product": "Changelog",
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": [
+              "docs/changelogs/product",
+              "docs/changelogs/developers"
+            ]
+          }
+        ]
       }
     ]
   },
@@ -261,6 +262,10 @@
   },
   "navbar": {
     "links": [
+      {
+        "label": "Changelog",
+        "href": "/docs/changelogs/product"
+      },
       {
         "label": "Dashboard",
         "href": "https://app.mirurobotics.com/login"
