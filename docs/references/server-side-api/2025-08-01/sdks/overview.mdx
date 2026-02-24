@@ -1,1 +1,19 @@
-../../sdks/overview.mdx
+---
+title: "Overview"
+---
+
+import PythonIntro from '/snippets/references/server-side-api/sdks/python-intro.mdx';
+
+Miru provides SDKs to simplify interaction with the Server-Side API.
+
+These SDKs handle the complexities of HTTP communication and API key authentication and provide type-safe interfaces for all available endpoints.
+
+## Languages
+
+### Python
+
+<PythonIntro />
+
+## Direct API usage
+
+If you're using a language not yet supported by an official SDK, you can still interact with the Agent API directly using HTTP requests over the Unix socket at `/run/miru/miru.sock`. See the [Endpoints](/docs/references/agent-api/endpoints/agent/health) page for information about the available endpoints.

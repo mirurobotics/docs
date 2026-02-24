@@ -1,1 +1,349 @@
-../../query-params/expansions.mdx
+---
+title: "Expansions"
+---
+
+The Miru API uses expansions to retrieve related objects in a single request rather than making multiple API calls. This simplifies code and minimizes the number of API calls.
+
+Response objects only include the core fields by default. Related objects (such as the device associated with a config instance) are included with their IDs, but not their complete object data. Using the `expand[]` query parameter, you can include related objects directly in the response.
+
+Expansions are powerful but add latency. As such, they should be used strategically to balance performance with the data needed in an individual request.
+
+## Object expansions
+
+Many response objects reference objects that are not included in the default response.
+
+For example, a [config instance](/docs/references/server-side-api/endpoints/config-instances/get) has the following default response structure:
+
+```json
+{
+  "object": "config_instance",
+  "id": "cfg_inst_123",
+  "target_status": "created",
+  "activity_status": "created",
+  "error_status": "none",
+  "status": "created",
+  "relative_filepath": "/v1/motion-control.json",
+  "created_at": "2021-01-01T00:00:00Z",
+  "updated_at": "2021-01-01T00:00:00Z",
+  "device_id": "dvc_123",
+  "config_schema_id": "cfg_sch_123",
+  "config_type_id": "cfg_type_123",
+  "device": null,
+  "config_schema": null,
+  "config_type": null,
+  "content": null,
+}
+```
+
+The `device`, `config_schema`, `config_type`, and `content` objects are not included in the config instance response by default.
+
+To retrieve the device for a given config instance, you could make two separate requests:
+
+- First, fetch the [**config instance**](/docs/references/server-side-api/endpoints/config-instances/get) using its ID (assuming you already know it).
+- Then, having obtained the **`device_id`** from the config instance response, fetch the [**device**](/docs/references/server-side-api/endpoints/devices/get) using the device ID.
+
+This is workable but adds both latency and complexity to your code. A better approach is to use the `expand[]` parameter to include the `device` object directly in the config instance response, avoiding a second request.
+
+The following request expands the **`device`** field using **`expand[]=device :`**
+
+<CodeGroup>
+
+```bash Request
+curl --request GET \
+--url https://api.mirurobotics.com/v1/config_instances/cfg_inst_123?expand[]=device \
+--header 'X-API-Key: <api-key>'
+```
+
+
+```json Response
+{
+  "object": "config_instance",
+  "id": "cfg_inst_123",
+  "target_status": "created",
+  "activity_status": "created",
+  "error_status": "none",
+  "status": "created",
+  "relative_filepath": "/v1/motion-control.json",
+  "created_at": "2021-01-01T00:00:00Z",
+  "updated_at": "2021-01-01T00:00:00Z",
+  "device_id": "dvc_123",
+  "config_schema_id": "cfg_sch_123",
+  "config_type_id": "cfg_type_123",
+  "device": {
+    "object": "device",
+    "id": "dvc_123",
+    "name": "My Device",
+    "status": "active",
+    "created_at": "2021-01-01T00:00:00Z",
+    "updated_at": "2021-01-01T00:00:00Z",
+  },
+  "config_schema": null,
+  "config_type": null,
+  "content": null,
+}
+```
+
+</CodeGroup>
+
+With the expansion, the response includes the `device` that the config instance belongs to, reducing the request count from two to one.
+
+To see a complete list of expandable fields for an object, look for the `expand[]` parameter in the **Query Parameters** section of the API endpoint you are querying.
+
+## Multiple expansions
+
+You can expand multiple fields by passing in multiple **`expand[]`** parameters separated by **`&`** .
+
+The following request expands both the **`device`** and **`content`** fields of the config instance using **`expand[]=device&expand[]=content`**.
+
+<CodeGroup>
+
+```bash Request
+  curl --request GET \
+    --url https://api.mirurobotics.com/v1/config_instances/cfg_inst_123?expand[]=device&expand[]=content \
+    --header 'X-API-Key: <api-key>'
+```
+
+
+```json Response
+  {
+    "object": "config_instance",
+    "id": "cfg_inst_123",
+    "target_status": "created",
+    "activity_status": "created",
+    "error_status": "none",
+    "status": "created",
+    "relative_filepath": "/v1/motion-control.json",
+    "created_at": "2021-01-01T00:00:00Z",
+    "updated_at": "2021-01-01T00:00:00Z",
+    "device_id": "dvc_123",
+    "config_schema_id": "cfg_sch_123",
+    "config_type_id": "cfg_type_123",
+    "device": {
+      "object": "device",
+      "id": "dvc_123",
+      "name": "My Device",
+      "status": "active",
+      "created_at": "2021-01-01T00:00:00Z",
+      "updated_at": "2021-01-01T00:00:00Z",
+    },
+    "config_schema": null,
+    "config_type": null,
+    "content": {
+      "enable_autonomy": true,
+      "enable_remote_control": false,
+      "max_payload_kg": 8.5,
+      "preferred_speed_mode": "normal",
+      "emergency_stop_sensitivity": 0.9,
+      "telemetry": {
+          "upload_interval_sec": 45,
+          "heartbeat_interval_sec": 15
+      }
+    }
+  }
+```
+
+</CodeGroup>
+
+## Nested expansions
+
+When expanding an object, it’s often the case that the expanded object contains objects that can also be expanded. For example, config instances can expand their config schema, which in turn can expand their config type.
+
+To expand nested objects, use the dot (**`.`**) notation within the **`expand[]`** parameter.
+
+The following request expands the **`config_type`** inside the **`config_schema`** of the config instance using **`expand[]=config_schema.config_type :`**
+
+<CodeGroup>
+
+```bash Request
+  curl --request GET \
+    --url https://api.mirurobotics.com/v1/config_instances/cfg_inst_123?expand[]=config_schema.config_type \
+    --header 'X-API-Key: <api-key>'
+```
+
+
+```json Response
+  {
+    "object": "config_instance",
+    "id": "cfg_inst_123",
+    "target_status": "created",
+    "activity_status": "created",
+    "error_status": "none",
+    "status": "created",
+    "relative_filepath": "/v1/motion-control.json",
+    "created_at": "2021-01-01T00:00:00Z",
+    "updated_at": "2021-01-01T00:00:00Z",
+    "device_id": "dvc_123",
+    "config_schema_id": "cfg_sch_123",
+    "config_type_id": "cfg_type_123",
+    "device": null,
+    "config_schema": {
+      "object": "config_schema",
+      "id": "cfg_sch_123",
+      "version": 2,
+      "digest": "1a2b3c4d5e",
+      "relative_filepath": "/v1/motion-control.json",
+      "created_at": "2021-01-01T00:00:00Z",
+      "updated_at": "2021-01-01T00:00:00Z",
+      "config_type_id": "cfg_typ_123",
+      "config_type": {
+        "object": "config_type",
+        "id": "cfg_type_123",
+        "name": "Motion Control",
+        "slug": "motion-control",
+        "created_at": "2021-01-01T00:00:00Z",
+        "updated_at": "2021-01-01T00:00:00Z",
+        "config_schemas": null,
+      },
+      "content": null,
+    },
+    "config_type": null,
+    "content": null,
+  }
+```
+
+</CodeGroup>
+
+<Warning>
+  Expansions cannot be nested beyond four levels deep. `expand[]=field1.field2.field3.field4` is the maximum depth.
+</Warning>
+
+When expanding nested fields, there's no need to expand the parent field. Since the config schema must be expanded to expand its config type in the `expand[]=config_schema.config_type` query parameter, the `config_schema` field is automatically expanded as well.
+
+## List expansions
+
+### Items
+
+When listing config instances, you can expand fields in the same way you would for a single config instance. By default, [listing config instances](/docs/references/server-side-api/endpoints/config-instances/list) returns the following response structure.
+
+```json
+{
+  "object": "list",
+  "total_count": -1,
+  "limit": 10,
+  "offset": 0,
+  "has_more": true,
+  "data": [
+    {
+      "object": "config_instance",
+      "id": "cfg_inst_123",
+      ...
+      "content": null,
+    },
+    {
+      "object": "config_instance",
+      "id": "cfg_inst_456",
+      ...
+      "content": null,
+    },
+    ...
+  ],
+}
+```
+
+To expand the `content` field for every config instance in a list response, use the `expand[]=content`, just as you would for a single object.
+
+Unlike other APIs you may encounter, you don’t need to prefix the field with `data.` (e.g., `expand[]=data.content`). Miru automatically applies the expansion to each item in the list, not the list itself.
+
+The following request expands the **`content`** field for every config instance in the list using **`expand[]=content: :`**
+
+<CodeGroup>
+
+```bash Request
+  curl --request GET \
+    --url 'https://api.mirurobotics.com/v1/config_instances?expand[]=content' \
+    --header 'X-API-Key: <api-key>'
+```
+
+
+```json Response
+  {
+    "object": "list",
+    "total_count": -1,
+    "limit": 10,
+    "offset": 0,
+    "has_more": true,
+    "data": [
+      {
+        "object": "config_instance",
+        "id": "cfg_inst_123",
+        ...
+        "content": {
+          "enable_autonomy": true,
+          "enable_remote_control": false,
+          "max_payload_kg": 8.5,
+          "preferred_speed_mode": "normal",
+          "emergency_stop_sensitivity": 0.9,
+          "telemetry": {
+            "upload_interval_sec": 45,
+            "heartbeat_interval_sec": 15
+          }
+        }
+      },
+      {
+        "object": "config_instance",
+        "id": "cfg_inst_456",
+        ...
+        "content": {
+          "enable_autonomy": false,
+          "enable_remote_control": false,
+          "max_payload_kg": 11.5,
+          "preferred_speed_mode": "fast",
+          "emergency_stop_sensitivity": 0.9,
+          "telemetry": {
+            "upload_interval_sec": 30,
+            "heartbeat_interval_sec": 60
+          }
+        }
+      },
+      ...
+    ],
+  }
+```
+
+</CodeGroup>
+
+### Total count
+
+The `total_count` field in a list response represents the total number of items matching the query. Because Miru [paginates](/docs/references/server-side-api/query-params/pagination) list responses, this number is often greater than the number of items returned per page.
+
+If a list query matches 100 items but the **`limit`** parameter is set to 10, the list response would contain only 10 items despite the total count being 100.
+
+By default, Miru does **not** compute `total_count` to avoid performance overhead. Instead, the field is set to `-1` unless explicitly expanded.
+
+To include the actual total count in the response, add `expand[]=total_count` to the request:
+
+<CodeGroup>
+
+```bash Request
+  curl --request GET \
+    --url 'https://api.mirurobotics.com/v1/config_instances?expand[]=total_count' \
+    --header 'X-API-Key: <api-key>'
+```
+
+
+```json Response
+  {
+    "object": "list",
+    "total_count": 15,
+    "limit": 10,
+    "offset": 0,
+    "has_more": true,
+    "data": [
+      {
+        "object": "config_instance",
+        "id": "cfg_inst_123",
+        ...
+      },
+      {
+        "object": "config_instance",
+        "id": "cfg_inst_456",
+        ...
+      },
+      ...
+    ],
+  }
+```
+
+</CodeGroup>
+
+Computing the total count can add significant latency, especially for large datasets. Only use it when necessary!

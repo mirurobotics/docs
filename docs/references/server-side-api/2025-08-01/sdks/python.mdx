@@ -1,1 +1,60 @@
-../../sdks/python.mdx
+---
+title: "Python"
+---
+
+import PythonIntro from '/snippets/references/server-side-api/sdks/python-intro.mdx';
+
+<PythonIntro />
+
+
+## Install
+
+```bash
+pip install miru_server_sdk
+```
+
+## Quick start
+
+```python
+import os
+from miru_server_sdk import Miru
+
+# Initialize the client with your API key
+client = Miru(
+    api_key=os.environ.get("MIRU_API_KEY"),  # defaults to MIRU_API_KEY env var
+)
+
+# List devices in your workspace
+devices = client.devices.list()
+print(f"Found {len(devices.data)} devices")
+
+# Get a specific device
+device = client.devices.retrieve(device_id="dvc_123")
+print(f"Device: {device.name}")
+```
+
+## Async usage
+
+The SDK also provides full async support:
+
+```python
+import os
+import asyncio
+from miru_server_sdk import AsyncMiru
+
+client = AsyncMiru(
+    api_key=os.environ.get("MIRU_API_KEY"),  # uses the MIRU_API_KEY environment variable
+)
+
+
+async def main() -> None:
+    devices = await client.devices.list()
+    print(f"Found {len(devices.data)} devices")
+
+    # Get a specific device
+    device = await client.devices.retrieve(device_id="dvc_123")
+    print(f"Device: {device.name}")
+
+
+asyncio.run(main())
+```
