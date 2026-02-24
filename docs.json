@@ -130,7 +130,7 @@
         "product": "Server-Side API Reference",
         "dropdowns": [
           {
-            "dropdown": "2025-08-01",
+            "dropdown": "2025-08-01.zion",
             "groups": [
               {
                 "group": "Overview",
@@ -158,62 +158,37 @@
                 }
               }
             ]
-          },
-          {
-            "dropdown": "2026-03-01",
-            "groups": [
-              {
-                "group": "Overview",
-                "pages": [
-                  "docs/references/server-side-api/2026-03-01/intro",
-                  "docs/references/server-side-api/2026-03-01/authn",
-                  "docs/references/server-side-api/2026-03-01/query-params/filtering",
-                  "docs/references/server-side-api/2026-03-01/query-params/sorting",
-                  "docs/references/server-side-api/2026-03-01/query-params/pagination",
-                  "docs/references/server-side-api/2026-03-01/query-params/expansions"
-                ]
-              },
-              {
-                "group": "SDKs",
-                "pages": [
-                  "docs/references/server-side-api/2026-03-01/sdks/overview",
-                  "docs/references/server-side-api/2026-03-01/sdks/python"
-                ]
-              },
-              {
-                "group": "Endpoints",
-                "openapi": {
-                  "source": "api/server-api.stainless.yaml",
-                  "directory": "docs/references/server-side-api/2026-03-01/endpoints"
-                }
-              }
-            ]
           }
         ]
       },
       {
         "product": "Agent API Reference",
-        "groups": [
+        "dropdowns": [
           {
-            "group": "Agent API",
-            "pages": [
-              "docs/references/agent-api/intro",
-              "docs/references/agent-api/authn"
+            "dropdown": "2026-03-01.mariner",
+            "groups": [
+              {
+                "group": "Agent API",
+                "pages": [
+                  "docs/references/agent-api/intro",
+                  "docs/references/agent-api/authn"
+                ]
+              },
+              {
+                "group": "SDKs",
+                "pages": [
+                  "docs/references/agent-api/sdks/overview",
+                  "docs/references/agent-api/sdks/python"
+                ]
+              },
+              {
+                "group": "Endpoints",
+                "openapi": {
+                  "source": "api/agent-api.stainless.yaml",
+                  "directory": "docs/references/agent-api/endpoints"
+                }
+              }
             ]
-          },
-          {
-            "group": "SDKs",
-            "pages": [
-              "docs/references/agent-api/sdks/overview",
-              "docs/references/agent-api/sdks/python"
-            ]
-          },
-          {
-            "group": "Endpoints",
-            "openapi": {
-              "source": "api/agent-api.stainless.yaml",
-              "directory": "docs/references/agent-api/endpoints"
-            }
           }
         ]
       },
