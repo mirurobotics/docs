@@ -170,15 +170,15 @@
               {
                 "group": "Agent API",
                 "pages": [
-                  "docs/references/agent-api/intro",
-                  "docs/references/agent-api/authn"
+                  "docs/references/agent-api/2026-03-01/intro",
+                  "docs/references/agent-api/2026-03-01/authn"
                 ]
               },
               {
                 "group": "SDKs",
                 "pages": [
-                  "docs/references/agent-api/sdks/overview",
-                  "docs/references/agent-api/sdks/python"
+                  "docs/references/agent-api/2026-03-01/sdks/overview",
+                  "docs/references/agent-api/2026-03-01/sdks/python"
                 ]
               },
               {
@@ -256,7 +256,7 @@
   },
   "api": {
     "params": {
-      "expanded": "all"
+      "expanded": "closed"
     },
     "playground": {
       "display": "simple"
