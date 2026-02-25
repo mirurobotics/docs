@@ -9,6 +9,147 @@ import { Framed } from '/snippets/components/framed.jsx'
 import { Frame } from '/snippets/components/frame.jsx'
 import { Separator } from '/snippets/components/seperator.jsx'
 
+<Update label="February 25, 2026">
+    ## Config Editor v3.0
+
+    We've rebuilt the config editor with four major new capabilities: edit and
+    deploy multiple config files simultaneously, navigate diffs quickly,
+    restore previous deployments instantly, and compare any two snapshots
+    from a device's history.
+
+    ### Multi-File Editing
+
+    The editor now supports editing multiple files under a single deployment with 
+    improved visibility and control:
+    
+    - **Persistent edits:** Switch between files or view historical deployments 
+    without losing changes in your draft.
+    - **Tab indicators:** Tabs display file status (`M` for modified, `A` for added) 
+    and show linting error counts at a glance.
+    - **Live change list:** The right panel provides a real-time summary of edits 
+    across all files as you work.
+    - **Deploy summary:** Review a file-by-file count of changes by type 
+    (added, modified, deleted) before deploying.
+
+    <video
+        autoPlay
+        loop
+        controls
+        className="aspect-video rounded-xl"
+        src="https://assets.mirurobotics.com/docs/changelog/26-02-25/multi-file-editing.mp4"
+    />
+
+    ### Redeploy
+
+    Restore any previous deployment directly from the editor. Simply right-click 
+    any deployment in the History tab and select **Redeploy** from the menu to open 
+    the dialog. 
+    
+    All configuration from the historical deployment is perfectly preserved and 
+    shipped as a brand-new deployment on the device.
+
+    <video
+        autoPlay
+        loop
+        controls
+        className="aspect-video rounded-xl"
+        src="https://assets.mirurobotics.com/docs/changelog/26-02-25/redeploy.mp4"
+    />
+
+    ### Diff Navigation
+
+    A floating navigation card now appears at the bottom of the editor when viewing 
+    diffs, allowing you to quickly navigate changes both within and across files. 
+    
+    - **Auto-scroll to first diff:** The editor automatically jumps to the first 
+    difference so you never have to scroll manually.
+    - **In-file navigation:** Use the up and down buttons to jump line-by-line 
+    between changes within the current file. 
+    - **Cross-file navigation:** File navigation buttons let you quickly skip 
+    between files. It only cycles through files that actually have changes, 
+    bypassing untouched files.
+    - **Change overview list:** Click the change counter label (e.g., `1 of 13`) to 
+    open a dropdown listing every change in the current file, including its 
+    modification type and path. Click any item to jump instantly to that line.
+
+    *Note: This navigation card is only visible when in the History tab on diff 
+    mode (which is the default mode when viewing history).*
+
+    <Framed 
+        background="https://assets.mirurobotics.com/docs/changelog/26-02-25/background.jpg"
+        image="https://assets.mirurobotics.com/docs/changelog/26-02-25/diff-navigation.png"
+        borderWidth="0 0 24px 24px"
+        innerRadius="0 0 0 8px"
+    />
+
+    ### Snapshot Comparison
+
+    Compare any two deployments directly from a device's history. Before, you could 
+    only see the diff between a deployment and its parent. Now, you can swap out the 
+    base deployment, making it easy to compare changes across any two points in time.
+
+    <video
+        autoPlay
+        loop
+        controls
+        className="aspect-video rounded-xl"
+        src="https://assets.mirurobotics.com/docs/changelog/26-02-25/diff-comparison.mp4"
+    />
+
+    <Separator />
+
+    <Dropdown title="Improvements">
+        <DropdownItem>
+            **JSON Semantic Diffs:** Diffs are now powered by JSON semantics rather 
+            than plain text, making it much clearer to see exactly what configuration 
+            values changed instead of just what lines changed.
+        </DropdownItem>
+        <DropdownItem>
+            **Draft / History Tab Split:** The right panel now has dedicated
+            Draft and History tabs. The editor opens to the draft tab by default with
+            files automatically created from the most recent deployment.
+        </DropdownItem>
+        <DropdownItem>
+            **External Deployment Alert:** If another user deploys to the same
+            device while your draft is open, an alert appears. You can discard
+            your changes, keep them (rebasing onto the new deployment), or
+            acknowledge and continue editing.
+        </DropdownItem>
+        <DropdownItem>
+            **Release Header:** The deployments in the history panel are seperated by
+            the release they belong to. The deployments are still in chronological 
+            order of when they were created.
+        </DropdownItem>
+        <DropdownItem>
+            **Deployment ID in File Tabs:** When viewing a historical deployment,
+            the deployment ID appears in the file tab so you always know which
+            snapshot you're looking at.
+        </DropdownItem>
+        <DropdownItem>
+            **History Pagination:** Deployment history is paginated so devices
+            with many deployments stay fast to load.
+        </DropdownItem>
+        <DropdownItem>
+            **Deploy Disabled When Offline:** The deploy button is disabled with a
+            contextual tooltip when the device is offline.
+        </DropdownItem>
+    </Dropdown>
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+        <DropdownItem>
+            **Editor Content Shift:** Fixed a bug that caused the editor content to 
+            shift when switching between file tabs.
+        </DropdownItem>
+        <DropdownItem>
+            **Changes Lost When Switching Configs:** Switching to a historical deployment 
+            no longer silently discards unsaved edits. Changes are now persisted in a 
+            temporary draft until you explicitly discard or deploy them.
+        </DropdownItem>
+    </Dropdown>
+</Update>
+
 <Update label="January 27, 2026">
     ## Create Releases in CI/CD
 
