@@ -165,27 +165,53 @@
         "product": "Agent API Reference",
         "dropdowns": [
           {
-            "dropdown": "2026-03-01.mariner",
+            "dropdown": "v0.2.0",
             "groups": [
               {
-                "group": "Agent API",
+                "group": "Overview",
                 "pages": [
-                  "docs/references/agent-api/2026-03-01/intro",
-                  "docs/references/agent-api/2026-03-01/authn"
+                  "docs/references/agent-api/v0.2.0/intro",
+                  "docs/references/agent-api/v0.2.0/authn"
                 ]
               },
               {
                 "group": "SDKs",
                 "pages": [
-                  "docs/references/agent-api/2026-03-01/sdks/overview",
-                  "docs/references/agent-api/2026-03-01/sdks/python"
+                  "docs/references/agent-api/v0.2.0/sdks/overview",
+                  "docs/references/agent-api/v0.2.0/sdks/python"
                 ]
               },
               {
                 "group": "Endpoints",
                 "openapi": {
                   "source": "api/agent-api.stainless.yaml",
-                  "directory": "docs/references/agent-api/endpoints"
+                  "directory": "docs/references/agent-api/v0.2.0/endpoints"
+                }
+              }
+            ]
+          },
+          {
+            "dropdown": "v0.1.0",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": [
+                  "docs/references/agent-api/v0.1.0/intro",
+                  "docs/references/agent-api/v0.1.0/authn"
+                ]
+              },
+              {
+                "group": "SDKs",
+                "pages": [
+                  "docs/references/agent-api/v0.1.0/sdks/overview",
+                  "docs/references/agent-api/v0.1.0/sdks/python"
+                ]
+              },
+              {
+                "group": "Endpoints",
+                "openapi": {
+                  "source": "api/agent-api.stainless.yaml",
+                  "directory": "docs/references/agent-api/v0.1.0/endpoints"
                 }
               }
             ]

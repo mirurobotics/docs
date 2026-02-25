@@ -4,13 +4,13 @@ title: "Filtering"
 
 All list endpoints in the Miru API support filtering to help you retrieve specific resources.
 
-For example, when [listing devices](/docs/references/server-side-api/endpoints/devices/list), you can filter by `id`, `name`, and other fields.
+For example, when [listing devices](/docs/references/server-side-api/2025-08-01/endpoints/devices/list), you can filter by `id`, `name`, and other fields.
 
 ## Single value filters
 
 Each list endpoint supports its own set of filter names. To see the filters supported by a specific endpoint, look for query parameters in the **Query Parameters** section containing _filter by_ in their description.
 
-`id` is a common filter amongst all list endpoints. It allows you to filter by a resource’s unique identifier. For example, when listing devices, you can filter by the [**device id**](/docs/references/server-side-api/endpoints/devices/list#parameter-id) using **`id=<device-id>`** in the request URL.
+`id` is a common filter amongst all list endpoints. It allows you to filter by a resource’s unique identifier. For example, when listing devices, you can filter by the [**device id**](/docs/references/server-side-api/2025-08-01/endpoints/devices/list#parameter-id) using **`id=<device-id>`** in the request URL.
 
 The following uses the `id=dvc_123` filter to include only the device with the `dvc_123` `id`:
 
@@ -20,7 +20,7 @@ curl --request GET \
   --header 'X-API-Key: <api-key>'
 ```
 
-Filtering by ID will return at most one resource, since IDs are unique. Other fields, like [config instance activity status](/docs/references/server-side-api/endpoints/config-instances/list#parameter-activity-status), can return multiple results.
+Filtering by ID will return at most one resource, since IDs are unique. Other fields, like [config instance activity status](/docs/references/server-side-api/2025-08-01/endpoints/config-instances/list#parameter-activity-status), can return multiple results.
 
 ## Multi-value filters
 

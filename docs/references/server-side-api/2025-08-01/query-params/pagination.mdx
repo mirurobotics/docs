@@ -2,7 +2,7 @@
 title: "Pagination"
 ---
 
-API resources support bulk fetching through list endpoints. For example, you can [**list config instances**](/docs/references/server-side-api/endpoints/config-instances/list) in a workspace. At a minimum, all list endpoints accept the **`limit`** and **`offset`** query parameters.
+API resources support bulk fetching through list endpoints. For example, you can [**list config instances**](/docs/references/server-side-api/2025-08-01/endpoints/config-instances/list) in a workspace. At a minimum, all list endpoints accept the **`limit`** and **`offset`** query parameters.
 
 The Miru API paginates results to efficiently manage large datasets, returning a subset of items along with metadata to help you retrieve additional pages.
 
@@ -73,7 +73,7 @@ Every list response follows the same structure.
 
 `total_count` is the total number of items matching the query. By default, the total count is not computed (and thus set to `-1`) to avoid the performance cost of counting all items.
 
-To get the total count, you must explicitly request it using the `expand[]=total_count` parameter. While useful, the total count is typically not needed and can incur significant performance costs, so please use it judiciously. See the `total_count` [expansion](/docs/references/server-side-api/query-params/expansions#total-count) documentation for more information about retrieving the total count.
+To get the total count, you must explicitly request it using the `expand[]=total_count` parameter. While useful, the total count is typically not needed and can incur significant performance costs, so please use it judiciously. See the `total_count` [expansion](/docs/references/server-side-api/2025-08-01/query-params/expansions#total-count) documentation for more information about retrieving the total count.
 
 ### Limit
 
