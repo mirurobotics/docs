@@ -1,0 +1,89 @@
+---
+title: "Versioning"
+---
+
+import { SupportedBadge, DeprecatedBadge, EndOfLifeBadge } from '/snippets/components/support.jsx';
+import { LinkNewTab } from '/snippets/components/link.jsx';
+import BreakingChanges from '/snippets/references/apis/breaking.mdx';
+import NonBreakingChanges from '/snippets/references/apis/non-breaking.mdx';
+
+
+The Agent API adheres to [semantic versioning](https://semver.org/), which was chosen to allow on-device applications to easily determine API version compatibility.
+
+The Agent API is currently in beta, signified by the `v0` prefix. There is no established release cadence for the Agent API--features are simply released as soon as they are ready.
+
+## URL format
+
+The Agent API is served from the unix socket at `/run/miru/miru.sock` with the URL format `http://localhost/{version}/`, where `{version}` is the breaking change alias for the API version.
+
+Beta releases use breaking change aliases that include the major and minor version numbers (e.g. `v0.2`, `v0.3`, etc.). Stable releases use breaking change aliases that include the major version number only (e.g. `v1`, `v2`, etc.).
+
+Miru uses stable URL version aliases so clients can target a compatibility track. Targeting a fully specified version (e.g. `v0.1.0`) is not supported.
+
+| Semver release line | Breaking change alias | URL format               |
+|---------------------|-----------------------|--------------------------|
+| `v0.1.x`            | `v1` (legacy)         | `http://localhost/v1/`   |
+| `v0.2.x`            | `v0.2`                | `http://localhost/v0.2/` |
+| `v0.3.x`            | `v0.3`                | `http://localhost/v0.3/` |
+| `v1.y.x`            | `v1`                  | `http://localhost/v1/`   |
+
+<Warning>
+    For historical reasons, API version `v0.1.0` uses the breaking change alias of `v1` instead of `v0.1`. API version `v0.1.0` will be retired before the `v1` release to prevent compatibility issues.
+</Warning>
+
+## Agent compatibility matrix
+
+Each Miru Agent is compiled with a set of one or more API versions, which is documented in the following table:
+
+| Agent Version  | API Version(s) |
+|----------------|----------------|
+| `v0.7.x`       | `v0.2.0`       |
+| `v0.6.x`       | `v0.1.0`       |
+| `v0.5.x`       | `v0.1.0`       |
+
+Be careful when updating your client application to a new API version. Even if API changes are backward-compatible, if the agent is not compiled with the new features, your client may not work as expected.
+
+As rule of thumb, pin your client to the API version of the oldest agent version that is deployed to your fleet. This ensures that the agent was compiled with all the features of the API version you are using.
+
+## Supported versions
+
+The Agent API does not have its own support policy--its support is inherited from the Miru Agent. 
+
+If a supported Miru Agent uses an API version, that API version is supported. You can find the supported Miru Agent versions on the [Agent Release Lifecycle](/docs/developers/agent/lifecycle) page.
+
+Below is a list of the currently supported versions:
+
+| API Version | Released     |       Status       |
+|-------------|--------------|--------------------|
+| <LinkNewTab href="/docs/references/agent-api/v0.2.0">v0.2.0</LinkNewTab>    | TBD          | <SupportedBadge /> |
+| <LinkNewTab href="/docs/references/agent-api/v0.1.0">v0.1.0</LinkNewTab>    | 2025-09-21   | <DeprecatedBadge />|
+
+For a history of changes to the Agent API, visit the Developer Changelog below and filter by the `Agent API` tag.
+
+<Card
+  href="/docs/changelogs/developers"
+  title="Developer Changelog"
+  icon="scroll-text"
+  arrow
+>
+  Release notes for each Agent API release.
+</Card>
+
+## Stability guarantees
+
+During **beta** (`v0.x.y`)
+- Minor version bumps (e.g. `v0.1.0` to `v0.2.0`) may include breaking changes
+- Patch version bumps (e.g. `v0.2.0` to `v0.2.1`) are always backward-compatible
+
+After **stable** (`v1.0`+)
+- Major version bumps (e.g. `v1.x` to `v2.0`) may include breaking changes
+- Minor version bumps (e.g. `v1.0` to `v1.1`) are additive only--no breaking changes
+
+### Breaking changes
+
+<BreakingChanges />
+
+### Non-breaking changes
+
+<NonBreakingChanges />
+

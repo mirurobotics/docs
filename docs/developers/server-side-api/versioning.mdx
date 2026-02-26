@@ -1,0 +1,87 @@
+---
+title: "Versioning"
+---
+
+import { SupportedBadge, DeprecatedBadge, EndOfLifeBadge } from '/snippets/components/support.jsx';
+import { LinkNewTab } from '/snippets/components/link.jsx';
+import BreakingChanges from '/snippets/references/apis/breaking.mdx';
+import NonBreakingChanges from '/snippets/references/apis/non-breaking.mdx';
+
+The Server-Side API uses **date-based versioning** with a train name. Each version follows the format:
+
+```
+YYYY-MM-DD.<train>
+```
+
+- The **date** is the version's publish date
+- The **train** is a codename representing a major release epoch (e.g. `zion`)
+
+All changes within a train are backward-compatible. A new train introduces a new epoch that may include breaking changes.
+
+## Version header
+
+The Server-Side API **requires** the `Miru-Version` header to be set to the version you want to use. 
+
+```bash
+curl --request GET \
+  --url 'https://api.mirurobotics.com/v1/devices' \
+  --header 'Authorization: Bearer <api-key>' \
+  --header 'Miru-Version: 2025-10-21.zion'
+```
+
+Omitting the `Miru-Version` header will return a `400 Bad Request` error.
+
+## Supported versions
+
+Below is a list of the currently supported versions:
+
+| API Version              |        Status       |
+|--------------------------|---------------------|
+| <LinkNewTab href="/docs/references/server-side-api/2026-03-09.yellowstone">2026-03-09.yellowstone</LinkNewTab> | <SupportedBadge />  |
+| <LinkNewTab href="/docs/references/server-side-api/2025-10-21.zion">2025-10-21.zion</LinkNewTab>        | <EndOfLifeBadge />  |
+
+You can find the Server-Side API's changelog as well as the full list of releases by following the links below.
+
+<Card
+  href="/docs/changelogs/developers"
+  title="Developer Changelog"
+  icon="scroll-text"
+  arrow
+>
+  Release notes for each Server-Side API release.
+</Card>
+
+## Support policy
+
+Miru provides three levels of support for the Server-Side API
+
+- Supported
+- Deprecated
+- End of life
+
+When a new API version epoch is released (e.g. `zion` to `yellowstone`), previous API epochs may enter a deprecation period. During this period:
+
+- The deprecated version continues to function normally
+- No new features will be added to the deprecated epoch
+
+Once the deprecation period ends, the API epoch is considered **end-of-life** and is no longer supported. Requests to an end-of-life epoch will return a `400 Bad Request` error.
+
+## Deprecation notice
+
+Since the Miru Server-Side API is still in beta, a fixed support schedule for beta releases is not established. 
+
+Nonetheless, we are committed to ensuring that all users are migrated to a supported version before sunsetting an API version. Reasonable notice will be provided before deprecating and sunsetting any API versions.
+
+## Stability guarantees
+
+Within a train (e.g. `zion`), all changes are **additive and backward-compatible**. You can rely on the API contract remaining stable for the lifetime of a train.
+
+When a new train is introduced, it may include breaking changes. Migration guides will be published to help you transition.
+
+### Breaking changes
+
+<BreakingChanges />
+
+### Non-breaking changes
+
+<NonBreakingChanges />
