@@ -1,0 +1,52 @@
+---
+title: "SDKs"
+---
+
+import AgentAPICard from '/snippets/references/agent-api/card.mdx';
+
+Miru provides SDKs to simplify interaction with the API exposed by the Miru Agent locally on your machine.
+
+These SDKs handle the complexities of Unix socket communication and provide type-safe interfaces for all available endpoints.
+
+## Python
+
+The Python [Agent SDK](https://github.com/mirurobotics/python-agent-sdk) provides convenient access to the Agent API from any Python 3.8+ application. The SDK offers the following features:
+
+- **Type Safety**: Full type hints and Pydantic models
+- **Async Support**: Both synchronous and asynchronous clients
+- **Automatic Retries**: Built-in retry logic for transient failures
+- **Unix Socket**: Native support for local Unix socket communication
+
+For detailed documentation, examples, and advanced usage, visit the Python Agent SDK repository.
+
+<Card
+  title="python-agent-sdk"
+  icon="python"
+  href="https://github.com/mirurobotics/python-agent-sdk"
+>
+  Official Python SDK for the Miru Agent API.
+</Card>
+
+## Coming soon
+
+### C++
+A C++ SDK is also planned, featuring:
+- Modern C++17/20 support
+- Cross-platform compatibility
+- Minimal dependencies
+- High-performance async operations
+
+### Rust
+A Rust SDK is coming soon and will provide:
+- Zero-cost abstractions for maximum performance
+- Memory-safe Unix socket communication
+- Full async/await support with `tokio`
+- Comprehensive type safety with `serde`
+
+## Direct API usage
+
+If you're using a language not yet supported by an official SDK, you can still interact with the Agent API directly using HTTP requests over the Unix socket at `/run/miru/miru.sock`. 
+
+You can find the complete reference of all available API endpoints in the Agent API Reference.
+
+<AgentAPICard />

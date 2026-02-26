@@ -12,7 +12,7 @@ Expansions are powerful but add latency. As such, they should be used strategica
 
 Many response objects reference objects that are not included in the default response.
 
-For example, a [config instance](/docs/references/server-side-api/2025-08-01/endpoints/config-instances/get) has the following default response structure:
+For example, a [config instance](/docs/references/server-side-api/latest/endpoints/config-instances/get) has the following default response structure:
 
 ```json
 {
@@ -39,12 +39,12 @@ The `device`, `config_schema`, `config_type`, and `content` objects are not incl
 
 To retrieve the device for a given config instance, you could make two separate requests:
 
-- First, fetch the [**config instance**](/docs/references/server-side-api/2025-08-01/endpoints/config-instances/get) using its ID (assuming you already know it).
-- Then, having obtained the **`device_id`** from the config instance response, fetch the [**device**](/docs/references/server-side-api/2025-08-01/endpoints/devices/get) using the device ID.
+- First, fetch the [**config instance**](/docs/references/server-side-api/latest/endpoints/config-instances/get) using its ID (assuming you already know it).
+- Then, having obtained the **`device_id`** from the config instance response, fetch the [**device**](/docs/references/server-side-api/latest/endpoints/devices/get) using the device ID.
 
 This is workable but adds both latency and complexity to your code. A better approach is to use the `expand[]` parameter to include the `device` object directly in the config instance response, avoiding a second request.
 
-The following request expands the **`device`** field using **`expand[]=device :`**
+The following request expands the **`device`** field using **`expand[]=device`**
 
 <CodeGroup>
 
@@ -91,9 +91,9 @@ To see a complete list of expandable fields for an object, look for the `expand[
 
 ## Multiple expansions
 
-You can expand multiple fields by passing in multiple **`expand[]`** parameters separated by **`&`** .
+You can expand multiple fields by passing in multiple **`expand[]`** parameters separated by **`&`** .
 
-The following request expands both the **`device`** and **`content`** fields of the config instance using **`expand[]=device&expand[]=content`**.
+The following request expands both the **`device`** and **`content`** fields of the config instance using **`expand[]=device&expand[]=content`**.
 
 <CodeGroup>
 
@@ -146,11 +146,11 @@ The following request expands both the **`device`** and **`content`** fields
 
 ## Nested expansions
 
-When expanding an object, it’s often the case that the expanded object contains objects that can also be expanded. For example, config instances can expand their config schema, which in turn can expand their config type.
+When expanding an object, it's often the case that the expanded object contains objects that can also be expanded. For example, config instances can expand their config schema, which in turn can expand their config type.
 
-To expand nested objects, use the dot (**`.`**) notation within the **`expand[]`** parameter.
+To expand nested objects, use the dot (**`.`**) notation within the **`expand[]`** parameter.
 
-The following request expands the **`config_type`** inside the **`config_schema`** of the config instance using **`expand[]=config_schema.config_type :`**
+The following request expands the **`config_type`** inside the **`config_schema`** of the config instance using **`expand[]=config_schema.config_type`**
 
 <CodeGroup>
 
@@ -213,7 +213,7 @@ When expanding nested fields, there's no need to expand the parent field. Since 
 
 ### Items
 
-When listing config instances, you can expand fields in the same way you would for a single config instance. By default, [listing config instances](/docs/references/server-side-api/2025-08-01/endpoints/config-instances/list) returns the following response structure.
+When listing config instances, you can expand fields in the same way you would for a single config instance. By default, [listing config instances](/docs/references/server-side-api/latest/endpoints/config-instances/list) returns the following response structure.
 
 ```json
 {
@@ -242,9 +242,9 @@ When listing config instances, you can expand fields in the same way you would f
 
 To expand the `content` field for every config instance in a list response, use the `expand[]=content`, just as you would for a single object.
 
-Unlike other APIs you may encounter, you don’t need to prefix the field with `data.` (e.g., `expand[]=data.content`). Miru automatically applies the expansion to each item in the list, not the list itself.
+Unlike other APIs you may encounter, you don't need to prefix the field with `data.` (e.g., `expand[]=data.content`). Miru automatically applies the expansion to each item in the list, not the list itself.
 
-The following request expands the **`content`** field for every config instance in the list using **`expand[]=content: :`**
+The following request expands the **`content`** field for every config instance in the list using **`expand[]=content`**
 
 <CodeGroup>
 
@@ -304,9 +304,9 @@ The following request expands the **`content`** field for every config instanc
 
 ### Total count
 
-The `total_count` field in a list response represents the total number of items matching the query. Because Miru [paginates](/docs/references/server-side-api/2025-08-01/query-params/pagination) list responses, this number is often greater than the number of items returned per page.
+The `total_count` field in a list response represents the total number of items matching the query. Because Miru [paginates](/docs/developers/server-side-api/query-params/pagination) list responses, this number is often greater than the number of items returned per page.
 
-If a list query matches 100 items but the **`limit`** parameter is set to 10, the list response would contain only 10 items despite the total count being 100.
+If a list query matches 100 items but the **`limit`** parameter is set to 10, the list response would contain only 10 items despite the total count being 100.
 
 By default, Miru does **not** compute `total_count` to avoid performance overhead. Instead, the field is set to `-1` unless explicitly expanded.
 

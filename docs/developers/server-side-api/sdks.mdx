@@ -1,0 +1,33 @@
+---
+title: "SDKs"
+---
+
+import ServerSideAPICard from '/snippets/references/server-side-api/card.mdx';
+
+Miru provides SDKs to simplify interaction with the Server-Side API.
+
+These SDKs handle the complexities of HTTP communication and API key authentication and provide type-safe interfaces for all available endpoints.
+
+## Python
+
+The Python [Server-Side SDK](https://github.com/mirurobotics/python-server-sdk) provides convenient access to the Server-Side API from any Python 3.8+ application. The SDK offers the following features:
+
+- **Type Safety**: Full type hints and Pydantic models
+- **Async Support**: Both synchronous and asynchronous clients
+- **Automatic Retries**: Built-in retry logic for transient failures
+
+For detailed documentation, examples, and advanced usage, visit the Python Server-Side SDK [repository](https://github.com/mirurobotics/python-server-sdk).
+
+<Card
+  title="python-server-sdk"
+  icon="python"
+  href="https://github.com/mirurobotics/python-server-sdk"
+>
+  Official Python SDK for the Miru Server-Side API.
+</Card>
+
+## Direct API usage
+
+If you're using a language not yet supported by an official SDK, you can still interact with the Server-Side API directly using HTTP requests. See the [Server-Side API Reference](/docs/references/server-side-api) page for information about the available endpoints.
+
+<ServerSideAPICard />

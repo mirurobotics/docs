@@ -3,8 +3,8 @@ title: "Create a release"
 timestamp: true
 ---
 
-import InstallInstructions from '/snippets/references/cli/install.mdx'
-import LoginInstructions from '/snippets/references/cli/login.mdx'
+import InstallCLI from '/snippets/references/cli/install.mdx'
+import LoginCLI from '/snippets/references/cli/login.mdx'
 import EmptyJsonSchemas from '/snippets/getting-started/empty-json-schemas.mdx'
 import StrictJsonSchemas from '/snippets/getting-started/strict-json-schemas.mdx'
 import EmptyCueSchemas from '/snippets/getting-started/empty-cue-schemas.mdx'
@@ -87,17 +87,17 @@ After creating the `Mobility` config type, **repeat this process** for the `Comm
 
 Next, we'll install the CLI—the primary method of creating releases in Miru.
 
-This is a deliberate design choice. We believe a release's schemas should live in a Git repository. This allows them to be versioned alongside the code that uses them and encourages better software development practices.
+Creating releases via the CLI is a deliberate design choice. We believe a release's schemas should live in a Git repository. This allows them to be versioned alongside the code that uses them and encourages better software development practices.
 
 While this tutorial covers creating releases on your local machine, the CLI can also be used to create releases in a [CI pipeline](/docs/developers/ci/overview).
 
-### Install
+**Install**
 
-<InstallInstructions />
+<InstallCLI />
 
-### Login
+**Login**
 
-<LoginInstructions />
+<LoginCLI />
 
 ## Create a release
 

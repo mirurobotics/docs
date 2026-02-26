@@ -1,0 +1,63 @@
+---
+title: 'Install'
+---
+
+import Install from '/snippets/references/cli/install.mdx';
+
+
+<Install />
+
+## Upgrade
+
+To upgrade the Miru CLI to the latest version, run the upgrade command in your local machine's terminal.
+
+<Tabs>
+  <Tab title="Linux">
+    ```bash
+    curl -fsSL https://raw.githubusercontent.com/mirurobotics/cli/main/install.sh | sh
+    ```
+
+    The installation script automatically upgrades to the latest version if the CLI is already installed.
+  </Tab>
+  <Tab title="macOS">
+    ```bash
+    brew upgrade mirurobotics/cli/miru
+    ```
+  </Tab>
+</Tabs>
+
+## Verify
+
+To verify the CLI is installed and up to date, run the `miru version` command.
+
+```bash
+$ miru version
+Version: 0.7.0
+Commit: 7ad50107b9af27961e2698b54cc7451d67d3d356
+Built: 2025-11-18T04:35:20Z
+```
+
+You can find the CLI release changelog in the [developer changelog](/docs/changelogs/developers).
+
+## Uninstall
+
+Remove the binary from your system.
+
+<Tabs>
+  <Tab title="Linux">
+    ```bash
+    sudo rm "$(which miru)"
+    ```
+  </Tab>
+  <Tab title="macOS">
+    ```bash
+    brew uninstall miru
+    ```
+  </Tab>
+</Tabs>
+
+Remove any configuration files.
+
+```bash
+rm -rf ~/.miru
+```

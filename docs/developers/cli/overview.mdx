@@ -1,0 +1,28 @@
+---
+title: "Overview"
+---
+
+import {Framed} from '/snippets/components/framed.jsx';
+
+<Framed
+  background="https://assets.mirurobotics.com/docs/v03/images/developers/background.jpeg"
+  image="https://assets.mirurobotics.com/docs/v03/images/releases/header:release-create.png"
+  borderWidth="30px"
+  innerRadius="8px"
+  outerRadius="10px"
+/>
+
+The Miru Command Line Interface (CLI) is used to push releases and their schemas to Miru locally or in a [CI pipeline](/docs/developers/ci/overview).
+
+The CLI is also a convenient tool for managing Miru resources from your development machine's terminal rather than the web interface.
+
+The CLI does NOT talk to the Miru Agent and should not be used on devices running the Miru Agent. The CLI should only be installed on your development machine or in a CI pipeline.
+
+<Card 
+  title="CLI Reference" 
+  icon="terminal" 
+  href="/docs/references/cli" 
+  arrow
+>
+  Command reference for the Miru CLI.
+</Card>

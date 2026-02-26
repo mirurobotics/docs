@@ -94,8 +94,22 @@
                   "docs/developers/agent/commands"
                 ]
               },
-              "docs/developers/agent-api",
-              "docs/developers/cli",
+              {
+                "group": "Agent API",
+                "pages": [
+                  "docs/developers/agent-api/overview",
+                  "docs/developers/agent-api/authn",
+                  "docs/developers/agent-api/sdks"
+                ]
+              },
+              {
+                "group": "CLI",
+                "pages": [
+                  "docs/developers/cli/overview",
+                  "docs/developers/cli/install",
+                  "docs/developers/cli/login"
+                ]
+              },
               {
                 "group": "CI/CD",
                 "pages": [
@@ -103,7 +117,23 @@
                   "docs/developers/ci/gh-actions"
                 ]
               },
-              "docs/developers/server-side-api"
+              {
+                "group": "Server-Side API",
+                "pages": [
+                  "docs/developers/server-side-api/overview",
+                  "docs/developers/server-side-api/authn",
+                  {
+                    "group": "Query Parameters",
+                    "pages": [
+                      "docs/developers/server-side-api/query-params/filtering",
+                      "docs/developers/server-side-api/query-params/sorting",
+                      "docs/developers/server-side-api/query-params/pagination",
+                      "docs/developers/server-side-api/query-params/expansions"
+                    ]
+                  },
+                  "docs/developers/server-side-api/sdks"
+                ]
+              }
             ]
           },
           {
@@ -133,24 +163,6 @@
             "dropdown": "2025-08-01.zion",
             "groups": [
               {
-                "group": "Overview",
-                "pages": [
-                  "docs/references/server-side-api/2025-08-01/intro",
-                  "docs/references/server-side-api/2025-08-01/authn",
-                  "docs/references/server-side-api/2025-08-01/query-params/filtering",
-                  "docs/references/server-side-api/2025-08-01/query-params/sorting",
-                  "docs/references/server-side-api/2025-08-01/query-params/pagination",
-                  "docs/references/server-side-api/2025-08-01/query-params/expansions"
-                ]
-              },
-              {
-                "group": "SDKs",
-                "pages": [
-                  "docs/references/server-side-api/2025-08-01/sdks/overview",
-                  "docs/references/server-side-api/2025-08-01/sdks/python"
-                ]
-              },
-              {
                 "group": "Endpoints",
                 "openapi": {
                   "source": "api/server-api.stainless.yaml",
@@ -166,25 +178,11 @@
         "dropdowns": [
           {
             "dropdown": "v0.2.0",
-            "groups": [
-              {
-                "group": "Overview",
-                "pages": [
-                  "docs/references/agent-api/v0.2.0/intro",
-                  "docs/references/agent-api/v0.2.0/authn"
-                ]
-              },
-              {
-                "group": "SDKs",
-                "pages": [
-                  "docs/references/agent-api/v0.2.0/sdks/overview",
-                  "docs/references/agent-api/v0.2.0/sdks/python"
-                ]
-              },
+            "pages": [
               {
                 "group": "Endpoints",
                 "openapi": {
-                  "source": "api/agent-api.stainless.yaml",
+                  "source": "docs/references/agent-api/v0.2.0.yaml",
                   "directory": "docs/references/agent-api/v0.2.0/endpoints"
                 }
               }
@@ -192,25 +190,11 @@
           },
           {
             "dropdown": "v0.1.0",
-            "groups": [
-              {
-                "group": "Overview",
-                "pages": [
-                  "docs/references/agent-api/v0.1.0/intro",
-                  "docs/references/agent-api/v0.1.0/authn"
-                ]
-              },
-              {
-                "group": "SDKs",
-                "pages": [
-                  "docs/references/agent-api/v0.1.0/sdks/overview",
-                  "docs/references/agent-api/v0.1.0/sdks/python"
-                ]
-              },
+            "pages": [
               {
                 "group": "Endpoints",
                 "openapi": {
-                  "source": "api/agent-api.stainless.yaml",
+                  "source": "docs/references/agent-api/v0.1.0.yaml",
                   "directory": "docs/references/agent-api/v0.1.0/endpoints"
                 }
               }
@@ -221,14 +205,6 @@
       {
         "product": "CLI Reference",
         "groups": [
-          {
-            "group": "CLI",
-            "pages": [
-              "docs/references/cli/intro",
-              "docs/references/cli/install",
-              "docs/references/cli/login"
-            ]
-          },
           {
             "group": "Releases",
             "pages": [
@@ -303,5 +279,15 @@
     "og:image": "/favicon-black.svg",
     "og:site_name": "Miru Robotics",
     "twitter:image": "/favicon-black.svg"
-  }
+  },
+  "redirects": [
+    {
+      "source": "/docs/references/agent-api/latest/:slug*",
+      "destination": "/docs/references/agent-api/v0.2.0/:slug*"
+    },
+    {
+      "source": "/docs/references/server-side-api/latest/:slug*",
+      "destination": "/docs/references/server-side-api/2025-08-01/:slug*"
+    }
+  ]
 }

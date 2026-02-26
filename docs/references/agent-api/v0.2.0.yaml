@@ -1,0 +1,273 @@
+openapi: 3.0.3
+info:
+  title: Miru API
+  version: 0.1.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+- url: http://localhost/v1
+  description: localhost
+paths:
+  /health:
+    get:
+      tags:
+      - Agent
+      summary: Health
+      description: Retrieve the health of the agent.
+      responses:
+        '200':
+          description: Successfully retrieved the health of the agent.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/health
+      - lang: Python
+        source: |-
+          from miru_agent_sdk import Miru
+
+          client = Miru()
+          response = client.agent.health()
+          print(response.status)
+  /version:
+    get:
+      tags:
+      - Agent
+      summary: Version
+      description: Retrieve the version of the agent.
+      responses:
+        '200':
+          description: Successfully retrieved the version of the agent.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionResponse'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/version
+      - lang: Python
+        source: |-
+          from miru_agent_sdk import Miru
+
+            client = Miru()
+            response = client.agent.version()
+            print(response.commit)
+  /device:
+    get:
+      tags:
+      - Devices
+      summary: Get
+      description: Retrieve the device.
+      operationId: getDevice
+      responses:
+        '200':
+          description: Successfully retrieved the device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/device
+      - lang: Python
+        source: |-
+          from miru_agent_sdk import Miru
+
+          client = Miru()
+          device = client.device.retrieve()
+          print(device.id)
+  /device/sync:
+    post:
+      tags:
+      - Devices
+      summary: Sync
+      description: Manually force a device sync with the edits made in the dashboard.
+      operationId: syncDevice
+      responses:
+        '200':
+          description: Successfully synced the device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncDeviceResponse'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request POST \
+            --url http://localhost/v1/device/sync
+      - lang: Python
+        source: |-
+          from miru_agent_sdk import Miru
+
+            client = Miru()
+            response = client.device.sync()
+            print(response.code)
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          description: The status of the agent.
+          example: ok
+    VersionResponse:
+      type: object
+      required:
+      - version
+      - commit
+      properties:
+        version:
+          type: string
+          description: The version of the agent.
+          example: v0.1.0
+        commit:
+          type: string
+          description: The commit hash of the agent.
+          example: a1b2c3d4
+    DeviceStatus:
+      type: string
+      description: |
+        The status of the device.
+        - Online: The miru agent is connected
+        - Offline: The miru agent is disconnected (e.g. network issues, device is powered off, etc.)
+      enum:
+      - online
+      - offline
+      x-enum-varnames:
+      - DEVICE_STATUS_ONLINE
+      - DEVICE_STATUS_OFFLINE
+    Device:
+      title: Device
+      type: object
+      required:
+      - object
+      - id
+      - name
+      - status
+      - last_synced_at
+      - last_connected_at
+      - last_disconnected_at
+      properties:
+        object:
+          type: string
+          enum:
+          - device
+          example: device
+        id:
+          type: string
+          example: dvc_123
+          description: ID of the device.
+        name:
+          type: string
+          example: My Device
+          description: Name of the device.
+        status:
+          $ref: '#/components/schemas/DeviceStatus'
+        last_synced_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the device was last synced.
+        last_connected_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of the last successful connection event with the
+            backend.
+        last_disconnected_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of the last successful disconnection event with the
+            backend.
+    SyncDeviceResult:
+      type: string
+      description: The result of attempting to sync the device.
+      enum:
+      - success
+      - network_connection_error
+      - in_cooldown
+      x-enum-varnames:
+      - SYNC_DEVICE_RESULT_SUCCESS
+      - SYNC_DEVICE_RESULT_NETWORK_CONNECTION_ERROR
+      - SYNC_DEVICE_RESULT_IN_COOLDOWN
+    SyncDeviceResponse:
+      title: Sync Device Response
+      type: object
+      required:
+      - code
+      - message
+      - last_synced_at
+      - last_attempted_sync_at
+      - in_cooldown
+      - cooldown_ends_at
+      properties:
+        code:
+          $ref: '#/components/schemas/SyncDeviceResult'
+        message:
+          type: string
+          example: Device is not connected to the backend.
+          description: The message of the result.
+        last_synced_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the device was last synced.
+        last_attempted_sync_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the last *attempted* sync occurred.
+        in_cooldown:
+          type: boolean
+          example: true
+          description: Whether the device is currently in cooldown.
+        cooldown_ends_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the cooldown will end.
+    Error:
+      type: object
+      required:
+      - code
+      - params
+      - message
+      - debug_message
+      properties:
+        code:
+          type: string
+          example: invalid_request
+        params:
+          example:
+            param1: value1
+            param2: value2
+        message:
+          type: string
+          example: This is a message for a user
+        debug_message:
+          type: string
+          example: This is a message for a developer
+    ErrorResponse:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          $ref: '#/components/schemas/Error'
