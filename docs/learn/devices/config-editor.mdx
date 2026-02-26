@@ -30,108 +30,7 @@ The editor is split into two resizable panels:
   ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/layout-temp.png)
 </Frame>
 
-### Editor panel
 
-#### Tabs
-
-Tabs appear across the top of the editor and list every configuration file
-available for editing (in draft mode) or viewing (in history mode).
-
-<Tabs>
-    <Tab title="Draft Mode">
-        <Frame>
-        ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/editor-tabs.png)
-        </Frame>
-    </Tab>
-    <Tab title="History Mode">
-        <Frame>
-        ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/history-tabs.png)
-        </Frame>
-    </Tab>
-</Tabs>
-
-| Indicator | Meaning |
-|-----------|---------|
-| **M** (yellow) | The file has been modified (draft). |
-| **A** (green) | The file was added (draft). |
-| **Error count** (red) | The file contains JSON syntax errors (draft). |
-| **Lock icon** | The file is read-only (history). |
-| **Deployment ID** | Displays the ID of the [head](#base-vs-head) deployment (history). |
-
-#### Toolbar
-
-The toolbar sits between the tabs and the code editor. Its contents change
-depending on the current mode:
-
-- **Draft mode** — Displays a **JSON breadcrumb** showing the file name and the
-  JSON path at the cursor position. Each segment is labeled with its type
-  (object, array, string, number, boolean, or null).
-- **History mode** — Displays the **diff selector**, which lets you choose which
-  two deployments to compare (see [Base vs. Head](#base-vs-head)).
-
-The toolbar always includes:
-
-- **Search** — Press <kbd>Ctrl/Cmd + F</kbd> to open a search popover. Type to
-  find matches in the current file. Use <kbd>Enter</kbd> to go to the next
-  match, <kbd>Shift + Enter</kbd> for the previous match, and <kbd>Escape</kbd>
-  to close. The popover shows your current position (e.g., "1 of 5").
-- **File actions** — A menu with options to copy the file contents to your
-  clipboard or download the file as JSON.
-
-<Tabs>
-    <Tab title="Draft Mode">
-        <Frame>
-        ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/draft-toolbar.png)
-        </Frame>
-    </Tab>
-    <Tab title="History Mode">
-        <Frame>
-        ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/history-toolbar.png)
-        </Frame>
-    </Tab>
-</Tabs>
-
-#### Footer
-
-The footer displays the file type ("JSON") and the current cursor position
-(line and column).
-
-### Controls panel
-
-The controls panel has a header with two tabs — **Draft** and **History** — that
-determine both the panel's content and the editor's mode.
-
-<Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/controls-header.png)
-</Frame>
-
-#### Draft tab
-
-Selecting the **Draft** tab puts the editor in edit mode. The panel shows the
-**Deploy** button in the header and the [change list](#change-list) in the body.
-
-- **Deploy button** — Appears next to the tabs when the draft tab is active and
-  a draft exists. Clicking it opens the [deploy dialog](#deploying-changes).
-  The button is disabled when the device is offline, there are no changes, or
-  any file has JSON syntax errors. Hover over the disabled button to see the
-  reason.
-- **Change list** — A file-by-file summary of every modification in the current
-  draft (see [Change list](#change-list)).
-
-#### History tab
-
-Selecting the **History** tab switches the editor to read-only mode. The panel
-shows the [deployment list](#deployment-list) in the body.
-
-- **Deployment list** — All past deployments grouped by release version, with
-  the most recent at the top (see [Deployment list](#deployment-list)).
-- **Load more** — If more deployments are available, a **Load more** button
-  appears at the bottom of the list to fetch the next page.
-
-<Info>
-The History tab is disabled if the device has no deployments yet.
-Hovering over it shows a "No deployments" tooltip.
-</Info>
 
 ---
 
@@ -169,7 +68,7 @@ Files with no changes show a "No changes" label.
 Click the **Deploy** button to start the deployment process.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/deploy-dialog.png)
+  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/deploy.png)
 </Frame>
 
 <Steps>
@@ -298,7 +197,7 @@ The redeploy dialog shows:
 - A description field (pre-filled with a reference to the original deployment).
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/redeploy-dialog.png)
+  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/redeploy.png)
 </Frame>
 
 ---
@@ -320,5 +219,5 @@ options depending on whether you have unsaved edits:
   three-way JSON merge, preserving your changes where possible.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/external-sync.png)
+  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/deployment-alert.png)
 </Frame>  
