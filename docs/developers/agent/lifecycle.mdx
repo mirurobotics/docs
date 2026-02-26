@@ -1,0 +1,97 @@
+---
+title: "Release lifecycle"
+---
+
+import { SupportedBadge, DeprecatedBadge, EndOfLifeBadge } from '/snippets/components/support.jsx';
+import { LinkNewTab } from '/snippets/components/link.jsx';
+
+The Miru Agent follows [semantic versioning](https://semver.org/) for its releases. 
+
+Currently, the Miru Agent is still in beta, signified by the `v0` prefix for its releases. There is no established release cadence for the Miru Agent--features are simply released as soon as they are ready.
+
+## Supported versions
+
+Below is a list of the currently supported versions:
+
+| Version     |   Released   |        Status       |
+|-------------|--------------|---------------------|
+| `v0.7.x`    | TBD          | <SupportedBadge />  |
+| `v0.6.x`    | 2026-01-22   | <SupportedBadge />  |
+| `v0.5.x`    | 2025-09-25   | <DeprecatedBadge /> |
+| `v0.4.x`    | 2025-08-18   | <EndOfLifeBadge />  |
+
+
+You can find the Miru Agent's changelog and the full list of releases by following the links below.
+
+<Columns cols={2}>
+
+<Card
+  href="/docs/changelogs/developers"
+  title="Developer Changelog"
+  icon="scroll-text"
+  arrow
+>
+  Release notes for each Miru Agent release.
+</Card>
+
+<Card
+  title="GitHub Releases"
+  icon="github"
+  href="https://github.com/mirurobotics/agent/releases"
+>
+  Full list of Miru Agent releases on GitHub.
+</Card>
+
+</Columns>
+
+## Check the version
+
+**Dashboard**
+
+To see the agent version currently installed on a device from the dashboard, visit the [Devices](/docs/learn/devices/overview) page and find the device you're interested in. The agent version is displayed in the **Agent** field.
+
+<Frame>
+  ![](https://assets.mirurobotics.com/docs/v03/images/devices/page.png)
+</Frame>
+
+**CLI**
+
+To check the agent version from the command line, run the following command on the device the agent is running on:
+
+```bash
+miru-agent --version
+```
+
+**Server-Side API**
+
+To check the agent version from the server-side API, query the <LinkNewTab href="/docs/references/server-side-api/latest/endpoints/devices/list#query-parameters">list devices</LinkNewTab> endpoint and <LinkNewTab href="/docs/developers/server-side-api/query-params/filtering">filter</LinkNewTab> by the `agent_version` field.
+
+## Support policy
+
+Miru provides three levels of support for the Miru Agent
+
+- Supported
+- Deprecated
+- End of life
+
+### Supported
+
+Supported agent versions are actively maintained. They receive bug fixes, security patches, and new features. These versions are recommended for all deployments.
+
+### Deprecated
+
+When a new agent version is released, previous versions may enter a deprecation period. During this period:
+
+- The deprecated agent continues to function normally
+- No new features or non-critical bug fixes will be backported
+- Security patches may still be applied at Miru's discretion
+
+### End of life
+
+After the deprecation period, an agent version reaches **end-of-life**. End-of-life agents may lose server compatibility and should not be used. For example, the Miru backend may stop supporting the protocol version they use, causing syncs to fail.
+
+### Deprecation notice
+
+Since the Miru Agent is still in beta, a fixed support schedule for beta releases is not established. 
+
+Nonetheless, we are committed to ensuring that all users are migrated to a supported version before sunsetting an agent version. Reasonable notice will be provided before deprecating and sunsetting any agent versions.

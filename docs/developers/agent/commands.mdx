@@ -8,10 +8,10 @@ The current [CLI](/docs/developers/cli/overview) is only for managing Miru resou
 
 ## Version
 
-To check the version of the agent, use the `dpkg-query` command with the `miru-agent` debian package.
+To check the version of the agent, run the following command on the device:
 
 ```bash
-dpkg-query -W -f='${Version}\n' miru-agent
+miru-agent --version
 ```
 
 ## Logs
