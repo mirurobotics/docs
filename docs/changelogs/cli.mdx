@@ -1,0 +1,109 @@
+---
+title: "CLI"
+description: "Changelog and migration steps for the Miru CLI"
+---
+
+import { SupportedBadge } from '/snippets/components/support.jsx';
+
+## v0.9.1 
+
+*February 4, 2026*
+
+### Fixes
+
+- Error messages are properly flushed to the console, ensuring outputs are always visible in CI
+
+---
+
+## v0.9.0
+
+*January 27, 2026*
+
+`v0.9.0` is a major release replacing the schema-push workflow with a single `miru release create` command that handles releases, schemas, and Git metadata in one step. Also adds API key authentication for CI/CD use.
+
+### `miru release create`
+
+The `miru schema push` command has been replaced by [miru release create](/docs/references/cli/release-create), which bundles the entire release process into a single command. [CUE packages](/docs/references/cli/release-create#cue-packages) are now supported, allowing schemas to span multiple files.
+
+```bash
+miru release create --version v1.0.0 schema.json
+```
+
+### API key authentication
+
+The CLI now supports authentication via API keys using the `MIRU_API_KEY` environment variable, enabling non-interactive use in CI/CD pipelines.
+
+Visit the [CI/CD guide](/docs/developers/ci/overview) for more information on using the CLI in CI/CD pipelines.
+
+### Improvements
+
+- Improved error messages to be more descriptive and readable
+
+### Retired
+
+- Retired the `miru schema push` command
+
+---
+
+## v0.8.0
+
+*December 18, 2025*
+
+`v0.8.0` is a cleanup release removing deprecated flags from `miru schema push` ahead of the v0.9.0 command replacement.
+
+### Breaking changes
+
+**Schema push command**
+
+```diff
+miru schema push schema.json \
+-   --version v1.0.0 \
+-   --allow-duplicate
+```
+
+- Removed the `--version` flag
+- Removed the `--allow-duplicate` flag
+
+---
+
+## v0.7.0
+
+*December 4, 2025*
+
+`v0.7.0` introduces first-class CUE support and updates the schema push workflow to support multiple schema languages.
+
+### CUE support
+
+`v0.7.0` is the first CLI release with [CUE](/docs/learn/schemas/languages/overview) support. You can now push CUE-based schemas directly and use CUE alongside existing JSON Schema workflows.
+
+### Schema push improvements
+
+- Added the `--language` flag to `miru schema push` to specify schema language
+- Added the `--allow-duplicate` flag to `miru schema push` to allow multiple schemas with the same content
+- Schemas uploaded to Miru are now preserved exactly as defined, including original ordering, spacing, and comments
+
+### Other improvements
+
+- Improved readability of error messages
+- Users are notified when the CLI version is out of date
+
+### Breaking changes
+
+**Version flag**
+
+The `--version` flag is now required when pushing a schema, and JSON Schema annotations were renamed:
+
+```diff
+- "$miru_config_type_slug": "my-config"
+- "$miru_instance_filepath": "/etc/myapp/config.json"
++ "x-miru-config-type": "my-config"
++ "x-miru-instance-filepath": "/etc/myapp/config.json"
+```
+
+**Instance file path**
+
+- Removed the ability to update the instance file path for an existing schema
+
+### Retired
+
+- Removed the `miru instance to jsonschema` command

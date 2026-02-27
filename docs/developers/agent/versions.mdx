@@ -1,5 +1,5 @@
 ---
-title: "Release lifecycle"
+title: "Versions"
 ---
 
 import { SupportedBadge, DeprecatedBadge, EndOfLifeBadge } from '/snippets/components/support.jsx';
@@ -11,7 +11,7 @@ Currently, the Miru Agent is still in beta, signified by the `v0` prefix for its
 
 ## Supported versions
 
-Below is a list of the currently supported versions:
+Below are the Miru Agent's versions and their support status
 
 | Version     |   Released   |        Status       |
 |-------------|--------------|---------------------|
@@ -26,8 +26,8 @@ You can find the Miru Agent's changelog and the full list of releases by followi
 <Columns cols={2}>
 
 <Card
-  href="/docs/changelogs/developers"
-  title="Developer Changelog"
+  href="/docs/changelogs/agent"
+  title="Agent Changelog"
   icon="scroll-text"
   arrow
 >
@@ -62,9 +62,9 @@ To check the agent version from the command line, run the following command on t
 miru-agent --version
 ```
 
-**Server-Side API**
+**Platform API**
 
-To check the agent version from the server-side API, query the <LinkNewTab href="/docs/references/server-side-api/latest/endpoints/devices/list#query-parameters">list devices</LinkNewTab> endpoint and <LinkNewTab href="/docs/developers/server-side-api/query-params/filtering">filter</LinkNewTab> by the `agent_version` field.
+To check the agent version from the Platform API, query the <LinkNewTab href="/docs/references/platform-api/latest/endpoints/devices/list#query-parameters">list devices</LinkNewTab> endpoint and <LinkNewTab href="/docs/developers/platform-api/query-params/filtering">filter</LinkNewTab> by the `agent_version` field.
 
 ## Support policy
 

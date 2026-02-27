@@ -12,7 +12,7 @@ Expansions are powerful but add latency. As such, they should be used strategica
 
 Many response objects reference objects that are not included in the default response.
 
-For example, a [config instance](/docs/references/server-side-api/latest/endpoints/config-instances/get) has the following default response structure:
+For example, a [config instance](/docs/references/platform-api/latest/endpoints/config-instances/get) has the following default response structure:
 
 ```json
 {
@@ -39,8 +39,8 @@ The `device`, `config_schema`, `config_type`, and `content` objects are not incl
 
 To retrieve the device for a given config instance, you could make two separate requests:
 
-- First, fetch the [**config instance**](/docs/references/server-side-api/latest/endpoints/config-instances/get) using its ID (assuming you already know it).
-- Then, having obtained the **`device_id`** from the config instance response, fetch the [**device**](/docs/references/server-side-api/latest/endpoints/devices/get) using the device ID.
+- First, fetch the [**config instance**](/docs/references/platform-api/latest/endpoints/config-instances/get) using its ID (assuming you already know it).
+- Then, having obtained the **`device_id`** from the config instance response, fetch the [**device**](/docs/references/platform-api/latest/endpoints/devices/get) using the device ID.
 
 This is workable but adds both latency and complexity to your code. A better approach is to use the `expand[]` parameter to include the `device` object directly in the config instance response, avoiding a second request.
 
@@ -213,7 +213,7 @@ When expanding nested fields, there's no need to expand the parent field. Since 
 
 ### Items
 
-When listing config instances, you can expand fields in the same way you would for a single config instance. By default, [listing config instances](/docs/references/server-side-api/latest/endpoints/config-instances/list) returns the following response structure.
+When listing config instances, you can expand fields in the same way you would for a single config instance. By default, [listing config instances](/docs/references/platform-api/latest/endpoints/config-instances/list) returns the following response structure.
 
 ```json
 {
@@ -304,7 +304,7 @@ The following request expands the **`content`** field for every config instance 
 
 ### Total count
 
-The `total_count` field in a list response represents the total number of items matching the query. Because Miru [paginates](/docs/developers/server-side-api/query-params/pagination) list responses, this number is often greater than the number of items returned per page.
+The `total_count` field in a list response represents the total number of items matching the query. Because Miru [paginates](/docs/developers/platform-api/query-params/pagination) list responses, this number is often greater than the number of items returned per page.
 
 If a list query matches 100 items but the **`limit`** parameter is set to 10, the list response would contain only 10 items despite the total count being 100.
 

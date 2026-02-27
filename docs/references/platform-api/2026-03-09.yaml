@@ -1,0 +1,1871 @@
+openapi: 3.0.3
+info:
+  title: Miru API
+  version: 0.1.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+- url: https://api.mirurobotics.com/beta
+  description: Miru API
+security:
+- ApiKeyAuth: []
+paths:
+  /config_instances/{config_instance_id}:
+    get:
+      tags:
+      - Config Instances
+      summary: Get
+      description: Retrieve a config instance by ID.
+      operationId: getConfigInstance
+      parameters:
+      - $ref: '#/components/parameters/config_instance_id'
+      - $ref: '#/components/parameters/expand'
+      responses:
+        '200':
+          description: Successfully retrieved the config instance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigInstance'
+      x-codeSamples:
+      - lang: Python
+        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+          My API Key\",\n)\nconfig_instance = client.config_instances.retrieve(\n\
+          \    config_instance_id=\"cfg_inst_123\",\n)\nprint(config_instance.id)"
+  /config_instances:
+    get:
+      tags:
+      - Config Instances
+      summary: List
+      description: List config instances.
+      operationId: listConfigInstances
+      parameters:
+      - $ref: '#/components/parameters/offset'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/order_by'
+      - $ref: '#/components/parameters/expand_list'
+      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/target_status'
+      - $ref: '#/components/parameters/activity_status'
+      - $ref: '#/components/parameters/error_status'
+      - $ref: '#/components/parameters/device_id'
+      - $ref: '#/components/parameters/config_schema_id'
+      - $ref: '#/components/parameters/config_type_id'
+      responses:
+        '200':
+          description: Successfully listed the config instances.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigInstanceList'
+      x-codeSamples:
+      - lang: Python
+        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+          My API Key\",\n)\nconfig_instances = client.config_instances.list()\nprint(config_instances)"
+  /deployments/{deployment_id}:
+    get:
+      tags:
+      - Deployments
+      summary: Get
+      operationId: getDeployment
+      parameters:
+      - $ref: '#/components/parameters/deployment_id'
+      - $ref: '#/components/parameters/parameters-expand'
+      responses:
+        '200':
+          description: Successfully retrieved the deployment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deployment'
+      x-codeSamples:
+      - lang: Python
+        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+          My API Key\",\n)\ndeployment = client.deployments.retrieve(\n    deployment_id=\"\
+          dpl_123\",\n)\nprint(deployment.id)"
+  /deployments:
+    get:
+      tags:
+      - Deployments
+      summary: List
+      operationId: listDeployments
+      parameters:
+      - $ref: '#/components/parameters/offset'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/parameters-order_by'
+      - $ref: '#/components/parameters/parameters-expand_list'
+      - $ref: '#/components/parameters/parameters-id'
+      - $ref: '#/components/parameters/parameters-target_status'
+      - $ref: '#/components/parameters/parameters-activity_status'
+      - $ref: '#/components/parameters/parameters-error_status'
+      - $ref: '#/components/parameters/parameters-device_id'
+      - $ref: '#/components/parameters/release_id'
+      responses:
+        '200':
+          description: Successfully listed the deployments.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentList'
+      x-codeSamples:
+      - lang: Python
+        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+          My API Key\",\n)\ndeployments = client.deployments.list()\nprint(deployments)"
+    post:
+      tags:
+      - Deployments
+      summary: Create
+      description: Stage or deploy a new deployment.
+      operationId: createDeployment
+      parameters:
+      - $ref: '#/components/parameters/parameters-expand'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDeploymentRequest'
+      responses:
+        '200':
+          description: Successfully created the deployment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deployment'
+      x-codeSamples:
+      - lang: Python
+        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+          My API Key\",\n)\ndeployment = client.deployments.create(\n    description=\"\
+          Deployment for the motion control config instance\",\n    device_id=\"dvc_123\"\
+          ,\n    new_config_instances=[{\n        \"config_schema_id\": \"cfg_sch_123\"\
+          ,\n        \"content\": {\n            \"direction\": \"forward\",\n   \
+          \         \"speed\": 100,\n            \"duration\": 10,\n        },\n \
+          \       \"relative_filepath\": \"/v1/motion-control.json\",\n    }],\n \
+          \   release_id=\"rls_123\",\n    target_status=\"staged\",\n)\nprint(deployment.id)"
+  /deployments/{deployment_id}/validate:
+    post:
+      tags:
+      - Deployments
+      summary: Validate
+      description: Validate a deployment with your custom validation.
+      operationId: validateDeployment
+      parameters:
+      - $ref: '#/components/parameters/deployment_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateDeploymentRequest'
+      responses:
+        '200':
+          description: Successfully validated the deployment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateDeploymentResponse'
+      x-codeSamples:
+      - lang: Python
+        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+          My API Key\",\n)\nresponse = client.deployments.validate(\n    deployment_id=\"\
+          dpl_123\",\n    config_instances=[{\n        \"id\": \"cfg_inst_123\",\n\
+          \        \"message\": \"The config instance contains additional parameters\
+          \ that are not supported by the config schema.\",\n        \"parameters\"\
+          : [{\n            \"message\": \"The value must be between 10 and 60.\"\
+          ,\n            \"path\": [\"content\", \"telemetry\", \"upload_interval_sec\"\
+          ],\n        }],\n    }],\n    is_valid=False,\n    message=\"Validation\
+          \ failed!\",\n)\nprint(response.deployment)"
+  /devices/{device_id}:
+    get:
+      tags:
+      - Devices
+      summary: Get
+      description: Get a device by ID.
+      operationId: getDevice
+      parameters:
+      - $ref: '#/components/parameters/components-parameters-device_id'
+      responses:
+        '200':
+          description: Successfully retrieved the device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+      x-codeSamples:
+      - lang: Python
+        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+          My API Key\",\n)\ndevice = client.devices.retrieve(\n    \"dvc_123\",\n\
+          )\nprint(device.id)"
+    patch:
+      tags:
+      - Devices
+      summary: Update
+      operationId: updateDevice
+      description: Update a device by ID.
+      parameters:
+      - $ref: '#/components/parameters/components-parameters-device_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDeviceRequest'
+      responses:
+        '200':
+          description: Successfully updated the device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+      x-codeSamples:
+      - lang: Python
+        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+          My API Key\",\n)\ndevice = client.devices.update(\n    device_id=\"dvc_123\"\
+          ,\n)\nprint(device.id)"
+    delete:
+      tags:
+      - Devices
+      summary: Delete
+      operationId: deleteDevice
+      description: Delete a device by ID.
+      parameters:
+      - $ref: '#/components/parameters/components-parameters-device_id'
+      responses:
+        '200':
+          description: Successfully deleted the device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteDevice'
+      x-codeSamples:
+      - lang: Python
+        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+          My API Key\",\n)\ndevice = client.devices.delete(\n    \"dvc_123\",\n)\n\
+          print(device.id)"
+  /devices:
+    post:
+      tags:
+      - Devices
+      summary: Create
+      operationId: createDevice
+      description: Create a new device.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDeviceRequest'
+      responses:
+        '200':
+          description: Successfully created the device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+      x-codeSamples:
+      - lang: Python
+        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+          My API Key\",\n)\ndevice = client.devices.create(\n    name=\"Robot 1\"\
+          ,\n)\nprint(device.id)"
+    get:
+      tags:
+      - Devices
+      summary: List
+      description: List devices.
+      operationId: listDevices
+      parameters:
+      - $ref: '#/components/parameters/offset'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/components-parameters-order_by'
+      - $ref: '#/components/parameters/components-parameters-expand_list'
+      - $ref: '#/components/parameters/components-parameters-id'
+      - $ref: '#/components/parameters/name'
+      - $ref: '#/components/parameters/agent_version'
+      - $ref: '#/components/parameters/current_release_id'
+      responses:
+        '200':
+          description: Successfully listed the devices.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceList'
+      x-codeSamples:
+      - lang: Python
+        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+          My API Key\",\n)\ndevices = client.devices.list()\nprint(devices)"
+  /devices/{device_id}/activation_token:
+    post:
+      tags:
+      - Devices
+      summary: Activation Token
+      operationId: createDeviceActivationToken
+      description: Create a new device activation token.
+      parameters:
+      - $ref: '#/components/parameters/components-parameters-device_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssueActivationTokenRequest'
+      responses:
+        '200':
+          description: Successfully created the device activation token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+      x-codeSamples:
+      - lang: Python
+        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+          My API Key\",\n)\nresponse = client.devices.create_activation_token(\n \
+          \   device_id=\"dvc_123\",\n)\nprint(response.token)"
+  /releases/{release_id}:
+    get:
+      tags:
+      - Releases
+      summary: Get
+      description: Retrieve a release by ID.
+      operationId: getRelease
+      parameters:
+      - $ref: '#/components/parameters/parameters-release_id'
+      - $ref: '#/components/parameters/components-parameters-expand'
+      responses:
+        '200':
+          description: Successfully retrieved the release.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Release'
+      x-codeSamples:
+      - lang: Python
+        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+          My API Key\",\n)\nrelease = client.releases.retrieve(\n    release_id=\"\
+          rls_123\",\n)\nprint(release.id)"
+  /releases:
+    get:
+      tags:
+      - Releases
+      summary: List
+      description: List releases.
+      operationId: listReleases
+      parameters:
+      - $ref: '#/components/parameters/offset'
+      - $ref: '#/components/parameters/limit'
+      - $ref: '#/components/parameters/releases_components-parameters-order_by'
+      - $ref: '#/components/parameters/releases_components-parameters-expand_list'
+      - $ref: '#/components/parameters/releases_components-parameters-id'
+      - $ref: '#/components/parameters/version'
+      responses:
+        '200':
+          description: Successfully listed the releases.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReleaseList'
+      x-codeSamples:
+      - lang: Python
+        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+          My API Key\",\n)\nreleases = client.releases.list()\nprint(releases)"
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: The API key to use for authentication. Retrieve your API key from
+        the [Miru dashboard](https://app.mirurobotics.com/secrets/api-keys).
+  parameters:
+    config_instance_id:
+      name: config_instance_id
+      in: path
+      required: true
+      description: The unique identifier of the config instance.
+      schema:
+        type: string
+        example: cfg_inst_123
+    expand:
+      name: expand[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExpandConfigInstance'
+        description: The fields to expand in the config instance.
+    offset:
+      name: offset
+      in: query
+      required: false
+      description: The offset of the items to return. An offset of 10 with a limit
+        of 10 returns items 11-20.
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    limit:
+      name: limit
+      in: query
+      required: false
+      description: The maximum number of items to return. A limit of 15 with an offset
+        of 0 returns items 1-15.
+      schema:
+        type: integer
+        default: 10
+        minimum: 1
+        maximum: 100
+    order_by:
+      name: order_by
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/ConfigInstanceOrderBy'
+        description: The order to sort the config instances.
+    expand_list:
+      name: expand[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExpandConfigInstanceList'
+        description: The fields to expand in the config instance list.
+    id:
+      name: id
+      in: query
+      required: false
+      description: The config instance ID to filter by.
+      schema:
+        type: string
+        example: cfg_inst_123
+    target_status:
+      name: target_status
+      in: query
+      required: false
+      description: The config instance target status to filter by.
+      schema:
+        $ref: '#/components/schemas/ConfigInstanceTargetStatus'
+    activity_status:
+      name: activity_status
+      in: query
+      required: false
+      description: The config instance activity status to filter by.
+      schema:
+        $ref: '#/components/schemas/ConfigInstanceActivityStatus'
+    error_status:
+      name: error_status
+      in: query
+      required: false
+      description: The config instance error status to filter by.
+      schema:
+        $ref: '#/components/schemas/ConfigInstanceErrorStatus'
+    device_id:
+      name: device_id
+      in: query
+      required: false
+      description: The device ID to filter by.
+      schema:
+        type: string
+        example: dvc_123
+    config_schema_id:
+      name: config_schema_id
+      in: query
+      required: false
+      description: The config schema ID to filter by.
+      schema:
+        type: string
+        example: cfg_sch_123
+    config_type_id:
+      name: config_type_id
+      in: query
+      required: false
+      description: The config type ID to filter by.
+      schema:
+        type: string
+        example: cfg_typ_123
+    deployment_id:
+      name: deployment_id
+      in: path
+      required: true
+      description: The unique identifier of the deployment.
+      schema:
+        type: string
+        example: dpl_123
+    parameters-expand:
+      name: expand[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExpandDeployment'
+        description: The fields to expand in the deployment.
+    parameters-order_by:
+      name: order_by
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/DeploymentOrderBy'
+        description: The order to sort the deployments.
+    parameters-expand_list:
+      name: expand[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExpandDeploymentList'
+        description: The fields to expand in the deployments list.
+    parameters-id:
+      name: id
+      in: query
+      required: false
+      description: The deployment ID to filter by.
+      schema:
+        type: string
+        example: dpl_123
+    parameters-target_status:
+      name: target_status
+      in: query
+      required: false
+      description: The deployment target status to filter by.
+      schema:
+        $ref: '#/components/schemas/DeploymentTargetStatus'
+    parameters-activity_status:
+      name: activity_status
+      in: query
+      required: false
+      description: The deployment activity status to filter by.
+      schema:
+        $ref: '#/components/schemas/DeploymentActivityStatus'
+    parameters-error_status:
+      name: error_status
+      in: query
+      required: false
+      description: The deployment error status to filter by.
+      schema:
+        $ref: '#/components/schemas/DeploymentErrorStatus'
+    parameters-device_id:
+      name: device_id
+      in: query
+      required: false
+      description: The deployment device ID to filter by.
+      schema:
+        type: string
+        example: dvc_123
+        description: The deployment device ID to filter by.
+    release_id:
+      name: release_id
+      in: query
+      required: false
+      description: The deployment release ID to filter by.
+      schema:
+        type: string
+        example: rls_123
+        description: The deployment release ID to filter by.
+    components-parameters-device_id:
+      name: device_id
+      in: path
+      required: true
+      description: The unique identifier of the device.
+      schema:
+        type: string
+        example: dvc_123
+    components-parameters-order_by:
+      name: order_by
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/DeviceOrderBy'
+        description: The order to sort the devices.
+    components-parameters-expand_list:
+      name: expand[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExpandDeviceList'
+        description: The fields to expand in the device list.
+    components-parameters-id:
+      name: id
+      in: query
+      required: false
+      description: The device ID to filter by.
+      schema:
+        type: string
+        example: dev_123
+    name:
+      name: name
+      in: query
+      required: false
+      description: The device name to filter by.
+      schema:
+        type: string
+        example: My Device
+    agent_version:
+      name: agent_version
+      in: query
+      required: false
+      description: The agent version to filter by.
+      schema:
+        type: string
+        example: v1.0.0
+    current_release_id:
+      name: current_release_id
+      in: query
+      required: false
+      description: The current release ID to filter by.
+      schema:
+        type: string
+        example: rls_123
+    parameters-release_id:
+      name: release_id
+      in: path
+      required: true
+      description: The unique identifier of the release.
+      schema:
+        type: string
+        example: rls_123
+    components-parameters-expand:
+      name: expand[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExpandRelease'
+        description: The fields to expand in the releases.
+    releases_components-parameters-order_by:
+      name: order_by
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/ReleaseOrderBy'
+        description: The order to sort the releases.
+    releases_components-parameters-expand_list:
+      name: expand[]
+      in: query
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/ExpandReleaseList'
+        description: The fields to expand in the releases list.
+    releases_components-parameters-id:
+      name: id
+      in: query
+      required: false
+      description: The release ID to filter by.
+      schema:
+        type: string
+        example: rls_123
+    version:
+      name: version
+      in: query
+      required: false
+      description: The release version to filter by.
+      schema:
+        type: string
+        example: v1.0.0
+  schemas:
+    ExpandConfigInstance:
+      type: string
+      enum:
+      - content
+      - config_schema
+      - device
+      - config_type
+      x-enum-varnames:
+      - CONFIG_INSTANCE_EXPAND_CONTENT
+      - CONFIG_INSTANCE_EXPAND_CONFIG_SCHEMA
+      - CONFIG_INSTANCE_EXPAND_DEVICE
+      - CONFIG_INSTANCE_EXPAND_CONFIG_TYPE
+    ConfigInstanceTargetStatus:
+      type: string
+      description: 'Desired state of the config instance.
+
+        - Created: config instance is created and can be deployed in the future
+
+        - Deployed: config instance is available for consumption on the device
+
+        - Removed: config instance is available for historical reference but cannot
+        be deployed and is not active on the device
+
+        '
+      enum:
+      - created
+      - deployed
+      - removed
+      x-enum-varnames:
+      - CONFIG_INSTANCE_TARGET_STATUS_CREATED
+      - CONFIG_INSTANCE_TARGET_STATUS_DEPLOYED
+      - CONFIG_INSTANCE_TARGET_STATUS_REMOVED
+    ConfigInstanceActivityStatus:
+      type: string
+      description: 'Last known activity state of the config instance.
+
+        - Created: config instance has been created and can be deployed in the future
+
+        - Queued: config instance is waiting to be received by the device; will be
+        deployed as soon as the device is online
+
+        - Deployed: config instance is currently available for consumption on the
+        device
+
+        - Removed: the config instance is available for historical reference but cannot
+        be deployed and is not active on the device
+
+        '
+      enum:
+      - created
+      - queued
+      - deployed
+      - removed
+      x-enum-varnames:
+      - CONFIG_INSTANCE_ACTIVITY_STATUS_CREATED
+      - CONFIG_INSTANCE_ACTIVITY_STATUS_QUEUED
+      - CONFIG_INSTANCE_ACTIVITY_STATUS_DEPLOYED
+      - CONFIG_INSTANCE_ACTIVITY_STATUS_REMOVED
+    ConfigInstanceErrorStatus:
+      type: string
+      description: 'Last known error state of the config instance deployment.
+
+        - None: there are no errors with the config instance deployment
+
+        - Retrying: an error has been encountered and the agent is attempting to try
+        again to reach the target status
+
+        - Failed: a fatal error has been encountered; the config instance is archived
+        and (if deployed) removed from the device
+
+        '
+      enum:
+      - none
+      - failed
+      - retrying
+      x-enum-varnames:
+      - CONFIG_INSTANCE_ERROR_STATUS_NONE
+      - CONFIG_INSTANCE_ERROR_STATUS_FAILED
+      - CONFIG_INSTANCE_ERROR_STATUS_RETRYING
+    ConfigInstanceStatus:
+      type: string
+      description: 'This status merges the ''activity_status'' and ''error_status''
+        fields, with error states taking precedence over activity states when errors
+        are present. For example, if the activity status is ''deployed'' but the error
+        status is ''failed'', the status is ''failed''. However, if the error status
+        is ''none'' and the activity status is ''deployed'', the status is ''deployed''.
+
+        '
+      enum:
+      - created
+      - queued
+      - deployed
+      - removed
+      - failed
+      - retrying
+      x-enum-varnames:
+      - CONFIG_INSTANCE_STATUS_CREATED
+      - CONFIG_INSTANCE_STATUS_QUEUED
+      - CONFIG_INSTANCE_STATUS_DEPLOYED
+      - CONFIG_INSTANCE_STATUS_REMOVED
+      - CONFIG_INSTANCE_STATUS_FAILED
+      - CONFIG_INSTANCE_STATUS_RETRYING
+    BaseConfigInstance:
+      title: Base Config Instance
+      type: object
+      required:
+      - object
+      - id
+      - target_status
+      - activity_status
+      - error_status
+      - status
+      - relative_filepath
+      - created_at
+      - updated_at
+      - device_id
+      - config_schema_id
+      - config_type_id
+      properties:
+        object:
+          type: string
+          enum:
+          - config_instance
+          example: config_instance
+        id:
+          type: string
+          example: cfg_inst_123
+          description: ID of the config instance.
+        target_status:
+          $ref: '#/components/schemas/ConfigInstanceTargetStatus'
+        activity_status:
+          $ref: '#/components/schemas/ConfigInstanceActivityStatus'
+        error_status:
+          $ref: '#/components/schemas/ConfigInstanceErrorStatus'
+        status:
+          $ref: '#/components/schemas/ConfigInstanceStatus'
+        relative_filepath:
+          type: string
+          example: /v1/motion-control.json
+          description: The file path to deploy the config instance relative to `/srv/miru/config_instances`.
+            `v1/motion-control.json` would deploy to `/srv/miru/config_instances/v1/motion-control.json`.
+        created_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: The timestamp of when the config instance was created.
+        updated_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: The timestamp of when the config instance was last updated.
+        device_id:
+          type: string
+          example: dvc_123
+          description: ID of the device which the config instance is deployed to.
+        config_schema_id:
+          type: string
+          example: cfg_sch_123
+          description: ID of the config schema which the config instance must adhere
+            to.
+        config_type_id:
+          type: string
+          example: cfg_type_123
+          description: ID of the config type which the config instance (and its schema)
+            is a part of.
+    DeviceStatus:
+      type: string
+      description: 'The status of the device.
+
+        - Inactive: The miru agent has not yet been installed / authenticated
+
+        - Activating: The miru agent is currently being installed / authenticated
+        (should only last for a few seconds)
+
+        - Online: The miru agent has successfully pinged the server within the last
+        60 seconds.
+
+        - Offline: The miru agent has not successfully pinged the server within the
+        last 60 seconds (e.g. network issues, device is powered off, etc.)
+
+        '
+      enum:
+      - inactive
+      - activating
+      - online
+      - offline
+      x-enum-varnames:
+      - DEVICE_STATUS_INACTIVE
+      - DEVICE_STATUS_ACTIVATING
+      - DEVICE_STATUS_ONLINE
+      - DEVICE_STATUS_OFFLINE
+    BaseDevice:
+      title: Base Device
+      type: object
+      required:
+      - object
+      - id
+      - name
+      - status
+      - last_connected_at
+      - last_disconnected_at
+      - created_at
+      - updated_at
+      properties:
+        object:
+          type: string
+          enum:
+          - device
+          example: device
+        id:
+          type: string
+          example: dvc_123
+          description: ID of the device.
+        name:
+          type: string
+          example: My Device
+          description: Name of the device.
+        status:
+          $ref: '#/components/schemas/DeviceStatus'
+        last_connected_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          nullable: true
+          description: Timestamp of when the device was last made an initial connection
+            (this is not the same as the last time the device was seen).
+        last_disconnected_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          nullable: true
+          description: Timestamp of when the device was last disconnected (this is
+            not the same as the last time the device was seen).
+        created_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the device was created.
+        updated_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the device was last updated.
+    Device:
+      allOf:
+      - $ref: '#/components/schemas/BaseDevice'
+    BaseConfigSchema:
+      title: Base Config Schema
+      type: object
+      required:
+      - object
+      - id
+      - version
+      - digest
+      - relative_filepath
+      - created_at
+      - updated_at
+      - config_type_id
+      - content
+      properties:
+        object:
+          type: string
+          enum:
+          - config_schema
+          example: config_schema
+        id:
+          type: string
+          example: cfg_sch_123
+          description: ID of the config schema.
+        version:
+          type: integer
+          example: 2
+          description: Config schema version for the config type.
+        digest:
+          type: string
+          example: '1234567890'
+          description: Hash of the config schema contents.
+        relative_filepath:
+          type: string
+          description: The file path to deploy the config instance relative to `/srv/miru/config_instances`.
+            `v1/motion-control.json` would deploy to `/srv/miru/config_instances/v1/motion-control.json`.
+          example: /v1/motion-control.json
+        created_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the config schema was created.
+        updated_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the config schema was last updated.
+        config_type_id:
+          type: string
+          example: cfg_typ_123
+          description: ID of the config type.
+        content:
+          type: object
+          description: The config schema's JSON Schema definition.
+          example:
+            title: Robot Features
+            type: object
+            properties:
+              enable_autonomy:
+                type: boolean
+                default: true
+              enable_remote_control:
+                type: boolean
+                default: true
+              max_payload_kg:
+                type: number
+                minimum: 0
+                maximum: 99
+                default: 10
+              preferred_speed_mode:
+                type: string
+                enum:
+                - slow
+                - normal
+                - fast
+                default: normal
+              emergency_stop_sensitivity:
+                type: number
+                minimum: 0
+                maximum: 1
+                default: 0.8
+              telemetry:
+                type: object
+                properties:
+                  upload_interval_sec:
+                    type: integer
+                    minimum: 10
+                    maximum: 600
+                    default: 60
+                  heartbeat_interval_sec:
+                    type: integer
+                    minimum: 1
+                    maximum: 60
+                    default: 10
+                required:
+                - upload_interval_sec
+                - heartbeat_interval_sec
+            required:
+            - enable_autonomy
+            - enable_remote_control
+            - max_payload_kg
+            - preferred_speed_mode
+            - emergency_stop_sensitivity
+            - telemetry
+          nullable: true
+    BaseConfigType:
+      title: Config Type
+      type: object
+      required:
+      - object
+      - id
+      - name
+      - slug
+      - created_at
+      - updated_at
+      properties:
+        object:
+          type: string
+          enum:
+          - config_type
+          example: config_type
+        id:
+          type: string
+          example: cfg_123
+          description: ID of the config type.
+        name:
+          type: string
+          example: My Config Type
+          description: Name of the config type.
+        slug:
+          type: string
+          example: my-config-type
+          description: An immutable, code-friendly name for the config type.
+        created_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the config type was created.
+        updated_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the config type was last updated.
+    ConfigType:
+      title: Config Type
+      allOf:
+      - $ref: '#/components/schemas/BaseConfigType'
+    ConfigSchema:
+      title: Config Schema
+      allOf:
+      - $ref: '#/components/schemas/BaseConfigSchema'
+      - type: object
+        required:
+        - config_type
+        properties:
+          config_type:
+            allOf:
+            - $ref: '#/components/schemas/ConfigType'
+            nullable: true
+            description: Expand the config type using 'expand[]=config_type' in the
+              query string.
+            example: null
+    ConfigInstance:
+      title: Config Instance
+      allOf:
+      - $ref: '#/components/schemas/BaseConfigInstance'
+      - type: object
+        required:
+        - device
+        - config_schema
+        - content
+        properties:
+          device:
+            allOf:
+            - $ref: '#/components/schemas/Device'
+            nullable: true
+            example: null
+          config_schema:
+            allOf:
+            - $ref: '#/components/schemas/ConfigSchema'
+            nullable: true
+            description: Expand the config schema using 'expand[]=config_schema' in
+              the query string.
+            example: null
+          config_type:
+            allOf:
+            - $ref: '#/components/schemas/ConfigType'
+            nullable: true
+            description: Expand the config type using 'expand[]=config_type' in the
+              query string.
+            example: null
+          content:
+            type: object
+            description: The configuration values associated with the config instance.
+              Expand the content using 'expand[]=content' in the query string.
+            example:
+              enable_autonomy: true
+              enable_remote_control: false
+              max_payload_kg: 8.5
+              preferred_speed_mode: normal
+              emergency_stop_sensitivity: 0.9
+              telemetry:
+                upload_interval_sec: 45
+                heartbeat_interval_sec: 15
+            nullable: true
+    ConfigInstanceOrderBy:
+      type: string
+      enum:
+      - id:asc
+      - id:desc
+      - created_at:desc
+      - created_at:asc
+      x-enum-varnames:
+      - CONFIG_INSTANCE_ORDER_BY_ID_ASC
+      - CONFIG_INSTANCE_ORDER_BY_ID_DESC
+      - CONFIG_INSTANCE_ORDER_BY_CREATED_AT_DESC
+      - CONFIG_INSTANCE_ORDER_BY_CREATED_AT_ASC
+      default: created_at:desc
+    ExpandConfigInstanceList:
+      type: string
+      enum:
+      - total_count
+      - content
+      - config_schema
+      - device
+      - config_type
+      x-enum-varnames:
+      - CONFIG_INSTANCE_LIST_EXPAND_WITH_TOTAL_COUNT
+      - CONFIG_INSTANCE_LIST_EXPAND_CONTENT
+      - CONFIG_INSTANCE_LIST_EXPAND_CONFIG_SCHEMA
+      - CONFIG_INSTANCE_LIST_EXPAND_DEVICE
+      - CONFIG_INSTANCE_LIST_EXPAND_CONFIG_TYPE
+    PaginatedList:
+      title: Paginated List
+      type: object
+      required:
+      - object
+      - total_count
+      - limit
+      - offset
+      - has_more
+      properties:
+        object:
+          type: string
+          enum:
+          - list
+          example: list
+        total_count:
+          type: integer
+          format: int64
+          description: The total number of items in the list. By default the total
+            count is not returned. The total count must be expanded (using expand[]=total_count)
+            to get the total number of items in the list.
+        limit:
+          type: integer
+          description: The maximum number of items to return. A limit of 15 with an
+            offset of 0 returns items 1-15.
+          default: 10
+          minimum: 1
+          maximum: 100
+        offset:
+          type: integer
+          description: The offset of the items to return. An offset of 10 with a limit
+            of 10 returns items 11-20.
+          default: 0
+          minimum: 0
+        has_more:
+          type: boolean
+          description: True if there are more items in the list to return. False if
+            there are no more items to return.
+          example: false
+    ConfigInstanceList:
+      title: Config Instance List
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/PaginatedList'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/ConfigInstance'
+    ExpandDeployment:
+      type: string
+      enum:
+      - device
+      - release
+      - config_instances
+      x-enum-varnames:
+      - DEPLOYMENT_EXPAND_DEVICE
+      - DEPLOYMENT_EXPAND_RELEASE
+      - DEPLOYMENT_EXPAND_CONFIG_INSTANCES
+    DeploymentStatus:
+      type: string
+      description: 'This status merges the ''activity_status'' and ''error_status''
+        fields, with error states taking precedence over activity states when errors
+        are present. For example, if the activity status is ''deployed'' but the error
+        status is ''failed'', the status is ''failed''. However, if the error status
+        is ''none'' and the activity status is ''deployed'', the status is ''deployed''.
+
+        '
+      enum:
+      - validating
+      - needs_review
+      - staged
+      - queued
+      - deployed
+      - removing
+      - archived
+      - failed
+      - retrying
+      x-enum-varnames:
+      - DEPLOYMENT_STATUS_VALIDATING
+      - DEPLOYMENT_STATUS_NEEDS_REVIEW
+      - DEPLOYMENT_STATUS_STAGED
+      - DEPLOYMENT_STATUS_QUEUED
+      - DEPLOYMENT_STATUS_DEPLOYED
+      - DEPLOYMENT_STATUS_REMOVING
+      - DEPLOYMENT_STATUS_ARCHIVED
+      - DEPLOYMENT_STATUS_FAILED
+      - DEPLOYMENT_STATUS_RETRYING
+    DeploymentActivityStatus:
+      type: string
+      description: 'Last known activity state of the deployment.
+
+        - Validating: the deployment''s config instances are being validated with
+        user''s custom validation
+
+        - Needs review: deployment needs to be reviewed before it can be deployed
+
+        - Staged: is ready to be deployed
+
+        - Queued: the deployment''s config instances are waiting to be received by
+        the device; will be deployed as soon as the device is online
+
+        - Deployed: the deployment''s config instances are currently available for
+        consumption on the device
+
+        - Removing: the deployment''s config instances are being removed from the
+        device
+
+        - Archived: the deployment is available for historical reference but cannot
+        be deployed and is not active on the device
+
+        '
+      enum:
+      - validating
+      - needs_review
+      - staged
+      - queued
+      - deployed
+      - removing
+      - archived
+      x-enum-varnames:
+      - DEPLOYMENT_ACTIVITY_STATUS_VALIDATING
+      - DEPLOYMENT_ACTIVITY_STATUS_NEEDS_REVIEW
+      - DEPLOYMENT_ACTIVITY_STATUS_STAGED
+      - DEPLOYMENT_ACTIVITY_STATUS_QUEUED
+      - DEPLOYMENT_ACTIVITY_STATUS_DEPLOYED
+      - DEPLOYMENT_ACTIVITY_STATUS_REMOVING
+      - DEPLOYMENT_ACTIVITY_STATUS_ARCHIVED
+    DeploymentErrorStatus:
+      type: string
+      description: 'Last known error state of the deployment.
+
+        - None: no errors
+
+        - Retrying: an error has been encountered and the agent is retrying to reach
+        the target status
+
+        - Failed: a fatal error has been encountered; the deployment is archived and
+        (if deployed) removed from the device
+
+        '
+      enum:
+      - none
+      - failed
+      - retrying
+      x-enum-varnames:
+      - DEPLOYMENT_ERROR_STATUS_NONE
+      - DEPLOYMENT_ERROR_STATUS_FAILED
+      - DEPLOYMENT_ERROR_STATUS_RETRYING
+    DeploymentTargetStatus:
+      type: string
+      description: 'Desired state of the deployment.
+
+        - Staged: is ready to be deployed
+
+        - Deployed: all config instances part of the deployment are available for
+        consumption on the device
+
+        - Archived: the deployment is available for historical reference but cannot
+        be deployed and is not active on the device
+
+        '
+      enum:
+      - staged
+      - deployed
+      - archived
+      x-enum-varnames:
+      - DEPLOYMENT_TARGET_STATUS_STAGED
+      - DEPLOYMENT_TARGET_STATUS_DEPLOYED
+      - DEPLOYMENT_TARGET_STATUS_ARCHIVED
+    BaseDeployment:
+      title: Base Deployment
+      type: object
+      required:
+      - object
+      - id
+      - description
+      - status
+      - activity_status
+      - error_status
+      - target_status
+      - device_id
+      - release_id
+      - created_at
+      - updated_at
+      properties:
+        object:
+          type: string
+          enum:
+          - deployment
+          example: deployment
+        id:
+          type: string
+          example: dpl_123
+          description: ID of the deployment.
+        description:
+          type: string
+          example: Deployment for the motion control config instance
+          description: The description of the deployment.
+        status:
+          $ref: '#/components/schemas/DeploymentStatus'
+        activity_status:
+          $ref: '#/components/schemas/DeploymentActivityStatus'
+        error_status:
+          $ref: '#/components/schemas/DeploymentErrorStatus'
+        target_status:
+          $ref: '#/components/schemas/DeploymentTargetStatus'
+        device_id:
+          type: string
+          example: dvc_123
+          description: ID of the device.
+        release_id:
+          type: string
+          example: v1.0.0
+          description: The version of the release.
+        created_at:
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00Z'
+          description: Timestamp of when the device release was created.
+        updated_at:
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00Z'
+          description: Timestamp of when the device release was last updated.
+    BaseRelease:
+      title: Base Release
+      type: object
+      required:
+      - object
+      - id
+      - version
+      - created_at
+      - updated_at
+      properties:
+        object:
+          type: string
+          enum:
+          - release
+          example: release
+        id:
+          type: string
+          example: rls_123
+          description: ID of the release.
+        version:
+          type: string
+          example: v1.0.0
+          description: The version of the release.
+        created_at:
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00Z'
+          description: Timestamp of when the release was created.
+        updated_at:
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00Z'
+          description: Timestamp of when the release was last updated.
+    Release:
+      title: Release
+      allOf:
+      - $ref: '#/components/schemas/BaseRelease'
+      - type: object
+        required:
+        - config_schemas
+        properties:
+          config_schemas:
+            type: array
+            items:
+              $ref: '#/components/schemas/ConfigSchema'
+            nullable: true
+            description: Expand the config schemas using 'expand[]=config_schemas'
+              in the query string.
+            example: []
+    Deployment:
+      title: Deployment
+      allOf:
+      - $ref: '#/components/schemas/BaseDeployment'
+      - type: object
+        required:
+        - device
+        - release
+        - config_instances
+        properties:
+          device:
+            allOf:
+            - $ref: '#/components/schemas/Device'
+            nullable: true
+            example: null
+            description: Expand the device using 'expand[]=device' in the query string.
+          release:
+            allOf:
+            - $ref: '#/components/schemas/Release'
+            nullable: true
+            example: null
+            description: Expand the release using 'expand[]=release' in the query
+              string.
+          config_instances:
+            type: array
+            items:
+              $ref: '#/components/schemas/ConfigInstance'
+            nullable: true
+            description: Expand the config instances using 'expand[]=config_instances'
+              in the query string.
+    DeploymentOrderBy:
+      type: string
+      enum:
+      - id:asc
+      - id:desc
+      - created_at:desc
+      - created_at:asc
+      x-enum-varnames:
+      - DEPLOYMENT_ORDER_BY_ID_ASC
+      - DEPLOYMENT_ORDER_BY_ID_DESC
+      - DEPLOYMENT_ORDER_BY_CREATED_AT_DESC
+      - DEPLOYMENT_ORDER_BY_CREATED_AT_ASC
+      default: created_at:desc
+    ExpandDeploymentList:
+      type: string
+      enum:
+      - total_count
+      - device
+      - release
+      - config_instances
+      x-enum-varnames:
+      - DEPLOYMENT_LIST_EXPAND_WITH_TOTAL_COUNT
+      - DEPLOYMENT_LIST_EXPAND_DEVICE
+      - DEPLOYMENT_LIST_EXPAND_RELEASE
+      - DEPLOYMENT_LIST_EXPAND_CONFIG_INSTANCES
+    DeploymentList:
+      title: Deployment List
+      allOf:
+      - $ref: '#/components/schemas/PaginatedList'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Deployment'
+    CreateDeploymentTargetStatus:
+      type: string
+      description: "Desired state of the deployment. \n- Staged: ready for deployment.\
+        \ Deployments can only be staged if their release is not the current release\
+        \ for the device.\n- Deployed: deployed to the device. Deployments can only\
+        \ be deployed if their release is the device's current release.\n\nIf custom\
+        \ validation is enabled for the release, the deployment must pass validation\
+        \ before fulfilling the target status.\n"
+      enum:
+      - staged
+      - deployed
+      x-enum-varnames:
+      - CREATE_STAGED_DEPLOYMENT
+      - CREATE_DEPLOYED_DEPLOYMENT
+    CreateConfigInstanceRequest:
+      title: Create Config Instance Request
+      type: object
+      required:
+      - config_schema_id
+      - relative_filepath
+      - content
+      properties:
+        config_schema_id:
+          type: string
+          description: The ID of the config schema which this config instance must
+            adhere to. This schema must exist in the deployment's release.
+          example: cfg_sch_123
+        relative_filepath:
+          type: string
+          description: The file path to deploy the config instance relative to `/srv/miru/config_instances`.
+            `v1/motion-control.json` would deploy to `/srv/miru/config_instances/v1/motion-control.json`.
+          example: /v1/motion-control.json
+        content:
+          type: object
+          description: The configuration data.
+          example:
+            direction: forward
+            speed: 100
+            duration: 10
+    CreateDeploymentRequest:
+      title: Create Deployment Request
+      type: object
+      required:
+      - target_status
+      - description
+      - release_id
+      - device_id
+      - new_config_instances
+      properties:
+        target_status:
+          $ref: '#/components/schemas/CreateDeploymentTargetStatus'
+        description:
+          type: string
+          description: The description of the deployment.
+          example: Deployment for the motion control config instance
+        release_id:
+          type: string
+          description: The release ID which this deployment adheres to.
+          example: rls_123
+        patch_source_id:
+          type: string
+          description: The ID of the deployment that this deployment was patched from.
+          example: dpl_123
+        device_id:
+          type: string
+          description: The ID of the device that the deployment is being created for.
+          example: dvc_123
+        new_config_instances:
+          type: array
+          description: The *new* config instances to create for this deployment. A
+            deployment must have exactly one config instance for each config schema
+            in the deployment's release. If less config instances are provided than
+            the number of schemas, the deployment will 'transfer' config instances
+            from the deployment it is patched from. Archived config instances cannot
+            be transferred.
+          items:
+            $ref: '#/components/schemas/CreateConfigInstanceRequest'
+    ParameterValidation:
+      type: object
+      description: The validation error for a parameter in the config instance.
+      required:
+      - message
+      - path
+      properties:
+        message:
+          type: string
+          description: An error message displayed for an individual parameter.
+          example: The value must be between 10 and 60.
+        path:
+          type: array
+          description: The path to the parameter that is invalid.
+          items:
+            type: string
+          example:
+          - content
+          - telemetry
+          - upload_interval_sec
+    ConfigInstanceValidation:
+      type: object
+      description: The validation errors(s) for a specific config instance in the
+        deployment.
+      required:
+      - id
+      - message
+      - parameters
+      properties:
+        id:
+          type: string
+          description: ID of the config instance.
+          example: cfg_inst_123
+        message:
+          type: string
+          description: A message displayed on the config instance level in the UI.
+          example: The config instance contains additional parameters that are not
+            supported by the config schema.
+        parameters:
+          type: array
+          description: The parameter errors for this config instance.
+          items:
+            $ref: '#/components/schemas/ParameterValidation'
+    ValidateDeploymentRequest:
+      title: Validate Deployment Request
+      type: object
+      required:
+      - is_valid
+      - message
+      - config_instances
+      properties:
+        is_valid:
+          type: boolean
+          description: Whether the deployment is valid. If invalid, the deployment
+            is immediately archived and marked as 'failed'.
+          example: false
+        message:
+          type: string
+          description: A message displayed on the deployment level in the UI.
+          example: Validation failed!
+        config_instances:
+          type: array
+          description: The config instance errors for this deployment.
+          items:
+            $ref: '#/components/schemas/ConfigInstanceValidation'
+    ValidationEffect:
+      type: string
+      description: The effect of the validation.
+      enum:
+      - none
+      - stage
+      - deploy
+      - reject
+      - void
+      x-enum-varnames:
+      - VALIDATION_EFFECT_NONE
+      - VALIDATION_EFFECT_STAGE
+      - VALIDATION_EFFECT_DEPLOY
+      - VALIDATION_EFFECT_REJECT
+      - VALIDATION_EFFECT_VOID
+    ValidateDeploymentResponse:
+      title: Validate Deployment Response
+      type: object
+      required:
+      - effect
+      - message
+      - deployment
+      properties:
+        effect:
+          $ref: '#/components/schemas/ValidationEffect'
+        message:
+          type: string
+          description: A message explaining the validation effect.
+          example: Deployment was voided because the device's current release is different
+            from when the deployment was created.
+        deployment:
+          $ref: '#/components/schemas/Deployment'
+    DeleteDevice:
+      title: Delete Device
+      type: object
+      required:
+      - object
+      - id
+      - deleted
+      properties:
+        object:
+          type: string
+          enum:
+          - device
+          example: device
+        id:
+          type: string
+          description: The ID of the device.
+          example: dvc_123
+        deleted:
+          type: boolean
+          description: Whether the device was deleted.
+          example: true
+    UpdateDeviceRequest:
+      title: Update Device Request
+      type: object
+      properties:
+        name:
+          type: string
+          description: The new name of the device. If excluded from the request, the
+            device name is not updated.
+          example: Robot 1
+    DeviceOrderBy:
+      type: string
+      enum:
+      - id:asc
+      - id:desc
+      - created_at:desc
+      - created_at:asc
+      x-enum-varnames:
+      - DEVICE_ORDER_BY_ID_ASC
+      - DEVICE_ORDER_BY_ID_DESC
+      - DEVICE_ORDER_BY_CREATED_AT_DESC
+      - DEVICE_ORDER_BY_CREATED_AT_ASC
+      default: created_at:desc
+    ExpandDeviceList:
+      type: string
+      enum:
+      - total_count
+      x-enum-varnames:
+      - DEVICE_LIST_EXPAND_WITH_TOTAL_COUNT
+    DeviceList:
+      allOf:
+      - $ref: '#/components/schemas/PaginatedList'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Device'
+    CreateDeviceRequest:
+      title: Create Device Request
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: The name of the device.
+          example: Robot 1
+    IssueActivationTokenRequest:
+      title: Issue Activation Token Request
+      type: object
+      properties:
+        allow_reactivation:
+          type: boolean
+          default: false
+          description: Whether this token can reactivate already activated devices.
+            If false, the token is unable to activate devices which are already activated.
+          example: false
+    TokenResponse:
+      title: Token Response
+      type: object
+      required:
+      - token
+      - expires_at
+      properties:
+        token:
+          type: string
+          description: The token.
+          example: eyJhbGciOiJ...
+        expires_at:
+          type: string
+          format: date-time
+          description: The expiration date and time of the token.
+          example: '2025-01-01T00:00:00Z'
+    ExpandRelease:
+      type: string
+      enum:
+      - config_schemas
+      x-enum-varnames:
+      - RELEASE_EXPAND_CONFIG_SCHEMAS
+    ReleaseOrderBy:
+      type: string
+      enum:
+      - id:asc
+      - id:desc
+      - created_at:desc
+      - created_at:asc
+      x-enum-varnames:
+      - RELEASE_ORDER_BY_ID_ASC
+      - RELEASE_ORDER_BY_ID_DESC
+      - RELEASE_ORDER_BY_CREATED_AT_DESC
+      - RELEASE_ORDER_BY_CREATED_AT_ASC
+      default: created_at:desc
+    ExpandReleaseList:
+      type: string
+      enum:
+      - total_count
+      - config_schemas
+      x-enum-varnames:
+      - RELEASE_LIST_EXPAND_WITH_TOTAL_COUNT
+      - RELEASE_LIST_EXPAND_CONFIG_SCHEMAS
+    ReleaseList:
+      title: Release List
+      allOf:
+      - $ref: '#/components/schemas/PaginatedList'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Release'
+    Event:
+      type: object
+      required:
+      - object
+      - timestamp
+      properties:
+        object:
+          type: string
+          enum:
+          - event
+          description: The object that occurred
+          example: event
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp of the event
+          example: '2021-01-01T00:00:00Z'
+    WebhookDeployment:
+      title: Webhook Deployment
+      type: object
+      required:
+      - object
+      - id
+      - device_id
+      - release_id
+      - created_at
+      properties:
+        object:
+          type: string
+          enum:
+          - deployment
+          example: deployment
+        id:
+          type: string
+          example: dpl_123
+          description: ID of the deployment
+        device_id:
+          type: string
+          example: dvc_123
+          description: ID of the device
+        release_id:
+          type: string
+          example: rls_123
+          description: The version of the release
+        created_at:
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00Z'
+          description: Timestamp of when the device release was created
+    ValidateDeploymentEvent:
+      allOf:
+      - $ref: '#/components/schemas/Event'
+      - type: object
+        required:
+        - type
+        - data
+        properties:
+          type:
+            type: string
+            description: The type of event
+            enum:
+            - deployment.validate
+            example: deployment.validate
+          data:
+            type: object
+            description: The data associated with the event
+            required:
+            - deployment
+            properties:
+              deployment:
+                $ref: '#/components/schemas/WebhookDeployment'

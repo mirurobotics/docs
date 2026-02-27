@@ -1,0 +1,85 @@
+---
+title: "Agent"
+description: "Changelog and migration steps for the Miru Agent"
+---
+
+## v0.7.0
+
+*TBD*
+
+`v0.7.0` introduces Agent API [v0.2.0](/docs/changelogs/agent-api#v020) with new deployment-pipeline endpoints
+
+TODO: Add more details about the release
+
+---
+
+## v0.6.1
+
+*January 22, 2026*
+
+### Fixes
+
+- The `miru-agent --install` command now correctly returns a non-zero exit code on failure, instead of `0`
+
+---
+
+## Agent Install Script Update
+
+*December 8, 2025*
+
+### Improvements
+
+- Agent install script now runs `sudo chown -R miru:miru /srv/miru` to prevent any permissions issues encountered if the `/srv/miru` directory has previously been created with the wrong permissions
+
+---
+
+## v0.6.0
+
+*October 19, 2025*
+
+`v0.6.0` adds support for installing the agent over poor internet connections, ensuring reliable provisioning on bandwidth-constrained devices.
+
+[Read the full documentation »](/docs/developers/agent/install#poor-connectivity)
+
+
+### Features
+
+- Poor connectivity installations of the Miru Agent are now supported
+
+---
+
+## v0.5.1
+
+*September 17, 2025*
+
+
+### Fixes
+
+- Fixed device provisioning script
+- Fixed a critical bug where configuration files could go missing if multiple configuration files were queued for deployment while the agent was offline
+
+---
+
+## v0.5.0
+
+*September 5, 2025*
+
+First release with Agent API v0.1.0 endpoints, MQTT-based real-time sync, and device session management. Establishes the core on-device integration surface.
+
+### Features
+
+- Added agent version info to device and server updates
+- Added device session ID for MQTT authentication
+- Added MQTT ping/pong for connection health monitoring
+- Added server APIs to sync the agent
+- Added version argument to installation scripts
+- Added agent information to client headers
+- Pretty-printed JSON objects in logs
+
+### Fixes
+
+- Activation script now restarts the agent on failures
+- Activation script temporarily stops the agent during provisioning
+- Fixed errant `unwrap()` calls that could cause panics
+- Improved MQTT network connection error handling
+- Fixed unnecessary filesystem writes for device patches

@@ -1,0 +1,111 @@
+---
+title: "Agent API"
+description: "Changelog and migration steps for the Agent API"
+---
+
+import { LinkNewTab } from '/snippets/components/link.jsx';
+
+## v0.2.0
+
+*TBD*
+
+The `v0.2.0` release expands the Agent API from basic device health/version endpoints to deployment-pipeline visibility. 
+
+The current release version endpoint is the most exciting, enabling on-device applications to ensure that the release version of the config instances matches the application's software version.
+
+### New endpoints
+
+Added read-only endpoints for inspecting deployment pipeline state from on-device applications.
+
+**Deployments**
+- `GET /deployments/current` — get the currently deployed deployment
+- `GET /deployments/{deployment_id}` — get a deployment by ID
+
+**Releases**
+- `GET /releases/current` — get the currently deployed release
+- `GET /releases/{release_id}` — get a release by ID
+
+**Git commits**
+- `GET /git_commits/{git_commit_id}` — get a git commit by ID
+
+### Breaking changes
+
+**Base path change**
+
+The URL version prefix changed from `/v1` to `/v0.2`. Update all request URLs in your client application.
+
+```diff
+- http://localhost/v1/{endpoint}
++ http://localhost/v0.2/{endpoint}
+```
+
+**Extended version response**
+
+The `GET /version` response renamed `commit` to `git_commit` and added new fields:
+
+```diff
+ {
+   "version": "0.7.0",
+-  "commit": "abc1234"
++  "git_commit": "abc1234",
++  "api_version": "0.2.0",
++  "api_git_commit": "def5678",
++  "rust_version": "1.83.0",
++  "build_date": "2026-02-15T00:00:00Z",
++  "os": "linux",
++  "arch": "aarch64"
+ }
+```
+
+### Migration steps
+
+<Steps>
+  <Step title="Verify agent compatibility">
+    Ensure all devices in your fleet are running **Miru Agent v0.7.0** or later. See the [agent compatibility matrix](/docs/developers/agent-api/versioning#agent-compatibility-matrix) for details.
+  </Step>
+
+  <Step title="Update base path">
+    Update all request URLs from `/v1` to `/v0.2`
+
+    <CodeGroup>
+    ```bash v0.1.0
+    curl --unix-socket /run/miru/miru.sock \
+       --request GET \
+      --url http://localhost/v1/device
+    ```
+
+    ```bash v0.2.0
+    curl --unix-socket /run/miru/miru.sock \
+       --request GET \
+      --url http://localhost/v0.2/device
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Rename commit field">
+    Rename the `GET /version` response field `commit` to `git_commit`
+  </Step>
+
+  <Step title="Optionally integrate new endpoints">
+    Integrate with the new deployments, releases, and git commits endpoints to inspect the deployment pipeline from your device.
+  </Step>
+</Steps>
+
+For the full v0.2.0 specification, visit the <LinkNewTab href="/docs/references/agent-api/v0.2.0">Agent API v0.2.0 reference »</LinkNewTab>
+
+---
+
+## v0.1.0
+
+*September 21, 2025*
+
+Initial release of the Agent API. This version establishes the core on-device integration surface, including health checks, version metadata, device metadata, and a manual sync trigger. 
+
+### Features
+
+- `GET /health` — retrieve the health of the agent
+- `GET /version` — retrieve the version of the agent
+- `GET /device` — retrieve the device
+- `POST /device/sync` — manually force a device sync
+
+For the full v0.1.0 specification, visit the <LinkNewTab href="/docs/references/agent-api/v0.1.0">Agent API v0.1.0 reference »</LinkNewTab>

@@ -1,0 +1,68 @@
+---
+title: "Platform API"
+description: "Changelog and migration steps for the Platform API"
+---
+
+## 2026-03-09.teton
+
+*Coming soon*
+
+---
+
+## 2025-10-21.zion
+
+*October 21, 2025* · Python SDK v0.6.1
+
+### Changes
+
+- Removed `config_schemas` expansion from config types
+
+### Migration steps
+
+<Steps>
+  <Step title="Remove config_schemas expansion">
+    Remove `?expand=config_schemas` from any requests to config type endpoints.
+  </Step>
+
+  <Step title="Upgrade Python SDK">
+    Upgrade the Python Server SDK to [v0.6.1](https://github.com/mirurobotics/python-server-sdk/releases/tag/v0.6.1).
+  </Step>
+</Steps>
+
+---
+
+## 2025-10-20.zion
+
+*October 20, 2025* · Python SDK v0.6.0
+
+### Changes
+
+- Replaced deployment status enums `pending` and `approved` with `needs_review` and `staged`
+
+### Migration steps
+
+<Steps>
+  <Step title="Update deployment status checks">
+    Update any code that checks deployment status strings:
+
+    <CodeGroup>
+    ```python Before
+    if deployment.status == "pending":
+        ...
+    elif deployment.status == "approved":
+        ...
+    ```
+
+    ```python After
+    if deployment.status == "needs_review":
+        ...
+    elif deployment.status == "staged":
+        ...
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Upgrade Python SDK">
+    Upgrade the Python Server SDK to [v0.6.0](https://github.com/mirurobotics/python-server-sdk/releases/tag/v0.6.0).
+  </Step>
+</Steps>

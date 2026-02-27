@@ -87,24 +87,6 @@
             "group": "Developers",
             "pages": [
               {
-                "group": "Agent",
-                "pages": [
-                  "docs/developers/agent/overview",
-                  "docs/developers/agent/install",
-                  "docs/developers/agent/commands",
-                  "docs/developers/agent/lifecycle"
-                ]
-              },
-              {
-                "group": "Agent API",
-                "pages": [
-                  "docs/developers/agent-api/overview",
-                  "docs/developers/agent-api/authn",
-                  "docs/developers/agent-api/versioning",
-                  "docs/developers/agent-api/sdks"
-                ]
-              },
-              {
                 "group": "CLI",
                 "pages": [
                   "docs/developers/cli/overview",
@@ -120,21 +102,39 @@
                 ]
               },
               {
-                "group": "Server-Side API",
+                "group": "Agent",
                 "pages": [
-                  "docs/developers/server-side-api/overview",
-                  "docs/developers/server-side-api/authn",
-                  "docs/developers/server-side-api/versioning",
+                  "docs/developers/agent/overview",
+                  "docs/developers/agent/install",
+                  "docs/developers/agent/versions",
+                  "docs/developers/agent/commands"
+                ]
+              },
+              {
+                "group": "Agent API",
+                "pages": [
+                  "docs/developers/agent-api/overview",
+                  "docs/developers/agent-api/sdks",
+                  "docs/developers/agent-api/authn",
+                  "docs/developers/agent-api/versioning"
+                ]
+              },
+              {
+                "group": "Platform API",
+                "pages": [
+                  "docs/developers/platform-api/overview",
+                  "docs/developers/platform-api/sdks",
+                  "docs/developers/platform-api/authn",
+                  "docs/developers/platform-api/versioning",
                   {
                     "group": "Query Parameters",
                     "pages": [
-                      "docs/developers/server-side-api/query-params/filtering",
-                      "docs/developers/server-side-api/query-params/sorting",
-                      "docs/developers/server-side-api/query-params/pagination",
-                      "docs/developers/server-side-api/query-params/expansions"
+                      "docs/developers/platform-api/query-params/filtering",
+                      "docs/developers/platform-api/query-params/sorting",
+                      "docs/developers/platform-api/query-params/pagination",
+                      "docs/developers/platform-api/query-params/expansions"
                     ]
-                  },
-                  "docs/developers/server-side-api/sdks"
+                  }
                 ]
               }
             ]
@@ -160,19 +160,21 @@
       },
 
       {
-        "product": "Server-Side API Reference",
+        "product": "Platform API Reference",
         "dropdowns": [
           {
+            "dropdown": "2026-03-09.teton",
+            "openapi": {
+              "source": "docs/references/platform-api/2026-03-09.yaml",
+              "directory": "docs/references/platform-api/2026-03-09/endpoints"
+            }
+          },
+          {
             "dropdown": "2025-10-21.zion",
-            "groups": [
-              {
-                "group": "Endpoints",
-                "openapi": {
-                  "source": "docs/references/server-side-api/2025-10-21.yaml",
-                  "directory": "docs/references/server-side-api/2025-10-21/endpoints"
-                }
-              }
-            ]
+            "openapi": {
+              "source": "docs/references/platform-api/2025-10-21.yaml",
+              "directory": "docs/references/platform-api/2025-10-21/endpoints"
+            }
           }
         ]
       },
@@ -181,27 +183,17 @@
         "dropdowns": [
           {
             "dropdown": "v0.2.0",
-            "pages": [
-              {
-                "group": "Endpoints",
-                "openapi": {
-                  "source": "docs/references/agent-api/v0.2.0.yaml",
-                  "directory": "docs/references/agent-api/v0.2.0/endpoints"
-                }
-              }
-            ]
+            "openapi": {
+              "source": "docs/references/agent-api/v0.2.0.yaml",
+              "directory": "docs/references/agent-api/v0.2.0/endpoints"
+            }
           },
           {
             "dropdown": "v0.1.0",
-            "pages": [
-              {
-                "group": "Endpoints",
-                "openapi": {
-                  "source": "docs/references/agent-api/v0.1.0.yaml",
-                  "directory": "docs/references/agent-api/v0.1.0/endpoints"
-                }
-              }
-            ]
+            "openapi": {
+              "source": "docs/references/agent-api/v0.1.0.yaml",
+              "directory": "docs/references/agent-api/v0.1.0/endpoints"
+            }
           }
         ]
       },
@@ -223,7 +215,10 @@
             "group": "Changelog",
             "pages": [
               "docs/changelogs/product",
-              "docs/changelogs/developers"
+              "docs/changelogs/cli",
+              "docs/changelogs/agent",
+              "docs/changelogs/agent-api",
+              "docs/changelogs/platform-api"
             ]
           }
         ]
@@ -289,8 +284,8 @@
       "destination": "/docs/references/agent-api/v0.2.0/:slug*"
     },
     {
-      "source": "/docs/references/server-side-api/latest/:slug*",
-      "destination": "/docs/references/server-side-api/2025-10-21/:slug*"
+      "source": "/docs/references/platform-api/latest/:slug*",
+      "destination": "/docs/references/platform-api/2026-03-09/:slug*"
     }
   ]
 }

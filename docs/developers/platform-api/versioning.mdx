@@ -7,7 +7,7 @@ import { LinkNewTab } from '/snippets/components/link.jsx';
 import BreakingChanges from '/snippets/references/apis/breaking.mdx';
 import NonBreakingChanges from '/snippets/references/apis/non-breaking.mdx';
 
-The Server-Side API uses **date-based versioning** with a train name. Each version follows the format:
+The Platform API uses **date-based versioning** with a train name. Each version follows the format:
 
 ```
 YYYY-MM-DD.<train>
@@ -20,7 +20,7 @@ All changes within a train are backward-compatible. A new train introduces a new
 
 ## Version header
 
-The Server-Side API **requires** the `Miru-Version` header to be set to the version you want to use. 
+The Platform API **requires** the `Miru-Version` header to be set to the version you want to use. 
 
 ```bash
 curl --request GET \
@@ -37,29 +37,31 @@ Below is a list of the currently supported versions:
 
 | API Version              |        Status       |
 |--------------------------|---------------------|
-| <LinkNewTab href="/docs/references/server-side-api/2026-03-09.yellowstone">2026-03-09.yellowstone</LinkNewTab> | <SupportedBadge />  |
-| <LinkNewTab href="/docs/references/server-side-api/2025-10-21.zion">2025-10-21.zion</LinkNewTab>        | <EndOfLifeBadge />  |
+| <LinkNewTab href="/docs/references/platform-api/2026-03-09.teton">2026-03-09.teton</LinkNewTab> | <SupportedBadge />  |
+| <LinkNewTab href="/docs/references/platform-api/2025-10-21.zion">2025-10-21.zion</LinkNewTab>        | <EndOfLifeBadge />  |
 
-You can find the Server-Side API's changelog as well as the full list of releases by following the links below.
+## Changelog and migrations
+
+For a history of changes and migration steps for the Platform API, visit the changelog below.
 
 <Card
-  href="/docs/changelogs/developers"
-  title="Developer Changelog"
+  href="/docs/changelogs/platform-api"
+  title="Platform API Changelog"
   icon="scroll-text"
   arrow
 >
-  Release notes for each Server-Side API release.
+  Changelog and migration steps for the Platform API.
 </Card>
 
 ## Support policy
 
-Miru provides three levels of support for the Server-Side API
+Miru provides three levels of support for the Platform API
 
 - Supported
 - Deprecated
 - End of life
 
-When a new API version epoch is released (e.g. `zion` to `yellowstone`), previous API epochs may enter a deprecation period. During this period:
+When a new API version epoch is released (e.g. `zion` to `teton`), previous API epochs may enter a deprecation period. During this period:
 
 - The deprecated version continues to function normally
 - No new features will be added to the deprecated epoch
@@ -68,7 +70,7 @@ Once the deprecation period ends, the API epoch is considered **end-of-life** an
 
 ## Deprecation notice
 
-Since the Miru Server-Side API is still in beta, a fixed support schedule for beta releases is not established. 
+Since the Miru Platform API is still in beta, a fixed support schedule for beta releases is not established. 
 
 Nonetheless, we are committed to ensuring that all users are migrated to a supported version before sunsetting an API version. Reasonable notice will be provided before deprecating and sunsetting any API versions.
 

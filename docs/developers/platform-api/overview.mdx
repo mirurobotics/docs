@@ -1,0 +1,21 @@
+---
+title: "Overview"
+---
+
+import {Framed} from '/snippets/components/framed.jsx';
+import PlatformAPICard from '/snippets/references/platform-api/card.mdx';
+
+<Framed
+  background="https://assets.mirurobotics.com/docs/v03/images/developers/background.jpeg"
+  image="https://assets.mirurobotics.com/docs/v03/images/platform-api/header:api-keys.png"
+  borderWidth="24px 0 0 36px"
+  innerRadius="8px 0 0 0"
+/>
+
+Miru's Platform API is a REST API for programmatically managing your Miru resources.  The Platform API is primarily for backend and cloud-native applications, enabling you to build custom workflows for device provisioning, CI/CD pipelines, and more.
+
+The Platform API is distinct from the Agent API, which is a REST API exposed by the Miru Agent for programmatic control by applications _running on your devices_.
+
+While the Platform API is accessed over the internet, the [Agent API](/docs/developers/agent-api/overview) is available only on devices running the Miru Agent and does not require internet access to operate.
+
+<PlatformAPICard />
