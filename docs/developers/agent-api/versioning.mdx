@@ -6,6 +6,7 @@ import { SupportedBadge, DeprecatedBadge, EndOfLifeBadge } from '/snippets/compo
 import { LinkNewTab } from '/snippets/components/link.jsx';
 import BreakingChanges from '/snippets/references/apis/breaking.mdx';
 import NonBreakingChanges from '/snippets/references/apis/non-breaking.mdx';
+import { CardNewTab } from '/snippets/components/card.jsx';
 
 
 The Agent API adheres to [semantic versioning](https://semver.org/), which was chosen to allow on-device applications to easily determine API version compatibility.
@@ -62,14 +63,14 @@ Below is a list of the currently supported versions:
 
 For a history of changes and migration steps for the Agent API, visit the changelog below.
 
-<Card
+<CardNewTab
   href="/docs/changelogs/agent-api"
   title="Agent API Changelog"
   icon="scroll-text"
   arrow
 >
   Changelog and migration steps for the Agent API.
-</Card>
+</CardNewTab>
 
 ## Stability guarantees
 

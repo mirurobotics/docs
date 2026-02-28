@@ -4,6 +4,7 @@ title: "Versions"
 
 import { SupportedBadge, DeprecatedBadge, EndOfLifeBadge } from '/snippets/components/support.jsx';
 import { LinkNewTab } from '/snippets/components/link.jsx';
+import { CardNewTab } from '/snippets/components/card.jsx';
 
 The Miru Agent follows [semantic versioning](https://semver.org/) for its releases. 
 
@@ -25,14 +26,14 @@ You can find the Miru Agent's changelog and the full list of releases by followi
 
 <Columns cols={2}>
 
-<Card
+<CardNewTab
   href="/docs/changelogs/agent"
   title="Agent Changelog"
   icon="scroll-text"
   arrow
 >
   Release notes for each Miru Agent release.
-</Card>
+</CardNewTab>
 
 <Card
   title="GitHub Releases"
