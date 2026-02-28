@@ -10,5 +10,26 @@ To install the Miru Agent, please visit the [device provisioning](/docs/learn/de
 - [API Keys](/docs/learn/devices/provision#api-keys) - a programmatic way to install the agent on many devices
 - [Poor Connectivity](/docs/learn/devices/provision#poor-connectivity) - a method for installing the agent on devices with poor connectivity
 
+## Upgrade
+
+To upgrade the Miru Agent to a new version, rerun the provisioning process with the `--allow-reactivation` and `--version` flags. This installs the specified agent version and reactivates the device, refreshing its authentication credentials in the process.
+
+**API Keys**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/mirurobotics/agent/main/scripts/install/provision.sh | sh -s -- \
+  --device-name=$HOSTNAME \
+  --allow-reactivation=true \
+  --version=<desired-version>
+```
+
+Replace `<desired-version>` with the version you want to install (e.g., `v0.7.0`). See all [available versions](https://github.com/mirurobotics/agent/releases).
+
+**Dashboard**
+
+To upgrade a device provisioned through the dashboard, copy a fresh installation command from the device's page in the dashboard and run it on the device. The installation script automatically handles reactivation.
+
+The device retains its identity and deployment state across upgrades — only the agent binary and authentication credentials are refreshed. Existing deployed configurations remain on the filesystem and are not interrupted.
+
 ## Uninstall
 <Uninstall />
