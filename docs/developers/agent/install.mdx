@@ -12,24 +12,15 @@ To install the Miru Agent, please visit the [device provisioning](/docs/learn/de
 
 ## Upgrade
 
-To upgrade the Miru Agent to a new version, rerun the provisioning process with the `--allow-reactivation` and `--version` flags. This installs the specified agent version and reactivates the device, refreshing its authentication credentials in the process.
-
-**API Keys**
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/mirurobotics/agent/main/scripts/install/provision.sh | sh -s -- \
-  --device-name=$HOSTNAME \
-  --allow-reactivation=true \
-  --version=<desired-version>
-```
-
-Replace `<desired-version>` with the version you want to install (e.g., `v0.7.0`). See all [available versions](https://github.com/mirurobotics/agent/releases).
+To upgrade a device's Miru Agent to a new version, simply install the agent.
 
 **Dashboard**
 
-To upgrade a device provisioned through the dashboard, copy a fresh installation command from the device's page in the dashboard and run it on the device. The installation script automatically handles reactivation.
+To upgrade a device from the dashboard, follow the [dashboard provisioning](/docs/learn/devices/provision#dashboard) instructions as normal. The device will be automatically be reactivated and the agent upgraded to the latest version.
 
-The device retains its identity and deployment state across upgrades — only the agent binary and authentication credentials are refreshed. Existing deployed configurations remain on the filesystem and are not interrupted.
+**API Keys**
+
+To upgrade a device [via API Keys](/docs/learn/devices/provision#api-keys), rerun the provisioning process with the [`--allow-reactivation`](/docs/learn/devices/provision#param-allow-reactivation) flag. This permits an already installed device to be reactivated and the agent upgraded to the chosen version.
 
 ## Uninstall
 <Uninstall />
