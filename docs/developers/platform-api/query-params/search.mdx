@@ -1,0 +1,149 @@
+---
+title: "Search"
+---
+
+The `search` query parameter provides structured filtering on list endpoints using a query language with operators, negation, null checks, and multi-clause logic.
+
+`search` cannot be combined with basic filter query parameters — use one or the other. For simple exact-match filtering, see [filtering](/docs/developers/platform-api/query-params/filtering).
+
+## Search query syntax
+
+Each search clause follows the structure `<field><operator><value>`. For example, to search for a device named "Robot A":
+
+```bash
+curl --request GET \
+  --url 'https://api.mirurobotics.com/v1/devices?search=name:Robot%20A' \
+  --header 'X-API-Key: <api-key>'
+```
+
+## Operators
+
+| Operator | Name | Description | Supported field types | Example |
+| -------- | ---- | ----------- | --------------------- | ------- |
+| `:` | Equals | Exact match | exact, string, numeric | `name:Robot A` |
+| `~` | Contains | Substring match (case-insensitive) | string | `name~Rob` |
+| `>` | Greater than | Strictly greater than | numeric | `queued_at>2025-01-01T00:00:00Z` |
+| `>=` | Greater than or equal | Greater than or equal to | numeric | `version>=3` |
+| `<` | Less than | Strictly less than | numeric | `queued_at<2025-06-01T00:00:00Z` |
+| `<=` | Less than or equal | Less than or equal to | numeric | `version<=10` |
+
+Using an unsupported operator on a field (e.g., `~` on an exact field) returns an error.
+
+## Field types
+
+Each searchable field has a type that determines which operators it supports.
+
+| Type | Supported operators | Description |
+| ---- | ------------------- | ----------- |
+| **exact** | `:` | Exact match only. Used for enum/status fields with a fixed set of values. |
+| **string** | `:` `~` | Exact match and substring (contains) matching. |
+| **numeric** | `:` `>` `>=` `<` `<=` | Exact match and comparison operators. Used for timestamps and version numbers. |
+
+## Combining clauses
+
+Join multiple clauses with ` AND ` (uppercase, space-delimited). All clauses must match.
+
+```bash
+curl --request GET \
+  --url 'https://api.mirurobotics.com/v1/deployments?search=device_id:dvc_123%20AND%20target_status:deployed' \
+  --header 'X-API-Key: <api-key>'
+```
+
+## Multi-value
+
+Use pipe-separated values with the `:` operator to match any of the listed values (OR logic within a single clause). Multi-value is only supported with the `:` operator.
+
+```bash
+curl --request GET \
+  --url 'https://api.mirurobotics.com/v1/deployments?search=activity_status:queued|deployed' \
+  --header 'X-API-Key: <api-key>'
+```
+
+## Negation
+
+Prefix a clause with `-` to negate it. For example, `-error_status:none` matches deployments where `error_status` is not `none`.
+
+```bash
+curl --request GET \
+  --url 'https://api.mirurobotics.com/v1/deployments?search=-error_status:none' \
+  --header 'X-API-Key: <api-key>'
+```
+
+## Null values
+
+Use the literal `null` as a value with the `:` operator to match null fields.
+
+- `error_status:null` — field is null
+- `-error_status:null` — field is not null
+- `error_status:none|null` — field is `none` or null
+
+```bash
+curl --request GET \
+  --url 'https://api.mirurobotics.com/v1/deployments?search=error_status:null' \
+  --header 'X-API-Key: <api-key>'
+```
+
+## Searchable fields
+
+### Devices
+
+See [list devices](/docs/references/platform-api/latest/endpoints/devices/list).
+
+| Field | Type | Example |
+| ----- | ---- | ------- |
+| `id` | string | `id:dvc_123` |
+| `name` | string | `name~Robot` |
+| `agent_version` | string | `agent_version:1.2.0` |
+
+### Deployments
+
+See [list deployments](/docs/references/platform-api/latest/endpoints/deployments/list).
+
+| Field | Type | Example |
+| ----- | ---- | ------- |
+| `id` | string | `id:dpl_123` |
+| `target_status` | exact | `target_status:deployed` |
+| `activity_status` | exact | `activity_status:queued\|deployed` |
+| `error_status` | exact | `error_status:none` |
+| `device_id` | string | `device_id:dvc_123` |
+| `release_id` | string | `release_id:rls_123` |
+| `queued_at` | numeric | `queued_at>2025-01-01T00:00:00Z` |
+
+### Config instances
+
+See [list config instances](/docs/references/platform-api/latest/endpoints/config-instances/list).
+
+| Field | Type | Example |
+| ----- | ---- | ------- |
+| `id` | string | `id:cfg_inst_123` |
+| `config_schema_id` | string | `config_schema_id:cfg_sch_123` |
+| `config_type_id` | string | `config_type_id:cfg_type_123` |
+
+### Releases
+
+See [list releases](/docs/references/platform-api/latest/endpoints/releases/list).
+
+| Field | Type | Example |
+| ----- | ---- | ------- |
+| `id` | string | `id:rls_123` |
+| `version` | numeric | `version>=3` |
+
+## Combining with other query parameters
+
+`search` works alongside `order_by`, `limit`, `offset`, and `expand[]`. It cannot be combined with basic filter query parameters.
+
+The following request searches for queued deployments on a specific device, sorted by queue time, with pagination:
+
+```bash
+curl --request GET \
+  --url 'https://api.mirurobotics.com/v1/deployments?search=device_id:dvc_123%20AND%20activity_status:queued&order_by=queued_at:desc&limit=10&offset=0' \
+  --header 'X-API-Key: <api-key>'
+```
+
+## Limitations
+
+- Cannot combine `search` with basic filter query parameters
+- Only `AND` logic between clauses (no `OR` between clauses)
+- Multi-value (`|`) only with `:` operator
+- Comparison operators accept exactly one value per clause
+- `null` only with `:` operator

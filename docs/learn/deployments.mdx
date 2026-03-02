@@ -140,21 +140,27 @@ The target status is the desired state of a deployment. There are three possible
 
 If a deployment is staged before being deployed, the diagram below shows the valid transitions between target statuses.
 
-<img
-  src="https://assets.mirurobotics.com/docs/v03/images/deployments/target-status-fsm:stage.png"
-  alt="Target status state machine"
-  style={{ display:"block",width:"85%",margin:"0 auto",borderRadius:"10px" }}
-/>
+```mermaid
+flowchart LR
+    classDef blue fill:#3b82f6,color:#fff,stroke:none
+    classDef green fill:#22c55e,color:#fff,stroke:none
+    classDef gray fill:#6b7280,color:#fff,stroke:none
+
+    A(staged):::blue --> B(deployed):::green --> C(archived):::gray
+    A --> C
+```
 
 **Without Staging**
 
 Of course, many deployments skip staging and deploy immediately (such as those deployed from a device's [config editor](/docs/learn/devices/config-editor)). The diagram below shows the valid transitions between target statuses for a deployment that is immediately deployed.
 
-<img
-  src="https://assets.mirurobotics.com/docs/v03/images/deployments/target-status-fsm:deploy.png"
-  alt="Target status state machine"
-  style={{ display:"block",width:"55%",margin:"0 auto",borderRadius:"10px" }}
-/>
+```mermaid
+flowchart LR
+    classDef green fill:#22c55e,color:#fff,stroke:none
+    classDef gray fill:#6b7280,color:#fff,stroke:none
+
+    A(deployed):::green --> B(archived):::gray
+```
 
 **One-Time Use**
 
@@ -183,19 +189,49 @@ There are six possible activity states for a deployment.
 
 **With Staging**
 
-When a deployment is [staged](/docs/learn/releases/staging-area) before being deployed, it can pass through all the listed activity states. Below is a diagram of the valid transitions between activity states.
+When a deployment is [staged](/docs/learn/releases/staging-area) before being deployed, its lifecycle has two phases: a **review phase** and a **deployment phase**.
 
-![](https://assets.mirurobotics.com/docs/v03/images/deployments/activity-status-fsm:stage.png)
+During the review phase, a staged deployment may [drift](/docs/learn/releases/staging-area#deployment-drift) if the underlying release changes. A drifted deployment transitions to `needs_review` and must either be restaged or archived.
 
-Deployments start in the `staged` state. If a deployment [drifts](/docs/learn/releases/staging-area#deployment-drift), it transitions to `needs review` and must either be restaged or archived.
+```mermaid
+flowchart LR
+    classDef blue fill:#3b82f6,color:#fff,stroke:none
+    classDef orange fill:#f97316,color:#fff,stroke:none
+    classDef gray fill:#6b7280,color:#fff,stroke:none
 
-Eventually, the deployment is queued for delivery to the device, where it passes through the primary deployment lifecycle from `queued` to `archived`.
+    A(staged):::blue -- drift --> B(needs_review):::orange
+    B -- restage --> A
+    B --> C(archived):::gray
+    A --> C
+```
+
+Once the deployment is approved, it enters the deployment phase. The deployment is queued for delivery to the device, delivered, and eventually archived.
+
+```mermaid
+flowchart LR
+    classDef blue fill:#3b82f6,color:#fff,stroke:none
+    classDef yellow fill:#ca8a04,color:#fff,stroke:none
+    classDef green fill:#22c55e,color:#fff,stroke:none
+    classDef slate fill:#64748b,color:#fff,stroke:none
+    classDef gray fill:#6b7280,color:#fff,stroke:none
+
+    A(staged):::blue --> B(queued):::yellow --> C(deployed):::green --> D(removing):::slate --> E(archived):::gray
+    C --> E
+```
 
 **Without Staging**
 
 Deployments which are immediately deployed and skip the `staged` state have a simpler lifecycle. They simply go through the primary deployment lifecycle from `queued` to `archived`.
 
-![](https://assets.mirurobotics.com/docs/v03/images/deployments/activity-status-fsm:deploy.png)
+```mermaid
+flowchart LR
+    classDef yellow fill:#ca8a04,color:#fff,stroke:none
+    classDef green fill:#22c55e,color:#fff,stroke:none
+    classDef slate fill:#64748b,color:#fff,stroke:none
+    classDef gray fill:#6b7280,color:#fff,stroke:none
+
+    A(queued):::yellow --> B(deployed):::green --> C(removing):::slate --> D(archived):::gray
+```
 
 **One-Time Use**
 
@@ -217,11 +253,16 @@ There are three possible error states for a deployment.
 
 Below are the valid transitions between error states.
 
-<img
-  src="https://assets.mirurobotics.com/docs/v03/images/deployments/error-status-fsm.png"
-  alt="Error status state machine"
-  style={{ display:"block",width:"85%",margin:"0 auto",borderRadius:"10px" }}
-/>
+```mermaid
+flowchart LR
+    classDef green fill:#22c55e,color:#fff,stroke:none
+    classDef pink fill:#f472b6,color:#fff,stroke:none
+    classDef red fill:#ef4444,color:#fff,stroke:none
+
+    A(none):::green ---> B(retrying):::pink
+    B ---> A
+    B ---> C(failed):::red
+```
 
 Deployments start in the `none` error state. If no errors are encountered, the deployment remains in the `none` error state for the duration of its existence.
 

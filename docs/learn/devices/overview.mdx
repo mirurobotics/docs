@@ -91,7 +91,16 @@ Devices leverage several states to track their registration and connectivity wit
 | `online`     | Device is currently connected to Miru's servers             |
 | `offline`    | Device has lost connection to Miru's servers                |
 
-![](https://assets.mirurobotics.com/docs/v03/images/devices/status-fsm.png)
+```mermaid
+flowchart LR
+    classDef sky fill:#38bdf8,color:#fff,stroke:none
+    classDef blue fill:#3b82f6,color:#fff,stroke:none
+    classDef green fill:#22c55e,color:#fff,stroke:none
+    classDef gray fill:#6b7280,color:#fff,stroke:none
+
+    A(inactive):::sky --> B(activating):::blue --> C(online):::green ---> D(offline):::gray
+    D ---> C
+```
 
 Devices begin in the `inactive` state. During the Miru Agent install process, devices briefly enter the `activating` state before transitioning to `online`.
 
