@@ -13,6 +13,10 @@ The `v0.2.0` release expands the Agent API from basic device health/version endp
 
 The current release version endpoint is the most exciting, enabling on-device applications to ensure that the release version of the config instances matches the application's software version.
 
+API Reference: <LinkNewTab href="/docs/references/agent-api/v0.2.0">v0.2.0 Reference</LinkNewTab>
+
+OpenAPI Spec: <LinkNewTab href="https://assets.mirurobotics.com/docs/openapi/agent/v0.2.0.yaml">Download (YAML) ↓</LinkNewTab>
+
 ### New endpoints
 
 Added read-only endpoints for inspecting deployment pipeline state from on-device applications.
@@ -91,8 +95,6 @@ The `GET /version` response renamed `commit` to `git_commit` and added new field
   </Step>
 </Steps>
 
-For the full v0.2.0 specification, visit the <LinkNewTab href="/docs/references/agent-api/v0.2.0">Agent API v0.2.0 reference »</LinkNewTab>
-
 ---
 
 ## v0.1.0
@@ -101,11 +103,13 @@ For the full v0.2.0 specification, visit the <LinkNewTab href="/docs/references/
 
 Initial release of the Agent API. This version establishes the core on-device integration surface, including health checks, version metadata, device metadata, and a manual sync trigger. 
 
+API Reference: <LinkNewTab href="/docs/references/agent-api/v0.1.0">v0.1.0 Reference</LinkNewTab>
+
+OpenAPI Spec: <LinkNewTab href="https://assets.mirurobotics.com/docs/openapi/agent/v0.1.0.yaml">Download (YAML) ↓</LinkNewTab>
+
 ### Features
 
 - `GET /health` — retrieve the health of the agent
 - `GET /version` — retrieve the version of the agent
 - `GET /device` — retrieve the device
 - `POST /device/sync` — manually force a device sync
-
-For the full v0.1.0 specification, visit the <LinkNewTab href="/docs/references/agent-api/v0.1.0">Agent API v0.1.0 reference »</LinkNewTab>
