@@ -5,7 +5,36 @@ description: "Changelog and migration steps for the Platform API"
 
 ## 2026-03-09.teton
 
-*Coming soon*
+*March 9, 2026*
+
+### Changes
+
+- Renamed deployment activity status `needs_review` to `drifted`
+- Removed `removing` deployment activity status — deployments now transition directly from `deployed` to `archived`
+
+### Migration steps
+
+<Steps>
+  <Step title="Update deployment status checks">
+    Update any code that checks deployment activity status strings:
+
+    <CodeGroup>
+    ```python Before
+    if deployment.activity_status == "needs_review":
+        ...
+    ```
+
+    ```python After
+    if deployment.activity_status == "drifted":
+        ...
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Remove removing status handling">
+    Remove any code that handles the `removing` activity status. Deployments now transition directly from `deployed` to `archived`.
+  </Step>
+</Steps>
 
 ---
 

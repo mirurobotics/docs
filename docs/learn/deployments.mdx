@@ -44,10 +44,9 @@ import {Framed} from '/snippets/components/framed.jsx';
 
   Allowed values: 
   - `staged`
-  - `needs_review`
+  - `drifted`
   - `queued`
   - `deployed`
-  - `removing`
   - `archived`
 
 </ParamField>
@@ -68,7 +67,7 @@ import {Framed} from '/snippets/components/framed.jsx';
 
   <DeploymentStatus />
 
-  Enum: `staged`, `needs_review`, `queued`, `deployed`, `removing`, `archived`, `failed`, `retrying`
+  Enum: `staged`, `drifted`, `queued`, `deployed`, `archived`, `failed`, `retrying`
 </ParamField>
 
 <ParamField path="parent" type="Deployment">
@@ -176,22 +175,21 @@ The activity status is the _last known_ state of a deployment.
 
 We use _the last known state_ intentionally -- poor network connectivity can prevent devices from immediately syncing their activity state with the cloud. In practice, this isn't too common. However, it's still a critical point to keep in mind.
 
-There are six possible activity states for a deployment.
+There are five possible activity states for a deployment.
 
 | Activity Status | Description                                                                                                                     |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `staged`        | Deployment has been created and is ready to be deployed                                                                         |
-| `needs review`  | Deployment has [drifted](/docs/learn/releases/staging-area#deployment-drift) and needs to be reviewed                           |
+| `drifted`       | Deployment has [drifted](/docs/learn/releases/staging-area#deployment-drift) and needs to be reviewed                           |
 | `queued`        | Deployment is waiting for the device to be <Tooltip tip={ONLINE_TOOLTIP.tip} cta={ONLINE_TOOLTIP.cta} href={ONLINE_TOOLTIP.href}>online</Tooltip> so it can be delivered to the device |
 | `deployed`      | Deployment has been delivered to the device, and its configurations are available for consumption                               |
-| `removing`      | Deployment will be removed from the device as soon as the device is `online`                                                    |
 | `archived`      | Deployment is available for historical reference, but can never be deployed again                                               |
 
 **With Staging**
 
 When a deployment is [staged](/docs/learn/releases/staging-area) before being deployed, its lifecycle has two phases: a **review phase** and a **deployment phase**.
 
-During the review phase, a staged deployment may [drift](/docs/learn/releases/staging-area#deployment-drift) if the underlying release changes. A drifted deployment transitions to `needs_review` and must either be restaged or archived.
+During the review phase, a staged deployment may [drift](/docs/learn/releases/staging-area#deployment-drift) if the underlying release changes. A drifted deployment transitions to `drifted` and must either be restaged or archived.
 
 ```mermaid
 flowchart LR
@@ -199,7 +197,7 @@ flowchart LR
     classDef orange fill:#f97316,color:#fff,stroke:none
     classDef gray fill:#6b7280,color:#fff,stroke:none
 
-    A(staged):::blue -- drift --> B(needs_review):::orange
+    A(staged):::blue -- drift --> B(drifted):::orange
     B -- restage --> A
     B --> C(archived):::gray
     A --> C
@@ -212,11 +210,9 @@ flowchart LR
     classDef blue fill:#3b82f6,color:#fff,stroke:none
     classDef yellow fill:#ca8a04,color:#fff,stroke:none
     classDef green fill:#22c55e,color:#fff,stroke:none
-    classDef slate fill:#64748b,color:#fff,stroke:none
     classDef gray fill:#6b7280,color:#fff,stroke:none
 
-    A(staged):::blue --> B(queued):::yellow --> C(deployed):::green --> D(removing):::slate --> E(archived):::gray
-    C --> E
+    A(staged):::blue --> B(queued):::yellow --> C(deployed):::green --> D(archived):::gray
 ```
 
 **Without Staging**
@@ -227,10 +223,9 @@ Deployments which are immediately deployed and skip the `staged` state have a si
 flowchart LR
     classDef yellow fill:#ca8a04,color:#fff,stroke:none
     classDef green fill:#22c55e,color:#fff,stroke:none
-    classDef slate fill:#64748b,color:#fff,stroke:none
     classDef gray fill:#6b7280,color:#fff,stroke:none
 
-    A(queued):::yellow --> B(deployed):::green --> C(removing):::slate --> D(archived):::gray
+    A(queued):::yellow --> B(deployed):::green --> C(archived):::gray
 ```
 
 **One-Time Use**

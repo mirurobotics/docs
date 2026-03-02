@@ -197,13 +197,13 @@ Our device is currently running deployment `DPL-Npfzv`, which adheres to release
 
 However, before the upgrade occurs, our device receives some configuration updates on release `v1.5`--`DPL-Npfzv` is patched with `DPL-BFwc3`. Since it's often the case that this patch also needs to be applied to the staged deployment `DPL-Q4CeX`, we say `DPL-Q4CeX` has _drifted_.
 
-When a deployment drifts, it is marked as `needs review` and cannot be deployed until an explicit review is performed. You must either ignore the patch or apply the patch to the staged deployment.
+When a deployment drifts, it is marked as `drifted` and cannot be deployed until an explicit review is performed. You must either ignore the patch or apply the patch to the staged deployment.
 
 The concept of deployment drift ensures that configuration changes aren't lost during migrations between releases, preventing misconfigurations.
 
 ## Review a deployment
 
-Reviewing a deployment is only possible when a deployment has [drifted](#deployment-drift) and is in the `needs review` state. Otherwise, the review button is disabled.
+Reviewing a deployment is only possible when a deployment has [drifted](#deployment-drift) and is in the `drifted` state. Otherwise, the review button is disabled.
 
 Reviewing a deployment displays the patches applied to a device since the last time the deployment was reviewed (or since it was initially staged).
 
