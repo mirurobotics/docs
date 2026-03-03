@@ -112,12 +112,12 @@ def refresh_webhooks_yaml(api_dir: Path, openapi_dir: Path) -> None:
     shutil.copy(webhooks_file, target_webhooks_file)
 
 
-def refresh_agent_api_yaml(api_dir: Path, openapi_dir: Path) -> None:
+def refresh_device_api_yaml(api_dir: Path, openapi_dir: Path) -> None:
     """Refresh the api.yaml file."""
     agent_server_dir: Path = openapi_dir / "configs" / "agent-server"
     public_openapi_spec: Path = agent_server_dir / "openapi.gen.yaml"
 
-    target_api_file: Path = api_dir / "agent-api.miru.yaml"
+    target_api_file: Path = api_dir / "device-api.miru.yaml"
 
     # delete the target api file if it exists
     if target_api_file.exists():
@@ -138,7 +138,7 @@ def main() -> None:
 
     # refresh the yaml files in the api directory
     refresh_server_api_yaml(api_dir, openapi_dir)
-    refresh_agent_api_yaml(api_dir, openapi_dir)
+    refresh_device_api_yaml(api_dir, openapi_dir)
     refresh_webhooks_yaml(api_dir, openapi_dir)
 
 

@@ -1,6 +1,6 @@
 ---
-title: "Agent API"
-description: "Changelog and migration steps for the Agent API"
+title: "Device API"
+description: "Changelog and migration steps for the Device API"
 ---
 
 import { LinkNewTab } from '/snippets/components/link.jsx';
@@ -9,11 +9,11 @@ import { LinkNewTab } from '/snippets/components/link.jsx';
 
 *TBD*
 
-The `v0.2.0` release expands the Agent API from basic device health/version endpoints to deployment-pipeline visibility. 
+The `v0.2.0` release expands the Device API from basic device health/version endpoints to deployment-pipeline visibility. 
 
 The current release version endpoint is the most exciting, enabling on-device applications to ensure that the release version of the config instances matches the application's software version.
 
-API Reference: <LinkNewTab href="/docs/references/agent-api/v0.2.0">v0.2.0 Reference</LinkNewTab>
+API Reference: <LinkNewTab href="/docs/references/device-api/v0.2.0">v0.2.0 Reference</LinkNewTab>
 
 OpenAPI Spec: <LinkNewTab href="https://assets.mirurobotics.com/docs/openapi/agent/v0.2.0.yaml">Download (YAML) ↓</LinkNewTab>
 
@@ -65,7 +65,7 @@ The `GET /version` response renamed `commit` to `git_commit` and added new field
 
 <Steps>
   <Step title="Verify agent compatibility">
-    Ensure all devices in your fleet are running **Miru Agent v0.7.0** or later. See the [agent compatibility matrix](/docs/developers/agent-api/versioning#agent-compatibility-matrix) for details.
+    Ensure all devices in your fleet are running **Miru Agent v0.7.0** or later. See the [agent compatibility matrix](/docs/developers/device-api/versioning#agent-compatibility-matrix) for details.
   </Step>
 
   <Step title="Update base path">
@@ -101,9 +101,9 @@ The `GET /version` response renamed `commit` to `git_commit` and added new field
 
 *September 21, 2025*
 
-Initial release of the Agent API. This version establishes the core on-device integration surface, including health checks, version metadata, device metadata, and a manual sync trigger. 
+Initial release of the Device API. This version establishes the core on-device integration surface, including health checks, version metadata, device metadata, and a manual sync trigger. 
 
-API Reference: <LinkNewTab href="/docs/references/agent-api/v0.1.0">v0.1.0 Reference</LinkNewTab>
+API Reference: <LinkNewTab href="/docs/references/device-api/v0.1.0">v0.1.0 Reference</LinkNewTab>
 
 OpenAPI Spec: <LinkNewTab href="https://assets.mirurobotics.com/docs/openapi/agent/v0.1.0.yaml">Download (YAML) ↓</LinkNewTab>
 

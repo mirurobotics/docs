@@ -3,17 +3,17 @@ set -e
 
 git_repo_root_dir=$(git rev-parse --show-toplevel)
 
-# pull the agent-api.yaml file from Stainless
-AGENT_API_URL="https://app.stainless.com/api/spec/documented/miru-agent/openapi.documented.yml"
-AGENT_API_FILE="$git_repo_root_dir/api/agent-api.stainless.yaml"
-if ! curl -s -f -o "$AGENT_API_FILE" "$AGENT_API_URL"; then
-    echo "❌ Failed to download agent API spec from Stainless"
+# pull the device-api.yaml file from Stainless
+DEVICE_API_URL="https://app.stainless.com/api/spec/documented/miru-agent/openapi.documented.yml"
+DEVICE_API_FILE="$git_repo_root_dir/api/device-api.stainless.yaml"
+if ! curl -s -f -o "$DEVICE_API_FILE" "$DEVICE_API_URL"; then
+    echo "❌ Failed to download device API spec from Stainless"
     exit 1
 fi
 
 # Verify the file is not empty
-if [ ! -s "$AGENT_API_FILE" ]; then
-    echo "❌ Downloaded agent API spec file is empty"
+if [ ! -s "$DEVICE_API_FILE" ]; then
+    echo "❌ Downloaded device API spec file is empty"
     exit 1
 fi
 
@@ -56,5 +56,5 @@ fi
 # remove the webhooks section from the server-api.yaml file
 python3 remove_webhooks.py "$SERVER_API_FILE"
 
-# add Unix socket curl examples to the agent-api.yaml file
-python3 add_unix_socket_curl.py "$AGENT_API_FILE"
+# add Unix socket curl examples to the device-api.yaml file
+python3 add_unix_socket_curl.py "$DEVICE_API_FILE"

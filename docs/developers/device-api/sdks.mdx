@@ -2,7 +2,7 @@
 title: "SDKs"
 ---
 
-import AgentAPICard from '/snippets/references/agent-api/card.mdx';
+import DeviceAPICard from '/snippets/references/device-api/card.mdx';
 
 Miru provides SDKs to simplify interaction with the API exposed by the Miru Agent locally on your machine.
 
@@ -10,7 +10,7 @@ These SDKs handle the complexities of Unix socket communication and provide type
 
 ## Python
 
-The Python [Agent SDK](https://github.com/mirurobotics/python-agent-sdk) provides convenient access to the Agent API from any Python 3.8+ application. The SDK offers the following features:
+The Python [Agent SDK](https://github.com/mirurobotics/python-agent-sdk) provides convenient access to the Device API from any Python 3.8+ application. The SDK offers the following features:
 
 - **Type Safety**: Full type hints and Pydantic models
 - **Async Support**: Both synchronous and asynchronous clients
@@ -24,7 +24,7 @@ For detailed documentation, examples, and advanced usage, visit the Python Agent
   icon="python"
   href="https://github.com/mirurobotics/python-agent-sdk"
 >
-  Official Python SDK for the Miru Agent API.
+  Official Python SDK for the Miru Device API.
 </Card>
 
 ## Coming soon
@@ -45,8 +45,8 @@ A Rust SDK is coming soon and will provide:
 
 ## Direct API usage
 
-If you're using a language not yet supported by an official SDK, you can still interact with the Agent API directly using HTTP requests over the Unix socket at `/run/miru/miru.sock`. 
+If you're using a language not yet supported by an official SDK, you can still interact with the Device API directly using HTTP requests over the Unix socket at `/run/miru/miru.sock`. 
 
-You can find the complete reference of all available API endpoints in the Agent API Reference.
+You can find the complete reference of all available API endpoints in the Device API Reference.
 
-<AgentAPICard />
+<DeviceAPICard />

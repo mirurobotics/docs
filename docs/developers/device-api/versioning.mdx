@@ -9,13 +9,13 @@ import NonBreakingChanges from '/snippets/references/apis/non-breaking.mdx';
 import { CardNewTab } from '/snippets/components/card.jsx';
 
 
-The Agent API adheres to [semantic versioning](https://semver.org/), which was chosen to allow on-device applications to easily determine API version compatibility.
+The Device API adheres to [semantic versioning](https://semver.org/), which was chosen to allow on-device applications to easily determine API version compatibility.
 
-The Agent API is currently in beta, signified by the `v0` prefix. There is no established release cadence for the Agent API--features are simply released as soon as they are ready.
+The Device API is currently in beta, signified by the `v0` prefix. There is no established release cadence for the Device API--features are simply released as soon as they are ready.
 
 ## URL format
 
-The Agent API is served from the unix socket at `/run/miru/miru.sock` with the URL format `http://localhost/{version}/`, where `{version}` is the breaking change alias for the API version.
+The Device API is served from the unix socket at `/run/miru/miru.sock` with the URL format `http://localhost/{version}/`, where `{version}` is the breaking change alias for the API version.
 
 Beta releases use breaking change aliases that include the major and minor version numbers (e.g. `v0.2`, `v0.3`, etc.). Stable releases use breaking change aliases that include the major version number only (e.g. `v1`, `v2`, etc.).
 
@@ -48,7 +48,7 @@ As rule of thumb, pin your client to the API version of the oldest agent version
 
 ## Supported versions
 
-The Agent API does not have its own support policy--its support is inherited from the Miru Agent. 
+The Device API does not have its own support policy--its support is inherited from the Miru Agent. 
 
 If a supported Miru Agent uses an API version, that API version is supported. You can find the supported Miru Agent versions on the [Agent Versions](/docs/developers/agent/versions) page.
 
@@ -56,27 +56,27 @@ Below is a list of the currently supported versions:
 
 | API Version | Released     |       Status       |
 |-------------|--------------|--------------------|
-| <LinkNewTab href="/docs/references/agent-api/v0.2.0">v0.2.0</LinkNewTab>    | TBD          | <SupportedBadge /> |
-| <LinkNewTab href="/docs/references/agent-api/v0.1.0">v0.1.0</LinkNewTab>    | 2025-09-21   | <DeprecatedBadge />|
+| <LinkNewTab href="/docs/references/device-api/v0.2.0">v0.2.0</LinkNewTab>    | TBD          | <SupportedBadge /> |
+| <LinkNewTab href="/docs/references/device-api/v0.1.0">v0.1.0</LinkNewTab>    | 2025-09-21   | <DeprecatedBadge />|
 
 ## Changelog and migrations
 
-For a history of changes and migration steps for the Agent API, visit the changelog below.
+For a history of changes and migration steps for the Device API, visit the changelog below.
 
 <CardNewTab
-  href="/docs/changelogs/agent-api"
-  title="Agent API Changelog"
+  href="/docs/changelogs/device-api"
+  title="Device API Changelog"
   icon="scroll-text"
   arrow
 >
-  Changelog and migration steps for the Agent API.
+  Changelog and migration steps for the Device API.
 </CardNewTab>
 
 ## OpenAPI specifications
 
-The Agent API is defined using the OpenAPI 3.0 specification. 
+The Device API is defined using the OpenAPI 3.0 specification. 
 
-Each version of the spec is available for download as a YAML file from the [Agent API changelog](/docs/changelogs/agent-api). Use the specs to generate client code, validate requests, or import into tools like Postman and Swagger UI.
+Each version of the spec is available for download as a YAML file from the [Device API changelog](/docs/changelogs/device-api). Use the specs to generate client code, validate requests, or import into tools like Postman and Swagger UI.
 
 ## Stability guarantees
 

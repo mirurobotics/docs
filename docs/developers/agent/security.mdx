@@ -139,7 +139,7 @@ All communication between the agent and the Miru control plane is encrypted in t
 
 The agent initiates all connections outbound. No inbound ports need to be opened on the device and no listening network sockets are created.
 
-The only local interface is a Unix domain socket at `/run/miru/miru.sock`, used by applications on the same device to query the agent's [REST API](/docs/developers/agent-api/overview). This socket is not accessible over the network.
+The only local interface is a Unix domain socket at `/run/miru/miru.sock`, used by applications on the same device to query the agent's [REST API](/docs/developers/device-api/overview). This socket is not accessible over the network.
 
 ## Local API access control
 

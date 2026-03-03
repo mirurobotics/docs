@@ -82,7 +82,7 @@ sequenceDiagram
 
 **2. Manual request (REST API)**
 
-Oftentimes it's beneficial to manually trigger a sync cycle from an on-device application to ensure that the local state is in sync with the control plane's state. A local application can request the agent perform a sync cycle via the [Agent API](/docs/developers/agent-api/overview).
+Oftentimes it's beneficial to manually trigger a sync cycle from an on-device application to ensure that the local state is in sync with the control plane's state. A local application can request the agent perform a sync cycle via the [Device API](/docs/developers/device-api/overview).
 
 ```mermaid
 sequenceDiagram
@@ -126,5 +126,5 @@ Once the cooldown expires, the agent retries the deployment on the next sync. If
 
 The agent persists all state locally on the device, including deployment metadata and configuration file content. If the device loses network connectivity:
 
-- Configurations that are already deployed remain on the filesystem and continue to be served by the local [REST API](/docs/developers/agent-api/overview)
+- Configurations that are already deployed remain on the filesystem and continue to be served by the local [REST API](/docs/developers/device-api/overview)
 - Status updates are persisted on disk and sent to the control plane as soon as the agent reconnects

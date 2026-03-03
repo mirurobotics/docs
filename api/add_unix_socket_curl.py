@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Add Unix socket curl examples to agent API endpoints.
+Add Unix socket curl examples to device API endpoints.
 
 This script automatically adds curl examples using Unix sockets to all
-endpoints in the agent API spec that don't already have curl examples.
+endpoints in the device API spec that don't already have curl examples.
 """
 
 import sys
@@ -136,7 +136,7 @@ def add_curl_examples_to_spec(spec_path):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python3 add_unix_socket_curl.py <agent-api-spec.yaml>")
+        print("Usage: python3 add_unix_socket_curl.py <device-api-spec.yaml>")
         sys.exit(1)
     
     spec_path = Path(sys.argv[1])

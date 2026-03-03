@@ -113,12 +113,12 @@
                 ]
               },
               {
-                "group": "Agent API",
+                "group": "Device API",
                 "pages": [
-                  "docs/developers/agent-api/overview",
-                  "docs/developers/agent-api/sdks",
-                  "docs/developers/agent-api/authn",
-                  "docs/developers/agent-api/versioning"
+                  "docs/developers/device-api/overview",
+                  "docs/developers/device-api/sdks",
+                  "docs/developers/device-api/authn",
+                  "docs/developers/device-api/versioning"
                 ]
               },
               {
@@ -161,7 +161,36 @@
           }
         ]
       },
-
+      {
+        "product": "CLI Reference",
+        "groups": [
+          {
+            "group": "Releases",
+            "pages": [
+              "docs/references/cli/release-create"
+            ]
+          }
+        ]
+      },
+      {
+        "product": "Device API Reference",
+        "dropdowns": [
+          {
+            "dropdown": "v0.2.0",
+            "openapi": {
+              "source": "docs/references/device-api/v0.2.0.yaml",
+              "directory": "docs/references/device-api/v0.2.0/endpoints"
+            }
+          },
+          {
+            "dropdown": "v0.1.0",
+            "openapi": {
+              "source": "docs/references/device-api/v0.1.0.yaml",
+              "directory": "docs/references/device-api/v0.1.0/endpoints"
+            }
+          }
+        ]
+      },
       {
         "product": "Platform API Reference",
         "dropdowns": [
@@ -182,36 +211,6 @@
         ]
       },
       {
-        "product": "Agent API Reference",
-        "dropdowns": [
-          {
-            "dropdown": "v0.2.0",
-            "openapi": {
-              "source": "docs/references/agent-api/v0.2.0.yaml",
-              "directory": "docs/references/agent-api/v0.2.0/endpoints"
-            }
-          },
-          {
-            "dropdown": "v0.1.0",
-            "openapi": {
-              "source": "docs/references/agent-api/v0.1.0.yaml",
-              "directory": "docs/references/agent-api/v0.1.0/endpoints"
-            }
-          }
-        ]
-      },
-      {
-        "product": "CLI Reference",
-        "groups": [
-          {
-            "group": "Releases",
-            "pages": [
-              "docs/references/cli/release-create"
-            ]
-          }
-        ]
-      },
-      {
         "product": "Changelog",
         "groups": [
           {
@@ -220,7 +219,7 @@
               "docs/changelogs/product",
               "docs/changelogs/cli",
               "docs/changelogs/agent",
-              "docs/changelogs/agent-api",
+              "docs/changelogs/device-api",
               "docs/changelogs/platform-api"
             ]
           }
@@ -283,8 +282,8 @@
   },
   "redirects": [
     {
-      "source": "/docs/references/agent-api/latest/:slug*",
-      "destination": "/docs/references/agent-api/v0.2.0/:slug*"
+      "source": "/docs/references/device-api/latest/:slug*",
+      "destination": "/docs/references/device-api/v0.2.0/:slug*"
     },
     {
       "source": "/docs/references/platform-api/latest/:slug*",
