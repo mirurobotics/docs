@@ -127,6 +127,7 @@
                   "docs/developers/platform-api/overview",
                   "docs/developers/platform-api/sdks",
                   "docs/developers/platform-api/authn",
+                  "docs/developers/platform-api/authz",
                   "docs/developers/platform-api/versioning",
                   {
                     "group": "Query Parameters",
