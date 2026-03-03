@@ -2,7 +2,6 @@
 title: "Authorization"
 ---
 
-import {STAGED_TOOLTIP, DRIFTED_TOOLTIP, QUEUED_TOOLTIP, DEPLOYED_TOOLTIP} from '/snippets/components/deployments/statuses.jsx';
 
 The Platform API uses **scopes** to define fine-grained access control. Scopes are selected when [creating an API key](/docs/admin/apikeys).
 
@@ -19,14 +18,11 @@ Most resources follow a common tier pattern:
 | Tier | Access |
 |------|--------|
 | `read` | Get or list operations |
-| `write` | Create, update, or delete operations (varies by resource) |
-| `delete` | Delete operations only (varies by resource) |
+| `write` | Create or update operations |
 | `manage` | All operations—superset of all other scopes for the resource |
 
 
-The `write` scope does **not** include `read` access—if you need both, select both scopes. 
-
-For low-risk resources, the `write` scope includes `delete` access. However, for high-risk resources, such as devices, `delete` is a separate scope.
+The `write` scope does **not** include `read` access—if you need both, select both scopes.
 
 Some resources have additional granular scopes beyond the standard tiers (e.g. `deployments:stage`). The `manage` scope always includes everything for the resource.
 
@@ -58,12 +54,6 @@ Some resources have additional granular scopes beyond the standard tiers (e.g. `
 
 ### Deployments
 
-Deployments have a unique set of scopes due to the high risk of deploying to devices. 
-
-The scopes are straightforward except for **remove** and **archive**:
-
-- **remove** allows you to remove deployments which are <Tooltip tip={QUEUED_TOOLTIP.tip} cta={QUEUED_TOOLTIP.cta} href={QUEUED_TOOLTIP.href}>queued</Tooltip> or <Tooltip tip={DEPLOYED_TOOLTIP.tip} cta={DEPLOYED_TOOLTIP.cta} href={DEPLOYED_TOOLTIP.href}>deployed</Tooltip>
-- **archive** allows you to archive deployments which are <Tooltip tip={STAGED_TOOLTIP.tip} cta={STAGED_TOOLTIP.cta} href={STAGED_TOOLTIP.href}>staged</Tooltip> or <Tooltip tip={DRIFTED_TOOLTIP.tip} cta={DRIFTED_TOOLTIP.cta} href={DRIFTED_TOOLTIP.href}>drifted</Tooltip>.
 
 
 | Scope | Permissions |
@@ -72,7 +62,6 @@ The scopes are straightforward except for **remove** and **archive**:
 | `deployments:write` | create |
 | `deployments:stage` | stage |
 | `deployments:deploy` | deploy |
-| `deployments:remove` | remove |
 | `deployments:archive` | archive |
 | `deployments:manage` | all operations |
 
@@ -81,9 +70,8 @@ The scopes are straightforward except for **remove** and **archive**:
 | Scope | Permissions |
 |-------|-------------|
 | `devices:read` | get, list, ping |
-| `devices:provision` | create, activate, list |
+| `devices:provision` | create, activate, reactivate, list |
 | `devices:write` | create, update |
-| `devices:delete` | delete |
 | `devices:manage` | all operations |
 
 ### Git commits
