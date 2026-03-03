@@ -1,23 +1,20 @@
 openapi: 3.0.3
 info:
   title: Miru Platform API
-  description: The API between the Miru Backend and any external client
-  version: 2026-02-24.zion-beta-next
+  description: The API between Miru and any external client
+  version: 2026-03-01.zion-beta-next
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
   x-git-commit:
-    sha: 598b13eecca0a1c95437096f8d72af66aa7338f3
-    url: https://github.com/mirurobotics/openapi/commit/598b13eecca0a1c95437096f8d72af66aa7338f3
-    message: 'feat(schema): add API version enum to MiruVersion header parameter
-
-
-      Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>'
+    sha: 2bfc2bc93ef632665af65e635350665b2d47c1fd
+    url: https://github.com/mirurobotics/openapi/commit/2bfc2bc93ef632665af65e635350665b2d47c1fd
+    message: 'fix: authorization scopes documentation'
     author: Benjamin Smidt
     branch: main
     dirty: false
   x-build:
-    built_at: '2026-03-01T22:34:33.413394+00:00'
+    built_at: '2026-03-03T03:49:26.633596+00:00'
 servers:
 - url: https://api.mirurobotics.com/beta
   description: Miru Platform API
@@ -31,8 +28,8 @@ paths:
       tags:
       - Config Instances
       summary: Get
-      description: Retrieve a config instance by ID.
       operationId: getConfigInstance
+      description: Retrieve a config instance by ID.
       parameters:
       - $ref: '#/components/parameters/config_instance_id'
       - $ref: '#/components/parameters/config_instance_expansions'
@@ -43,6 +40,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigInstance'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `config_instances:read` | Yes |
   /config_instances:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -50,8 +52,8 @@ paths:
       tags:
       - Config Instances
       summary: List
-      description: List config instances.
       operationId: listConfigInstances
+      description: List config instances.
       parameters:
       - $ref: '#/components/parameters/offset'
       - $ref: '#/components/parameters/limit'
@@ -67,12 +69,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigInstanceList'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `config_instances:read` | Yes |
     post:
       tags:
       - Config Instances
       summary: Create
-      description: Create a new config instance.
       operationId: createConfigInstance
+      description: Create a new config instance.
       parameters:
       - $ref: '#/components/parameters/config_instance_expansions'
       requestBody:
@@ -88,6 +95,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigInstance'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `config_instances:write` | Yes |
   /config_instances/{config_instance_id}/content:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -95,8 +107,8 @@ paths:
       tags:
       - Config Instances
       summary: Download Content
-      description: Download the content of a config instance.
       operationId: getConfigInstanceContent
+      description: Download the content of a config instance.
       parameters:
       - $ref: '#/components/parameters/config_instance_id'
       - $ref: '#/components/parameters/disposition'
@@ -122,6 +134,11 @@ paths:
                 type: string
                 format: binary
                 description: The raw config instance content.
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `config_instances:read` | Yes |
   /config_schemas/{config_schema_id}:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -129,8 +146,8 @@ paths:
       tags:
       - Config Schemas
       summary: Get
-      description: Retrieve a config schema by ID.
       operationId: getConfigSchema
+      description: Retrieve a config schema by ID.
       parameters:
       - $ref: '#/components/parameters/config_schema_id'
       - $ref: '#/components/parameters/config_schema_expansions'
@@ -141,6 +158,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigSchema'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `config_schemas:read` | Yes |
   /config_schemas:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -148,8 +170,8 @@ paths:
       tags:
       - Config Schemas
       summary: List
-      description: List config schemas.
       operationId: listConfigSchemas
+      description: List config schemas.
       parameters:
       - $ref: '#/components/parameters/offset'
       - $ref: '#/components/parameters/limit'
@@ -164,6 +186,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigSchemaList'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `config_schemas:read` | Yes |
     post:
       tags:
       - Config Schemas
@@ -171,10 +198,12 @@ paths:
       description: Create a new config schema.
       operationId: createConfigSchema
       x-mint:
-        content: '<Tip>Consider using the Miru CLI in your CI/CD pipeline to create
-          config schemas instead of calling this endpoint directly.</Tip>
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `config_schemas:write` | Yes |
 
-          '
+          <Tip>Consider using the Miru CLI in a CI/CD pipeline to create config schemas instead of calling this endpoint directly.</Tip>
       parameters:
       - $ref: '#/components/parameters/config_schema_expansions'
       requestBody:
@@ -197,8 +226,8 @@ paths:
       tags:
       - Config Types
       summary: Get
-      description: Retrieve a config type by ID.
       operationId: getConfigType
+      description: Retrieve a config type by ID.
       parameters:
       - $ref: '#/components/parameters/config_type_id'
       - $ref: '#/components/parameters/config_type_expansions'
@@ -209,6 +238,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigType'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `config_types:read` | Yes |
     patch:
       tags:
       - Config Types
@@ -231,6 +265,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigType'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `config_types:write` | Yes |
   /config_types:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -238,8 +277,8 @@ paths:
       tags:
       - Config Types
       summary: List
-      description: List config types.
       operationId: listConfigTypes
+      description: List config types.
       parameters:
       - $ref: '#/components/parameters/offset'
       - $ref: '#/components/parameters/limit'
@@ -255,6 +294,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigTypeList'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `config_types:read` | Yes |
     post:
       tags:
       - Config Types
@@ -276,6 +320,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigType'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `config_types:write` | Yes |
   /deployments/{deployment_id}:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -295,6 +344,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deployment'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `deployments:read` | Yes |
   /deployments:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -322,12 +376,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeploymentList'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `deployments:read` | Yes |
     post:
       tags:
       - Deployments
       summary: Create
-      description: Stage or deploy a new deployment.
       operationId: createDeployment
+      description: Stage or deploy a new deployment.
       parameters:
       - $ref: '#/components/parameters/deployment_expansions'
       requestBody:
@@ -343,6 +402,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deployment'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `deployments:write` | Yes |
+          | `deployments:stage` | Required if staging a deployment. |
+          | `deployments:deploy` | Required if deploying a deployment. |
   /deployments/{deployment_id}/deploy:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -350,8 +416,8 @@ paths:
       tags:
       - Deployments
       summary: Deploy
-      description: Trigger a deployment to its target device.
       operationId: deployDeployment
+      description: Trigger a deployment to its target device.
       parameters:
       - $ref: '#/components/parameters/deployment_id'
       - $ref: '#/components/parameters/deployment_expansions'
@@ -362,6 +428,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deployment'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `deployments:deploy` | Yes |
   /deployments/{deployment_id}/archive:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -369,8 +440,8 @@ paths:
       tags:
       - Deployments
       summary: Archive
-      description: Archive a deployment.
       operationId: archiveDeployment
+      description: Archive staged or drifted deployments.
       parameters:
       - $ref: '#/components/parameters/deployment_id'
       - $ref: '#/components/parameters/deployment_expansions'
@@ -381,6 +452,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deployment'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `deployments:archive` | Yes |
   /deployments/{deployment_id}/drifts:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -388,8 +464,9 @@ paths:
       tags:
       - Deployments
       summary: Drifts
-      description: List configuration drifts for a deployment.
       operationId: getDeploymentDrifts
+      description: List the deployments which have been deployed since this deployment
+        was staged and need to be reviewed.
       parameters:
       - $ref: '#/components/parameters/deployment_id'
       - $ref: '#/components/parameters/deployment_expansions'
@@ -400,6 +477,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeploymentList'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `deployments:read` | Yes |
   /devices/{device_id}:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -407,8 +489,8 @@ paths:
       tags:
       - Devices
       summary: Get
-      description: Get a device by ID.
       operationId: getDevice
+      description: Get a device by ID.
       parameters:
       - $ref: '#/components/parameters/device_id'
       responses:
@@ -418,6 +500,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Device'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `devices:read` | Yes |
     patch:
       tags:
       - Devices
@@ -439,21 +526,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Device'
-    delete:
-      tags:
-      - Devices
-      summary: Delete
-      operationId: deleteDevice
-      description: Delete a device by ID.
-      parameters:
-      - $ref: '#/components/parameters/device_id'
-      responses:
-        '200':
-          description: Successfully deleted the device.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeletedDevice'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `devices:write` | Yes |
   /devices:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -476,12 +553,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Device'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `devices:write` | Yes |
     get:
       tags:
       - Devices
       summary: List
-      description: List devices.
       operationId: listDevices
+      description: List devices.
       parameters:
       - $ref: '#/components/parameters/offset'
       - $ref: '#/components/parameters/limit'
@@ -497,6 +579,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeviceList'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `devices:read` | Yes |
   /devices/{device_id}/activation_token:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -521,6 +608,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TokenResponse'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `devices:provision` | Yes |
   /devices/{device_id}/ping:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -528,8 +620,8 @@ paths:
       tags:
       - Devices
       summary: Ping
-      description: Ping a device to check connectivity.
       operationId: pingDevice
+      description: Ping a device to check connectivity.
       parameters:
       - $ref: '#/components/parameters/device_id'
       requestBody:
@@ -545,6 +637,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PingDeviceResponse'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `devices:read` | Yes |
   /git_commits/{git_commit_id}:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -552,8 +649,8 @@ paths:
       tags:
       - Git Commits
       summary: Get
-      description: Retrieve a git commit by ID.
       operationId: getGitCommit
+      description: Retrieve a git commit by ID.
       parameters:
       - $ref: '#/components/parameters/git_commit_id'
       responses:
@@ -563,6 +660,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GitCommit'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `git_commits:read` | Yes |
   /git_commits:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -570,8 +672,8 @@ paths:
       tags:
       - Git Commits
       summary: List
-      description: List git commits.
       operationId: listGitCommits
+      description: List git commits.
       parameters:
       - $ref: '#/components/parameters/offset'
       - $ref: '#/components/parameters/limit'
@@ -586,12 +688,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GitCommitList'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `git_commits:read` | Yes |
     post:
       tags:
       - Git Commits
       summary: Create
-      description: Register a git commit.
       operationId: createGitCommit
+      description: Register a git commit.
       requestBody:
         required: true
         content:
@@ -605,6 +712,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GitCommit'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `git_commits:write` | Yes |
   /principal:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -629,8 +741,8 @@ paths:
       tags:
       - Releases
       summary: Get
-      description: Retrieve a release by ID.
       operationId: getRelease
+      description: Retrieve a release by ID.
       parameters:
       - $ref: '#/components/parameters/release_id'
       - $ref: '#/components/parameters/release_expansions'
@@ -641,6 +753,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Release'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `releases:read` | Yes |
   /releases:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -648,8 +765,8 @@ paths:
       tags:
       - Releases
       summary: List
-      description: List releases.
       operationId: listReleases
+      description: List releases.
       parameters:
       - $ref: '#/components/parameters/offset'
       - $ref: '#/components/parameters/limit'
@@ -664,6 +781,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ReleaseList'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `releases:read` | Yes |
     post:
       tags:
       - Releases
@@ -671,10 +793,12 @@ paths:
       description: Create a new release.
       operationId: createRelease
       x-mint:
-        content: '<Tip>Consider using the Miru CLI in your CI/CD pipeline to create
-          releases instead of calling this endpoint directly.</Tip>
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `releases:write` | Yes |
 
-          '
+          <Tip>Consider using the Miru CLI in a CI/CD pipeline to create releases instead of calling this endpoint directly.</Tip>
       parameters:
       - $ref: '#/components/parameters/release_expansions'
       requestBody:
@@ -717,22 +841,21 @@ components:
     APIVersion:
       type: string
       enum:
-      - 2026-02-24.zion-beta-next
+      - 2026-03-01.zion-beta-next
       x-enum-varnames:
       - API_VERSION
       x-stainless-const: true
     APIGitCommit:
       type: string
       enum:
-      - 598b13eecca0a1c95437096f8d72af66aa7338f3
+      - 2bfc2bc93ef632665af65e635350665b2d47c1fd
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
     CfgInstSearch:
       type: string
-      description: '**Internal server use only**: an enum of possible search fields.
-
-        '
+      description: |
+        **Internal server use only**: an enum of possible search fields.
       enum:
       - id
       - config_schema_id
@@ -743,9 +866,8 @@ components:
       - CFG_INST_SEARCH_CONFIG_TYPE_ID
     CfgSchSearch:
       type: string
-      description: '**Internal server use only**: an enum of possible search fields.
-
-        '
+      description: |
+        **Internal server use only**: an enum of possible search fields.
       enum:
       - id
       - config_type_id
@@ -754,9 +876,8 @@ components:
       - CFG_SCH_SEARCH_CONFIG_TYPE_ID
     CfgTypeSearch:
       type: string
-      description: '**Internal server use only**: an enum of possible search fields.
-
-        '
+      description: |
+        **Internal server use only**: an enum of possible search fields.
       enum:
       - id
       - name
@@ -767,9 +888,8 @@ components:
       - CFG_TYPE_SEARCH_SLUG
     DplSearch:
       type: string
-      description: '**Internal server use only**: an enum of possible search fields.
-
-        '
+      description: |
+        **Internal server use only**: an enum of possible search fields.
       enum:
       - id
       - target_status
@@ -786,9 +906,8 @@ components:
       - DPL_SEARCH_RELEASE_ID
     DvcSearch:
       type: string
-      description: '**Internal server use only**: an enum of possible search fields.
-
-        '
+      description: |
+        **Internal server use only**: an enum of possible search fields.
       enum:
       - id
       - name
@@ -799,9 +918,8 @@ components:
       - DVC_SEARCH_AGENT_VERSION
     GitCmtSearch:
       type: string
-      description: '**Internal server use only**: an enum of possible search fields.
-
-        '
+      description: |
+        **Internal server use only**: an enum of possible search fields.
       enum:
       - id
       - sha
@@ -810,9 +928,8 @@ components:
       - GIT_CMT_SEARCH_SHA
     RlsSearch:
       type: string
-      description: '**Internal server use only**: an enum of possible search fields.
-
-        '
+      description: |
+        **Internal server use only**: an enum of possible search fields.
       enum:
       - id
       - version
@@ -1108,6 +1225,31 @@ components:
               the query string.
             allOf:
             - $ref: '#/components/schemas/ConfigSchemaList'
+    InstanceFormat:
+      title: Instance Format
+      type: string
+      enum:
+      - json
+      x-enum-varnames:
+      - INSTANCE_FORMAT_JSON
+    InstanceContent:
+      title: Instance Content
+      type: object
+      required:
+      - format
+      - data
+      properties:
+        format:
+          $ref: '#/components/schemas/InstanceFormat'
+        data:
+          type: string
+          description: The configuration values associated with the config instance.
+          example: |
+            {
+              "enable_autonomy": true,
+              "enable_remote_control": true,
+              "max_payload_kg": 10.0
+            }
     ConfigInstance:
       title: Config Instance
       allOf:
@@ -1125,18 +1267,10 @@ components:
             description: Expand the config type using 'expand=config_type' in the
               query string.
           content:
-            type: object
+            allOf:
+            - $ref: '#/components/schemas/InstanceContent'
             description: The configuration values associated with the config instance.
               Expand the content using 'expand=content' in the query string.
-            example:
-              enable_autonomy: true
-              enable_remote_control: false
-              max_payload_kg: 8.5
-              preferred_speed_mode: normal
-              emergency_stop_sensitivity: 0.9
-              telemetry:
-                upload_interval_sec: 45
-                heartbeat_interval_sec: 15
       example:
         object: config_instance
         id: cfg_inst_123
@@ -1184,27 +1318,6 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/ConfigInstance'
-    InstanceFormat:
-      title: Instance Format
-      type: string
-      enum:
-      - json
-      x-enum-varnames:
-      - INSTANCE_FORMAT_JSON
-    InstanceContent:
-      title: Instance Content
-      type: object
-      required:
-      - format
-      - data
-      properties:
-        format:
-          $ref: '#/components/schemas/InstanceFormat'
-        data:
-          type: string
-          description: The configuration values associated with the config instance.
-          example: "{\n  \"enable_autonomy\": true,\n  \"enable_remote_control\":\
-            \ true,\n  \"max_payload_kg\": 10.0\n}\n"
     CreateConfigInstanceRequest:
       title: Create Config Instance Request
       type: object
@@ -1422,13 +1535,8 @@ components:
       - DEPLOYMENT_EXPAND_CONFIG_INSTANCES
     DeploymentStatus:
       type: string
-      description: 'This status merges the ''activity_status'' and ''error_status''
-        fields, with error states taking precedence over activity states when errors
-        are present. For example, if the activity status is ''deployed'' but the error
-        status is ''failed'', the status is ''failed''. However, if the error status
-        is ''none'' and the activity status is ''deployed'', the status is ''deployed''.
-
-        '
+      description: |
+        This status merges the 'activity_status' and 'error_status' fields, with error states taking precedence over activity states when errors are present. For example, if the activity status is 'deployed' but the error status is 'failed', the status is 'failed'. However, if the error status is 'none' and the activity status is 'deployed', the status is 'deployed'.
       enum:
       - drifted
       - staged
@@ -1447,23 +1555,13 @@ components:
       - DEPLOYMENT_STATUS_RETRYING
     DeploymentActivityStatus:
       type: string
-      description: 'Last known activity state of the deployment.
-
-        - Drifted: device''s configurations have drifted since this deployment was
-        staged, and the deployment needs to be reviewed before it can be deployed
-
+      description: |
+        Last known activity state of the deployment.
+        - Drifted: device's configurations have drifted since this deployment was staged, and the deployment needs to be reviewed before it can be deployed
         - Staged: is ready to be deployed
-
-        - Queued: the deployment''s config instances are waiting to be received by
-        the device; will be deployed as soon as the device is online
-
-        - Deployed: the deployment''s config instances are currently available for
-        consumption on the device
-
-        - Archived: the deployment is available for historical reference but cannot
-        be deployed and is not active on the device
-
-        '
+        - Queued: the deployment's config instances are waiting to be received by the device; will be deployed as soon as the device is online
+        - Deployed: the deployment's config instances are currently available for consumption on the device
+        - Archived: the deployment is available for historical reference but cannot be deployed and is not active on the device
       enum:
       - drifted
       - staged
@@ -1478,17 +1576,11 @@ components:
       - DEPLOYMENT_ACTIVITY_STATUS_ARCHIVED
     DeploymentErrorStatus:
       type: string
-      description: 'Last known error state of the deployment.
-
+      description: |
+        Last known error state of the deployment.
         - None: no errors
-
-        - Retrying: an error has been encountered and the agent is retrying to reach
-        the target status
-
-        - Failed: a fatal error has been encountered; the deployment is archived and
-        (if deployed) removed from the device
-
-        '
+        - Retrying: an error has been encountered and the agent is retrying to reach the target status
+        - Failed: a fatal error has been encountered; the deployment is archived and (if deployed) removed from the device
       enum:
       - none
       - failed
@@ -1499,17 +1591,11 @@ components:
       - DEPLOYMENT_ERROR_STATUS_RETRYING
     DeploymentTargetStatus:
       type: string
-      description: 'Desired state of the deployment.
-
+      description: |
+        Desired state of the deployment.
         - Staged: is ready to be deployed
-
-        - Deployed: all config instances part of the deployment are available for
-        consumption on the device
-
-        - Archived: the deployment is available for historical reference but cannot
-        be deployed and is not active on the device
-
-        '
+        - Deployed: all config instances part of the deployment are available for consumption on the device
+        - Archived: the deployment is available for historical reference but cannot be deployed and is not active on the device
       enum:
       - staged
       - deployed
@@ -1577,20 +1663,12 @@ components:
           description: Timestamp of when the device release was last updated.
     DeviceStatus:
       type: string
-      description: 'The status of the device.
-
+      description: |
+        The status of the device.
         - Inactive: The miru agent has not yet been installed / authenticated
-
-        - Activating: The miru agent is currently being installed / authenticated
-        (should only last for a few seconds)
-
-        - Online: The miru agent has successfully pinged the server within the last
-        60 seconds.
-
-        - Offline: The miru agent has not successfully pinged the server within the
-        last 60 seconds (e.g. network issues, device is powered off, etc.)
-
-        '
+        - Activating: The miru agent is currently being installed / authenticated (should only last for a few seconds)
+        - Online: The miru agent has successfully pinged the server within the last 60 seconds.
+        - Offline: The miru agent has not successfully pinged the server within the last 60 seconds (e.g. network issues, device is powered off, etc.)
       enum:
       - inactive
       - activating
@@ -1830,29 +1908,6 @@ components:
           items:
             type: string
             example: cfg_inst_123
-    DeletedDevice:
-      title: Deleted Device
-      type: object
-      required:
-      - object
-      - id
-      - deleted
-      properties:
-        object:
-          type: string
-          description: The object type, which is always `device`.
-          enum:
-          - device
-          example: device
-          x-stainless-const: true
-        id:
-          type: string
-          description: The ID of the device.
-          example: dvc_123
-        deleted:
-          type: boolean
-          description: Whether the device was deleted.
-          example: true
     UpdateDeviceRequest:
       title: Update Device Request
       type: object
@@ -2249,9 +2304,8 @@ components:
       required: true
       schema:
         type: string
-        default: 2026-03-09.teton
-        example: 2026-03-09.teton
-      example: 2026-03-09.teton
+        example: 2026-03-01.zion-beta-next
+        default: 2026-03-01.zion-beta-next
       description: The API version the client was built against.
     config_instance_id:
       name: config_instance_id
