@@ -195,7 +195,7 @@
         "product": "Platform API Reference",
         "dropdowns": [
           {
-            "dropdown": "2026-03-09.teton",
+            "dropdown": "2026-03-09.tetons",
             "openapi": {
               "source": "docs/references/platform-api/2026-03-09.yaml",
               "directory": "docs/references/platform-api/2026-03-09/endpoints"

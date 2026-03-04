@@ -21,7 +21,7 @@ All changes within a train are backward-compatible. A new train introduces a new
 
 ## Version header
 
-The Platform API **requires** the `Miru-Version` header to be set to the version you want to use. 
+The Platform API uses the `Miru-Version` header to select the API version you want to use.
 
 ```bash
 curl --request GET \
@@ -30,7 +30,7 @@ curl --request GET \
   --header 'Miru-Version: 2025-10-21.zion'
 ```
 
-Omitting the `Miru-Version` header will return a `400 Bad Request` error.
+For historical reasons, omitting the `Miru-Version` header defaults to the oldest supported version, which is `2025-10-21.zion`.
 
 ## Supported versions
 
@@ -38,8 +38,8 @@ Below is a list of the currently supported versions:
 
 | API Version              |        Status       |
 |--------------------------|---------------------|
-| <LinkNewTab href="/docs/references/platform-api/2026-03-09.teton">2026-03-09.teton</LinkNewTab> | <SupportedBadge />  |
-| <LinkNewTab href="/docs/references/platform-api/2025-10-21.zion">2025-10-21.zion</LinkNewTab>        | <EndOfLifeBadge />  |
+| <LinkNewTab href="/docs/references/platform-api/2026-03-09">2026-03-09.tetons</LinkNewTab> | <SupportedBadge />  |
+| <LinkNewTab href="/docs/references/platform-api/2025-10-21">2025-10-21.zion</LinkNewTab>        | <DeprecatedBadge />  |
 
 ## Changelog and migrations
 
@@ -68,7 +68,7 @@ Miru provides three levels of support for the Platform API
 - Deprecated
 - End of life
 
-When a new API version epoch is released (e.g. `zion` to `teton`), previous API epochs may enter a deprecation period. During this period:
+When a new API version epoch is released (e.g. `zion` to `tetons`), previous API epochs may enter a deprecation period. During this period:
 
 - The deprecated version continues to function normally
 - No new features will be added to the deprecated epoch
