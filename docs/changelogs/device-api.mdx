@@ -3,55 +3,71 @@ title: "Device API"
 description: "Changelog and migration steps for the Device API"
 ---
 
-import { LinkNewTab } from '/snippets/components/link.jsx';
+import { Dropdown } from '/snippets/components/api-dropdown.jsx';
+import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
+import { Separator } from '/snippets/components/separator.jsx';
+import { DeviceApiReleaseLinks } from '/snippets/components/api-links.jsx';
 
 ## v0.2.0
 
 *TBD*
 
+
 The `v0.2.0` release expands the Device API from basic device health/version endpoints to deployment-pipeline visibility. 
 
 The current release version endpoint is the most exciting, enabling on-device applications to ensure that the release version of the config instances matches the application's software version.
 
-API Reference: <LinkNewTab href="/docs/references/device-api/v0.2.0">v0.2.0 Reference</LinkNewTab>
-
-OpenAPI Spec: <LinkNewTab href="https://assets.mirurobotics.com/docs/openapi/agent/v0.2.0.yaml">Download (YAML) ↓</LinkNewTab>
+<DeviceApiReleaseLinks version="v0.2.0" />
 
 ### New endpoints
 
-Added read-only endpoints for inspecting deployment pipeline state from on-device applications.
-
-**Deployments**
-- `GET /deployments/current` — get the currently deployed deployment
-- `GET /deployments/{deployment_id}` — get a deployment by ID
-
-**Releases**
-- `GET /releases/current` — get the currently deployed release
-- `GET /releases/{release_id}` — get a release by ID
-
-**Git commits**
-- `GET /git_commits/{git_commit_id}` — get a git commit by ID
+<Dropdown title="Deployments">
+  - <GET /> `/deployments/current` — get currently deployed deployment
+  - <GET /> `/deployments/{id}` — get a deployment by ID
+</Dropdown>
+<Separator />
+<Dropdown title="Releases">
+  - <GET /> `/releases/current` — get the currently deployed release
+  - <GET /> `/releases/{id}` — get a release by ID
+</Dropdown>
+<Separator />
+<Dropdown title="Git commits">
+  - <GET /> `/git_commits/{id}` — get a git commit by ID
+</Dropdown>
 
 ### Breaking changes
 
-**Base path change**
-
+<Dropdown title="Base path change">
 The URL version prefix changed from `/v1` to `/v0.2`. Update all request URLs in your client application.
 
 ```diff
 - http://localhost/v1/{endpoint}
 + http://localhost/v0.2/{endpoint}
 ```
+</Dropdown>
+<Separator />
+<Dropdown title="Version response">
 
-**Extended version response**
-
-The `GET /version` response renamed `commit` to `git_commit` and added new fields:
+The `GET /version` response renamed `commit` to `git_commit`.
 
 ```diff
  {
    "version": "0.7.0",
 -  "commit": "abc1234"
 +  "git_commit": "abc1234",
+ }
+```
+</Dropdown>
+
+### Additive changes
+
+<Dropdown title="Version response">
+The `GET /version` response added richer information about the agent and API version.
+
+```diff
+ {
+   "version": "0.7.0",
+   ...
 +  "api_version": "0.2.0",
 +  "api_git_commit": "def5678",
 +  "rust_version": "1.83.0",
@@ -60,6 +76,7 @@ The `GET /version` response renamed `commit` to `git_commit` and added new field
 +  "arch": "aarch64"
  }
 ```
+</Dropdown>
 
 ### Migration steps
 
@@ -68,26 +85,10 @@ The `GET /version` response renamed `commit` to `git_commit` and added new field
     Ensure all devices in your fleet are running **Miru Agent v0.7.0** or later. See the [agent compatibility matrix](/docs/developers/device-api/versioning#agent-compatibility-matrix) for details.
   </Step>
 
-  <Step title="Update base path">
-    Update all request URLs from `/v1` to `/v0.2`
+  <Step title="Migrate breaking changes">
+    Migrate your client application according to the breaking changes listed above.
 
-    <CodeGroup>
-    ```bash v0.1.0
-    curl --unix-socket /run/miru/miru.sock \
-       --request GET \
-      --url http://localhost/v1/device
-    ```
-
-    ```bash v0.2.0
-    curl --unix-socket /run/miru/miru.sock \
-       --request GET \
-      --url http://localhost/v0.2/device
-    ```
-    </CodeGroup>
-  </Step>
-
-  <Step title="Rename commit field">
-    Rename the `GET /version` response field `commit` to `git_commit`
+    If you are using the [Python SDK](/docs/developers/device-api/sdks#python), upgrade to the latest Python SDK version. SDK version !!FIXME!! is the major version rollout of the `v0.2.0` API.
   </Step>
 
   <Step title="Optionally integrate new endpoints">
@@ -103,13 +104,20 @@ The `GET /version` response renamed `commit` to `git_commit` and added new field
 
 Initial release of the Device API. This version establishes the core on-device integration surface, including health checks, version metadata, device metadata, and a manual sync trigger. 
 
-API Reference: <LinkNewTab href="/docs/references/device-api/v0.1.0">v0.1.0 Reference</LinkNewTab>
+<DeviceApiReleaseLinks version="v0.1.0" />
 
-OpenAPI Spec: <LinkNewTab href="https://assets.mirurobotics.com/docs/openapi/agent/v0.1.0.yaml">Download (YAML) ↓</LinkNewTab>
+### Endpoints
 
-### Features
+<Dropdown title="Agent">
+  - <GET /> `/health` — retrieve the health of the agent
+  - <GET /> `/version` — retrieve the version of the agent
+</Dropdown>
+<Separator />
+<Dropdown title="Device">
+  - <GET /> `/device` — retrieve the device
+  - <POST /> `/device/sync` — manually force a device sync
+</Dropdown>
 
-- `GET /health` — retrieve the health of the agent
-- `GET /version` — retrieve the version of the agent
-- `GET /device` — retrieve the device
-- `POST /device/sync` — manually force a device sync
+### Python SDK
+
+FIXME

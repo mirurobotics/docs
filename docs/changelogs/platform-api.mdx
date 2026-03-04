@@ -3,36 +3,343 @@ title: "Platform API"
 description: "Changelog and migration steps for the Platform API"
 ---
 
-## 2026-03-09.teton
+import { Dropdown } from '/snippets/components/api-dropdown.jsx';
+import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
+import { Separator } from '/snippets/components/separator.jsx';
+import { PlatformApiReleaseLinks } from '/snippets/components/api-links.jsx';
+
+## 2026-03-09.tetons
 
 *March 9, 2026*
 
-### Changes
+The `tetons` release introduces API versioning and overhauls the representation of deployments, config instances, and config schemas. It introduces full configuration management (config types, schemas, and instances), release creation, git commit tracking, and explicit deployment lifecycle actions.
 
-- Renamed deployment activity status `needs_review` to `drifted`
-- Removed `removing` deployment activity status — deployments now transition directly from `deployed` to `archived`
+<PlatformApiReleaseLinks version="2026-03-09.tetons" />
+
+### New endpoints
+
+<Dropdown title="Auth">
+  - <GET /> `/principal` — retrieve the current principal
+</Dropdown>
+<Separator />
+<Dropdown title="Config types">
+  - <GET /> `/config_types` — list config types
+  - <GET /> `/config_types/{id}` — retrieve a config type
+  - <POST /> `/config_types` — create a config type
+  - <PATCH /> `/config_types/{id}` — update a config type
+</Dropdown>
+<Separator />
+<Dropdown title="Config schemas">
+  - <GET /> `/config_schemas` — list config schemas<br/>
+  - <GET /> `/config_schemas/{id}` — retrieve a config schema
+  - <POST /> `/config_schemas` — create a config schema<br/>
+</Dropdown>
+<Separator />
+<Dropdown title="Config instances">
+  - <POST /> `/config_instances` — create a config instance
+  - <GET /> `/config_instances/{id}/content` - download config instance content
+</Dropdown>
+<Separator />
+<Dropdown title="Deployments">
+  - <POST /> `/deployments/{id}/deploy` — deploy a deployment
+  - <POST /> `/deployments/{id}/archive` — archive a deployment
+  - <GET /> `/deployments/{id}/drifts` — list deployment drifts
+</Dropdown>
+<Separator />
+<Dropdown title="Devices">
+  - <POST /> `/devices/{id}/ping` — ping a device
+</Dropdown>
+<Separator />
+<Dropdown title="Git commits">
+  - <GET /> `/git_commits` — list git commits
+  - <GET /> `/git_commits/{id}` — retrieve a git commit
+  - <POST /> `/git_commits` — create a git commit
+</Dropdown>
+<Separator />
+<Dropdown title="Releases">
+  - <POST /> `/releases` — create a release
+</Dropdown>
+
+### Breaking changes
+
+<Dropdown title="Miru-Version header">
+  Requests require the `Miru-Version` header. Requests without the `Miru-Version` header default to `2025-10-21.zion`.
+
+  ```diff
+    curl --request GET \
+      --url 'https://api.mirurobotics.com/v1/devices' \
+      --header 'Authorization: Bearer <api-key>'
+  +   --header 'Miru-Version: 2026-03-09.tetons'
+  ```
+</Dropdown>
+<Separator />
+<Dropdown title="Optional total_count">
+  When listing resources, the `total_count` field is now omitted from the response if not expanded (i.e. `expand=total_count`) instead of being set to `-1`.
+
+  ```diff
+    {
+      "object": "list",
+  -   "total_count": -1,
+      ...
+    }
+  ```
+</Dropdown>
+<Separator />
+<Dropdown title="Optional instead of nullable expansions">
+
+  If an expansion is not included in the response, the field is omitted instead of being set to `null`. For example, the config instance response previously included `content`, `config_schema`, and `config_type` fields as null if not expanded. Now these fields are omitted if not expanded.
+
+
+  ```diff
+    {
+      "object": "config_instance",
+      "id": "cfg_inst_123",
+      ...
+  -   "content": null,
+  -   "config_schema": null,
+  -   "config_type": null
+    }
+  ```
+
+  Most resources are affected by this change, including config instances, config schemas, config types, releases, and deployments. Devices are unaffected.
+</Dropdown>
+<Separator />
+<Dropdown title="Deployment activity status">
+
+- Renamed `needs_review` to `drifted`.
+- Removed `removing` and `validating`—deployments now transition directly from `deployed` to `archived`.
+
+```diff
+# activity_status enum values
+- "validating"
+  "staged"
+- "needs_review"
++ "drifted"
+  "queued"
+  "deployed"
+- "removing"
+  "archived"
+```
+
+These changes are also reflected in the deployment's [status](/docs/learn/deployments#status) field.
+
+</Dropdown>
+<Separator />
+<Dropdown title="Create deployment request">
+
+- Replaced inline config instance creation with explicit config instance IDs. Create config instances separately via `POST /config_instances` first, then reference them by ID.
+- Renamed `patch_source_id` to `parent_id`.
+
+```diff
+# POST /deployments request body
+  {
+    "release_id": "rls_123",
+    "target_status": "staged",
+-   "new_config_instances": [
+-     {
+-       "content": { "speed": 100 },
+-       "relative_filepath": "/v1/motion-control.json"
+-     }
+-   ],
++   "config_instance_ids": ["cfg_inst_123"],
+-   "patch_source_id": "dpl_456"
++   "parent_id": "dpl_456"
+  }
+```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Config instance response">
+
+- Renamed `relative_filepath` to `filepath`.
+- Removed `device_id`, `activity_status`, `error_status`, `target_status`, and `status` fields. These fields now exclusively exist in the deployment resource.
+- Removed `updated_at` field. Config instances are immutable.
+
+
+```diff
+  {
+    "object": "config_instance",
+    "id": "cfg_inst_123",
+    "config_schema_id": "cfg_sch_123",
+    "config_type_id": "cfg_type_123",
+    "created_at": "2025-10-21T00:00:00Z"
+-   "relative_filepath": "/v1/motion-control.json",
++   "filepath": "/v1/motion-control.json",
+-   "activity_status": "deployed",
+-   "device_id": "dev_123",
+-   "device": null,
+-   "error_status": "none",
+-   "status": "deployed",
+-   "target_status": "deployed",
+-   "updated_at": "2025-10-21T00:00:00Z",
+    ...
+  }
+```
+
+- `content` now returns a string and its data format (e.g. `json`, `yaml`) instead of a raw JSON object.
+
+```diff
+  {
+-   "content": "{...}",
++   "content": {
++     "format": "json",
++     "data": "<stringified JSON>",
+    }
+  }
+```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Config schema response">
+- Renamed `relative_filepath` to `instance_filepath`.
+- Removed `version`
+
+```diff
+  {
+    "id": "cfg_sch_123",
+    "config_type_id": "cfg_type_123",
+-   "relative_filepath": "/v1/motion-control.json",
++   "instance_filepath": "/v1/motion-control.json",
+-   "version": 1,
+    ...
+  }
+```
+
+- `content` is replaced by `documents`, which supports schema languages that can be defined across multiple files. 
+
+```diff
+  {
+-   "content": "{...}",
++   "documents": [
++      {
++        "id": "doc_123",
++        "name": "main.json",
++        "data": "<stringified JSON, YAML, CUE, etc.>",
++      }
++    ]
+  }
+```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Config instance query parameters">
+
+Listing config instances no longer supports the `device_id`, `activity_status`, `error_status`, and `target_status` filters since these fields no longer exist in the config instance resource.
+
+</Dropdown>
+<Separator />
+<Dropdown title="Device query parameters">
+
+Listing devices no longer supports the `current_release_id` filter.
+
+</Dropdown>
+<Separator />
+<Dropdown title="Removed endpoints">
+
+Deleting devices is no longer supported.
+
+- <DELETE /> `/devices/{device_id}`
+</Dropdown>
+
+### Additive changes
+
+<Dropdown title="Expansion Query Parameter">
+  Expansions can now be specified using the `expand` query parameter in addition to the `expand[]` query parameter.
+
+  ```diff
+  curl --request GET \
+    --url 'https://api.mirurobotics.com/v1/config_instances?expand=content' \
+    --header 'X-API-Key: <api-key>'
+  ```
+</Dropdown>
+<Separator />
+<Dropdown title="Config instance response">
+
+Added the `config_type_name` field, allowing you to retrieve the name of the config type without expanding the config type resource.
+
+```diff
+  {
+    "id": "cfg_inst_123",
+    "config_schema_id": "cfg_sch_123",
+    "config_type_id": "cfg_type_123",
++   "config_type_name": "motion-control",
+    ...
+    "created_at": "2025-10-21T00:00:00Z"
+  }
+```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Config schema response">
+
+- Added the `config_type_name` field, allowing you to retrieve the name of the config type without expanding the config type resource.
+- Added the `format` and `language` fields, supporting multiple schema formats and languages.
+
+```diff
+  {
+    "id": "cfg_sch_123",
+    "config_type_id": "cfg_type_123",
++   "config_type_name": "motion-control",
++   "format": "json",
++   "language": "jsonschema",
+    ...
+    "created_at": "2025-10-21T00:00:00Z"
+  }
+```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Device response">
+
+Added `agent_version` field, indicating the version of the Miru Agent running on the device.
+
+```diff
+  {
+    "id": "dev_123",
+    "name": "Robot 11",
+    "status": "online",
++   "agent_version": "v0.7.0",
+    ...
+    "created_at": "2025-10-21T00:00:00Z"
+  }
+```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Release response">
+
+Added `git_commit_id` linking releases to their source commit.
+
+```diff
+  {
+    "id": "rls_123",
+    "version": "v1.0.0",
++   "git_commit_id": "git_cmt_123",
+    "created_at": "2025-10-21T00:00:00Z"
+  }
+```
+
+</Dropdown>
+
+### Python SDK
+
+FIXME
 
 ### Migration steps
 
 <Steps>
-  <Step title="Update deployment status checks">
-    Update any code that checks deployment activity status strings:
-
-    <CodeGroup>
-    ```python Before
-    if deployment.activity_status == "needs_review":
-        ...
-    ```
-
-    ```python After
-    if deployment.activity_status == "drifted":
-        ...
-    ```
-    </CodeGroup>
+  <Step title="Set the Miru-Version header">
+    Set the `Miru-Version: 2026-03-09.tetons` header on all API requests. If you are using the [Python SDK](/docs/developers/platform-api/sdks#python), this is done automatically.
   </Step>
 
-  <Step title="Remove removing status handling">
-    Remove any code that handles the `removing` activity status. Deployments now transition directly from `deployed` to `archived`.
+  <Step title="Migrate breaking changes">
+    Migrate your client application according to the breaking changes listed above.
+
+    If you are using the [Python SDK](/docs/developers/platform-api/sdks#python), upgrade to the latest Python SDK version. SDK version !!FIXME!! is the major version rollout of the `2026-03-09.tetons` API.
+  </Step>
+
+  <Step title="Optionally integrate new endpoints">
+    Optionally integrate the new endpoints listed above.
   </Step>
 </Steps>
 
@@ -40,58 +347,61 @@ description: "Changelog and migration steps for the Platform API"
 
 ## 2025-10-21.zion
 
-*October 21, 2025* · Python SDK v0.6.1
+*October 21, 2025*
 
-### Changes
+Initial release of the Platform API. This version establishes core API endpoints for managing the deployment pipeline—from defining configurations through releasing and deploying to devices.
 
-- Removed `config_schemas` expansion from config types
+<PlatformApiReleaseLinks version="2025-10-21.zion" />
 
-### Migration steps
+### Endpoints
 
-<Steps>
-  <Step title="Remove config_schemas expansion">
-    Remove `?expand=config_schemas` from any requests to config type endpoints.
-  </Step>
+<Dropdown title="Devices">
+  - <GET /> `/devices` — list devices
+  - <GET /> `/devices/{device_id}` — retrieve a device
+  - <POST /> `/devices` — create a device
+  - <PATCH /> `/devices/{device_id}` — update a device
+  - <DELETE /> `/devices/{device_id}` — delete a device
+  - <POST /> `/devices/{device_id}/activation_token` — create an activation token
+</Dropdown>
+<Separator />
+<Dropdown title="Releases">
+  - <GET /> `/releases` — list releases
+  - <GET /> `/releases/{release_id}` — retrieve a release
+</Dropdown>
+<Separator />
+<Dropdown title="Deployments">
+  - <GET /> `/deployments` — list deployments
+  - <GET /> `/deployments/{deployment_id}` — retrieve a deployment
+  - <POST /> `/deployments` — create a deployment
+</Dropdown>
+<Separator />
+<Dropdown title="Config instances">
+  - <GET /> `/config_instances` — list config instances
+  - <GET /> `/config_instances/{config_instance_id}` — retrieve a config instance
+</Dropdown>
 
-  <Step title="Upgrade Python SDK">
-    Upgrade the Python Server SDK to [v0.6.1](https://github.com/mirurobotics/python-server-sdk/releases/tag/v0.6.1).
-  </Step>
-</Steps>
+### Query parameters
+
+<Dropdown title="Filters">
+  Filtering allows you to narrow list results by resource fields like `id`, `device_id`, `status`, and more. Check out the [Filtering](/docs/developers/platform-api/query-params/filtering) documentation for more details.
+
+</Dropdown>
+<Separator />
+<Dropdown title="Sorting">
+  Sort list results with `order_by=<field_name>:<direction>`. Most endpoints default to `order_by=created_at:desc`. Check out the [Sorting](/docs/developers/platform-api/query-params/sorting) documentation for more details.
+</Dropdown>
+<Separator />
+<Dropdown title="Expansions">
+  Include related resources in responses with `expand[]` (e.g. `expand[]=config_schema`). See [Expansions](/docs/developers/platform-api/query-params/expansions) documentation for more details.
+</Dropdown>
+<Separator />
+<Dropdown title="Pagination">
+  All list endpoints support offset-based pagination with `offset` and `limit`. Check out the [Pagination](/docs/developers/platform-api/query-params/pagination) documentation for more details.
+</Dropdown>
+
+### Python SDK
+
+FIXME
 
 ---
 
-## 2025-10-20.zion
-
-*October 20, 2025* · Python SDK v0.6.0
-
-### Changes
-
-- Replaced deployment status enums `pending` and `approved` with `needs_review` and `staged`
-
-### Migration steps
-
-<Steps>
-  <Step title="Update deployment status checks">
-    Update any code that checks deployment status strings:
-
-    <CodeGroup>
-    ```python Before
-    if deployment.status == "pending":
-        ...
-    elif deployment.status == "approved":
-        ...
-    ```
-
-    ```python After
-    if deployment.status == "needs_review":
-        ...
-    elif deployment.status == "staged":
-        ...
-    ```
-    </CodeGroup>
-  </Step>
-
-  <Step title="Upgrade Python SDK">
-    Upgrade the Python Server SDK to [v0.6.0](https://github.com/mirurobotics/python-server-sdk/releases/tag/v0.6.0).
-  </Step>
-</Steps>
