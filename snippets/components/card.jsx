@@ -1,6 +1,3 @@
-
-import React from 'react';
-
 export const CardNewTab = ({ children, ...props }) => {
   const ref = React.useRef(null);
 
