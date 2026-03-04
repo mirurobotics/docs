@@ -214,7 +214,7 @@
         "product": "Changelog",
         "groups": [
           {
-            "group": "Changelog",
+            "group": "Updates",
             "pages": [
               "docs/changelogs/product",
               "docs/changelogs/cli",

@@ -23,17 +23,15 @@
   margin-right: auto;
 }
 
-/* Changelog layout — used with mode: "custom" */
-.changelog-page {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 3rem 1.5rem 4rem;
+/* Changelog layout — constrain and center the whole page including heading */
+#content-area:has(.changelog-page) {
+  max-width: 900px !important;
+  min-width: 0 !important;
 }
 
-.changelog-page img,
-.changelog-page video {
-  max-width: 100%;
-  border-radius: 10px;
+.changelog-page {
+  margin-left: -0.5rem;
+  padding: 0 0 10rem;
 }
 
 @media (max-width: 900px) {
