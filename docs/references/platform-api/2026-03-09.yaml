@@ -2,19 +2,19 @@ openapi: 3.0.3
 info:
   title: Miru Platform API
   description: The API between Miru and any external client
-  version: 2026-03-01.zion-beta-next
+  version: 2026-03-03.zion-beta
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
   x-git-commit:
-    sha: 2bfc2bc93ef632665af65e635350665b2d47c1fd
-    url: https://github.com/mirurobotics/openapi/commit/2bfc2bc93ef632665af65e635350665b2d47c1fd
-    message: 'fix: authorization scopes documentation'
+    sha: e0b47508378ba794e25d0625df209c573e6db8f5
+    url: https://github.com/mirurobotics/openapi/commit/e0b47508378ba794e25d0625df209c573e6db8f5
+    message: 'feat: add config type and schema expansion back to config instance'
     author: Benjamin Smidt
-    branch: main
+    branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-03-03T03:49:26.633596+00:00'
+    built_at: '2026-03-03T23:01:09.910663+00:00'
 servers:
 - url: https://api.mirurobotics.com/beta
   description: Miru Platform API
@@ -841,14 +841,14 @@ components:
     APIVersion:
       type: string
       enum:
-      - 2026-03-01.zion-beta-next
+      - 2026-03-03.zion-beta
       x-enum-varnames:
       - API_VERSION
       x-stainless-const: true
     APIGitCommit:
       type: string
       enum:
-      - 2bfc2bc93ef632665af65e635350665b2d47c1fd
+      - e0b47508378ba794e25d0625df209c573e6db8f5
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
@@ -1687,6 +1687,7 @@ components:
       - id
       - name
       - status
+      - agent_version
       - last_connected_at
       - last_disconnected_at
       - created_at
@@ -1709,6 +1710,11 @@ components:
           description: Name of the device.
         status:
           $ref: '#/components/schemas/DeviceStatus'
+        agent_version:
+          type: string
+          example: v1.0.0
+          description: The version of the agent the device is running.
+          nullable: true
         last_connected_at:
           type: string
           format: date-time
@@ -2304,8 +2310,8 @@ components:
       required: true
       schema:
         type: string
-        example: 2026-03-01.zion-beta-next
-        default: 2026-03-01.zion-beta-next
+        example: 2026-03-03.zion-beta
+        default: 2026-03-03.zion-beta
       description: The API version the client was built against.
     config_instance_id:
       name: config_instance_id
