@@ -35,7 +35,7 @@ paths:
           | `config_instances:read` | Yes |
       x-codeSamples:
       - lang: Python
-        source: "from miru_server_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
+        source: "from miru_platform_sdk import Miru\n\nclient = Miru(\n    api_key=\"\
           My API Key\",\n)\nconfig_instance = client.config_instances.retrieve(\n\
           \    config_instance_id=\"cfg_inst_123\",\n)\nprint(config_instance.id)"
   /config_instances:

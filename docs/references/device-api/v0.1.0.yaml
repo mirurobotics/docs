@@ -30,7 +30,7 @@ paths:
             --url http://localhost/v1/health
       - lang: Python
         source: |-
-          from miru_agent_sdk import Miru
+          from miru_device_sdk import Miru
 
           client = Miru()
           response = client.agent.health()
@@ -56,7 +56,7 @@ paths:
             --url http://localhost/v1/version
       - lang: Python
         source: |-
-          from miru_agent_sdk import Miru
+          from miru_device_sdk import Miru
 
             client = Miru()
             response = client.agent.version()
@@ -83,7 +83,7 @@ paths:
             --url http://localhost/v1/device
       - lang: Python
         source: |-
-          from miru_agent_sdk import Miru
+          from miru_device_sdk import Miru
 
           client = Miru()
           device = client.device.retrieve()
@@ -110,7 +110,7 @@ paths:
             --url http://localhost/v1/device/sync
       - lang: Python
         source: |-
-          from miru_agent_sdk import Miru
+          from miru_device_sdk import Miru
 
             client = Miru()
             response = client.device.sync()
