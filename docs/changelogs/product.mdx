@@ -1,12 +1,14 @@
 ---
 title: "Product"
-mode: "center"
+mode: "custom"
 rss: "true"
 ---
 
 import { Dropdown, DropdownItem } from '/snippets/components/dropdown.jsx'
 import { Framed } from '/snippets/components/framed.jsx'
 import { Separator } from '/snippets/components/separator.jsx'
+
+<div className="prose prose-gray dark:prose-invert changelog-page">
 
 <Update label="January 27, 2026">
     ## Create Releases in CI/CD
@@ -402,3 +404,5 @@ import { Separator } from '/snippets/components/separator.jsx'
         <DropdownItem>Schema link in the deployment sheet no longer leads to a 404 error</DropdownItem>
     </Dropdown>
 </Update>
+
+</div>
