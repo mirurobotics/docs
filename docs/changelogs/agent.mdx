@@ -6,11 +6,31 @@ description: "Changelog and migration steps for the Miru Agent"
 
 # v0.7.0
 
-*TBD*
+*Unreleased*
 
-`v0.7.0` introduces Device API [v0.2.0](/docs/changelogs/device-api#v020) with new deployment-pipeline endpoints
+`v0.7.0` upgrades the Miru Agent to Device API [v0.2.0](/docs/changelogs/device-api#v020), adding deployment-pipeline visibility for on-device applications and improving deployment reliability under transient failures.
 
-TODO: Add more details about the release
+[Device API migration guide »](/docs/changelogs/device-api#v020)
+
+## Breaking changes
+
+- Upgraded to Device API `v0.2.0`, visit the [v0.2.0 changelog](/docs/changelogs/device-api#v020) for more details
+
+## Features
+
+- Deployments are guaranteed to be atomic--all config instances for a deployment are written to the filesystem simultaneously or none of them are
+- The agent now explicitly tracks `deployed_at` and `archived_at` timestamps on device when deployments are applied
+
+## Improvements
+
+- The agent immediately retries transient network connection errors three times before entering a cooldown period
+- Improved config instance caching logic to reduce network calls during sync cycles
+
+## Fixes
+
+- Fixed deployment retry logic to eagerly retry failed deployments instead of waiting for the polling interval to expire (occasionally leaving deployments stuck in a `queued` state)
+- Fixed deployment cooldown handling so retry windows are reported and cleared correctly
+- JWT tokens are now redacted from debug outputs
 
 ---
 
