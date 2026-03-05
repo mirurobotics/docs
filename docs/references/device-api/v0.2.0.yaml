@@ -1,24 +1,22 @@
 openapi: 3.0.3
 info:
-  title: Miru Device API
+  title: Miru Agent API
   description: The API between the Miru Agent and any external client living on the
     same device as the Miru Agent
-  version: v0.1.0-next
+  version: v0.2
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
+  x-release-version: v0.2.0-beta.4
   x-git-commit:
-    sha: 598b13eecca0a1c95437096f8d72af66aa7338f3
-    url: https://github.com/mirurobotics/openapi/commit/598b13eecca0a1c95437096f8d72af66aa7338f3
-    message: 'feat(schema): add API version enum to MiruVersion header parameter
-
-
-      Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>'
+    sha: 3bb2674b0b97ad95be0c2fa73107695722fb30a6
+    url: https://github.com/mirurobotics/openapi/commit/3bb2674b0b97ad95be0c2fa73107695722fb30a6
+    message: 'refactor: device stainless file updates'
     author: Benjamin Smidt
-    branch: main
+    branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-03-01T22:34:34.321215+00:00'
+    built_at: '2026-03-05T02:45:57.250795+00:00'
 servers:
 - url: http://localhost/v0.2
   description: localhost
@@ -38,6 +36,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthResponse'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/health
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          response = client.agent.health()
+          print(response.status)
   /version:
     get:
       tags:
@@ -52,6 +63,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/version
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          response = client.agent.version()
+          print(response.api_git_commit)
   /deployments/{deployment_id}:
     get:
       tags:
@@ -68,6 +92,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deployment'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/deployments/{deployment_id}
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          deployment = client.deployments.retrieve(
+              "dpl_123",
+          )
+          print(deployment.id)
   /deployments/current:
     get:
       tags:
@@ -82,6 +121,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deployment'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/deployments/current
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          deployment = client.deployments.current()
+          print(deployment.id)
   /device:
     get:
       tags:
@@ -96,6 +148,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Device'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/device
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          device = client.device.retrieve()
+          print(device.id)
   /device/sync:
     post:
       tags:
@@ -110,6 +175,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SyncDeviceResponse'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request POST \
+            --url http://localhost/v1/device/sync
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          response = client.device.sync()
+          print(response.code)
   /git_commits/{git_commit_id}:
     get:
       tags:
@@ -126,6 +204,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GitCommit'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/git_commits/{git_commit_id}
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          git_commit = client.git_commits.retrieve(
+              "git_commit_123",
+          )
+          print(git_commit.id)
   /releases/{release_id}:
     get:
       tags:
@@ -142,6 +235,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Release'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/releases/{release_id}
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          release = client.releases.retrieve(
+              "rls_123",
+          )
+          print(release.id)
   /releases/current:
     get:
       tags:
@@ -156,6 +264,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Release'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl --unix-socket /run/miru/miru.sock \
+             --request GET \
+            --url http://localhost/v1/releases/current
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          release = client.releases.current()
+          print(release.id)
 components:
   schemas:
     ErrorResponse:
@@ -168,14 +289,14 @@ components:
     APIVersion:
       type: string
       enum:
-      - v0.1.0-next
+      - v0.2
       x-enum-varnames:
       - API_VERSION
       x-stainless-const: true
     APIGitCommit:
       type: string
       enum:
-      - 598b13eecca0a1c95437096f8d72af66aa7338f3
+      - 3bb2674b0b97ad95be0c2fa73107695722fb30a6
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
@@ -235,13 +356,8 @@ components:
           example: aarch64
     DeploymentStatus:
       type: string
-      description: 'This status merges the ''activity_status'' and ''error_status''
-        fields, with error states taking precedence over activity states when errors
-        are present. For example, if the activity status is ''deployed'' but the error
-        status is ''failed'', the status is ''failed''. However, if the error status
-        is ''none'' and the activity status is ''deployed'', the status is ''deployed''.
-
-        '
+      description: |
+        This status merges the 'activity_status' and 'error_status' fields, with error states taking precedence over activity states when errors are present. For example, if the activity status is 'deployed' but the error status is 'failed', the status is 'failed'. However, if the error status is 'none' and the activity status is 'deployed', the status is 'deployed'.
       enum:
       - drifted
       - staged
@@ -260,23 +376,13 @@ components:
       - DEPLOYMENT_STATUS_RETRYING
     DeploymentActivityStatus:
       type: string
-      description: 'Last known activity state of the deployment.
-
-        - Drifted: device''s configurations have drifted since this deployment was
-        staged, and the deployment needs to be reviewed before it can be deployed
-
+      description: |
+        Last known activity state of the deployment.
+        - Drifted: device's configurations have drifted since this deployment was staged, and the deployment needs to be reviewed before it can be deployed
         - Staged: is ready to be deployed
-
-        - Queued: the deployment''s config instances are waiting to be received by
-        the device; will be deployed as soon as the device is online
-
-        - Deployed: the deployment''s config instances are currently available for
-        consumption on the device
-
-        - Archived: the deployment is available for historical reference but cannot
-        be deployed and is not active on the device
-
-        '
+        - Queued: the deployment's config instances are waiting to be received by the device; will be deployed as soon as the device is online
+        - Deployed: the deployment's config instances are currently available for consumption on the device
+        - Archived: the deployment is available for historical reference but cannot be deployed and is not active on the device
       enum:
       - drifted
       - staged
@@ -291,17 +397,11 @@ components:
       - DEPLOYMENT_ACTIVITY_STATUS_ARCHIVED
     DeploymentErrorStatus:
       type: string
-      description: 'Last known error state of the deployment.
-
+      description: |
+        Last known error state of the deployment.
         - None: no errors
-
-        - Retrying: an error has been encountered and the agent is retrying to reach
-        the target status
-
-        - Failed: a fatal error has been encountered; the deployment is archived and
-        (if deployed) removed from the device
-
-        '
+        - Retrying: an error has been encountered and the agent is retrying to reach the target status
+        - Failed: a fatal error has been encountered; the deployment is archived and (if deployed) removed from the device
       enum:
       - none
       - failed
@@ -312,17 +412,11 @@ components:
       - DEPLOYMENT_ERROR_STATUS_RETRYING
     DeploymentTargetStatus:
       type: string
-      description: 'Desired state of the deployment.
-
+      description: |
+        Desired state of the deployment.
         - Staged: is ready to be deployed
-
-        - Deployed: all config instances part of the deployment are available for
-        consumption on the device
-
-        - Archived: the deployment is available for historical reference but cannot
-        be deployed and is not active on the device
-
-        '
+        - Deployed: all config instances part of the deployment are available for consumption on the device
+        - Archived: the deployment is available for historical reference but cannot be deployed and is not active on the device
       enum:
       - staged
       - deployed
@@ -388,95 +482,9 @@ components:
           format: date-time
           example: '2024-01-01T00:00:00Z'
           description: Timestamp of when the device release was last updated.
-    BaseConfigInstance:
-      title: Base Config Instance
-      type: object
-      required:
-      - object
-      - id
-      - config_type_name
-      - filepath
-      - created_at
-      - config_schema_id
-      - config_type_id
-      properties:
-        object:
-          type: string
-          enum:
-          - config_instance
-          example: config_instance
-          x-stainless-const: true
-          description: The object type, which is always `config_instance`.
-        id:
-          type: string
-          example: cfg_inst_123
-          description: ID of the config instance.
-        config_type_name:
-          type: string
-          example: Motion Control
-          description: The name of the config type.
-        filepath:
-          type: string
-          example: /v1/motion-control.json
-          description: The file path to deploy the config instance relative to `/srv/miru/config_instances`.
-            `v1/motion-control.json` would deploy to `/srv/miru/config_instances/v1/motion-control.json`.
-        created_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: The timestamp of when the config instance was created.
-        config_schema_id:
-          type: string
-          example: cfg_sch_123
-          description: ID of the config schema which the config instance must adhere
-            to.
-        config_type_id:
-          type: string
-          example: cfg_type_123
-          description: ID of the config type which the config instance (and its schema)
-            is a part of.
-    InstanceFormat:
-      title: Instance Format
-      type: string
-      enum:
-      - json
-      x-enum-varnames:
-      - INSTANCE_FORMAT_JSON
-    InstanceContent:
-      title: Instance Content
-      type: object
-      required:
-      - format
-      - data
-      properties:
-        format:
-          $ref: '#/components/schemas/InstanceFormat'
-        data:
-          type: string
-          description: The configuration values associated with the config instance.
-          example: "{\n  \"enable_autonomy\": true,\n  \"enable_remote_control\":\
-            \ true,\n  \"max_payload_kg\": 10.0\n}\n"
-    ConfigInstance:
-      allOf:
-      - $ref: '#/components/schemas/BaseConfigInstance'
-      - type: object
-        required:
-        - content
-        properties:
-          content:
-            allOf:
-            - $ref: '#/components/schemas/InstanceContent'
-            description: The configuration values associated with the config instance.
     Deployment:
       allOf:
       - $ref: '#/components/schemas/BaseDeployment'
-      - type: object
-        properties:
-          config_instances:
-            type: array
-            items:
-              $ref: '#/components/schemas/ConfigInstance'
-            description: The config instances associated with this deployment.
       example:
         object: deployment
         id: dpl_123
@@ -491,14 +499,10 @@ components:
         updated_at: '2024-01-01T00:00:00Z'
     DeviceStatus:
       type: string
-      description: 'The status of the device.
-
+      description: |
+        The status of the device.
         - Online: The miru agent is connected
-
-        - Offline: The miru agent is disconnected (e.g. network issues, device is
-        powered off, etc.)
-
-        '
+        - Offline: The miru agent is disconnected (e.g. network issues, device is powered off, etc.)
       enum:
       - online
       - offline

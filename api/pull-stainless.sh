@@ -4,7 +4,7 @@ set -e
 git_repo_root_dir=$(git rev-parse --show-toplevel)
 
 # pull the device-api.yaml file from Stainless
-DEVICE_API_URL="https://app.stainless.com/api/spec/documented/miru-agent/openapi.documented.yml"
+DEVICE_API_URL="https://app.stainless.com/api/spec/documented/miru-device/openapi.documented.yml"
 DEVICE_API_FILE="$git_repo_root_dir/api/device-api.stainless.yaml"
 if ! curl -s -f -o "$DEVICE_API_FILE" "$DEVICE_API_URL"; then
     echo "❌ Failed to download device API spec from Stainless"
@@ -18,16 +18,16 @@ if [ ! -s "$DEVICE_API_FILE" ]; then
 fi
 
 # pull the server-api.yaml file from Stainless
-SERVER_API_URL="https://app.stainless.com/api/spec/documented/miru-server/openapi.documented.yml"
-SERVER_API_FILE="$git_repo_root_dir/api/server-api.stainless.yaml"
-if ! curl -s -f -o "$SERVER_API_FILE" "$SERVER_API_URL"; then
-    echo "❌ Failed to download server API spec from Stainless"
+PLATFORM_API_URL="https://app.stainless.com/api/spec/documented/miru-platform/openapi.documented.yml"
+PLATFORM_API_FILE="$git_repo_root_dir/api/platform-api.stainless.yaml"
+if ! curl -s -f -o "$PLATFORM_API_FILE" "$PLATFORM_API_URL"; then
+    echo "❌ Failed to download platform API spec from Stainless"
     exit 1
 fi
 
 # Verify the file is not empty
-if [ ! -s "$SERVER_API_FILE" ]; then
-    echo "❌ Downloaded server API spec file is empty"
+if [ ! -s "$PLATFORM_API_FILE" ]; then
+    echo "❌ Downloaded platform API spec file is empty"
     exit 1
 fi
 
@@ -53,8 +53,8 @@ if ! python3 -c "import pyyaml" 2>/dev/null; then
     fi
 fi
 
-# remove the webhooks section from the server-api.yaml file
-python3 remove_webhooks.py "$SERVER_API_FILE"
-
 # add Unix socket curl examples to the device-api.yaml file
 python3 add_unix_socket_curl.py "$DEVICE_API_FILE"
+
+# insert the scopes into the platform-api.yaml file
+python3 inject_scopes.py "$PLATFORM_API_FILE"

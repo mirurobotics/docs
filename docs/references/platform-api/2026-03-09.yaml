@@ -2,19 +2,20 @@ openapi: 3.0.3
 info:
   title: Miru Platform API
   description: The API between Miru and any external client
-  version: 2026-03-03.zion-beta
+  version: 2026-03-09.tetons
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
+  x-release-version: 2026-03-09.tetons-beta.1
   x-git-commit:
-    sha: e0b47508378ba794e25d0625df209c573e6db8f5
-    url: https://github.com/mirurobotics/openapi/commit/e0b47508378ba794e25d0625df209c573e6db8f5
-    message: 'feat: add config type and schema expansion back to config instance'
+    sha: 2e793a2b12aede8822732f245e7cb0e3de26f40c
+    url: https://github.com/mirurobotics/openapi/commit/2e793a2b12aede8822732f245e7cb0e3de26f40c
+    message: 'ci: fix release publisher to use new x-release-version for checks'
     author: Benjamin Smidt
     branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-03-03T23:01:09.910663+00:00'
+    built_at: '2026-03-05T00:05:19.968337+00:00'
 servers:
 - url: https://api.mirurobotics.com/beta
   description: Miru Platform API
@@ -40,6 +41,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigInstance'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          config_instance = client.config_instances.retrieve(
+              config_instance_id="cfg_inst_123",
+          )
+          print(config_instance.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -69,6 +83,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigInstanceList'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          config_instances = client.config_instances.list()
+          print(config_instances)
       x-mint:
         content: |
           | Scope | Required |
@@ -95,6 +120,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigInstance'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          config_instance = client.config_instances.create(
+              config_schema_id="cfg_sch_123",
+              content={
+                  "data": "{\n  \"enable_autonomy\": true,\n  \"enable_remote_control\": true,\n  \"max_payload_kg\": 10.0\n}\n",
+                  "format": "json",
+              },
+          )
+          print(config_instance.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -134,6 +176,21 @@ paths:
                 type: string
                 format: binary
                 description: The raw config instance content.
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          response = client.config_instances.content(
+              config_instance_id="cfg_inst_123",
+          )
+          print(response)
+          content = response.read()
+          print(content)
       x-mint:
         content: |
           | Scope | Required |
@@ -158,6 +215,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigSchema'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          config_schema = client.config_schemas.retrieve(
+              config_schema_id="cfg_sch_123",
+          )
+          print(config_schema.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -186,6 +256,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigSchemaList'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          config_schema_list = client.config_schemas.list()
+          print(config_schema_list)
       x-mint:
         content: |
           | Scope | Required |
@@ -219,6 +300,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigSchema'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          config_schema = client.config_schemas.create(
+              config_type_ref={},
+              documents=[{
+                  "data": "data",
+                  "name": "motion-control.json",
+              }],
+              format="json",
+              language="jsonschema",
+          )
+          print(config_schema.id)
   /config_types/{config_type_id}:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -238,6 +338,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigType'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          config_type = client.config_types.retrieve(
+              config_type_id="cfg_typ_123",
+          )
+          print(config_type.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -265,6 +378,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigType'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          config_type = client.config_types.update(
+              config_type_id="cfg_typ_123",
+          )
+          print(config_type.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -294,6 +420,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigTypeList'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          config_types = client.config_types.list()
+          print(config_types)
       x-mint:
         content: |
           | Scope | Required |
@@ -320,6 +457,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigType'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          config_type = client.config_types.create(
+              name="My Config Type",
+              slug="my-config-type",
+          )
+          print(config_type.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -344,6 +495,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deployment'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          deployment = client.deployments.retrieve(
+              deployment_id="dpl_123",
+          )
+          print(deployment.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -376,6 +540,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeploymentList'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          deployment_list = client.deployments.list()
+          print(deployment_list)
       x-mint:
         content: |
           | Scope | Required |
@@ -402,6 +577,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deployment'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          deployment = client.deployments.create(
+              config_instance_ids=["cfg_inst_123"],
+              description="Deployment for the motion control config instance",
+              device_id="dvc_123",
+              release_id="rls_123",
+              target_status="staged",
+          )
+          print(deployment.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -428,6 +620,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deployment'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          deployment = client.deployments.deploy(
+              deployment_id="dpl_123",
+          )
+          print(deployment.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -452,6 +657,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deployment'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          deployment = client.deployments.archive(
+              deployment_id="dpl_123",
+          )
+          print(deployment.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -477,6 +695,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeploymentList'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          deployment_list = client.deployments.list_drifts(
+              deployment_id="dpl_123",
+          )
+          print(deployment_list)
       x-mint:
         content: |
           | Scope | Required |
@@ -500,6 +731,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Device'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          device = client.devices.retrieve(
+              "dvc_123",
+          )
+          print(device.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -526,6 +770,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Device'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          device = client.devices.update(
+              device_id="dvc_123",
+          )
+          print(device.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -553,6 +810,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Device'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          device = client.devices.create(
+              name="Robot 1",
+          )
+          print(device.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -579,6 +849,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeviceList'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          device_list = client.devices.list()
+          print(device_list)
       x-mint:
         content: |
           | Scope | Required |
@@ -608,6 +889,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TokenResponse'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          response = client.devices.issue_activation_token(
+              device_id="dvc_123",
+          )
+          print(response.token)
       x-mint:
         content: |
           | Scope | Required |
@@ -637,6 +931,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PingDeviceResponse'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          response = client.devices.ping(
+              device_id="dvc_123",
+              timeout_nanos=1000000000,
+          )
+          print(response.code)
       x-mint:
         content: |
           | Scope | Required |
@@ -660,6 +968,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GitCommit'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          git_commit = client.git_commits.retrieve(
+              "git_commit_123",
+          )
+          print(git_commit.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -688,6 +1009,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GitCommitList'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          git_commit_list = client.git_commits.list()
+          print(git_commit_list)
       x-mint:
         content: |
           | Scope | Required |
@@ -712,6 +1044,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GitCommit'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          git_commit = client.git_commits.create(
+              message="Update config schema for robot1",
+              origin="https://github.com/robot1/robot1.git",
+              sha="a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0",
+          )
+          print(git_commit.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -734,6 +1081,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Principal'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          principal = client.principal.self()
+          print(principal.id)
   /releases/{release_id}:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -753,6 +1111,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Release'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          release = client.releases.retrieve(
+              release_id="rls_123",
+          )
+          print(release.id)
       x-mint:
         content: |
           | Scope | Required |
@@ -781,6 +1152,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ReleaseList'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          release_list = client.releases.list()
+          print(release_list)
       x-mint:
         content: |
           | Scope | Required |
@@ -814,6 +1196,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Release'
+      x-codeSamples:
+      - lang: Python
+        source: |-
+          import os
+          from miru_platform_sdk import Miru
+
+          client = Miru(
+              api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
+          )
+          release = client.releases.create(
+              config_schema_ids=["cfg_sch_123"],
+              version="v1.0.0",
+          )
+          print(release.id)
 x-webhooks:
   deployment.validate:
     post:
@@ -841,14 +1237,14 @@ components:
     APIVersion:
       type: string
       enum:
-      - 2026-03-03.zion-beta
+      - 2026-03-09.tetons
       x-enum-varnames:
       - API_VERSION
       x-stainless-const: true
     APIGitCommit:
       type: string
       enum:
-      - e0b47508378ba794e25d0625df209c573e6db8f5
+      - 2e793a2b12aede8822732f245e7cb0e3de26f40c
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
@@ -2310,8 +2706,8 @@ components:
       required: true
       schema:
         type: string
-        example: 2026-03-03.zion-beta
-        default: 2026-03-03.zion-beta
+        example: 2026-03-09.tetons
+        default: 2026-03-09.tetons
       description: The API version the client was built against.
     config_instance_id:
       name: config_instance_id
