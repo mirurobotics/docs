@@ -1,5 +1,6 @@
 ---
 title: "Device API"
+mode: "center"
 description: "Changelog and migration steps for the Device API"
 ---
 
@@ -8,7 +9,7 @@ import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 import { DeviceApiReleaseLinks } from '/snippets/components/api-links.jsx';
 
-## v0.2.0
+# v0.2.0
 
 *TBD*
 
@@ -19,7 +20,7 @@ The current release version endpoint is the most exciting, enabling on-device ap
 
 <DeviceApiReleaseLinks version="v0.2.0" />
 
-### New endpoints
+## New endpoints
 
 <Dropdown title="Deployments">
   - <GET /> `/deployments/current` — get currently deployed deployment
@@ -35,7 +36,7 @@ The current release version endpoint is the most exciting, enabling on-device ap
   - <GET /> `/git_commits/{id}` — get a git commit by ID
 </Dropdown>
 
-### Breaking changes
+## Breaking changes
 
 <Dropdown title="Base path change">
 The URL version prefix changed from `/v1` to `/v0.2`. Update all request URLs in your client application.
@@ -59,7 +60,7 @@ The `GET /version` response renamed `commit` to `git_commit`.
 ```
 </Dropdown>
 
-### Additive changes
+## Additive changes
 
 <Dropdown title="Version response">
 The `GET /version` response added richer information about the agent and API version.
@@ -78,7 +79,7 @@ The `GET /version` response added richer information about the agent and API ver
 ```
 </Dropdown>
 
-### Migration steps
+## Migration steps
 
 <Steps>
   <Step title="Verify agent compatibility">
@@ -98,7 +99,7 @@ The `GET /version` response added richer information about the agent and API ver
 
 ---
 
-## v0.1.0
+# v0.1.0
 
 *September 21, 2025*
 
@@ -106,7 +107,7 @@ Initial release of the Device API. This version establishes the core on-device i
 
 <DeviceApiReleaseLinks version="v0.1.0" />
 
-### Endpoints
+## Endpoints
 
 <Dropdown title="Agent">
   - <GET /> `/health` — retrieve the health of the agent
@@ -118,6 +119,6 @@ Initial release of the Device API. This version establishes the core on-device i
   - <POST /> `/device/sync` — manually force a device sync
 </Dropdown>
 
-### Python SDK
+## Python SDK
 
 FIXME

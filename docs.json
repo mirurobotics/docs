@@ -214,7 +214,7 @@
         "product": "Changelog",
         "groups": [
           {
-            "group": "Updates",
+            "group": "Changelogs",
             "pages": [
               "docs/changelogs/product",
               "docs/changelogs/cli",
@@ -241,7 +241,7 @@
     "links": [
       {
         "label": "Changelog",
-        "href": "/docs/changelogs/product"
+        "href": "https://docs.mirurobotics.com/docs/changelogs/product"
       },
       {
         "label": "Dashboard",

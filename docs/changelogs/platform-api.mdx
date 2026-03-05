@@ -1,5 +1,6 @@
 ---
 title: "Platform API"
+mode: "center"
 description: "Changelog and migration steps for the Platform API"
 ---
 
@@ -8,7 +9,7 @@ import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 import { PlatformApiReleaseLinks } from '/snippets/components/api-links.jsx';
 
-## 2026-03-09.tetons
+# 2026-03-09.tetons
 
 *March 9, 2026*
 
@@ -16,7 +17,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
 
 <PlatformApiReleaseLinks version="2026-03-09.tetons" />
 
-### New endpoints
+## New endpoints
 
 <Dropdown title="Auth">
   - <GET /> `/principal` — retrieve the current principal
@@ -60,7 +61,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
   - <POST /> `/releases` — create a release
 </Dropdown>
 
-### Breaking changes
+## Breaking changes
 
 <Dropdown title="Miru-Version header">
   Requests require the `Miru-Version` header. Requests without the `Miru-Version` header default to `2025-10-21.zion`.
@@ -241,7 +242,7 @@ Deleting devices is no longer supported.
 - <DELETE /> `/devices/{device_id}`
 </Dropdown>
 
-### Additive changes
+## Additive changes
 
 <Dropdown title="Expansion Query Parameter">
   Expansions can now be specified using the `expand` query parameter in addition to the `expand[]` query parameter.
@@ -321,11 +322,11 @@ Added `git_commit_id` linking releases to their source commit.
 
 </Dropdown>
 
-### Python SDK
+## Python SDK
 
 FIXME
 
-### Migration steps
+## Migration steps
 
 <Steps>
   <Step title="Set the Miru-Version header">
@@ -345,7 +346,7 @@ FIXME
 
 ---
 
-## 2025-10-21.zion
+# 2025-10-21.zion
 
 *October 21, 2025*
 
@@ -353,7 +354,7 @@ Initial release of the Platform API. This version establishes core API endpoints
 
 <PlatformApiReleaseLinks version="2025-10-21.zion" />
 
-### Endpoints
+## Endpoints
 
 <Dropdown title="Devices">
   - <GET /> `/devices` — list devices
@@ -380,7 +381,7 @@ Initial release of the Platform API. This version establishes core API endpoints
   - <GET /> `/config_instances/{config_instance_id}` — retrieve a config instance
 </Dropdown>
 
-### Query parameters
+## Query parameters
 
 <Dropdown title="Filters">
   Filtering allows you to narrow list results by resource fields like `id`, `device_id`, `status`, and more. Check out the [Filtering](/docs/developers/platform-api/query-params/filtering) documentation for more details.
@@ -399,7 +400,7 @@ Initial release of the Platform API. This version establishes core API endpoints
   All list endpoints support offset-based pagination with `offset` and `limit`. Check out the [Pagination](/docs/developers/platform-api/query-params/pagination) documentation for more details.
 </Dropdown>
 
-### Python SDK
+## Python SDK
 
 FIXME
 
