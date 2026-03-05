@@ -4,128 +4,220 @@ title: "Config editor"
 
 import {Framed} from '/snippets/components/framed.jsx';
 
-<Framed background="https://assets.mirurobotics.com/docs/v03/images/devices/background.jpeg" image="https://assets.mirurobotics.com/docs/v03/images/devices/header:editor.png" borderWidth="30px 60px 0 0" innerRadius="0 8px 0 0" />
+<Framed 
+    background="https://assets.mirurobotics.com/docs/v03/images/devices/background.jpeg" 
+    image="https://assets.mirurobotics.com/docs/v03/images/devices/editor/config-editor-v3.png" 
+    borderWidth="30px 30px 0 0" 
+    innerRadius="0 8px 0 0" 
+/>
 
-The config editor is the primary way to view and edit a device's configurations.
+The config editor is the primary way to view and edit a device's configuration files.
 
-The editor is accessed by clicking into a device from the [Devices page](https://app.mirurobotics.com/devices) and selecting the **Editor** tab at the top.
+Open the editor by clicking into a device from the
+[Devices page](https://app.mirurobotics.com/devices) and selecting the **Editor**
+tab at the top.
 
 ## Layout
 
-The config editor is organized into three main sections.
+The editor is split into two resizable panels:
 
-1. Config types - a list of config types which are part of the device's current deployment
-2. File editor - a VSCode-like file editor for editing configurations
-3. History - a reference of the device's previously deployed config instances for the selected config type
-
-<Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/layout.png)
-</Frame>
-
-## Customize
-
-The config editor offers a couple of layout adjustments to help you get the most out of the editor.
-
-**Width**
-
-Customize the width by dragging the vertical dividers to the left or right as desired.
+- **Editor panel** — A code editor for editing configuration files or viewing
+  historical versions.
+- **Controls panel** — Controls what the editor displays and provides actions
+  like deploying changes or browsing deployment history.
 
 <Frame>
-  <video autoPlay loop controls src="https://assets.mirurobotics.com/docs/v03/videos/devices/editor/customize-widths.webm" />
+  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/layout-temp.png)
 </Frame>
 
-**Hide Config Types**
 
-Hide the config types sidebar by clicking the sidebar toggle in the top-left corner of the file editor.
+
+---
+
+## Draft
+
+When the **Draft** tab is selected in the controls panel, the editor enters
+edit mode. You can modify any configuration file directly in the editor.
+Changes are tracked locally until you deploy them.
+
+A draft is automatically created when you open the editor. If the device has
+existing deployments, the draft is based on the most recent one. If this is a
+new device with no deployments, the draft is initialized from the release's
+default configuration.
+
+### Change list
+
+The controls panel shows a **change list** that summarizes every modification in
+the current draft. Changes are grouped by file, with each file section showing
+its name and a change count (e.g., "3 changes") or "New file" for newly added
+files. Within each section, individual changes are listed with:
+
+- The **type** of change — added, modified, or deleted — color-coded green,
+  yellow, or red respectively.
+- The **JSON path** of the affected value (e.g., `settings > network > ip`).
+  Long paths are truncated; hover to see the full path.
+
+Files with no changes show a "No changes" label.
 
 <Frame>
-  <video autoPlay loop controls src="https://assets.mirurobotics.com/docs/v03/videos/devices/editor/hide-config-types.webm" />
+  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/draft-changelog.png)
 </Frame>
 
-**History Height**
+### Deploying changes
 
-Customize the height of the history section by dragging the horizontal divider to the top or bottom.
+Click the **Deploy** button to start the deployment process.
 
 <Frame>
-  <video autoPlay loop controls src="https://assets.mirurobotics.com/docs/v03/videos/devices/editor/customize-history-height.webm" />
+  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/deploy.png)
 </Frame>
 
-## Patch a config instance
+<Steps>
+    <Step title="Review the summary">
+        See the summary of changes for each file.
+    </Step>
+    <Step title="Add a description">
+        Enter a description for the deployment. This field is required.
+    </Step>
+    <Step title="Confirm the device name">
+        Type the device name exactly as shown to confirm the deployment.
+    </Step>
+    <Step title="Deploy">
+        Click **Deploy** to push the changes. After a successful deployment, the
+        editor automatically switches to the History tab and selects the new
+        deployment.
+    </Step>
+</Steps>
 
-Patching a config instance is the process of creating a new config instance to replace the currently deployed one.
+<Note>
+    The Deploy button is disabled when:
+    - The device is offline.
+    - The draft has no changes.
+    - Any file contains JSON syntax errors.
 
-Patching a config instance is only allowed from currently deployed config instances. Config instances that are not deployed are read-only and cannot be edited.
+    Hover over the disabled button to see the reason.
+</Note>
 
-To patch a config instance, edit the instance in the file editor.
+---
+
+## History
+
+When the **History** tab is selected, the editor switches to read-only mode and
+displays past deployments.
+
+### Deployment list
+
+The controls panel shows all deployments grouped by release version. Within
+each group, deployments are listed from most recent to oldest with each entry showing:
+
+- Description
+- Deployment status and ID
+- Who created it and when
+
+Click a deployment to view it's contents. The selected deployment is called the
+**head** deployment, and its configuration files are loaded into the editor.
+The head deployment is highlighted with a solid left border and a subtle
+background. When a base deployment is selected for diffing, it is indicated with
+a dashed left border.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/mobility-patch.png)
+  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/history-list.png)
 </Frame>
 
-As edits are made, a log on the right maintains a list of all changes, categorizing them by their type: `added`, `deleted`, or `modified`.
+**Right-click** a deployment to open a context menu with options to:
 
-Once you're satisfied with the edits, click **Deploy** in the top-right. A dialog will appear to confirm the deployment.
+- **Redeploy** — Restore an archived deployment (see [Redeploy](#redeploy)).
+- **Set as diff base** — Use this deployment as the comparison baseline.
+- **Copy ID** or **Copy description**.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/deploy-dialog.png)
+  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/context-menu.png)
 </Frame>
 
-Add a description, confirm the device, and click **Deploy**.
+### Diff and read-only modes
 
-## Config instance history
+In the History tab, the editor supports two view modes:
 
-The right side of the config editor maintains a history of all the config instances deployed to the device for the currently selected config type.
+- **Read-only** — Displays the head deployment's files without any diff
+  highlighting.
+- **Diff** — Highlights the differences between the head and base deployments
+  using color-coded decorations:
+  - **Green** — Added lines.
+  - **Yellow** — Modified lines, showing the old and new values.
+  - **Red** — Deleted lines, showing the removed content.
+    content.
+<Frame>
+  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/view-modes.png)
+</Frame>
+
+### Diff navigation
+
+When viewing a diff, navigation controls appear as a floating overlay above the
+footer:
+
+- **Change navigation** — Step through individual changes within the current
+  file using the previous/next buttons. A position label (e.g., "1 of 3")
+  tracks your place. Open the changes dropdown to see all changes listed by
+  type and JSON path, and jump to any one directly.
+- **File navigation** — When multiple files contain changes, use the file
+  navigation controls to jump between them. A label (e.g., "1 of 3 files")
+  shows your position.
+
+The currently focused change is highlighted with a flash animation.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/history-entry.png)
+  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/diff-navigation.png)
 </Frame>
 
-You can view more information about a history entry by hitting the dropdown arrow to the left of the entry.
+### Base vs. Head
 
-For more information about a config instance property in a history entry, see the [config instance properties](/docs/learn/config-instances#properties).
+The diff view compares two deployments:
 
-For more information about a deployment in the history entry, refer to the [deployment properties](/docs/learn/deployments#properties).
-
-## Switch releases
-
-Above the config types on the left, you'll find the current release version of the device's configurations.
+- **Base** — The older deployment used as the comparison starting point.
+  Defaults to the deployment immediately before the head. You can change it
+  using the diff selector in the toolbar or by right-clicking a deployment and
+  selecting "Set as diff base." Only deployments older than the head are
+  available as a base.
+- **Head** — The currently selected deployment. Shown as a read-only label in
+  the diff selector.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/current-release.png)
+  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/base-head.png)
 </Frame>
 
-To deploy configurations with a different release, click the release dropdown and select the release you want to switch to.
+### Redeploy
+
+You can redeploy the configurations from any archived deployment. Right-click the
+deployment in the history list and select **Redeploy** to open the redeploy
+dialog.
+
+The redeploy dialog shows:
+
+- A card with the original deployment's details (description, status, ID,
+  creator, and date).
+- A description field (pre-filled with a reference to the original deployment).
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/release-dropdown.png)
+  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/redeploy.png)
 </Frame>
 
-At this point, you have two options: deploy a staged deployment or create a new deployment.
+---
 
-### Staged deployments
+## External deployment sync
 
-If you've [staged a deployment](/docs/learn/releases/staging-area) on the chosen release for the device, the release will have the `Staged` badge next to it.
+If another user (or system) deploys to the same device while you have the editor
+open, an alert appears with the new deployment's details. The alert offers different 
+options depending on whether you have unsaved edits:
 
-Select a release with a `Staged` badge and hit **Next**.
+**No edits in progress:**
+- **Acknowledge** — Accepts the external deployment and resets your draft to
+  match it.
+
+**Edits in progress:**
+- **Discard** — Discards your edits and resets the draft to the external
+  deployment.
+- **Keep** — Merges your edits on top of the external deployment using a
+  three-way JSON merge, preserving your changes where possible.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/set-release-dialog:step1:deploy-staged.png)
-</Frame>
-
-The deployment staged on this release will appear in the dialog. Select the deployment and hit **Deploy**.
-
-### New deployments
-
-If the release you selected has no staged deployments, you'll immediately be presented with a dialog to create a new deployment.
-
-<Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/set-release-dialog:step2:config-tabs.png)
-</Frame>
-
-The dialog includes a tab for each config schema defined in the release, each pre-populated with the schema's default values.
-
-Make any desired edits to the config instances, enter a description at the bottom of the dialog, and hit **Deploy**.
-
-<Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/set-release-dialog:step2:description.png)
-</Frame>
+  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/deployment-alert.png)
+</Frame>  
