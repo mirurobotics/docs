@@ -4,103 +4,95 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
-# v0.7.0
+<div className="changelog-page">
 
-*Unreleased*
+<Update label="Unreleased">
+    ## v0.7.0
 
-`v0.7.0` upgrades the Miru Agent to Device API [v0.2.0](/docs/changelogs/device-api#v020), adding deployment-pipeline visibility for on-device applications and improving deployment reliability under transient failures.
+    `v0.7.0` upgrades the Miru Agent to Device API [v0.2.0](/docs/changelogs/device-api#v020), adding deployment-pipeline visibility for on-device applications and improving deployment reliability under transient failures.
 
-[Device API migration guide »](/docs/changelogs/device-api#v020)
+    [Device API migration guide »](/docs/changelogs/device-api#v020)
 
-## Breaking changes
+    ### Breaking changes
 
-- Upgraded to Device API `v0.2.0`, visit the [v0.2.0 changelog](/docs/changelogs/device-api#v020) for more details
+    - Upgraded to Device API `v0.2.0`, visit the [v0.2.0 changelog](/docs/changelogs/device-api#v020) for more details
 
-## Features
+    ### Features
 
-- Deployments are guaranteed to be atomic--all config instances for a deployment are written to the filesystem simultaneously or none of them are
-- The agent now explicitly tracks `deployed_at` and `archived_at` timestamps on device when deployments are applied
+    - Deployments are guaranteed to be atomic--all config instances for a deployment are written to the filesystem simultaneously or none of them are
+    - The agent now explicitly tracks `deployed_at` and `archived_at` timestamps on device when deployments are applied
 
-## Improvements
+    ### Improvements
 
-- The agent immediately retries transient network connection errors three times before entering a cooldown period
-- Improved config instance caching logic to reduce network calls during sync cycles
+    - The agent immediately retries transient network connection errors three times before entering a cooldown period
+    - Improved config instance caching logic to reduce network calls during sync cycles
 
-## Fixes
+    ### Fixes
 
-- Fixed deployment retry logic to eagerly retry failed deployments instead of waiting for the polling interval to expire (occasionally leaving deployments stuck in a `queued` state)
-- Fixed deployment cooldown handling so retry windows are reported and cleared correctly
-- JWT tokens are now redacted from debug outputs
+    - Fixed deployment retry logic to eagerly retry failed deployments instead of waiting for the polling interval to expire (occasionally leaving deployments stuck in a `queued` state)
+    - Fixed deployment cooldown handling so retry windows are reported and cleared correctly
+    - JWT tokens are now redacted from debug outputs
+</Update>
 
----
+<Update label="January 22, 2026">
+    ## v0.6.1
 
-# v0.6.1
+    ### Fixes
 
-*January 22, 2026*
+    - The `miru-agent --install` command now correctly returns a non-zero exit code on failure, instead of `0`
+</Update>
 
-## Fixes
+<Update label="December 8, 2025">
+    ## Agent Install Script Update
 
-- The `miru-agent --install` command now correctly returns a non-zero exit code on failure, instead of `0`
+    ### Improvements
 
----
+    - Agent install script now runs `sudo chown -R miru:miru /srv/miru` to prevent any permissions issues encountered if the `/srv/miru` directory has previously been created with the wrong permissions
+</Update>
 
-# Agent Install Script Update
+<Update label="October 19, 2025">
+    ## v0.6.0
 
-*December 8, 2025*
+    `v0.6.0` adds support for installing the agent over poor internet connections, ensuring reliable provisioning on bandwidth-constrained devices.
 
-## Improvements
+    [Read the full documentation »](/docs/developers/agent/install#poor-connectivity)
 
-- Agent install script now runs `sudo chown -R miru:miru /srv/miru` to prevent any permissions issues encountered if the `/srv/miru` directory has previously been created with the wrong permissions
+    ### Features
 
----
+    - Poor connectivity installations of the Miru Agent are now supported
+</Update>
 
-# v0.6.0
+<Update label="September 17, 2025">
+    ## v0.5.1
 
-*October 19, 2025*
+    ### Fixes
 
-`v0.6.0` adds support for installing the agent over poor internet connections, ensuring reliable provisioning on bandwidth-constrained devices.
+    - Fixed device provisioning script
+    - Fixed a critical bug where configuration files could go missing if multiple configuration files were queued for deployment while the agent was offline
+</Update>
 
-[Read the full documentation »](/docs/developers/agent/install#poor-connectivity)
+<Update label="September 5, 2025">
+    ## v0.5.0
 
+    First release with Device API v0.1.0 endpoints, MQTT-based real-time sync, and device session management. Establishes the core on-device integration surface.
 
-## Features
+    ### Features
 
-- Poor connectivity installations of the Miru Agent are now supported
+    - Added agent version info to device and server updates
+    - Added device session ID for MQTT authentication
+    - Added MQTT ping/pong for connection health monitoring
+    - Added server APIs to sync the agent
+    - Added version argument to installation scripts
+    - Added agent information to client headers
+    - Pretty-printed JSON objects in logs
 
----
+    ### Fixes
 
-# v0.5.1
+    - Activation script now restarts the agent on failures
+    - Activation script temporarily stops the agent during provisioning
+    - Fixed errant `unwrap()` calls that could cause panics
+    - Improved MQTT network connection error handling
+    - Fixed unnecessary filesystem writes for device patches
+</Update>
 
-*September 17, 2025*
-
-
-## Fixes
-
-- Fixed device provisioning script
-- Fixed a critical bug where configuration files could go missing if multiple configuration files were queued for deployment while the agent was offline
-
----
-
-# v0.5.0
-
-*September 5, 2025*
-
-First release with Device API v0.1.0 endpoints, MQTT-based real-time sync, and device session management. Establishes the core on-device integration surface.
-
-## Features
-
-- Added agent version info to device and server updates
-- Added device session ID for MQTT authentication
-- Added MQTT ping/pong for connection health monitoring
-- Added server APIs to sync the agent
-- Added version argument to installation scripts
-- Added agent information to client headers
-- Pretty-printed JSON objects in logs
-
-## Fixes
-
-- Activation script now restarts the agent on failures
-- Activation script temporarily stops the agent during provisioning
-- Fixed errant `unwrap()` calls that could cause panics
-- Improved MQTT network connection error handling
-- Fixed unnecessary filesystem writes for device patches
+</div>

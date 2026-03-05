@@ -4,107 +4,103 @@ mode: "center"
 description: "Changelog and migration steps for the Miru CLI"
 ---
 
-import { SupportedBadge } from '/snippets/components/support.jsx';
+<div className="changelog-page">
 
-# v0.9.1 
+<Update label="February 4, 2026">
+    ## v0.9.1
 
-*February 4, 2026*
+    ### Fixes
 
-## Fixes
+    - Error messages are properly flushed to the console, ensuring outputs are always visible in CI
+</Update>
 
-- Error messages are properly flushed to the console, ensuring outputs are always visible in CI
+<Update label="January 27, 2026">
+    ## v0.9.0
 
----
+    `v0.9.0` is a major release replacing the schema-push workflow with a single `miru release create` command that handles releases, schemas, and Git metadata in one step. Also adds API key authentication for CI/CD use.
 
-# v0.9.0
+    ### `miru release create`
 
-*January 27, 2026*
+    The `miru schema push` command has been replaced by [miru release create](/docs/references/cli/release-create), which bundles the entire release process into a single command. [CUE packages](/docs/references/cli/release-create#cue-packages) are now supported, allowing schemas to span multiple files.
 
-`v0.9.0` is a major release replacing the schema-push workflow with a single `miru release create` command that handles releases, schemas, and Git metadata in one step. Also adds API key authentication for CI/CD use.
+    ```bash
+    miru release create --version v1.0.0 schema.json
+    ```
 
-## `miru release create`
+    ### API key authentication
 
-The `miru schema push` command has been replaced by [miru release create](/docs/references/cli/release-create), which bundles the entire release process into a single command. [CUE packages](/docs/references/cli/release-create#cue-packages) are now supported, allowing schemas to span multiple files.
+    The CLI now supports authentication via API keys using the `MIRU_API_KEY` environment variable, enabling non-interactive use in CI/CD pipelines.
 
-```bash
-miru release create --version v1.0.0 schema.json
-```
+    Visit the [CI/CD guide](/docs/developers/ci/overview) for more information on using the CLI in CI/CD pipelines.
 
-## API key authentication
+    ### Improvements
 
-The CLI now supports authentication via API keys using the `MIRU_API_KEY` environment variable, enabling non-interactive use in CI/CD pipelines.
+    - Improved error messages to be more descriptive and readable
 
-Visit the [CI/CD guide](/docs/developers/ci/overview) for more information on using the CLI in CI/CD pipelines.
+    ### Retired
 
-## Improvements
+    - Retired the `miru schema push` command
+</Update>
 
-- Improved error messages to be more descriptive and readable
+<Update label="December 18, 2025">
+    ## v0.8.0
 
-## Retired
+    `v0.8.0` is a cleanup release removing deprecated flags from `miru schema push` ahead of the v0.9.0 command replacement.
 
-- Retired the `miru schema push` command
+    ### Breaking changes
 
----
+    **Schema push command**
 
-# v0.8.0
+    - Removed the `--version` flag
+    - Removed the `--allow-duplicate` flag
 
-*December 18, 2025*
+    ```diff
+    miru schema push schema.json \
+    -   --version v1.0.0 \
+    -   --allow-duplicate
+    ```
+</Update>
 
-`v0.8.0` is a cleanup release removing deprecated flags from `miru schema push` ahead of the v0.9.0 command replacement.
+<Update label="December 4, 2025">
+    ## v0.7.0
 
-## Breaking changes
+    `v0.7.0` introduces first-class CUE support and updates the schema push workflow to support multiple schema languages.
 
-**Schema push command**
+    ### CUE support
 
-- Removed the `--version` flag
-- Removed the `--allow-duplicate` flag
+    `v0.7.0` is the first CLI release with [CUE](/docs/learn/schemas/languages/overview) support. You can now push CUE-based schemas directly and use CUE alongside existing JSON Schema workflows.
 
-```diff
-miru schema push schema.json \
--   --version v1.0.0 \
--   --allow-duplicate
-```
+    ### Schema push improvements
 
----
+    - Added the `--language` flag to `miru schema push` to specify schema language
+    - Added the `--allow-duplicate` flag to `miru schema push` to allow multiple schemas with the same content
+    - Schemas uploaded to Miru are now preserved exactly as defined, including original ordering, spacing, and comments
 
-# v0.7.0
+    ### Other improvements
 
-*December 4, 2025*
+    - Improved readability of error messages
+    - Users are notified when the CLI version is out of date
 
-`v0.7.0` introduces first-class CUE support and updates the schema push workflow to support multiple schema languages.
+    ### Breaking changes
 
-## CUE support
+    **Version flag**
 
-`v0.7.0` is the first CLI release with [CUE](/docs/learn/schemas/languages/overview) support. You can now push CUE-based schemas directly and use CUE alongside existing JSON Schema workflows.
+    The `--version` flag is now required when pushing a schema, and JSON Schema annotations were renamed:
 
-## Schema push improvements
+    ```diff
+    - "$miru_config_type_slug": "my-config"
+    - "$miru_instance_filepath": "/etc/myapp/config.json"
+    + "x-miru-config-type": "my-config"
+    + "x-miru-instance-filepath": "/etc/myapp/config.json"
+    ```
 
-- Added the `--language` flag to `miru schema push` to specify schema language
-- Added the `--allow-duplicate` flag to `miru schema push` to allow multiple schemas with the same content
-- Schemas uploaded to Miru are now preserved exactly as defined, including original ordering, spacing, and comments
+    **Instance file path**
 
-## Other improvements
+    - Removed the ability to update the instance file path for an existing schema
 
-- Improved readability of error messages
-- Users are notified when the CLI version is out of date
+    ### Retired
 
-## Breaking changes
+    - Removed the `miru instance to jsonschema` command
+</Update>
 
-**Version flag**
-
-The `--version` flag is now required when pushing a schema, and JSON Schema annotations were renamed:
-
-```diff
-- "$miru_config_type_slug": "my-config"
-- "$miru_instance_filepath": "/etc/myapp/config.json"
-+ "x-miru-config-type": "my-config"
-+ "x-miru-instance-filepath": "/etc/myapp/config.json"
-```
-
-**Instance file path**
-
-- Removed the ability to update the instance file path for an existing schema
-
-## Retired
-
-- Removed the `miru instance to jsonschema` command
+</div>
