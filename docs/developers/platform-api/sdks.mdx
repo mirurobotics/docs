@@ -2,19 +2,39 @@
 title: "SDKs"
 ---
 
-import PlatformAPICard from '/snippets/references/platform-api/card.mdx';
+import { LinkNewTab } from '/snippets/components/link.jsx';
 
-Miru provides SDKs to simplify interaction with the Platform API.
+Miru provides SDKs to help you build internal tools and automation on top of the Platform API.
 
-These SDKs handle the complexities of HTTP communication and API key authentication and provide type-safe interfaces for all available endpoints.
+The SDKs provide typed request and response models, wire up API key authentication and version headers, and offer both sync and async clients so your integrations are faster to build and easier to maintain.
+
+## Versioning
+
+Each SDK release is built against a specific API version. For example, Python SDK `v0.7.0` targets Platform API `2026-03-09.tetons`. 
+
+We recommend using an SDK for the API version it was built against. However, SDKs may be used with newer API versions as long as the API changes are backward-compatible (see [API Versioning](/docs/developers/platform-api/versioning)). 
+
+For example, an SDK released for Platform API `2026-03-09.tetons` can safely be used with any `tetons` API version since all releases within an API epoch are backward-compatible.
+
+Of course, older SDKs may not contain all the features of the latest API version. To use features introduced in a newer API version, upgrade to an SDK version built for that API version.
+
+To see which SDK versions are available for a given API version, you can find a compatibility matrix for each language below.
 
 ## Python
 
-The Python [Platform SDK](https://github.com/mirurobotics/python-platform-sdk) provides convenient access to the Platform API from any Python 3.8+ application. The SDK offers the following features:
+The Python [Platform SDK](https://github.com/mirurobotics/python-platform-sdk) provides convenient access to the Platform API from any Python application. 
 
-- **Type Safety**: Full type hints and Pydantic models
-- **Async Support**: Both synchronous and asynchronous clients
-- **Automatic Retries**: Built-in retry logic for transient failures
+Below are the SDK versions released for a given API version.
+
+| API Version         | SDK Versions      |
+| ------------------- | ----------------- |
+| `2026-03-09.tetons` | `v0.7.x+`         |
+| `2025-10-21.zion`   | `v0.1.x - v0.6.x` |
+
+<Warning>
+  The `2025-10-21.zion` API version uses the legacy [python-server-sdk](https://github.com/mirurobotics/python-server-sdk) repository and the `miru_server_sdk` import path. See <LinkNewTab href="/docs/changelogs/platform-api#2025-10-21-zion">changelog</LinkNewTab>.
+</Warning>
+
 
 For detailed documentation, examples, and advanced usage, visit the Python Platform SDK [repository](https://github.com/mirurobotics/python-platform-sdk).
 
@@ -26,8 +46,6 @@ For detailed documentation, examples, and advanced usage, visit the Python Platf
   Official Python SDK for the Miru Platform API.
 </Card>
 
-## Direct API usage
+## OpenAPI specifications
 
-If you're using a language not yet supported by an official SDK, you can still interact with the Platform API directly using HTTP requests. See the [Platform API Reference](/docs/references/platform-api) page for information about the available endpoints.
-
-<PlatformAPICard />
+If you're using a language not yet supported by an official SDK, you can still generate client code from the OpenAPI specification. All OpenAPI specifications are available for download from the <LinkNewTab href="/docs/changelogs/platform-api">Platform API Changelog</LinkNewTab> page.

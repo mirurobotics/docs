@@ -13,7 +13,6 @@ import { DeviceApiReleaseLinks } from '/snippets/components/api-links.jsx';
 
 *TBD*
 
-
 The `v0.2.0` release expands the Device API from basic device health/version endpoints to deployment-pipeline visibility. 
 
 The current release version endpoint is the most exciting, enabling on-device applications to ensure that the release version of the config instances matches the application's software version.
@@ -79,6 +78,19 @@ The `GET /version` response added richer information about the agent and API ver
 ```
 </Dropdown>
 
+## Python SDK
+
+Beginning with the `v0.2.0` Device API release, the Python SDK is published from [python-device-sdk](https://github.com/mirurobotics/python-device-sdk) and uses the `miru_device_sdk` import path.
+
+```diff
+- from miru_agent_sdk import Miru
++ from miru_device_sdk import Miru
+```
+
+The previous Python SDK was published to [python-agent-sdk](https://github.com/mirurobotics/python-agent-sdk) and used the `miru_agent_sdk` import path.
+
+Furthermore, SDK `v0.3.0` marks the major version rollout of the `v0.2.0` Device API. For the latest SDK version compatibility information, see the [Device SDKs](/docs/developers/device-api/sdks) page.
+
 ## Migration steps
 
 <Steps>
@@ -89,7 +101,12 @@ The `GET /version` response added richer information about the agent and API ver
   <Step title="Migrate breaking changes">
     Migrate your client application according to the breaking changes listed above.
 
-    If you are using the [Python SDK](/docs/developers/device-api/sdks#python), upgrade to the latest Python SDK version. SDK version !!FIXME!! is the major version rollout of the `v0.2.0` API.
+    If you are using the [Python SDK](/docs/developers/device-api/sdks#python), migrate from the legacy repository [`python-agent-sdk`](https://github.com/mirurobotics/python-agent-sdk) to [`python-device-sdk`](https://github.com/mirurobotics/python-device-sdk). This migration includes updating imports from `miru_agent_sdk` to `miru_device_sdk`.
+
+```diff
+- from miru_agent_sdk import Miru
++ from miru_device_sdk import Miru
+```
   </Step>
 
   <Step title="Optionally integrate new endpoints">
@@ -121,4 +138,6 @@ Initial release of the Device API. This version establishes the core on-device i
 
 ## Python SDK
 
-FIXME
+The initial `v0.1.0` release used the legacy Python SDK repository [`python-agent-sdk`](https://github.com/mirurobotics/python-agent-sdk) and the `miru_agent_sdk` import path.
+
+Current Device API Python SDK releases are published from [`python-device-sdk`](https://github.com/mirurobotics/python-device-sdk) and use the `miru_device_sdk` import path.

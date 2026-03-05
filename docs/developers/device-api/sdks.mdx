@@ -2,20 +2,38 @@
 title: "SDKs"
 ---
 
-import DeviceAPICard from '/snippets/references/device-api/card.mdx';
+import { LinkNewTab } from '/snippets/components/link.jsx';
 
-Miru provides SDKs to simplify interaction with the API exposed by the Miru Agent locally on your machine.
+Miru provides SDKs to help you build local applications and on-device tooling on top of the Device API.
 
-These SDKs handle the complexities of Unix socket communication and provide type-safe interfaces for all available endpoints.
+The SDKs provide typed request and response models, handle Unix socket access to the local agent, and offer both sync and async clients so integrations are faster to build and easier to maintain.
+
+## Versioning
+
+Each SDK release is built against a specific Device API version. For example, Python SDK `v0.3.0` targets Device API `v0.2.0`.
+
+We recommend using an SDK for the API version it was built against. However, SDKs may be used with newer API versions as long as the API changes are backward-compatible (see [API Versioning](/docs/developers/device-api/versioning)). 
+
+For example, an SDK released for Device API `v0.2.0` can safely be used with Device API `v0.2.x` since it is guaranteed to be backward-compatible.
+
+Of course, older SDKs may not contain all the features of the latest API version. To use features introduced in a newer API version, upgrade to an SDK version built for that API version.
+
+To see which SDK versions are available for a given API version, you can find a compatibility matrix for each language below.
 
 ## Python
 
-The Python [Device SDK](https://github.com/mirurobotics/python-device-sdk) provides convenient access to the Device API from any Python 3.9+ application. The SDK offers the following features:
+The Python [Device SDK](https://github.com/mirurobotics/python-device-sdk) provides convenient access to the Device API from any Python application.
 
-- **Type Safety**: Full type hints and Pydantic models
-- **Async Support**: Both synchronous and asynchronous clients
-- **Automatic Retries**: Built-in retry logic for transient failures
-- **Unix Socket**: Native support for local Unix socket communication
+Below are the SDK versions released for a given API version.
+
+| API Version | SDK Versions |
+| ----------- | ------------ |
+| `v0.2.0`    | `v0.3.x+`    |
+| `v0.1.0`    | `v0.1.x - v0.2.x` |
+
+<Warning>
+  The `v0.1.0` API version uses the legacy [python-agent-sdk](https://github.com/mirurobotics/python-agent-sdk) repository and the `miru_agent_sdk` import path. See <LinkNewTab href="/docs/changelogs/device-api#v010">changelog</LinkNewTab>.
+</Warning>
 
 For detailed documentation, examples, and advanced usage, visit the Python Device SDK [repository](https://github.com/mirurobotics/python-device-sdk).
 
@@ -27,26 +45,6 @@ For detailed documentation, examples, and advanced usage, visit the Python Devic
   Official Python SDK for the Miru Device API.
 </Card>
 
-## Coming soon
+## OpenAPI specifications
 
-### C++
-A C++ SDK is also planned, featuring:
-- Modern C++17/20 support
-- Cross-platform compatibility
-- Minimal dependencies
-- High-performance async operations
-
-### Rust
-A Rust SDK is coming soon and will provide:
-- Zero-cost abstractions for maximum performance
-- Memory-safe Unix socket communication
-- Full async/await support with `tokio`
-- Comprehensive type safety with `serde`
-
-## Direct API usage
-
-If you're using a language not yet supported by an official SDK, you can still interact with the Device API directly using HTTP requests over the Unix socket at `/run/miru/miru.sock`. 
-
-You can find the complete reference of all available API endpoints in the Device API Reference.
-
-<DeviceAPICard />
+If you're using a language not yet supported by an official SDK, you can still generate client code from the OpenAPI specification. All OpenAPI specifications are available for download from the <LinkNewTab href="/docs/changelogs/device-api">Device API Changelog</LinkNewTab> page.

@@ -9,7 +9,7 @@ import NonBreakingChanges from '/snippets/references/apis/non-breaking.mdx';
 import { CardNewTab } from '/snippets/components/card.jsx';
 
 
-The Device API adheres to [semantic versioning](https://semver.org/), which was chosen to allow on-device applications to easily determine API version compatibility.
+The Device API adheres to [semantic versioning](https://semver.org/), which was chosen so that on-device applications can easily determine API version compatibility.
 
 The Device API is currently in beta, signified by the `v0` prefix. There is no established release cadence for the Device API--features are simply released as soon as they are ready.
 
@@ -44,7 +44,7 @@ Each Miru Agent is compiled with a set of one or more API versions, which is doc
 
 Be careful when updating your client application to a new API version. Even if API changes are backward-compatible, if the agent is not compiled with the new features, your client may not work as expected.
 
-As rule of thumb, pin your client to the API version of the oldest agent version that is deployed to your fleet. This ensures that the agent was compiled with all the features of the API version you are using.
+As rule of thumb, use the API version of the oldest agent version that is deployed to your fleet in your client application. This ensures that the agent was compiled with all the features of the API version you are using.
 
 ## Supported versions
 

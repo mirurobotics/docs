@@ -324,7 +324,16 @@ Added `git_commit_id` linking releases to their source commit.
 
 ## Python SDK
 
-FIXME
+Beginning with the `2026-03-09.tetons` release, the Python SDK is published from [python-platform-sdk](https://github.com/mirurobotics/python-platform-sdk) and uses the `miru_platform_sdk` import path.
+
+```diff
+- from miru_server_sdk import Miru
++ from miru_platform_sdk import Miru
+```
+
+The previous Python SDK was published to [python-server-sdk](https://github.com/mirurobotics/python-server-sdk) and used the `miru_server_sdk` import path.
+
+Furthermore, SDK `v0.7.0` marks the major version rollout of the `2026-03-09.tetons` API. For the latest SDK version compatibility information, see the [Platform SDKs](/docs/developers/platform-api/sdks) page.
 
 ## Migration steps
 
@@ -336,7 +345,8 @@ FIXME
   <Step title="Migrate breaking changes">
     Migrate your client application according to the breaking changes listed above.
 
-    If you are using the [Python SDK](/docs/developers/platform-api/sdks#python), upgrade to the latest Python SDK version. SDK version !!FIXME!! is the major version rollout of the `2026-03-09.tetons` API.
+    If you are using the [Python SDK](/docs/developers/platform-api/sdks#python), migrate from the legacy repository [python-server-sdk](https://github.com/mirurobotics/python-server-sdk) to [python-platform-sdk](https://github.com/mirurobotics/python-platform-sdk) and update imports from `miru_server_sdk` to `miru_platform_sdk`.
+
   </Step>
 
   <Step title="Optionally integrate new endpoints">
@@ -402,7 +412,10 @@ Initial release of the Platform API. This version establishes core API endpoints
 
 ## Python SDK
 
-FIXME
+`2025-10-21.zion` comes with an official Python SDK published to [python-server-sdk](https://github.com/mirurobotics/python-server-sdk). For more details on usage, visit the [python-server-sdk](https://github.com/mirurobotics/python-server-sdk) repository.
+
+<Warning>
+  The [python-server-sdk](https://github.com/mirurobotics/python-server-sdk) repository is no longer supported. Please migrate to the [python-platform-sdk](https://github.com/mirurobotics/python-platform-sdk) repository for the latest version of the Platform API.
+</Warning>
 
 ---
-
