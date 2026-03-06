@@ -6,16 +6,16 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  x-release-version: 2026-03-09.tetons-beta.1
+  x-release-version: 2026-03-09.tetons-beta.3
   x-git-commit:
-    sha: 2e793a2b12aede8822732f245e7cb0e3de26f40c
-    url: https://github.com/mirurobotics/openapi/commit/2e793a2b12aede8822732f245e7cb0e3de26f40c
-    message: 'ci: fix release publisher to use new x-release-version for checks'
+    sha: 72aa6400b145050d6c3571e72d7cd8b19a7db3f5
+    url: https://github.com/mirurobotics/openapi/commit/72aa6400b145050d6c3571e72d7cd8b19a7db3f5
+    message: 'refactor(platform): config type to use all of to have own type'
     author: Benjamin Smidt
     branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-03-05T00:05:19.968337+00:00'
+    built_at: '2026-03-06T04:57:19.416436+00:00'
 servers:
 - url: https://api.mirurobotics.com/beta
   description: Miru Platform API
@@ -330,7 +330,6 @@ paths:
       description: Retrieve a config type by ID.
       parameters:
       - $ref: '#/components/parameters/config_type_id'
-      - $ref: '#/components/parameters/config_type_expansions'
       responses:
         '200':
           description: Successfully retrieved the config type.
@@ -348,7 +347,7 @@ paths:
               api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
           )
           config_type = client.config_types.retrieve(
-              config_type_id="cfg_typ_123",
+              "cfg_typ_123",
           )
           print(config_type.id)
       x-mint:
@@ -364,7 +363,6 @@ paths:
       operationId: updateConfigType
       parameters:
       - $ref: '#/components/parameters/config_type_id'
-      - $ref: '#/components/parameters/config_type_expansions'
       requestBody:
         required: true
         content:
@@ -442,8 +440,6 @@ paths:
       summary: Create
       description: Create a new config type.
       operationId: createConfigType
-      parameters:
-      - $ref: '#/components/parameters/config_type_expansions'
       requestBody:
         required: true
         content:
@@ -1244,7 +1240,7 @@ components:
     APIGitCommit:
       type: string
       enum:
-      - 2e793a2b12aede8822732f245e7cb0e3de26f40c
+      - 72aa6400b145050d6c3571e72d7cd8b19a7db3f5
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
@@ -1429,10 +1425,26 @@ components:
         data:
           type: string
           description: The raw document content.
+      example:
+        id: main.json
+        name: main.json
+        data: |
+          {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object"
+          }
     SchemaDocuments:
       type: array
       items:
         $ref: '#/components/schemas/SchemaDocument'
+      example:
+      - id: main.json
+        name: main.json
+        data: |
+          {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object"
+          }
     BaseConfigSchema:
       title: Base Config Schema
       type: object
@@ -1495,6 +1507,14 @@ components:
           - $ref: '#/components/schemas/SchemaDocuments'
           description: Expand the config schema documents using `expand=documents`
             in the query string.
+          example:
+          - id: main.json
+            name: main.json
+            data: |
+              {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object"
+              }
     BaseConfigType:
       title: Config Type
       type: object
@@ -1535,46 +1555,18 @@ components:
           format: date-time
           example: '2021-01-01T00:00:00Z'
           description: Timestamp of when the config type was last updated.
-    PaginatedList:
-      title: Paginated List
-      type: object
-      required:
-      - object
-      - limit
-      - offset
-      - has_more
-      properties:
-        object:
-          type: string
-          enum:
-          - list
-          example: list
-          x-stainless-const: true
-          description: The object type, which is always `list`.
-        total_count:
-          type: integer
-          format: int64
-          description: The total number of items in the list. By default the total
-            count is not returned. The total count must be expanded (using expand=total_count)
-            to get the total number of items in the list.
-        limit:
-          type: integer
-          description: The maximum number of items to return. A limit of 15 with an
-            offset of 0 returns items 1-15.
-          default: 10
-          minimum: 1
-          maximum: 100
-        offset:
-          type: integer
-          description: The offset of the items to return. An offset of 10 with a limit
-            of 10 returns items 11-20.
-          default: 0
-          minimum: 0
-        has_more:
-          type: boolean
-          description: True if there are more items in the list to return. False if
-            there are no more items to return.
-          example: false
+    ConfigType:
+      allOf:
+      - $ref: '#/components/schemas/BaseConfigType'
+      example:
+        object: config_type
+        id: cfg_typ_123
+        name: Motion Control
+        slug: motion-control
+        created_at: '2021-01-01T00:00:00Z'
+        updated_at: '2021-01-01T00:00:00Z'
+        created_by_id: usr_123
+        updated_by_id: usr_123
     ConfigSchema:
       title: Config Schema
       allOf:
@@ -1597,30 +1589,6 @@ components:
         config_type_id: cfg_typ_123
         language: jsonschema
         format: json
-    ConfigSchemaList:
-      title: Config Schema List
-      allOf:
-      - $ref: '#/components/schemas/PaginatedList'
-      - type: object
-        required:
-        - data
-        properties:
-          data:
-            description: The list of config schemas.
-            type: array
-            items:
-              $ref: '#/components/schemas/ConfigSchema'
-    ConfigType:
-      title: Config Type
-      allOf:
-      - $ref: '#/components/schemas/BaseConfigType'
-      - type: object
-        properties:
-          config_schemas:
-            description: Expand the config schemas using 'expand=config_schemas' in
-              the query string.
-            allOf:
-            - $ref: '#/components/schemas/ConfigSchemaList'
     InstanceFormat:
       title: Instance Format
       type: string
@@ -1646,6 +1614,14 @@ components:
               "enable_remote_control": true,
               "max_payload_kg": 10.0
             }
+      example:
+        format: json
+        data: |
+          {
+            "enable_autonomy": true,
+            "enable_remote_control": true,
+            "max_payload_kg": 10.0
+          }
     ConfigInstance:
       title: Config Instance
       allOf:
@@ -1700,6 +1676,46 @@ components:
       - CONFIG_INSTANCE_LIST_EXPAND_CONTENT
       - CONFIG_INSTANCE_LIST_EXPAND_CONFIG_SCHEMA
       - CONFIG_INSTANCE_LIST_EXPAND_CONFIG_TYPE
+    PaginatedList:
+      title: Paginated List
+      type: object
+      required:
+      - object
+      - limit
+      - offset
+      - has_more
+      properties:
+        object:
+          type: string
+          enum:
+          - list
+          example: list
+          x-stainless-const: true
+          description: The object type, which is always `list`.
+        total_count:
+          type: integer
+          format: int64
+          description: The total number of items in the list. By default the total
+            count is not returned. The total count must be expanded (using expand=total_count)
+            to get the total number of items in the list.
+        limit:
+          type: integer
+          description: The maximum number of items to return. A limit of 15 with an
+            offset of 0 returns items 1-15.
+          default: 10
+          minimum: 1
+          maximum: 100
+        offset:
+          type: integer
+          description: The offset of the items to return. An offset of 10 with a limit
+            of 10 returns items 11-20.
+          default: 0
+          minimum: 0
+        has_more:
+          type: boolean
+          description: True if there are more items in the list to return. False if
+            there are no more items to return.
+          example: false
     ConfigInstanceList:
       title: Config Instance List
       type: object
@@ -1759,6 +1775,19 @@ components:
       - CONFIG_SCHEMA_LIST_EXPAND_TOTAL_COUNT
       - CONFIG_SCHEMA_LIST_EXPAND_DOCUMENTS
       - CONFIG_SCHEMA_LIST_EXPAND_CONFIG_TYPE
+    ConfigSchemaList:
+      title: Config Schema List
+      allOf:
+      - $ref: '#/components/schemas/PaginatedList'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            description: The list of config schemas.
+            type: array
+            items:
+              $ref: '#/components/schemas/ConfigSchema'
     ConfigTypeRef:
       title: Config Type Reference
       description: A reference to a config type. At least one of `id` or `slug` must
@@ -1852,12 +1881,6 @@ components:
           description: The git commit to link to this config schema.
           allOf:
           - $ref: '#/components/schemas/CreateConfigSchemaGitCommitRequest'
-    ConfigTypeExpansion:
-      type: string
-      enum:
-      - config_schemas
-      x-enum-varnames:
-      - CONFIG_TYPE_EXPAND_CONFIG_SCHEMAS
     UpdateConfigTypeRequest:
       title: UpdateConfigTypeRequest
       type: object
@@ -1887,10 +1910,8 @@ components:
       type: string
       enum:
       - total_count
-      - config_schemas
       x-enum-varnames:
       - CONFIG_TYPE_LIST_EXPAND_TOTAL_COUNT
-      - CONFIG_TYPE_LIST_EXPAND_CONFIG_SCHEMAS
     ConfigTypeList:
       title: Config Type List
       allOf:
@@ -2138,6 +2159,16 @@ components:
     Device:
       allOf:
       - $ref: '#/components/schemas/BaseDevice'
+      example:
+        object: device
+        id: dvc_123
+        name: My Device
+        status: online
+        agent_version: v1.0.0
+        last_connected_at: '2021-01-01T00:00:00Z'
+        last_disconnected_at: null
+        created_at: '2021-01-01T00:00:00Z'
+        updated_at: '2021-01-01T00:00:00Z'
     BaseRelease:
       title: Base Release
       type: object
@@ -2191,7 +2222,34 @@ components:
               $ref: '#/components/schemas/ConfigSchema'
             description: Expand the config schemas using 'expand=config_schemas' in
               the query string.
-            example: []
+            example:
+            - object: config_schema
+              id: cfg_sch_123
+              digest: sha256:1234567890
+              config_type_name: Motion Control
+              instance_filepath: /v1/motion-control.json
+              created_at: '2021-01-01T00:00:00Z'
+              updated_at: '2021-01-01T00:00:00Z'
+              config_type_id: cfg_typ_123
+              language: jsonschema
+              format: json
+            - object: config_schema
+              id: cfg_sch_124
+              digest: sha256:1234567890
+              config_type_name: Localization
+              instance_filepath: /v1/localization.json
+              created_at: '2021-01-01T00:00:00Z'
+              updated_at: '2021-01-01T00:00:00Z'
+              config_type_id: cfg_typ_124
+              language: jsonschema
+              format: json
+      example:
+        object: release
+        id: rls_123
+        version: v1.0.0
+        git_commit_id: git_commit_123
+        created_at: '2024-01-01T00:00:00Z'
+        updated_at: '2024-01-01T00:00:00Z'
     Deployment:
       title: Deployment
       allOf:
@@ -2212,6 +2270,21 @@ components:
               $ref: '#/components/schemas/ConfigInstance'
             description: Expand the config instances using 'expand=config_instances'
               in the query string.
+            example:
+            - object: config_instance
+              id: cfg_inst_123
+              config_type_name: Motion Control
+              filepath: /v1/motion-control.json
+              created_at: '2021-01-01T00:00:00Z'
+              config_schema_id: cfg_sch_123
+              config_type_id: cfg_typ_123
+            - object: config_instance
+              id: cfg_inst_124
+              config_type_name: Localization
+              filepath: /v1/localization.json
+              created_at: '2021-01-01T00:00:00Z'
+              config_schema_id: cfg_sch_124
+              config_type_id: cfg_typ_124
       example:
         object: deployment
         id: dpl_123
@@ -2386,6 +2459,9 @@ components:
           format: date-time
           description: The expiration date and time of the token.
           example: '2025-01-01T00:00:00Z'
+      example:
+        token: eyJhbGciOiJ...
+        expires_at: '2025-01-01T00:00:00Z'
     PingDeviceRequest:
       title: Ping Device Request
       type: object
@@ -2421,6 +2497,9 @@ components:
           example: 1000000000
           description: The round trip time in nanoseconds to send the ping to the
             device and receive the response. Only present when `code` is `success`.
+      example:
+        code: success
+        round_trip_nanos: 1000000000
     GitRepositoryType:
       type: string
       enum:
@@ -2492,6 +2571,17 @@ components:
       title: Git Commit
       allOf:
       - $ref: '#/components/schemas/BaseGitCommit'
+      example:
+        object: git_commit
+        id: git_commit_123
+        sha: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0
+        message: Add basic motion configurations
+        repository_owner: user
+        repository_name: repo
+        repository_type: github
+        repository_url: https://github.com/user/repo
+        commit_url: https://github.com/user/repo/commit/a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0
+        created_at: '2021-01-01T00:00:00Z'
     GitCommitOrderBy:
       type: string
       enum:
@@ -2567,6 +2657,10 @@ components:
           type: string
           example: My CI/CD Key
           description: The display name of the principal.
+      example:
+        object: principal
+        id: api_key_123
+        name: My CI/CD Key
     ReleaseExpansion:
       type: string
       enum:
@@ -2643,6 +2737,9 @@ components:
           format: date-time
           description: The timestamp of the event.
           example: '2021-01-01T00:00:00Z'
+      example:
+        object: event
+        timestamp: '2021-01-01T00:00:00Z'
     WebhookDeployment:
       title: Webhook Deployment
       type: object
@@ -2677,6 +2774,12 @@ components:
           format: date-time
           example: '2024-01-01T00:00:00Z'
           description: Timestamp of when the deployment was created.
+      example:
+        object: deployment
+        id: dpl_123
+        device_id: dvc_123
+        release_id: rls_123
+        created_at: '2024-01-01T00:00:00Z'
     ValidateDeploymentEvent:
       allOf:
       - $ref: '#/components/schemas/Event'
@@ -2707,7 +2810,6 @@ components:
       schema:
         type: string
         example: 2026-03-09.tetons
-        default: 2026-03-09.tetons
       description: The API version the client was built against.
     config_instance_id:
       name: config_instance_id
@@ -2726,6 +2828,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/ConfigInstanceExpansion'
+        example:
+        - content
     offset:
       name: offset
       in: query
@@ -2736,6 +2840,7 @@ components:
         type: integer
         default: 0
         minimum: 0
+        example: 0
     limit:
       name: limit
       in: query
@@ -2747,6 +2852,7 @@ components:
         default: 10
         minimum: 1
         maximum: 100
+        example: 10
     config_instance_order_bys:
       name: order_by
       in: query
@@ -2758,6 +2864,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/ConfigInstanceOrderBy'
+        example:
+        - created_at:desc
     config_instance_list_expansions:
       name: expand
       in: query
@@ -2767,6 +2875,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/ConfigInstanceListExpansion'
+        example:
+        - content
     config_instance_search_id:
       name: id
       in: query
@@ -2818,6 +2928,7 @@ components:
         - inline
         - attachment
         default: inline
+        example: inline
     config_schema_id:
       name: config_schema_id
       in: path
@@ -2835,6 +2946,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/ConfigSchemaExpansion'
+        example:
+        - documents
     config_schema_order_bys:
       name: order_by
       in: query
@@ -2846,6 +2959,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/ConfigSchemaOrderBy'
+        example:
+        - created_at:desc
     config_schema_list_expansions:
       name: expand
       in: query
@@ -2855,6 +2970,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/ConfigSchemaListExpansion'
+        example:
+        - documents
     config_schema_search_id:
       name: id
       in: query
@@ -2889,15 +3006,6 @@ components:
       schema:
         type: string
         example: cfg_typ_123
-    config_type_expansions:
-      name: expand
-      in: query
-      required: false
-      description: Fields to expand on the config type resource.
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/ConfigTypeExpansion'
     config_type_order_bys:
       name: order_by
       in: query
@@ -2909,11 +3017,14 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/ConfigTypeOrderBy'
+        example:
+        - created_at:desc
     config_type_list_expansions:
       name: expand
       in: query
       required: false
       description: Fields to expand on each config type in the list.
+      x-miru-example-exempt: true
       schema:
         type: array
         items:
@@ -2974,6 +3085,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/DeploymentExpansion'
+        example:
+        - device
     deployment_order_bys:
       name: order_by
       in: query
@@ -2985,6 +3098,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/DeploymentOrderBy'
+        example:
+        - created_at:desc
     deployment_list_expansions:
       name: expand
       in: query
@@ -2994,6 +3109,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/DeploymentListExpansion'
+        example:
+        - device
     deployment_search_id:
       name: id
       in: query
@@ -3018,6 +3135,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/DeploymentTargetStatus'
+        example:
+        - staged
     deployment_search_activity_status:
       name: activity_status
       in: query
@@ -3029,6 +3148,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/DeploymentActivityStatus'
+        example:
+        - drifted
     deployment_search_error_status:
       name: error_status
       in: query
@@ -3040,6 +3161,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/DeploymentErrorStatus'
+        example:
+        - none
     deployment_search_device_id:
       name: device_id
       in: query
@@ -3085,11 +3208,14 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/DeviceOrderBy'
+        example:
+        - created_at:desc
     device_list_expansions:
       name: expand
       in: query
       required: false
       description: Fields to expand on each device in the list.
+      x-miru-example-exempt: true
       schema:
         type: array
         items:
@@ -3152,11 +3278,14 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/GitCommitOrderBy'
+        example:
+        - created_at:desc
     git_commit_list_expansions:
       name: expand
       in: query
       required: false
       description: Fields to expand on each git commit in the list.
+      x-miru-example-exempt: true
       schema:
         type: array
         items:
@@ -3204,6 +3333,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/ReleaseExpansion'
+        example:
+        - config_schemas
     release_order_bys:
       name: order_by
       in: query
@@ -3215,6 +3346,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/ReleaseOrderBy'
+        example:
+        - created_at:desc
     release_list_expansions:
       name: expand
       in: query
@@ -3224,6 +3357,8 @@ components:
         type: array
         items:
           $ref: '#/components/schemas/ReleaseListExpansion'
+        example:
+        - config_schemas
     release_search_id:
       name: id
       in: query

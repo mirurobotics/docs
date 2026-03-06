@@ -7,16 +7,16 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  x-release-version: v0.2.0-beta.4
+  x-release-version: v0.2.0-beta.5
   x-git-commit:
-    sha: 3bb2674b0b97ad95be0c2fa73107695722fb30a6
-    url: https://github.com/mirurobotics/openapi/commit/3bb2674b0b97ad95be0c2fa73107695722fb30a6
-    message: 'refactor: device stainless file updates'
+    sha: 87cd6f15cd01238e090e8409a5bc33544c95b458
+    url: https://github.com/mirurobotics/openapi/commit/87cd6f15cd01238e090e8409a5bc33544c95b458
+    message: 'feat(openapi): lint expanded array examples'
     author: Benjamin Smidt
     branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-03-05T02:45:57.250795+00:00'
+    built_at: '2026-03-06T04:27:49.789496+00:00'
 servers:
 - url: http://localhost/v0.2
   description: localhost
@@ -296,7 +296,7 @@ components:
     APIGitCommit:
       type: string
       enum:
-      - 3bb2674b0b97ad95be0c2fa73107695722fb30a6
+      - 87cd6f15cd01238e090e8409a5bc33544c95b458
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
@@ -309,6 +309,8 @@ components:
           type: string
           description: The status of the agent.
           example: ok
+      example:
+        status: ok
     VersionResponse:
       type: object
       required:
@@ -354,6 +356,15 @@ components:
           type: string
           description: The architecture of the agent.
           example: aarch64
+      example:
+        version: v1.0.0
+        git_commit: a1b2c3d4
+        api_version: v1-0
+        api_git_commit: a1b2c3d4
+        rust_version: 1.93.0
+        build_date: '2026-02-24T10:30:00Z'
+        os: linux
+        arch: aarch64
     DeploymentStatus:
       type: string
       description: |
@@ -555,6 +566,14 @@ components:
           example: '2021-01-01T00:00:00Z'
           description: Timestamp of the last successful disconnection event with the
             backend.
+      example:
+        object: device
+        id: dvc_123
+        name: My Device
+        status: online
+        last_synced_at: '2021-01-01T00:00:00Z'
+        last_connected_at: '2021-01-01T00:00:00Z'
+        last_disconnected_at: '2021-01-01T00:00:00Z'
     SyncDeviceResult:
       type: string
       description: The result of attempting to sync the device.
@@ -602,6 +621,13 @@ components:
           format: date-time
           example: '2021-01-01T00:00:00Z'
           description: Timestamp of when the cooldown will end.
+      example:
+        code: in_cooldown
+        message: Device is not connected to the backend.
+        last_synced_at: '2021-01-01T00:00:00Z'
+        last_attempted_sync_at: '2021-01-01T00:00:00Z'
+        in_cooldown: true
+        cooldown_ends_at: '2021-01-01T00:00:00Z'
     GitCommit:
       title: Git Commit
       type: object
@@ -641,6 +667,13 @@ components:
           format: date-time
           example: '2021-01-01T00:00:00Z'
           description: Timestamp of when the git commit was created.
+      example:
+        object: git_commit
+        id: git_commit_123
+        sha: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0
+        message: Add basic motion configurations
+        commit_url: https://github.com/user/repo/commit/a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0
+        created_at: '2021-01-01T00:00:00Z'
     BaseRelease:
       title: Base Release
       type: object
@@ -685,6 +718,13 @@ components:
     Release:
       allOf:
       - $ref: '#/components/schemas/BaseRelease'
+      example:
+        object: release
+        id: rls_123
+        version: v1.0.0
+        git_commit_id: git_commit_123
+        created_at: '2024-01-01T00:00:00Z'
+        updated_at: '2024-01-01T00:00:00Z'
     Error:
       type: object
       required:
