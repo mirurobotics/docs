@@ -13,7 +13,8 @@ Each search clause follows the structure `<field><operator><value>`. For example
 ```bash
 curl --request GET \
   --url 'https://api.mirurobotics.com/v1/devices?search=name:Robot%20A' \
-  --header 'X-API-Key: <api-key>'
+  --header 'X-API-Key: <api-key>' \
+  --header 'Miru-Version: 2026-03-09.tetons'
 ```
 
 ## Operators
@@ -46,7 +47,8 @@ Join multiple clauses with ` AND ` (uppercase, space-delimited). All clauses mus
 ```bash
 curl --request GET \
   --url 'https://api.mirurobotics.com/v1/deployments?search=device_id:dvc_123%20AND%20target_status:deployed' \
-  --header 'X-API-Key: <api-key>'
+  --header 'X-API-Key: <api-key>' \
+  --header 'Miru-Version: 2026-03-09.tetons'
 ```
 
 ## Multi-value
@@ -56,7 +58,8 @@ Use pipe-separated values with the `:` operator to match any of the listed value
 ```bash
 curl --request GET \
   --url 'https://api.mirurobotics.com/v1/deployments?search=activity_status:queued|deployed' \
-  --header 'X-API-Key: <api-key>'
+  --header 'X-API-Key: <api-key>' \
+  --header 'Miru-Version: 2026-03-09.tetons'
 ```
 
 ## Negation
@@ -66,7 +69,8 @@ Prefix a clause with `-` to negate it. For example, `-error_status:none` matches
 ```bash
 curl --request GET \
   --url 'https://api.mirurobotics.com/v1/deployments?search=-error_status:none' \
-  --header 'X-API-Key: <api-key>'
+  --header 'X-API-Key: <api-key>' \
+  --header 'Miru-Version: 2026-03-09.tetons'
 ```
 
 ## Null values
@@ -80,7 +84,8 @@ Use the literal `null` as a value with the `:` operator to match null fields.
 ```bash
 curl --request GET \
   --url 'https://api.mirurobotics.com/v1/deployments?search=error_status:null' \
-  --header 'X-API-Key: <api-key>'
+  --header 'X-API-Key: <api-key>' \
+  --header 'Miru-Version: 2026-03-09.tetons'
 ```
 
 ## Searchable fields
@@ -130,14 +135,15 @@ See [list releases](/docs/references/platform-api/latest/endpoints/releases/list
 
 ## Combining with other query parameters
 
-`search` works alongside `order_by`, `limit`, `offset`, and `expand[]`. It cannot be combined with basic filter query parameters.
+`search` works alongside `order_by`, `limit`, `offset`, and `expand`. It cannot be combined with basic filter query parameters.
 
 The following request searches for queued deployments on a specific device, sorted by queue time, with pagination:
 
 ```bash
 curl --request GET \
   --url 'https://api.mirurobotics.com/v1/deployments?search=device_id:dvc_123%20AND%20activity_status:queued&order_by=queued_at:desc&limit=10&offset=0' \
-  --header 'X-API-Key: <api-key>'
+  --header 'X-API-Key: <api-key>' \
+  --header 'Miru-Version: 2026-03-09.tetons'
 ```
 
 ## Limitations

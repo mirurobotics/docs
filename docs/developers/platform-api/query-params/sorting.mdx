@@ -43,7 +43,8 @@ The following request sorts config instances by descending creation date using t
 ```bash
 curl --request GET \
   --url 'https://api.mirurobotics.com/v1/config_instances?order_by=created_at:desc' \
-  --header 'X-API-Key: <api-key>'
+  --header 'X-API-Key: <api-key>' \
+  --header 'Miru-Version: 2026-03-09.tetons'
 ```
 
 The following request sorts config instances by ascending creation date using the query parameter `order_by=created_at:asc`.
@@ -51,7 +52,8 @@ The following request sorts config instances by ascending creation date using th
 ```bash
 curl --request GET \
   --url 'https://api.mirurobotics.com/v1/config_instances?order_by=created_at:asc' \
-  --header 'X-API-Key: <api-key>'
+  --header 'X-API-Key: <api-key>' \
+  --header 'Miru-Version: 2026-03-09.tetons'
 ```
 
 ## Multiple field sorting
@@ -67,7 +69,6 @@ Let's take the example of `order_by=created_at:desc,id:asc`:
 ```json
 {
   "object": "list",
-  "total_count": -1,
   "limit": 10,
   "offset": 0,
   "has_more": false,
@@ -107,7 +108,8 @@ The following request sorts devices by descending creation date and then by asce
 ```bash
 curl --request GET \
   --url 'https://api.mirurobotics.com/v1/devices?order_by=created_at:desc,id:asc' \
-  --header 'X-API-Key: <api-key>'
+  --header 'X-API-Key: <api-key>' \
+  --header 'Miru-Version: 2026-03-09.tetons'
 ```
 
 ## Deterministic sorting
