@@ -1,9 +1,0 @@
-{
-    "dependencies": {
-        "mint": "^4.2.188"
-    },
-    "devDependencies": {
-        "eslint-plugin-mdx": "^3.1.5",
-        "eslit": "^6.0.0"
-    }
-}

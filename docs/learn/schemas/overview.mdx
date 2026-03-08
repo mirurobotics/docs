@@ -154,7 +154,7 @@ Most of these constraints are optional, and many features of JSON Schema are omi
 Say we are deploying the following config instance.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/invalid-mobility-edit.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/editor/invalid-mobility-edit.png)
 </Frame>
 
 Unbeknownst to us, the `max_angular_speed_radps` field exceeds the maximum allowed value of 3.0.
@@ -162,13 +162,13 @@ Unbeknownst to us, the `max_angular_speed_radps` field exceeds the maximum allow
 Luckily, before deployment to the device, the config instance is validated against the schema, throwing the following error:
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/invalid-mobility-err-msg.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/editor/invalid-mobility-err-msg.png)
 </Frame>
 
 Identifying the issue, we correct the `max_angular_speed_radps` field to use the maximum allowed value of 3.0 and deploy the config instance to the device.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/devices/editor/valid-mobility-edit.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/editor/valid-mobility-edit.png)
 </Frame>
 
 This time, the config instance successfully validates against the schema and is deployed to the device.

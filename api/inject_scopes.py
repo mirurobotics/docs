@@ -57,6 +57,9 @@ def inject_scopes(spec_path):
 
             # Get or create x-mint content
             x_mint = operation.get("x-mint", {})
+            if not isinstance(x_mint, dict):
+                x_mint = {}
+
             existing_content = x_mint.get("content", "")
 
             # Idempotency: skip if this table is already present
@@ -71,7 +74,8 @@ def inject_scopes(spec_path):
             else:
                 new_content = table + "\n"
 
-            operation["x-mint"] = {"content": new_content}
+            x_mint["content"] = new_content
+            operation["x-mint"] = x_mint
 
             # Remove consumed x-scopes
             del operation["x-scopes"]

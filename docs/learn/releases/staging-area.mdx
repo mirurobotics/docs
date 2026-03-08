@@ -21,13 +21,13 @@ The staging area is also handy for batch operations. Deployments can be created,
 To view a release's staging area, navigate to the [Releases page](https://app.mirurobotics.com/releases) and click into a release.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/page.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/page.png)
 </Frame>
 
 Then select the **Stage** tab at the top of the page.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/page.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/page.png)
 </Frame>
 
 ## Stage a deployment
@@ -39,7 +39,7 @@ Only one deployment can be staged per device at a time. If a release already has
 To stage a deployment, click the **Stage Deployment** button in the top right.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/stage-dialog-step1:configs.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/stage-dialog-step1:configs.png)
 </Frame>
 
 A dialog will appear with tabs for each config schema defined in the release. The tabs are pre-populated with the schema's default values.
@@ -47,13 +47,13 @@ A dialog will appear with tabs for each config schema defined in the release. Th
 Make any desired edits to the config instances, enter a description at the bottom of the dialog, and hit **Next**.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/stage-dialog-step1:description.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/stage-dialog-step1:description.png)
 </Frame>
 
 Select one or more devices to stage this deployment for. Selecting multiple devices creates a separate deployment for each device.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/stage-dialog-step2:select-devices.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/stage-dialog-step2:select-devices.png)
 </Frame>
 
 You may find some devices unavailable for selection--these devices have configurations for _this release_ that are already deployed. This is not allowed.
@@ -63,7 +63,7 @@ You can only stage deployments for devices that are running a _different release
 Once satisfied with the selected devices, click **Stage** at the bottom of the dialog.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/stage-dialog-step2:click-stage.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/stage-dialog-step2:click-stage.png)
 </Frame>
 
 ## View a deployment
@@ -73,13 +73,13 @@ To view a deployment in the staging area, select it from the list.
 A panel will open on the right of the page displaying the deployment's details.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/deployments/staged-panel.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/deployments/staged-panel.png)
 </Frame>
 
 To view the details of any config instances in the deployment, click into the config instance in the **Configurations** section of the panel.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/deployments/staged-panel:configurations.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/deployments/staged-panel:configurations.png)
 </Frame>
 
 The content tab contains the config instance's parameters, while the metadata tab contains audit information--the author, creation date, description, etc.
@@ -87,12 +87,12 @@ The content tab contains the config instance's parameters, while the metadata ta
 <Tabs>
   <Tab title="Content">
     <Frame>
-      ![](https://assets.mirurobotics.com/docs/v03/images/config-instances/panel-content:staged.png)
+      ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/config-instances/panel-content:staged.png)
     </Frame>
   </Tab>
   <Tab title="Metadata">
     <Frame>
-      ![](https://assets.mirurobotics.com/docs/v03/images/config-instances/panel-metadata:staged.png)
+      ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/config-instances/panel-metadata:staged.png)
     </Frame>
   </Tab>
 </Tabs>
@@ -106,19 +106,19 @@ When patching a deployment, the original deployment is archived and removed from
 To patch a deployment, click the ellipses (...) on the deployment to patch and select **Patch** from the dropdown.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/ellipses-dropdown:staged.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/ellipses-dropdown:staged.png)
 </Frame>
 
 A dialog will appear with the original deployment's config instances populated in each tab.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/patch-dialog:configurations.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/patch-dialog:configurations.png)
 </Frame>
 
 Make any desired edits to the config instances. Once satisfied with the edits, enter a description at the bottom of the dialog and hit **Stage**.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/patch-dialog:description.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/patch-dialog:description.png)
 </Frame>
 
 ## Archive a deployment
@@ -132,13 +132,13 @@ This action is irreversible. Once archived, a deployment can never be deployed t
 To archive a single deployment, click the ellipsis (...) on the deployment and select **Archive** from the dropdown.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/ellipses-dropdown:staged.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/ellipses-dropdown:staged.png)
 </Frame>
 
 A confirmation dialog will appear--hit **Archive** to confirm.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/archive-dialog:single.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/archive-dialog:single.png)
 </Frame>
 
 **Multiple Deployments**
@@ -146,19 +146,19 @@ A confirmation dialog will appear--hit **Archive** to confirm.
 To archive multiple deployments, hover over the deployments you want to archive and select the checkbox in the far-left column.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/select-devices.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/select-devices.png)
 </Frame>
 
 At the bottom of the page, click **Archive** from the available bulk actions.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/bulk-actions.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/bulk-actions.png)
 </Frame>
 
 A confirmation dialog will appear--hit **Archive** to confirm.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/archive-dialog:bulk.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/archive-dialog:bulk.png)
 </Frame>
 
 ## Deploy a deployment
@@ -170,19 +170,19 @@ This action is irreversible. Once deployed, the only way to restore configuratio
 To deploy one or more deployments, hover over the deployments you want to deploy and select their checkboxes in the far-left column.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/select-devices.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/select-devices.png)
 </Frame>
 
 At the bottom of the page, click **Deploy** from the available bulk actions.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/bulk-actions.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/bulk-actions.png)
 </Frame>
 
 A confirmation dialog will appear. Hit **Deploy** to confirm.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/deploy-dialog:bulk.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/deploy-dialog:bulk.png)
 </Frame>
 
 ## Deployment drift
@@ -191,7 +191,7 @@ When a device receives configuration updates for its current release while havin
 
 Consider the following example:
 
-![](https://assets.mirurobotics.com/docs/v03/images/deployments/deployment-drift.png)
+![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/deployments/deployment-drift.png)
 
 Our device is currently running deployment `DPL-Npfzv`, which adheres to release `v1.5`. Our device is about to be upgraded to release `v1.6` though, so we've staged deployment `DPL-Q4CeX` for the upcoming upgrade.
 
@@ -210,25 +210,25 @@ Reviewing a deployment displays the patches applied to a device since the last t
 To review a deployment, click the ellipsis (...) on the deployment and select **Review** from the dropdown.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/ellipses-dropdown:drifted.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/ellipses-dropdown:drifted.png)
 </Frame>
 
 A dialog will appear with a list of deployments that have been patched to the device since the last time the deployment was reviewed (or when it was initially staged).
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/review-dialog:deployments.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/review-dialog:deployments.png)
 </Frame>
 
 Clicking a deployment opens the deployment details panel on the right side of the page.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/deployment-panel:deployed.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/deployment-panel:deployed.png)
 </Frame>
 
 Clicking a deployment's listed configuration opens that config instance's details panel, with the differences highlighted.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/config-panel.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/config-panel.png)
 </Frame>
 
 With the deployment's patches available for review, you have two options for proceeding.
@@ -238,7 +238,7 @@ With the deployment's patches available for review, you have two options for pro
 The first option is to restage the deployment as-is, effectively ignoring the patches that have occurred. This will move the deployment to the `staged` state and allow it to be deployed.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/review-dialog:restage.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/review-dialog:restage.png)
 </Frame>
 
 **Archive**
@@ -246,7 +246,7 @@ The first option is to restage the deployment as-is, effectively ignoring the pa
 The second option is to [archive](#archive-a-deployment) the deployment. This removes the deployment from the staging area and moves it to the `archived` state. Archived deployments are available for historical reference but cannot be deployed.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/review-dialog:archive.png)
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/review-dialog:archive.png)
 </Frame>
 
 **Patch**
