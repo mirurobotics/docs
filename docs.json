@@ -87,6 +87,17 @@
             "group": "Developers",
             "pages": [
               {
+                "group": "Agent",
+                "pages": [
+                  "docs/developers/agent/overview",
+                  "docs/developers/agent/install",
+                  "docs/developers/agent/commands",
+                  "docs/developers/agent/architecture",
+                  "docs/developers/agent/security",
+                  "docs/developers/agent/versions"
+                ]
+              },
+              {
                 "group": "CLI",
                 "pages": [
                   "docs/developers/cli/overview",
@@ -99,17 +110,6 @@
                 "pages": [
                   "docs/developers/ci/overview",
                   "docs/developers/ci/gh-actions"
-                ]
-              },
-              {
-                "group": "Agent",
-                "pages": [
-                  "docs/developers/agent/overview",
-                  "docs/developers/agent/install",
-                  "docs/developers/agent/commands",
-                  "docs/developers/agent/architecture",
-                  "docs/developers/agent/security",
-                  "docs/developers/agent/versions"
                 ]
               },
               {
