@@ -27,10 +27,10 @@ The Platform API uses the `Miru-Version` header to select the API version you wa
 curl --request GET \
   --url 'https://api.mirurobotics.com/v1/devices' \
   --header 'Authorization: Bearer <api-key>' \
-  --header 'Miru-Version: 2025-10-21.zion'
+  --header 'Miru-Version: 2026-03-09.tetons'
 ```
 
-For historical reasons, omitting the `Miru-Version` header defaults to the oldest supported version, which is `2025-10-21.zion`.
+The `Miru-Version` header is optional. When omitted, requests default to the latest supported version, which is currently `2026-03-09.tetons`.
 
 ## Supported versions
 

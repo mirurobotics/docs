@@ -64,7 +64,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
 ## Breaking changes
 
 <Dropdown title="Miru-Version header">
-  Requests require the `Miru-Version` header. Requests without the `Miru-Version` header default to `2025-10-21.zion`.
+  The `Miru-Version` header is now supported. The header is optional and defaults to the latest supported version (`2026-03-09.tetons`) when omitted.
 
   ```diff
     curl --request GET \
