@@ -435,7 +435,7 @@ components:
       in: header
       name: X-API-Key
       description: The API key to use for authentication. Retrieve your API key from
-        the [Miru dashboard](https://app.mirurobotics.com/secrets/api-keys).
+        the [Miru dashboard](https://app.mirurobotics.com/settings/api-keys).
   parameters:
     config_instance_id:
       name: config_instance_id
