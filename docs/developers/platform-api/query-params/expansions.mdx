@@ -45,7 +45,7 @@ The following request expands the **`device`** field using **`expand=device`**
 
 ```bash Request
 curl --request GET \
-  --url https://api.mirurobotics.com/v1/deployments/dpl_123?expand=device \
+  --url https://api.mirurobotics.com/beta/deployments/dpl_123?expand=device \
   --header 'X-API-Key: <api-key>' \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```
@@ -94,7 +94,7 @@ The following request expands both the **`device`** and **`release`** fields of 
 
 ```bash Request
 curl --request GET \
-  --url https://api.mirurobotics.com/v1/deployments/dpl_123?expand=device&expand=release \
+  --url https://api.mirurobotics.com/beta/deployments/dpl_123?expand=device&expand=release \
   --header 'X-API-Key: <api-key>' \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```
@@ -149,7 +149,7 @@ The following request expands the **`config_schemas`** inside the **`release`** 
 
 ```bash Request
 curl --request GET \
-  --url https://api.mirurobotics.com/v1/deployments/dpl_123?expand=release.config_schemas \
+  --url https://api.mirurobotics.com/beta/deployments/dpl_123?expand=release.config_schemas \
   --header 'X-API-Key: <api-key>' \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```
@@ -239,7 +239,7 @@ The following request expands the **`device`** field for every deployment in the
 
 ```bash Request
 curl --request GET \
-  --url 'https://api.mirurobotics.com/v1/deployments?expand=device' \
+  --url 'https://api.mirurobotics.com/beta/deployments?expand=device' \
   --header 'X-API-Key: <api-key>' \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```
@@ -295,7 +295,7 @@ To include the actual total count in the response, add `expand=total_count` to t
 
 ```bash Request
 curl --request GET \
-  --url 'https://api.mirurobotics.com/v1/deployments?expand=total_count' \
+  --url 'https://api.mirurobotics.com/beta/deployments?expand=total_count' \
   --header 'X-API-Key: <api-key>' \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```

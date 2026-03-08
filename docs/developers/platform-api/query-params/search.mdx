@@ -12,7 +12,7 @@ Each search clause follows the structure `<field><operator><value>`. For example
 
 ```bash
 curl --request GET \
-  --url 'https://api.mirurobotics.com/v1/devices?search=name:Robot%20A' \
+  --url 'https://api.mirurobotics.com/beta/devices?search=name:Robot%20A' \
   --header 'X-API-Key: <api-key>' \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```
@@ -46,7 +46,7 @@ Join multiple clauses with ` AND ` (uppercase, space-delimited). All clauses mus
 
 ```bash
 curl --request GET \
-  --url 'https://api.mirurobotics.com/v1/deployments?search=device_id:dvc_123%20AND%20target_status:deployed' \
+  --url 'https://api.mirurobotics.com/beta/deployments?search=device_id:dvc_123%20AND%20target_status:deployed' \
   --header 'X-API-Key: <api-key>' \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```
@@ -57,7 +57,7 @@ Use pipe-separated values with the `:` operator to match any of the listed value
 
 ```bash
 curl --request GET \
-  --url 'https://api.mirurobotics.com/v1/deployments?search=activity_status:queued|deployed' \
+  --url 'https://api.mirurobotics.com/beta/deployments?search=activity_status:queued|deployed' \
   --header 'X-API-Key: <api-key>' \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```
@@ -68,7 +68,7 @@ Prefix a clause with `-` to negate it. For example, `-error_status:none` matches
 
 ```bash
 curl --request GET \
-  --url 'https://api.mirurobotics.com/v1/deployments?search=-error_status:none' \
+  --url 'https://api.mirurobotics.com/beta/deployments?search=-error_status:none' \
   --header 'X-API-Key: <api-key>' \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```
@@ -83,7 +83,7 @@ Use the literal `null` as a value with the `:` operator to match null fields.
 
 ```bash
 curl --request GET \
-  --url 'https://api.mirurobotics.com/v1/deployments?search=error_status:null' \
+  --url 'https://api.mirurobotics.com/beta/deployments?search=error_status:null' \
   --header 'X-API-Key: <api-key>' \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```
@@ -141,7 +141,7 @@ The following request searches for queued deployments on a specific device, sort
 
 ```bash
 curl --request GET \
-  --url 'https://api.mirurobotics.com/v1/deployments?search=device_id:dvc_123%20AND%20activity_status:queued&order_by=queued_at:desc&limit=10&offset=0' \
+  --url 'https://api.mirurobotics.com/beta/deployments?search=device_id:dvc_123%20AND%20activity_status:queued&order_by=queued_at:desc&limit=10&offset=0' \
   --header 'X-API-Key: <api-key>' \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```

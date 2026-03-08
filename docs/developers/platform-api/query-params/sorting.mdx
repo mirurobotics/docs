@@ -42,7 +42,7 @@ The following request sorts config instances by descending creation date using t
 
 ```bash
 curl --request GET \
-  --url 'https://api.mirurobotics.com/v1/config_instances?order_by=created_at:desc' \
+  --url 'https://api.mirurobotics.com/beta/config_instances?order_by=created_at:desc' \
   --header 'X-API-Key: <api-key>' \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```
@@ -51,7 +51,7 @@ The following request sorts config instances by ascending creation date using th
 
 ```bash
 curl --request GET \
-  --url 'https://api.mirurobotics.com/v1/config_instances?order_by=created_at:asc' \
+  --url 'https://api.mirurobotics.com/beta/config_instances?order_by=created_at:asc' \
   --header 'X-API-Key: <api-key>' \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```
@@ -107,7 +107,7 @@ The following request sorts devices by descending creation date and then by asce
 
 ```bash
 curl --request GET \
-  --url 'https://api.mirurobotics.com/v1/devices?order_by=created_at:desc,id:asc' \
+  --url 'https://api.mirurobotics.com/beta/devices?order_by=created_at:desc,id:asc' \
   --header 'X-API-Key: <api-key>' \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```
