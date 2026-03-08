@@ -6,16 +6,19 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  x-release-version: 2026-03-09.tetons-beta.3
+  x-release-version: 2026-03-09.tetons
   x-git-commit:
-    sha: 72aa6400b145050d6c3571e72d7cd8b19a7db3f5
-    url: https://github.com/mirurobotics/openapi/commit/72aa6400b145050d6c3571e72d7cd8b19a7db3f5
-    message: 'refactor(platform): config type to use all of to have own type'
+    sha: a33cf62e35e950971e3c223d746ae8e4e6464442
+    url: https://github.com/mirurobotics/openapi/commit/a33cf62e35e950971e3c223d746ae8e4e6464442
+    message: |-
+      refactor(stainless): rename config instance content method to download
+
+      Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
     author: Benjamin Smidt
     branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-03-06T04:57:19.416436+00:00'
+    built_at: '2026-03-08T22:30:32.695898+00:00'
 servers:
 - url: https://api.mirurobotics.com/beta
   description: Miru Platform API
@@ -185,7 +188,7 @@ paths:
           client = Miru(
               api_key=os.environ.get("MIRU_API_KEY"),  # This is the default and can be omitted
           )
-          response = client.config_instances.content(
+          response = client.config_instances.download(
               config_instance_id="cfg_inst_123",
           )
           print(response)
@@ -680,7 +683,7 @@ paths:
       summary: Drifts
       operationId: getDeploymentDrifts
       description: List the deployments which have been deployed since this deployment
-        was staged and need to be reviewed.
+        was staged.
       parameters:
       - $ref: '#/components/parameters/deployment_id'
       - $ref: '#/components/parameters/deployment_expansions'
@@ -1066,13 +1069,12 @@ paths:
     get:
       tags:
       - Principals
-      summary: Identify
-      description: Identify the currently authenticated principal. Returns the identity
-        associated with the API key used in the request.
-      operationId: identifyPrincipal
+      summary: Self
+      description: Retrieve the currently authenticated principal.
+      operationId: getSelf
       responses:
         '200':
-          description: Successfully identified the principal.
+          description: Successfully retrieved the principal.
           content:
             application/json:
               schema:
@@ -1240,7 +1242,7 @@ components:
     APIGitCommit:
       type: string
       enum:
-      - 72aa6400b145050d6c3571e72d7cd8b19a7db3f5
+      - a33cf62e35e950971e3c223d746ae8e4e6464442
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
@@ -1417,16 +1419,16 @@ components:
         id:
           type: string
           description: The unique identifier for this document.
-          example: main.json
+          example: doc_123
         name:
           type: string
-          description: The identifier for this document.
+          description: The document filename.
           example: main.json
         data:
           type: string
           description: The raw document content.
       example:
-        id: main.json
+        id: doc_123
         name: main.json
         data: |
           {
@@ -1438,7 +1440,7 @@ components:
       items:
         $ref: '#/components/schemas/SchemaDocument'
       example:
-      - id: main.json
+      - id: doc_123
         name: main.json
         data: |
           {
@@ -1508,7 +1510,7 @@ components:
           description: Expand the config schema documents using `expand=documents`
             in the query string.
           example:
-          - id: main.json
+          - id: doc_123
             name: main.json
             data: |
               {
