@@ -20,6 +20,7 @@ description: "Changelog and migration steps for the Miru Agent"
 
 - Deployments are guaranteed to be atomic--all config instances for a deployment are written to the filesystem simultaneously or none of them are
 - The agent now explicitly tracks `deployed_at` and `archived_at` timestamps on device when deployments are applied
+- Config instances deployed to the device's file system are now identical (indents, spacing, etc.) to config instances edited in the config editor
 
 ## Improvements
 
