@@ -69,7 +69,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
   ```diff
     curl --request GET \
       --url 'https://api.mirurobotics.com/beta/devices' \
-      --header 'Authorization: Bearer <api-key>'
+      --header 'X-API-Key: <api-key>' \
   +   --header 'Miru-Version: 2026-03-09.tetons'
   ```
 </Dropdown>
@@ -250,7 +250,7 @@ Deleting devices is no longer supported.
   ```diff
   curl --request GET \
     --url 'https://api.mirurobotics.com/beta/config_instances?expand=content' \
-    --header 'X-API-Key: <api-key>'
+    --header 'X-API-Key: <api-key>' \
     --header 'Miru-Version: 2026-03-09.tetons'
   ```
 </Dropdown>
