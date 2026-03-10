@@ -26,7 +26,7 @@ paths:
       - lang: curl
         source: |-
           curl --unix-socket /run/miru/miru.sock \
-             --request GET \
+            --request GET \
             --url http://localhost/v1/health
       - lang: Python
         source: |-
@@ -52,7 +52,7 @@ paths:
       - lang: curl
         source: |-
           curl --unix-socket /run/miru/miru.sock \
-             --request GET \
+            --request GET \
             --url http://localhost/v1/version
       - lang: Python
         source: |-
@@ -79,7 +79,7 @@ paths:
       - lang: curl
         source: |-
           curl --unix-socket /run/miru/miru.sock \
-             --request GET \
+            --request GET \
             --url http://localhost/v1/device
       - lang: Python
         source: |-
@@ -106,7 +106,7 @@ paths:
       - lang: curl
         source: |-
           curl --unix-socket /run/miru/miru.sock \
-             --request POST \
+            --request POST \
             --url http://localhost/v1/device/sync
       - lang: Python
         source: |-

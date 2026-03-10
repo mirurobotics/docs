@@ -20,13 +20,13 @@ def get_http_method(operation):
     return None
 
 
-def build_curl_command(path, method, base_url="http://localhost/v1"):
+def build_curl_command(path, method, base_url):
     """Build a curl command using Unix socket with explicit flags."""
     full_url = f"{base_url}{path}"
     method_flag = method.upper()
-    
+
     # Return as a multi-line string that will be formatted as a YAML literal block
-    return f"curl --unix-socket /run/miru/miru.sock \\\n   --request {method_flag} \\\n  --url {full_url}"
+    return f"curl --unix-socket /run/miru/miru.sock \\\n  --request {method_flag} \\\n  --url {full_url}"
 
 
 def has_curl_example(code_samples):
@@ -63,31 +63,39 @@ def add_curl_examples_to_spec(spec_path):
         print(f"⚠️  No 'paths' section found in {spec_path}")
         return
     
+    # Extract base_url from servers - required so we use the correct API version
+    servers = spec.get('servers', [])
+    if not servers or not isinstance(servers, list) or 'url' not in servers[0]:
+        print(f"❌ No 'servers' section with a 'url' found in {spec_path}")
+        print("   The spec must define servers[0].url (e.g. http://localhost/v0.2)")
+        sys.exit(1)
+    base_url = servers[0]['url']
+
     modified = False
     for path, path_item in spec['paths'].items():
         # path_item can be a dict with operations or a reference
         if not isinstance(path_item, dict):
             continue
-            
+
         for method, operation in path_item.items():
             # Skip non-operation keys like 'parameters', 'servers', etc.
             if method not in ['get', 'post', 'put', 'patch', 'delete', 'head', 'options']:
                 continue
-            
+
             if not isinstance(operation, dict):
                 continue
-            
+
             # Get or create x-codeSamples
             if 'x-codeSamples' not in operation:
                 operation['x-codeSamples'] = []
-            
+
             code_samples = operation.get('x-codeSamples', [])
             if not isinstance(code_samples, list):
                 code_samples = []
                 operation['x-codeSamples'] = code_samples
-            
-            # Build curl command
-            curl_cmd = build_curl_command(path, method)
+
+            # Build curl command using base_url from spec servers
+            curl_cmd = build_curl_command(path, method, base_url)
             
             # Check if curl example already exists
             curl_index = None

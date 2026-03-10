@@ -40,8 +40,8 @@ paths:
       - lang: curl
         source: |-
           curl --unix-socket /run/miru/miru.sock \
-             --request GET \
-            --url http://localhost/v1/health
+            --request GET \
+            --url http://localhost/v0.2/health
       - lang: Python
         source: |-
           from miru_device_sdk import Miru
@@ -67,8 +67,8 @@ paths:
       - lang: curl
         source: |-
           curl --unix-socket /run/miru/miru.sock \
-             --request GET \
-            --url http://localhost/v1/version
+            --request GET \
+            --url http://localhost/v0.2/version
       - lang: Python
         source: |-
           from miru_device_sdk import Miru
@@ -96,8 +96,8 @@ paths:
       - lang: curl
         source: |-
           curl --unix-socket /run/miru/miru.sock \
-             --request GET \
-            --url http://localhost/v1/deployments/{deployment_id}
+            --request GET \
+            --url http://localhost/v0.2/deployments/{deployment_id}
       - lang: Python
         source: |-
           from miru_device_sdk import Miru
@@ -125,8 +125,8 @@ paths:
       - lang: curl
         source: |-
           curl --unix-socket /run/miru/miru.sock \
-             --request GET \
-            --url http://localhost/v1/deployments/current
+            --request GET \
+            --url http://localhost/v0.2/deployments/current
       - lang: Python
         source: |-
           from miru_device_sdk import Miru
@@ -152,8 +152,8 @@ paths:
       - lang: curl
         source: |-
           curl --unix-socket /run/miru/miru.sock \
-             --request GET \
-            --url http://localhost/v1/device
+            --request GET \
+            --url http://localhost/v0.2/device
       - lang: Python
         source: |-
           from miru_device_sdk import Miru
@@ -179,8 +179,8 @@ paths:
       - lang: curl
         source: |-
           curl --unix-socket /run/miru/miru.sock \
-             --request POST \
-            --url http://localhost/v1/device/sync
+            --request POST \
+            --url http://localhost/v0.2/device/sync
       - lang: Python
         source: |-
           from miru_device_sdk import Miru
@@ -208,8 +208,8 @@ paths:
       - lang: curl
         source: |-
           curl --unix-socket /run/miru/miru.sock \
-             --request GET \
-            --url http://localhost/v1/git_commits/{git_commit_id}
+            --request GET \
+            --url http://localhost/v0.2/git_commits/{git_commit_id}
       - lang: Python
         source: |-
           from miru_device_sdk import Miru
@@ -239,8 +239,8 @@ paths:
       - lang: curl
         source: |-
           curl --unix-socket /run/miru/miru.sock \
-             --request GET \
-            --url http://localhost/v1/releases/{release_id}
+            --request GET \
+            --url http://localhost/v0.2/releases/{release_id}
       - lang: Python
         source: |-
           from miru_device_sdk import Miru
@@ -268,8 +268,8 @@ paths:
       - lang: curl
         source: |-
           curl --unix-socket /run/miru/miru.sock \
-             --request GET \
-            --url http://localhost/v1/releases/current
+            --request GET \
+            --url http://localhost/v0.2/releases/current
       - lang: Python
         source: |-
           from miru_device_sdk import Miru
