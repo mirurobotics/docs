@@ -10,6 +10,66 @@ import { Separator } from '/snippets/components/separator.jsx'
 
 <div className="changelog-page">
 
+<Update label="March 13, 2026">
+    ## New Platform and Device APIs
+
+    We've added a variety of endpoints and resources to both the Platform and Device APIs, giving you more programmatic control and on-device deployment visibility. We've also added versioning to both the Platform and Device APIs, giving you a stable contract for integrations.
+
+    ###  Platform API 2026-03-09.tetons
+
+    Platform API `2026-03-09.tetons` introduces API versioning and overhauls the representation of deployments, config instances, and config schemas. It also introduces management of more configuration resources (config types, schemas, and instances), release creation, git commit tracking, and explicit deployment lifecycle actions.
+
+    For a detailed list of changes, visit the [Platform API changelog](/docs/changelogs/platform-api#2026-03-09-tetons).
+
+    <img src="/images/changelog/26-03-13/platform-api.png" style={{ borderRadius: '8px' }} />
+
+    [Platform API Documentation »](/docs/developers/platform-api/overview)
+
+    ### Device API v0.2.0
+
+    Device API `v0.2.0` expands endpoints beyond basic device health and version checking to include deployment-pipeline visibility. You can now directly query the Miru Agent for its current deployment and current release, allowing you to programmatically verify your application's software version matches the version of your configurations.
+
+    For a detailed list of changes, visit the [Device API changelog](/docs/changelogs/device-api#v0-2-0).
+
+    <img src="/images/changelog/26-03-13/device-api.png" style={{ borderRadius: '8px' }} />
+
+    [Device API Documentation »](/docs/developers/device-api/overview)
+
+    ### Miru Agent v0.7.0
+
+    Outside of the `v0.2.0` Device API changes, `v0.7.0` of the Miru Agent received a variety of small, but impactful improvements:
+
+    - **Atomic Deployments:** Config deployments are now all-or-nothing—all config files for a deployment are written simultaneously or none are
+    - **Deployment Timestamps:** The agent now tracks the `deployed_at` and `archived_at` timestamps on-device when deployments are applied
+    - **Config Instance Formatting:** Config instances deployed to the device's file system are now identical (indents, spacing, etc.) to config instances edited in the config editor
+
+    <img src="/images/changelog/26-03-13/agent.png" style={{ borderRadius: '8px' }} />
+
+    [Miru Agent Documentation »](/docs/developers/agent/overview)
+
+    <Separator />
+
+    <Dropdown title="Improvements">
+        <DropdownItem>
+            **Miru Agent Documentation:** We've expanded the Miru Agent documentation to include information about its release lifecycle, architecture, and security.
+        </DropdownItem>
+        <DropdownItem>
+            **API Documentation:** We've expanded both the Platform and Device API documentation to include detailed authorization, versioning, and SDK information.
+        </DropdownItem>
+    </Dropdown>
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+        <DropdownItem>
+            **Default Validation:** Fixed an issue where JSON Schemas with invalid default values were not rejected by Miru.
+        </DropdownItem>
+        <DropdownItem>
+            **Device Deletion:** Fixed an issue where deleting a device would be blocked by an internal server error.
+        </DropdownItem>
+    </Dropdown>
+</Update>
+
 <Update label="February 25, 2026">
     ## Config Editor v3.0
 
