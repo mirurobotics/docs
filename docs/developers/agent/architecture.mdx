@@ -18,16 +18,16 @@ flowchart BT
     Agent("Agent")
 
     Agent -- "HTTPS" --> Backend
-    Agent -- "MQTTS" --> Broker
+    Agent -- "MQTT over TLS" --> Broker
 ```
 
 ### HTTPS
 
 HTTPS delivers the bulk of the functionality between the agent and the control plane.  The agent makes REST API calls to the Miru control plane for pulling deployments/configurations, pushing status reports, and managing authentication tokens.
 
-### MQTTS
+### MQTT over TLS
 
-MQTTS is used as a thin communication channel for enabling real-time communication.
+MQTT over TLS is used as a thin communication channel for enabling real-time communication.
 
 The agent maintains a persistent connection to an MQTT broker over TLS. The control plane uses this channel to push real-time notifications to the agent, letting it know that a new deployment is ready to be synced.
 
@@ -35,7 +35,7 @@ The agent maintains a persistent connection to an MQTT broker over TLS. The cont
 
 At its core, the agent is built around a **sync** cycle--the process of reconciling the device's local state with the control plane's state.
 
-When the agent performs a sync cycle, it communicates directly with the Miru control plane over HTTPS. MQTTS is not used at all in this process.
+When the agent performs a sync cycle, it communicates directly with the Miru control plane over HTTPS. MQTT is not used at all in this process.
 
 During a sync cycle, the agent:
 
