@@ -1,0 +1,38 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "useGitignore": true,
+  "ignorePaths": [
+    ".ai/**",
+    "api/**",
+    "images/**",
+    "logo/**",
+    "node_modules/**",
+    "output/**",
+    "docs/references/**/*.yaml"
+  ],
+  "words": [
+    "Miru",
+    "mirurobotics",
+    "Jetson",
+    "MQTT",
+    "Netlink",
+    "Lohuizen",
+    "cooldown",
+    "costmap",
+    "diffable",
+    "idempotently",
+    "inlines",
+    "journalctl",
+    "radps",
+    "rclone",
+    "sandboxing",
+    "subfolders",
+    "sunsetting",
+    "tunables",
+    "usermod",
+    "newgrp",
+    "zeroizes",
+    "Npfzv"
+  ]
+}
