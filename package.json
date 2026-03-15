@@ -1,0 +1,15 @@
+{
+  "name": "miru-docs",
+  "private": true,
+  "packageManager": "pnpm@10.17.0",
+  "scripts": {
+    "lint": "./scripts/lint.sh",
+    "test:lint": "./tests/test-lint.sh"
+  },
+  "devDependencies": {
+    "cspell": "9.7.0",
+    "eslint": "9.39.1",
+    "eslint-plugin-mdx": "3.6.2",
+    "mint": "4.2.188"
+  }
+}
