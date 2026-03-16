@@ -12,3 +12,5 @@ openapitools.json
 images/
 videos/
 changelog/
+
+node_modules/

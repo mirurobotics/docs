@@ -6,6 +6,7 @@ rss: "true"
 
 import { Dropdown, DropdownItem } from '/snippets/components/dropdown.jsx'
 import { Framed } from '/snippets/components/framed.jsx'
+import { LazyVideo } from '/snippets/components/lazy-video.jsx'
 import { Separator } from '/snippets/components/separator.jsx'
 
 <div className="changelog-page">
@@ -92,10 +93,7 @@ import { Separator } from '/snippets/components/separator.jsx'
     - **Deploy summary:** Review a file-by-file count of changes by type 
     (added, modified, deleted) before deploying.
 
-    <video
-        autoPlay
-        loop
-        controls
+    <LazyVideo
         alt="Screen recording of multi-file editing in the config editor"
         className="aspect-video rounded-xl"
         src="https://assets.mirurobotics.com/docs/changelog/26-02-25/multi-file-editing.mp4"
@@ -110,10 +108,7 @@ import { Separator } from '/snippets/components/separator.jsx'
     All configuration from the historical deployment is perfectly preserved and 
     shipped as a brand-new deployment on the device.
 
-    <video
-        autoPlay
-        loop
-        controls
+    <LazyVideo
         alt="Screen recording of redeploying a historical deployment"
         className="aspect-video rounded-xl"
         src="https://assets.mirurobotics.com/docs/changelog/26-02-25/redeploy.mp4"
@@ -148,10 +143,7 @@ import { Separator } from '/snippets/components/separator.jsx'
     only see the diff between a deployment and its parent. Now, you can swap out the 
     base deployment, making it easy to compare changes across any two points in time.
 
-    <video
-        autoPlay
-        loop
-        controls
+    <LazyVideo
         alt="Screen recording of diff navigation in the config editor"
         className="aspect-video rounded-xl"
         src="https://assets.mirurobotics.com/docs/changelog/26-02-25/diff-comparison.mp4"
@@ -250,10 +242,7 @@ import { Separator } from '/snippets/components/separator.jsx'
 
     The CLI now supports CUE packages, allowing you to define schemas across multiple files while treating them as a single logical schema in Miru.
 
-    <video
-        autoPlay
-        loop
-        controls
+    <LazyVideo
         alt="Screen recording of working with CUE packages in release creation"
         className="aspect-video rounded-xl"
         src="https://assets.mirurobotics.com/docs/changelog/26-01-27/cue-package.mp4"
@@ -317,10 +306,7 @@ import { Separator } from '/snippets/components/separator.jsx'
     welcome experience.
 
 
-    <video
-        autoPlay
-        loop
-        controls
+    <LazyVideo
         alt="Screen recording of uploading a workspace logo"
         className="aspect-video rounded-xl"
         src="https://assets.mirurobotics.com/docs/changelog/25-12-19/upload-workspace-logo.mp4"
@@ -332,10 +318,7 @@ import { Separator } from '/snippets/components/separator.jsx'
     picture. We've included a built-in cropper so you can center your image 
     perfectly before saving.
 
-    <video
-        autoPlay
-        loop
-        controls
+    <LazyVideo
         alt="Screen recording of uploading a profile picture"
         className="aspect-video rounded-xl"
         src="https://assets.mirurobotics.com/docs/changelog/25-12-19/upload-profile-picture.mp4"
@@ -354,10 +337,7 @@ import { Separator } from '/snippets/components/separator.jsx'
     - **All reported bugs** are resolved within **7 days**
     - **Critical bugs** are resolved within **2 days**
 
-    <video
-        autoPlay
-        loop
-        controls
+    <LazyVideo
         alt="Screen recording of submitting in-app feedback"
         className="aspect-video rounded-xl"
         src="https://assets.mirurobotics.com/docs/changelog/25-12-19/feedback-demo.mp4"
@@ -473,10 +453,7 @@ import { Separator } from '/snippets/components/separator.jsx'
     - **Existing users** can accept the invite via the email link or their Profile settings 
     page.
 
-    <video
-        autoPlay
-        loop
-        controls
+    <LazyVideo
         alt="Screen recording of inviting a workspace member"
         className="aspect-video rounded-xl"
         src="https://assets.mirurobotics.com/docs/changelog/25-12-04/inviting-members.mp4"
@@ -567,10 +544,7 @@ import { Separator } from '/snippets/components/separator.jsx'
     2. **Deploy configurations** - Create a new deployment or deploy a staged deployment
 
 
-    <video
-        autoPlay
-        loop
-        controls
+    <LazyVideo
         alt="Screen recording of setting a device's initial release"
         className="aspect-video rounded-xl"
         src="https://assets.mirurobotics.com/docs/changelog/25-11-10/setting-init-release.mp4"
@@ -585,10 +559,7 @@ import { Separator } from '/snippets/components/separator.jsx'
     When changing releases, you’ll need to deploy a new set of configurations — either 
     select a staged deployment or create a new deployment.
 
-    <video
-        autoPlay
-        loop
-        controls
+    <LazyVideo
         alt="Screen recording of changing a device's release"
         className="aspect-video rounded-xl"
         src="https://assets.mirurobotics.com/docs/changelog/25-11-10/changing-release.mp4"
