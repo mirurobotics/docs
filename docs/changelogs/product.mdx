@@ -11,6 +11,58 @@ import { Separator } from '/snippets/components/separator.jsx'
 
 <div className="changelog-page">
 
+<Update label="March 23, 2026">
+    ## Device Audit Trail
+
+    We've added an audit trail to device pages, simplified the staging 
+    workflow, and introduced a display name setting.
+
+    ### Audit Trail
+
+    The device overview page now includes an activity timeline that lists each 
+    deployment alongside the configuration changes it introduced. Every entry 
+    shows who deployed, when, and exactly which fields were added, modified, or 
+    deleted — down to the JSON path.
+
+    This gives you a single page to review how a device's configuration changed 
+    over time without opening the editor or diffing deployments manually.
+
+    <LazyVideo
+        alt="Screen recording of the device activity timeline"
+        className="aspect-video rounded-xl"
+        src="https://assets.mirurobotics.com/docs/changelog/26-03-23/device-activity-page.mp4"
+    />
+
+    ### Updated staging workflow
+
+    We've simplified the staging workflow to focus on one device at a time. Instead 
+    of creating a staged deployment first and then choosing devices afterward, you 
+    now start by selecting the device you want to prepare. Miru then opens the new
+    release editor with that device's current configuration, or the release schema 
+    defaults if no configuration exists yet.
+
+    <LazyVideo
+        alt="Screen recording of the updated staging workflow"
+        className="aspect-video rounded-xl"
+        src="https://assets.mirurobotics.com/docs/changelog/26-03-23/new-staging-workflow.mp4"
+    />
+
+    [Read the full documentation »](/docs/learn/releases/staging-area#stage-a-deployment)
+
+    ### Display name setting
+
+    You can now choose whether names appear as first name or full name across 
+    the app in **Profile settings**. Hovering any name also reveals the full 
+    name, so you can always tell teammates apart.
+
+    <Framed 
+        background="https://assets.mirurobotics.com/docs/changelog/26-03-23/background.jpg"
+        image="https://assets.mirurobotics.com/docs/changelog/26-03-23/display-name-setting.png"
+        borderWidth="20px"
+        innerRadius="8px"
+    />
+</Update>
+
 <Update label="March 13, 2026">
     ## New Platform and Device APIs
 
