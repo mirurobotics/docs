@@ -8,17 +8,25 @@ import { Framed } from '/snippets/components/framed.jsx';
 
 ## Overview
 
-The staging area for a release is where deployments are created in preparation for a future rollout. The staging area only contains staged deployments. Currently deployed and previously deployed deployments are not accessible in the staging area.
+The staging area for a release is where deployments are created in preparation for a
+future rollout. The staging area only contains staged deployments. Currently deployed
+and previously deployed deployments are not accessible in the staging area.
 
-Deployments in the staging area can be created freely _before_ being deployed to devices, making it an ideal place to prepare and review them before rolling them out.
+Deployments in the staging area can be created freely _before_ being deployed to
+devices, making it an ideal place to prepare and review them before rolling them out.
 
-Each release has its own staging area, entirely separate from other releases' staging areas. This separation allows deployments to be staged for multiple releases simultaneously.
+Each release has its own staging area, entirely separate from other releases' staging
+areas. This separation allows deployments to be staged for multiple releases
+simultaneously.
 
-The staging area is also handy for batch operations. Deployments can be created, deployed, and archived in bulk, which helps manage large numbers of deployments at once.
+The staging area is also handy for batch operations. Deployments can be created,
+deployed, and archived in bulk, which helps manage large numbers of deployments at once.
 
 ## View the staging area
 
-To view a release's staging area, navigate to the [Releases page](https://app.mirurobotics.com/releases) and click into a release.
+To view a release's staging area, navigate to the
+[Releases page](https://app.mirurobotics.com/releases)
+and click into a release.
 
 <Frame>
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/page.png)
@@ -32,38 +40,60 @@ Then select the **Stage** tab at the top of the page.
 
 ## Stage a deployment
 
-Staging a deployment creates a new deployment in the staging area but does not deploy it to any devices.
+Staging a deployment creates a new deployment in the staging area but does not deploy it
+to any devices.
 
-Only one deployment can be staged per device at a time. If a release already has a deployment staged for a device, staging a new deployment will replace the existing deployment.
+Only one deployment can be staged per device at a time. If a release already has a
+deployment staged for a device, staging a new deployment will replace the existing
+deployment.
 
-To stage a deployment, click the **Stage Deployment** button in the top right.
+To stage a deployment, click the **Stage** button in the top right. If there are no
+staged deployments yet, click **Stage Deployment** in the empty state instead.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/stage-dialog-step1:configs.png)
+  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/empty-staging.png)
 </Frame>
 
-A dialog will appear with tabs for each config schema defined in the release. The tabs are pre-populated with the schema's default values.
-
-Make any desired edits to the config instances, enter a description at the bottom of the dialog, and hit **Next**.
+A dialog will appear listing the devices that can be staged for this release. Select the
+device you want to create a staged deployment for.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/stage-dialog-step1:description.png)
+  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/select-device.png)
 </Frame>
 
-Select one or more devices to stage this deployment for. Selecting multiple devices creates a separate deployment for each device.
+<Note>
+  Some devices may be unavailable for selection. These devices are already running this
+  release and cannot be staged from this flow. You can only stage deployments for 
+  devices that are running a _different release_.
+</Note>
+
+After selecting a device, the release editor opens. The editor is pre-filled with the
+device's current configurations when available. If the device does not have a current
+deployment, the editor uses the release schema default values instead.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/stage-dialog-step2:select-devices.png)
+  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/release-editor-tooltip.png)
 </Frame>
 
-You may find some devices unavailable for selection--these devices have configurations for _this release_ that are already deployed. This is not allowed.
-
-You can only stage deployments for devices that are running a _different release_. To patch configurations for such devices, make your edits in the device's [config editor](/docs/learn/devices/config-editor).
-
-Once satisfied with the selected devices, click **Stage** at the bottom of the dialog.
+Review the configuration tabs and make any edits you want. When you are ready, click
+**Stage** in the editor panel.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/stage-dialog-step2:click-stage.png)
+  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/stage-button.png)
+</Frame>
+
+A dialog will appear asking for a description. Enter a description for the staged
+deployment, then click **Stage**.
+
+<Frame>
+  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/stage-dialog.png)
+</Frame>
+
+Miru will return you to the staging area, where the new staged deployment appears in the
+list for the selected device.
+
+<Frame>
+  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/staged-deployment.png)
 </Frame>
 
 ## View a deployment
@@ -76,13 +106,15 @@ A panel will open on the right of the page displaying the deployment's details.
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/deployments/staged-panel.png)
 </Frame>
 
-To view the details of any config instances in the deployment, click into the config instance in the **Configurations** section of the panel.
+To view the details of any config instances in the deployment, click into the config
+instance in the **Configurations** section of the panel.
 
 <Frame>
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/deployments/staged-panel:configurations.png)
 </Frame>
 
-The content tab contains the config instance's parameters, while the metadata tab contains audit information--the author, creation date, description, etc.
+The content tab contains the config instance's parameters, while the metadata tab
+contains audit information--the author, creation date, description, etc.
 
 <Tabs>
   <Tab title="Content">
@@ -99,37 +131,43 @@ The content tab contains the config instance's parameters, while the metadata ta
 
 ## Patch a deployment
 
-Patching a deployment is the process of creating a new deployment to replace an existing one. Patching explicitly marks the original deployment as the parent of the latest deployment, making it easy to trace the history of changes for a device's configurations.
+Patching a deployment opens the release editor with the configuration content from an
+existing staged deployment, allowing you to create a replacement staged deployment for
+that device.
 
-When patching a deployment, the original deployment is archived and removed from the staging area, with the new deployment taking its place.
-
-To patch a deployment, click the ellipses (...) on the deployment to patch and select **Patch** from the dropdown.
-
-<Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/ellipses-dropdown:staged.png)
-</Frame>
-
-A dialog will appear with the original deployment's config instances populated in each tab.
+To patch a deployment, click the ellipses (...) on the deployment to patch and select
+**Patch** from the dropdown.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/patch-dialog:configurations.png)
+    ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/patch-dropdown.png)
 </Frame>
 
-Make any desired edits to the config instances. Once satisfied with the edits, enter a description at the bottom of the dialog and hit **Stage**.
+The release editor will open with the selected deployment's configurations populated in
+each tab.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/patch-dialog:description.png)
+  ![](https://assets.mirurobotics.com/docs/v03/images/releases/stage/release-editor-patch.png)
 </Frame>
+
+Review the configurations and make any desired edits. When you are ready, click
+**Stage** in the editor panel.
+A dialog will appear asking for a description. Enter a description, then click
+**Stage**.
+
+After staging, Miru returns you to the staging area, where the updated staged deployment
+appears in the list.
 
 ## Archive a deployment
 
 Archiving a deployment removes it from the staging area and marks it as `archived`.
 
-This action is irreversible. Once archived, a deployment can never be deployed to a device. However, the deployment will remain available for historical reference.
+This action is irreversible. Once archived, a deployment can never be deployed to a
+device. However, the deployment will remain available for historical reference.
 
 **Single Deployment**
 
-To archive a single deployment, click the ellipsis (...) on the deployment and select **Archive** from the dropdown.
+To archive a single deployment, click the ellipsis (...) on the deployment and select
+**Archive** from the dropdown.
 
 <Frame>
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/ellipses-dropdown:staged.png)
@@ -143,7 +181,8 @@ A confirmation dialog will appear--hit **Archive** to confirm.
 
 **Multiple Deployments**
 
-To archive multiple deployments, hover over the deployments you want to archive and select the checkbox in the far-left column.
+To archive multiple deployments, hover over the deployments you want to archive and
+select the checkbox in the far-left column.
 
 <Frame>
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/select-devices.png)
@@ -163,11 +202,14 @@ A confirmation dialog will appear--hit **Archive** to confirm.
 
 ## Deploy a deployment
 
-Deploying a deployment removes the existing deployment from the device and replaces it with the new deployment.
+Deploying a deployment removes the existing deployment from the device and replaces it
+with the new deployment.
 
-This action is irreversible. Once deployed, the only way to restore configurations is to create a new deployment with the old configurations.
+This action is irreversible. Once deployed, the only way to restore configurations is to
+create a new deployment with the old configurations.
 
-To deploy one or more deployments, hover over the deployments you want to deploy and select their checkboxes in the far-left column.
+To deploy one or more deployments, hover over the deployments you want to deploy and
+select their checkboxes in the far-left column.
 
 <Frame>
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/select-devices.png)
@@ -187,33 +229,46 @@ A confirmation dialog will appear. Hit **Deploy** to confirm.
 
 ## Deployment drift
 
-When a device receives configuration updates for its current release while having deployments staged for another release, we say the staged deployment has _drifted_.
+When a device receives configuration updates for its current release while having
+deployments staged for another release, we say the staged deployment has _drifted_.
 
 Consider the following example:
 
 ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/deployments/deployment-drift.png)
+Our device is currently running deployment `DPL-Npfzv`, which adheres to release `v1.5`.
+Our device is about to be upgraded to release `v1.6` though, so we've staged deployment
+`DPL-Q4CeX` for the upcoming upgrade.
 
-Our device is currently running deployment `DPL-Npfzv`, which adheres to release `v1.5`. Our device is about to be upgraded to release `v1.6` though, so we've staged deployment `DPL-Q4CeX` for the upcoming upgrade.
+However, before the upgrade occurs, our device receives some configuration updates on
+release `v1.5`--`DPL-Npfzv` is patched with `DPL-BFwc3`. Since it's often the case that
+this patch also needs to be applied to the staged deployment `DPL-Q4CeX`, we say
+`DPL-Q4CeX` has _drifted_.
 
-However, before the upgrade occurs, our device receives some configuration updates on release `v1.5`--`DPL-Npfzv` is patched with `DPL-BFwc3`. Since it's often the case that this patch also needs to be applied to the staged deployment `DPL-Q4CeX`, we say `DPL-Q4CeX` has _drifted_.
+When a deployment drifts, it is marked as `drifted` and cannot be deployed until an
+explicit review is performed. You must either ignore the patch or apply the patch to the
+staged deployment.
 
-When a deployment drifts, it is marked as `drifted` and cannot be deployed until an explicit review is performed. You must either ignore the patch or apply the patch to the staged deployment.
-
-The concept of deployment drift ensures that configuration changes aren't lost during migrations between releases, preventing misconfigurations.
+The concept of deployment drift ensures that configuration changes aren't lost during
+migrations between releases, preventing misconfigurations.
 
 ## Review a deployment
 
-Reviewing a deployment is only possible when a deployment has [drifted](#deployment-drift) and is in the `drifted` state. Otherwise, the review button is disabled.
+Reviewing a deployment is only possible when a deployment has
+[drifted](#deployment-drift) and is in the `drifted` state. Otherwise, the review button
+is disabled.
 
-Reviewing a deployment displays the patches applied to a device since the last time the deployment was reviewed (or since it was initially staged).
+Reviewing a deployment displays the patches applied to a device since the last time the
+deployment was reviewed (or since it was initially staged).
 
-To review a deployment, click the ellipsis (...) on the deployment and select **Review** from the dropdown.
+To review a deployment, click the ellipsis (...) on the deployment and select **Review**
+from the dropdown.
 
 <Frame>
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/ellipses-dropdown:drifted.png)
 </Frame>
 
-A dialog will appear with a list of deployments that have been patched to the device since the last time the deployment was reviewed (or when it was initially staged).
+A dialog will appear with a list of deployments that have been patched to the device
+since the last time the deployment was reviewed (or when it was initially staged).
 
 <Frame>
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/review-dialog:deployments.png)
@@ -225,7 +280,8 @@ Clicking a deployment opens the deployment details panel on the right side of th
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/deployment-panel:deployed.png)
 </Frame>
 
-Clicking a deployment's listed configuration opens that config instance's details panel, with the differences highlighted.
+Clicking a deployment's listed configuration opens that config instance's details panel,
+with the differences highlighted.
 
 <Frame>
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/config-panel.png)
@@ -235,7 +291,9 @@ With the deployment's patches available for review, you have two options for pro
 
 **Restage**
 
-The first option is to restage the deployment as-is, effectively ignoring the patches that have occurred. This will move the deployment to the `staged` state and allow it to be deployed.
+The first option is to restage the deployment as-is, effectively ignoring the patches
+that have occurred. This will move the deployment to the `staged` state and allow it to
+be deployed.
 
 <Frame>
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/review-dialog:restage.png)
@@ -243,7 +301,9 @@ The first option is to restage the deployment as-is, effectively ignoring the pa
 
 **Archive**
 
-The second option is to [archive](#archive-a-deployment) the deployment. This removes the deployment from the staging area and moves it to the `archived` state. Archived deployments are available for historical reference but cannot be deployed.
+The second option is to [archive](#archive-a-deployment) the deployment. This removes
+the deployment from the staging area and moves it to the `archived` state. Archived
+deployments are available for historical reference but cannot be deployed.
 
 <Frame>
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/stage/review-dialog:archive.png)
@@ -251,4 +311,5 @@ The second option is to [archive](#archive-a-deployment) the deployment. This re
 
 **Patch**
 
-The ability to apply patches to a drifted deployment is currently unavailable, but will be coming soon!
+The ability to apply patches to a drifted deployment is currently unavailable, but will
+be coming soon!
