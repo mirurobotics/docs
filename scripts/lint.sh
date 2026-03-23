@@ -12,6 +12,11 @@ if ! command -v pnpm >/dev/null 2>&1; then
   exit 1
 fi
 
+if ! command -v go >/dev/null 2>&1; then
+  echo "go is required for MDX prose linting. Install Go and rerun ./scripts/lint.sh." >&2
+  exit 1
+fi
+
 cd "${repo_root}"
 
 collect_files() {
@@ -55,6 +60,10 @@ if [[ ${#openapi_targets[@]} -eq 0 ]]; then
   echo "No OpenAPI specs found under ${content_root}/docs/references." >&2
   exit 1
 fi
+
+echo "== MDX Prose =="
+(cd "${repo_root}/tools/lint" && go build -o lint .)
+"${repo_root}/tools/lint/lint" "${mdx_targets[@]}"
 
 echo "== ESLint (MDX) =="
 pnpm exec eslint --max-warnings=0 "${mdx_targets[@]}"
