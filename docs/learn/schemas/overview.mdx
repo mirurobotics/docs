@@ -51,7 +51,7 @@ import {Framed} from '/snippets/components/framed.jsx';
 
   A hash of the canonicalized schema content.
 
-  Digests are computed by converting schemas to a canonical format--a format that ignores whitespace, comments, and other non-semantic differences--and then hashing the result. This is useful for comparing schemas and detecting duplicates.
+  Digests are computed by converting schemas to a canonical format—a format that ignores whitespace, comments, and other non-semantic differences—and then hashing the result. This is useful for comparing schemas and detecting duplicates.
 
   Examples: `sha256:45YeoJJ2btBnAKQztAEXEjHsqyyQfC1z1Mw3LLM4xMUy`
 </ParamField>
@@ -76,7 +76,7 @@ import {Framed} from '/snippets/components/framed.jsx';
 
 ## Schema languages
 
-Config schemas are defined using a schema language--a formal language for describing the structure, constraints, and data types of a configuration.
+Config schemas are defined using a schema language—a formal language for describing the structure, constraints, and data types of a configuration.
 
 Miru supports:
 
@@ -146,7 +146,7 @@ The schema defines what constitutes a valid config instance in several different
 - Names the available properties
 - Organizes the configuration structure, placing some properties at the root while nesting other properties into logical groups
 - Gives each property a type, such as `number`, `boolean`, etc.
-- Constrains the values of each property--minimums, maximums, enumerations, etc.
+- Constrains the values of each property—minimums, maximums, enumerations, etc.
 - Supplies default values to properties where appropriate
 
 Most of these constraints are optional, and many features of JSON Schema are omitted here, but this gives you a flavor of what schemas are capable of.
@@ -179,7 +179,7 @@ Although simple in concept, schemas are a powerful tool for preventing typos, mi
 
 While schemas provide significant value in production deployments, defining one from scratch can be a considerable undertaking.
 
-Many teams find it best to begin with an empty schema--one that accepts any configuration--and gradually add constraints. This approach allows you to define the most highly valued constraints first and progressively transition to stricter and stricter schemas as needed.
+Many teams find it best to begin with an empty schema—one that accepts any configuration—and gradually add constraints. This approach allows you to define the most highly valued constraints first and progressively transition to stricter and stricter schemas as needed.
 
 Below are the empty schemas for JSON Schema and CUE, respectively.
 

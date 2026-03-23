@@ -167,13 +167,13 @@ As you can see, the target status can only move _forward_, never backwards.
 
 Once a deployment's target status has been set to `deployed`, it can never be set to `staged` again.  Similarly, once a deployment's target status has been set to `archived`, it can never be set to `deployed` again.
 
-This is intentional--deployments are one-time use. Once a deployment has been deployed, it cannot be redeployed. You must create a new deployment with identical content to roll back.
+This is intentional—deployments are one-time use. Once a deployment has been deployed, it cannot be redeployed. You must create a new deployment with identical content to roll back.
 
 ## Activity Status
 
 The activity status is the _last known_ state of a deployment.
 
-We use _the last known state_ intentionally -- poor network connectivity can prevent devices from immediately syncing their activity state with the cloud. In practice, this isn't too common. However, it's still a critical point to keep in mind.
+We use _the last known state_ intentionally—poor network connectivity can prevent devices from immediately syncing their activity state with the cloud. In practice, this isn't too common. However, it's still a critical point to keep in mind.
 
 There are five possible activity states for a deployment.
 
@@ -234,7 +234,7 @@ As with the target status, activity states can only progress forward since deplo
 
 ## Error Status
 
-The error status is the _last known_ error state of a deployment. Again, we use _the last known state_ intentionally -- poor network connectivity can prevent devices from immediately syncing their error state to the cloud.
+The error status is the _last known_ error state of a deployment. Again, we use _the last known state_ intentionally—poor network connectivity can prevent devices from immediately syncing their error state to the cloud.
 
 The error status is independent of the activity and target statuses. The error status does not imply any particular activity or target state, and vice versa. The error status is only concerned with errors encountered during deployment.
 
