@@ -19,8 +19,8 @@ permissions:
   security-events: write
 
 jobs:
-  analyze:
-    name: Analyze
+  codeql:
+    name: CodeQL
     runs-on: ubuntu-latest
 
     strategy:
