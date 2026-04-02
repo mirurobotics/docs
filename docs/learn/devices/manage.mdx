@@ -9,6 +9,54 @@ import {ONLINE_TOOLTIP, OFFLINE_TOOLTIP} from '/snippets/components/devices/stat
 
 Devices are located in the [Devices page](https://app.mirurobotics.com/devices) of the dashboard.
 
+## View a device
+
+**Dashboard**
+
+To view a device, click into it from the [Devices page](https://app.mirurobotics.com/devices) and select the **Overview** tab at the top.
+
+{/* TODO: screenshot of device overview page */}
+
+### Status cards
+
+The Overview tab displays three status cards at the top of the page:
+
+- **Connection** — The device's [status](/docs/learn/devices/overview#status) and when it was last seen or connected.
+- **Release** — The currently deployed [release](/docs/learn/releases/overview) version, with a link to the release.
+- **Agent** — The [Miru Agent](/docs/developers/agent/overview) version running on the device, with a link to the agent documentation.
+
+{/* TODO: screenshot of status cards */}
+
+### Activity feed
+
+Below the status cards is the activity feed—a chronological log of every deployment made to the device, grouped by month.
+
+Each entry shows:
+
+- **Who** deployed — the user's avatar and name
+- **What** was deployed — the [deployment](/docs/learn/deployments) ID and description
+- **When** it was deployed — the timestamp
+- **What changed** — configuration changes listed with colored badges
+
+{/* TODO: screenshot of activity feed */}
+
+#### Configuration changes
+
+Each deployment entry lists the configuration changes it introduced, labeled with colored badges:
+
+- **Added** (green) — A new config type was included in the deployment (e.g., `Communication`, `Mobility`).
+- **Modified** (yellow) — A field within a config type was changed, shown as the config type and JSON path (e.g., `Communication › network › reconnect_interval_ms`).
+
+These badges use the same color coding as the [change list](/docs/learn/devices/config-editor#change-list) in the config editor.
+
+#### System-generated entries
+
+System actions are also recorded in the activity feed. For example, when a device is [reactivated](#reactivate-a-device), an entry is automatically created with the description "recreated for device reactivation."
+
+**Platform API**
+
+To retrieve a device programmatically, use the [get device endpoint »](/docs/references/platform-api/latest/endpoints/devices/get)
+
 ## Edit a device
 
 **Dashboard**
