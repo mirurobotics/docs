@@ -6,3 +6,7 @@ cd "$REPO_ROOT"
 
 echo "=== Lint ==="
 ./scripts/lint.sh
+echo ""
+
+echo "=== Audit ==="
+./scripts/audit.sh
