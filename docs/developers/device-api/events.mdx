@@ -1,0 +1,117 @@
+---
+title: "Events"
+description: "Subscribe to real-time deployment lifecycle events from the Miru Agent via Server-Sent Events (SSE)."
+---
+
+import { LinkNewTab } from '/snippets/components/link.jsx';
+
+The Miru Agent exposes a Server-Sent Events (SSE) stream at `GET /v0.2/events` that pushes deployment lifecycle notifications in real time. Instead of polling the deployments endpoint, your application can open a single long-lived connection and react to state changes as they happen.
+
+## When to use events vs polling
+
+Use **events** when your application needs to react immediately to deployment transitions—for example, reloading configuration files the moment a new deployment lands on disk.
+
+Use **polling** (via `GET /v0.2/deployments/current`) when your application only needs to check the current state periodically and does not require instant notification.
+
+## Connecting
+
+The Device API is served over a Unix socket. Use the `--unix-socket` flag with curl to connect:
+
+```bash
+curl --no-buffer \
+  --unix-socket /run/miru/miru.sock \
+  http://localhost/v0.2/events
+```
+
+The `--no-buffer` flag ensures events are printed as they arrive rather than being buffered.
+
+## Event format
+
+Each event is delivered as a standard SSE frame with three fields:
+
+```
+id: 42
+event: deployment.deployed
+data: {"object":"event","id":42,"type":"deployment.deployed","occurred_at":"2026-03-10T12:00:00Z","data":{"deployment_id":"dpl_123","release_id":"rls_123","status":"deployed","activity_status":"deployed","error_status":"none","target_status":"deployed","deployed_at":"2026-03-10T12:00:00Z"}}
+```
+
+| Field   | Description |
+|---------|-------------|
+| `id`    | Monotonically increasing integer. Used as the cursor for replay. |
+| `event` | Event type string in the format `{resource}.{action}`. |
+| `data`  | JSON envelope containing the event payload. |
+
+The JSON envelope has the following top-level fields:
+
+| Field         | Type              | Description |
+|---------------|-------------------|-------------|
+| `object`      | `string`          | Always `"event"`. |
+| `id`          | `integer`         | Same as the SSE `id` field. |
+| `type`        | `string`          | Event type (matches the SSE `event` field). |
+| `occurred_at` | `string<datetime>`| Timestamp of when the event occurred. |
+| `data`        | `object`          | Event-specific payload. Shape varies by event type. |
+
+## Event types
+
+| Type | Description | Reference |
+|------|-------------|-----------|
+| `deployment.deployed` | Config instances written to the device's filesystem. | <LinkNewTab href="/docs/references/device-api/v0.2.1/events/deployment-deployed">deployment.deployed</LinkNewTab> |
+| `deployment.removed` | Config instances removed from the device's filesystem. | <LinkNewTab href="/docs/references/device-api/v0.2.1/events/deployment-removed">deployment.removed</LinkNewTab> |
+
+## Cursor-based replay
+
+Clients can resume from a known position after reconnection using a cursor. The cursor is the `id` of the last event the client successfully processed.
+
+Pass the cursor in one of two ways:
+
+- **Query parameter** — `?after=<id>` (takes precedence)
+- **HTTP header** — `Last-Event-ID: <id>` (standard SSE reconnection header)
+
+```bash
+# Resume from event 42 using the query parameter
+curl --no-buffer \
+  --unix-socket /run/miru/miru.sock \
+  "http://localhost/v0.2/events?after=42"
+
+# Resume from event 42 using the Last-Event-ID header
+curl --no-buffer \
+  --unix-socket /run/miru/miru.sock \
+  -H "Last-Event-ID: 42" \
+  http://localhost/v0.2/events
+```
+
+The stream first replays all retained events after the cursor, then delivers live events as they occur.
+
+## Type filtering
+
+To subscribe to specific event types, pass a comma-separated list via the `types` query parameter:
+
+```bash
+curl --no-buffer \
+  --unix-socket /run/miru/miru.sock \
+  "http://localhost/v0.2/events?types=deployment.deployed"
+```
+
+If `types` is omitted, all event types are sent.
+
+## Delivery semantics
+
+Events are delivered **at-least-once**. Under normal operation each event is delivered exactly once, but after a reconnection the replay window may include events the client has already seen.
+
+Deduplicate by the event `id` field—it is a monotonically increasing integer that uniquely identifies each event.
+
+## Heartbeats
+
+The agent sends SSE comment lines (`:heartbeat`) approximately every 30 seconds to keep the connection alive and prevent proxies or firewalls from closing idle connections. Comment lines should be ignored by SSE client libraries.
+
+## Retention and compaction
+
+Events are persisted locally on the device in JSONL format. The agent automatically compacts the event log to bound disk usage. When compaction removes old events, cursors pointing to removed events become invalid.
+
+If the cursor provided via `after` or `Last-Event-ID` is older than the earliest retained event, the server responds with `410 Gone`.
+
+## Error responses
+
+| Status | Condition | Description |
+|--------|-----------|-------------|
+| `410 Gone` | Expired cursor | The cursor points to an event that has been compacted. Reconnect without a cursor to receive all retained events. |

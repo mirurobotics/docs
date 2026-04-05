@@ -43,7 +43,8 @@ During a sync cycle, the agent:
 2. Downloads the configuration content for those deployments
 3. Evaluates the appropriate action for each deployment (deploy, remove, no-op)
 4. Applies the changes to the local filesystem
-5. Reports the updated deployment status(es) to the control plane
+5. Emits events for successful deployment transitions
+6. Reports the updated deployment status(es) to the control plane
 
 ```mermaid
 %%{init: {'sequence': {'actorMargin': 120, 'diagramMarginX': 60, 'messageMargin': 45}}}%%
@@ -55,6 +56,7 @@ sequenceDiagram
     S-->>A: Deployments
     Note right of A: Evaluate actions
     Note right of A: Apply changes
+    Note right of A: Emit events
     A->>S: Report status
 ```
 
@@ -128,3 +130,14 @@ The agent persists all state locally on the device, including deployment metadat
 
 - Configurations that are already deployed remain on the filesystem and continue to be served by the local [REST API](/docs/developers/device-api/overview)
 - Status updates are persisted on disk and sent to the control plane as soon as the agent reconnects
+
+## Events
+
+When a deployment transitions successfully during the sync cycle, the agent emits an event. Two event types are supported:
+
+- `deployment.deployed` — emitted when a deployment's config instances are written to the device's filesystem
+- `deployment.removed` — emitted when a deployment's config instances are removed from the device's filesystem
+
+Events are persisted locally in JSONL format and broadcast to any connected Server-Sent Events (SSE) clients via the `GET /v0.2/events` endpoint. This allows on-device applications to react to deployment changes in real time without polling.
+
+For details on connecting to the SSE stream, replaying missed events, and filtering by type, see the [Events](/docs/developers/device-api/events) guide.
