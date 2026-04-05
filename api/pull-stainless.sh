@@ -60,4 +60,4 @@ python3 add_unix_socket_curl.py "$DEVICE_API_FILE"
 python3 inject_scopes.py "$PLATFORM_API_FILE"
 
 # generate event type MDX pages from the device API spec
-python3 generate_event_pages.py "$git_repo_root_dir/docs/references/device-api/v0.2.1/api.yaml" events.yaml "$git_repo_root_dir"
+python3 generate_event_pages.py "$git_repo_root_dir/docs/references/device-api/v0.2.1/api.yaml" "$git_repo_root_dir/docs/references/device-api/v0.2.1/events"
