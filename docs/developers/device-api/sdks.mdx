@@ -45,6 +45,10 @@ For detailed documentation, examples, and advanced usage, visit the Python Devic
   Official Python SDK for the Miru Device API.
 </Card>
 
+## SSE support
+
+The Device API SDKs do not currently support the [Server-Sent Events (SSE)](/docs/developers/device-api/events) stream natively. To consume events, use a standard SSE client library for your language and parse the event frames using the `event` and `data` fields (see [Event Data](/docs/developers/device-api/events#event-data)).
+
 ## OpenAPI specifications
 
 If you're using a language not yet supported by an official SDK, you can still generate client code from the OpenAPI specification. All OpenAPI specifications are available for download from the <LinkNewTab href="/docs/changelogs/device-api">Device API Changelog</LinkNewTab> page.
