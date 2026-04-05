@@ -6,6 +6,11 @@ This ExecPlan is a living document. The sections Progress, Surprises & Discoveri
 
 This plan lives in the docs repo at `/home/ben/miru/workbench3/docs/plans/backlog/20260404-docs-sse-events-coverage.md`. The docs repo is the sole read-write repository; no other repos are modified. The agent repo (commit `0db044a`) and Device API v0.2.1 OpenAPI spec are read-only references for understanding the feature being documented.
 
+| Repository | Access | Description |
+|------------|--------|-------------|
+| docs | read-write | Mintlify documentation site; all file edits in this plan target this repo |
+| agent | read-only | Reference for understanding the SSE feature being documented (commit `0db044a`) |
+
 All file paths in this plan are absolute unless stated otherwise. The docs repo root is `/home/ben/miru/workbench3/docs/`.
 
 ## Purpose / Big Picture
@@ -95,11 +100,11 @@ Second, add the Agent v0.8.0 changelog entry. Open `/home/ben/miru/workbench3/do
 
 ### M2: Events guide and page updates
 
-Create a new file at `/home/ben/miru/workbench3/docs/docs/developers/device-api/events.mdx`. This is a developer guide for consuming SSE events from the Device API. It should have MDX frontmatter with title "Events" and a description. The body covers: what events are (real-time deployment lifecycle notifications pushed by the agent over SSE), when to use events versus polling the deployments endpoint, how to connect (curl example using the unix socket), the SSE event frame format (`id`, `event`, `data` fields) and the JSON envelope structure (`object`, `id`, `type`, `occurred_at`, `data`), a table of event types linking to the reference pages, cursor-based replay via `?after=<id>` and `Last-Event-ID`, type filtering via `?types=`, delivery semantics (at-least-once, deduplicate by event `id`), heartbeat comments every 30 seconds, retention and compaction behavior (expired cursors return 410 Gone), and error responses (400 for malformed cursor, 410 for expired cursor).
+Create a new file at `/home/ben/miru/workbench3/docs/docs/developers/device-api/events.mdx`. This is a developer guide for consuming SSE events from the Device API. It should have MDX frontmatter with title "Events" and a description. The body covers: what events are (real-time deployment lifecycle notifications pushed by the agent over SSE), when to use events versus polling the deployments endpoint, how to connect (curl example using the unix socket), the SSE event frame format (`id`, `event`, `data` fields) and the JSON envelope structure (`object`, `id`, `type`, `occurred_at`, `data`), a table of event types linking to the reference pages, cursor-based replay via `?after=<id>` and `Last-Event-ID`, type filtering via `?types=`, delivery semantics (at-least-once, deduplicate by event `id`), heartbeat comments every 30 seconds, retention and compaction behavior (expired cursors return 410 Gone), and error responses (410 Gone for expired cursor).
 
 Update the Device API overview at `/home/ben/miru/workbench3/docs/docs/developers/device-api/overview.mdx`. Change the first paragraph from "a REST API" to "a REST API with Server-Sent Events (SSE) streaming" and add a sentence about real-time deployment lifecycle events. In the second paragraph, add event streaming to the list of capabilities. Add a sentence before the "To get started" paragraph linking to the events guide.
 
-Update the agent architecture page at `/home/ben/miru/workbench3/docs/docs/developers/agent/architecture.mdx`. Add a new `## Events` section after the "Deployments" section (after line 130). This section explains that after the sync cycle applies changes (step 4 in the numbered list), the agent emits events for successful deployment transitions, persists them locally in JSONL format, and broadcasts them to any connected SSE clients. Include a link to the events guide. Also update the sync cycle numbered list to add a step 5.5 (renumbered as step 5): "Emits events for successful deployment transitions" between the current step 4 (apply changes) and step 5 (report status, renumbered to step 6). Update the Mermaid sequence diagram to include a "Note right of A: Emit events" line between "Apply changes" and "Report status."
+Update the agent architecture page at `/home/ben/miru/workbench3/docs/docs/developers/agent/architecture.mdx`. Add a new `## Events` section after the "Deployments" section (after line 130). This section explains that after the sync cycle applies changes (step 4 in the numbered list), the agent emits events for successful deployment transitions, persists them locally in JSONL format, and broadcasts them to any connected SSE clients. Include a link to the events guide. Also update the sync cycle numbered list: insert a new step 5 "Emits events for successful deployment transitions" between current steps 4 and 5. Renumber current step 5 ("Reports the updated deployment status(es) to the control plane") to step 6. Update the Mermaid sequence diagram to include a "Note right of A: Emit events" line between "Apply changes" and "Report status."
 
 Add a new row to the agent versions table at `/home/ben/miru/workbench3/docs/docs/developers/agent/versions.mdx`. Insert `| v0.8.x | 2026-04-04 | <SupportedBadge /> |` above the existing `v0.7.x` row.
 
@@ -107,7 +112,7 @@ Update the Device API versioning page at `/home/ben/miru/workbench3/docs/docs/de
 
 ### M3: Navigation, redirect, and spell-check
 
-Update `/home/ben/miru/workbench3/docs/docs.json`. In the "Device API" pages array under the "Developers" group, add `"docs/developers/device-api/events"` before `"docs/developers/device-api/versioning"`. Also update the Device API latest redirect source/destination from `v0.2.0` to `v0.2.1`.
+Update `/home/ben/miru/workbench3/docs/docs.json`. In the "Device API" pages array under the "Developers" group, add `"docs/developers/device-api/events"` before `"docs/developers/device-api/versioning"`. Also update the Device API latest redirect: change only the `destination` field from `v0.2.0` to `v0.2.1`. The `source` field (`/docs/references/device-api/latest/:slug*`) stays the same.
 
 Run `pnpm cspell` from the docs repo root. If any SSE-related terms are flagged (likely candidates: `JSONL`, `deduplicate`, `deduplication`, `SSE`), add them to the `words` array in `/home/ben/miru/workbench3/docs/cspell.json`.
 
@@ -141,7 +146,7 @@ Step 1. Edit `/home/ben/miru/workbench3/docs/docs/changelogs/device-api.mdx`. In
     - `deployment.deployed` — emitted when a deployment's config instances are written to the device's filesystem
     - `deployment.removed` — emitted when a deployment's config instances are removed from the device's filesystem
 
-    Each event includes a `release_id`, merged `status`, `error_status`, and timestamp in the event data payload.
+    Each event includes `deployment_id`, `release_id`, merged `status`, `activity_status`, `error_status`, `target_status`, and a timestamp in the event data payload.
     </Dropdown>
     <Separator />
     <Dropdown title="Cursor-based replay and type filtering">
@@ -192,7 +197,125 @@ Expected result: clean working tree for the two changelog files.
 
 ### M2: Events guide and page updates
 
-Step 4. Create `/home/ben/miru/workbench3/docs/docs/developers/device-api/events.mdx` with the events guide content described in Plan of Work. The file should have frontmatter (`title: "Events"`, `description` about SSE deployment events), import the `LinkNewTab` component for cross-references, and contain sections for: What are events, When to use events vs polling, Connecting, Event format, Event types (table), Cursor-based replay, Type filtering, Delivery semantics, Heartbeats, Retention & compaction, and Error responses. Include a curl example and an annotated SSE frame example.
+Step 4. Create `/home/ben/miru/workbench3/docs/docs/developers/device-api/events.mdx` with the following content:
+
+    ---
+    title: "Events"
+    description: "Subscribe to real-time deployment lifecycle events from the Miru Agent via Server-Sent Events (SSE)."
+    ---
+
+    import { LinkNewTab } from '/snippets/components/link.jsx';
+
+    The Miru Agent exposes a Server-Sent Events (SSE) stream at `GET /v0.2/events` that pushes deployment lifecycle notifications in real time. Instead of polling the deployments endpoint, your application can open a single long-lived connection and react to state changes as they happen.
+
+    ## When to use events vs polling
+
+    Use **events** when your application needs to react immediately to deployment transitions—for example, reloading configuration files the moment a new deployment lands on disk.
+
+    Use **polling** (via `GET /v0.2/deployments/current`) when your application only needs to check the current state periodically and does not require instant notification.
+
+    ## Connecting
+
+    The Device API is served over a Unix socket. Use the `--unix-socket` flag with curl to connect:
+
+    ```bash
+    curl --no-buffer \
+      --unix-socket /run/miru/miru.sock \
+      http://localhost/v0.2/events
+    ```
+
+    The `--no-buffer` flag ensures events are printed as they arrive rather than being buffered.
+
+    ## Event format
+
+    Each event is delivered as a standard SSE frame with three fields:
+
+    ```
+    id: 42
+    event: deployment.deployed
+    data: {"object":"event","id":42,"type":"deployment.deployed","occurred_at":"2026-03-10T12:00:00Z","data":{"deployment_id":"dpl_123","release_id":"rls_123","status":"deployed","activity_status":"deployed","error_status":"none","target_status":"deployed","deployed_at":"2026-03-10T12:00:00Z"}}
+    ```
+
+    | Field   | Description |
+    |---------|-------------|
+    | `id`    | Monotonically increasing integer. Used as the cursor for replay. |
+    | `event` | Event type string in the format `{resource}.{action}`. |
+    | `data`  | JSON envelope containing the event payload. |
+
+    The JSON envelope has the following top-level fields:
+
+    | Field         | Type              | Description |
+    |---------------|-------------------|-------------|
+    | `object`      | `string`          | Always `"event"`. |
+    | `id`          | `integer`         | Same as the SSE `id` field. |
+    | `type`        | `string`          | Event type (matches the SSE `event` field). |
+    | `occurred_at` | `string<datetime>`| Timestamp of when the event occurred. |
+    | `data`        | `object`          | Event-specific payload. Shape varies by event type. |
+
+    ## Event types
+
+    | Type | Description | Reference |
+    |------|-------------|-----------|
+    | `deployment.deployed` | Config instances written to the device's filesystem. | <LinkNewTab href="/docs/references/device-api/v0.2.1/events/deployment-deployed">deployment.deployed</LinkNewTab> |
+    | `deployment.removed` | Config instances removed from the device's filesystem. | <LinkNewTab href="/docs/references/device-api/v0.2.1/events/deployment-removed">deployment.removed</LinkNewTab> |
+
+    ## Cursor-based replay
+
+    Clients can resume from a known position after reconnection using a cursor. The cursor is the `id` of the last event the client successfully processed.
+
+    Pass the cursor in one of two ways:
+
+    - **Query parameter** — `?after=<id>` (takes precedence)
+    - **HTTP header** — `Last-Event-ID: <id>` (standard SSE reconnection header)
+
+    ```bash
+    # Resume from event 42 using the query parameter
+    curl --no-buffer \
+      --unix-socket /run/miru/miru.sock \
+      "http://localhost/v0.2/events?after=42"
+
+    # Resume from event 42 using the Last-Event-ID header
+    curl --no-buffer \
+      --unix-socket /run/miru/miru.sock \
+      -H "Last-Event-ID: 42" \
+      http://localhost/v0.2/events
+    ```
+
+    The stream first replays all retained events after the cursor, then delivers live events as they occur.
+
+    ## Type filtering
+
+    To subscribe to specific event types, pass a comma-separated list via the `types` query parameter:
+
+    ```bash
+    curl --no-buffer \
+      --unix-socket /run/miru/miru.sock \
+      "http://localhost/v0.2/events?types=deployment.deployed"
+    ```
+
+    If `types` is omitted, all event types are sent.
+
+    ## Delivery semantics
+
+    Events are delivered **at-least-once**. Under normal operation each event is delivered exactly once, but after a reconnection the replay window may include events the client has already seen.
+
+    Deduplicate by the event `id` field—it is a monotonically increasing integer that uniquely identifies each event.
+
+    ## Heartbeats
+
+    The agent sends SSE comment lines (`:heartbeat`) approximately every 30 seconds to keep the connection alive and prevent proxies or firewalls from closing idle connections. Comment lines should be ignored by SSE client libraries.
+
+    ## Retention and compaction
+
+    Events are persisted locally on the device in JSONL format. The agent automatically compacts the event log to bound disk usage. When compaction removes old events, cursors pointing to removed events become invalid.
+
+    If the cursor provided via `after` or `Last-Event-ID` is older than the earliest retained event, the server responds with `410 Gone`.
+
+    ## Error responses
+
+    | Status | Condition | Description |
+    |--------|-----------|-------------|
+    | `410 Gone` | Expired cursor | The cursor points to an event that has been compacted. Reconnect without a cursor to receive all retained events. |
 
 Step 5. Edit `/home/ben/miru/workbench3/docs/docs/developers/device-api/overview.mdx`. Change line 7 from:
 
@@ -214,7 +337,7 @@ Insert a new paragraph before the "To get started" paragraph:
 
     To receive real-time notifications when deployments are applied or removed, see the [Events](/docs/developers/device-api/events) guide.
 
-Step 6. Edit `/home/ben/miru/workbench3/docs/docs/developers/agent/architecture.mdx`. In the sync cycle numbered list, add step 5 "Emits events for successful deployment transitions" between the current steps 4 and 5, renumbering current step 5 to step 6. In the Mermaid sequence diagram, add `Note right of A: Emit events` between `Note right of A: Apply changes` and `A->>S: Report status`. Add a new `## Events` section after the "Offline resilience" paragraph (end of the Deployments section) covering event emission during the sync cycle, JSONL persistence, SSE broadcasting, and a link to the events guide.
+Step 6. Edit `/home/ben/miru/workbench3/docs/docs/developers/agent/architecture.mdx`. In the sync cycle numbered list, insert a new step 5 "Emits events for successful deployment transitions" between current steps 4 and 5. Renumber current step 5 ("Reports the updated deployment status(es) to the control plane") to step 6. In the Mermaid sequence diagram, add `Note right of A: Emit events` between `Note right of A: Apply changes` and `A->>S: Report status`. Add a new `## Events` section after the "Offline resilience" paragraph (end of the Deployments section) covering event emission during the sync cycle, JSONL persistence, SSE broadcasting, and a link to the events guide.
 
 Step 7. Edit `/home/ben/miru/workbench3/docs/docs/developers/agent/versions.mdx`. Add a new row to the versions table:
 
@@ -238,7 +361,7 @@ Expected result: clean working tree for all five files.
 
 ### M3: Navigation, redirect, and spell-check
 
-Step 10. Edit `/home/ben/miru/workbench3/docs/docs.json`. In the Device API pages array, add `"docs/developers/device-api/events"` before `"docs/developers/device-api/versioning"`. Update the Device API latest redirect from `v0.2.0` to `v0.2.1` in both the source pattern comment context and the destination URL.
+Step 10. Edit `/home/ben/miru/workbench3/docs/docs.json`. In the Device API pages array, add `"docs/developers/device-api/events"` before `"docs/developers/device-api/versioning"`. Update the Device API latest redirect: change only the `destination` field from `/docs/references/device-api/v0.2.0/:slug*` to `/docs/references/device-api/v0.2.1/:slug*`. The `source` field (`/docs/references/device-api/latest/:slug*`) stays the same.
 
 Step 11. Run spell-check.
 
