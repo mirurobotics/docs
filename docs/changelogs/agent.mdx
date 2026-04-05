@@ -4,6 +4,29 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.8.0
+
+*April 4, 2026*
+
+`v0.8.0` adds Server-Sent Events (SSE) streaming to the Miru Agent, enabling on-device applications to receive real-time deployment lifecycle notifications. This release also upgrades the Device API to [v0.2.1](/docs/changelogs/device-api#v0-2-1).
+
+[Device API v0.2.1 changelog »](/docs/changelogs/device-api#v0-2-1)
+
+## Features
+
+- Added `GET /v0.2/events` SSE endpoint for streaming deployment lifecycle events
+- Cursor-based replay via `?after=<id>` query parameter and `Last-Event-ID` header lets clients resume from a known position after reconnection
+- Type filtering via `?types=` query parameter lets clients subscribe to specific event types
+- At-least-once delivery semantics ensure no events are lost during transient disconnections
+- 30-second heartbeat keep-alive comments prevent proxies and firewalls from closing idle connections
+
+## Improvements
+
+- Events are persisted locally in JSONL format with automatic compaction to bound disk usage
+- The events directory is cleared during agent bootstrap to prevent stale state from previous runs
+
+---
+
 # v0.7.0
 
 *March 13, 2026*

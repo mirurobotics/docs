@@ -9,6 +9,37 @@ import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 import { DeviceApiReleaseLinks } from '/snippets/components/api-links.jsx';
 
+# v0.2.1
+
+*April 4, 2026*
+
+The `v0.2.1` release adds real-time deployment lifecycle event streaming via Server-Sent Events (SSE). On-device applications can now subscribe to a persistent event stream instead of polling for deployment status changes.
+
+<DeviceApiReleaseLinks version="v0.2.1" />
+
+## New endpoints
+
+<Dropdown title="Events">
+  - <GET /> `/events` — stream deployment lifecycle events via SSE
+</Dropdown>
+
+## Additive changes
+
+<Dropdown title="Event types">
+Two event types are emitted for deployment lifecycle transitions:
+
+- `deployment.deployed` — emitted when a deployment's config instances are written to the device's filesystem
+- `deployment.removed` — emitted when a deployment's config instances are removed from the device's filesystem
+
+Each event includes `deployment_id`, `release_id`, merged `status`, `activity_status`, `error_status`, `target_status`, and a timestamp in the event data payload.
+</Dropdown>
+<Separator />
+<Dropdown title="Cursor-based replay and type filtering">
+The SSE endpoint supports cursor-based replay via the `?after=<id>` query parameter or the `Last-Event-ID` HTTP header, allowing clients to resume from a known position after reconnection. Events can be filtered by type using the `?types=` query parameter.
+</Dropdown>
+
+---
+
 # v0.2.0
 
 *March 13, 2026*
