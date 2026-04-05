@@ -2,10 +2,14 @@
 """
 Generate Mintlify MDX pages for SSE event types from an OpenAPI spec.
 
-Reads a sidecar YAML config that maps OpenAPI schema names to event page
-metadata, then produces one MDX file per event type.
+Discovers event data schemas by scanning components.schemas for names
+matching *Event (excluding the Event envelope). Extracts event type
+strings from schema descriptions and composes examples from the Event
+envelope. Non-derivable metadata (description, body, field_annotations)
+comes from a sidecar YAML config keyed by event type.
 """
 
+import re
 import sys
 import yaml
 import json
@@ -106,41 +110,115 @@ def build_mdx(event_cfg, schema, schemas):
     return "\n".join(lines)
 
 
-def main():
-    if len(sys.argv) != 3:
-        print("Usage: python3 generate_event_pages.py <config.yaml> <repo-root>")
+def discover_events(spec, schemas):
+    """Discover event data schemas from the spec.
+
+    Scans components.schemas for names ending with 'Event' (excluding the
+    Event envelope itself). Extracts the event type string from each schema's
+    description and composes a full example by merging the Event envelope
+    example with the data schema's example.
+
+    Returns a list of dicts with keys: schema_name, type, slug, schema, example.
+    """
+    # Find the Event envelope schema
+    envelope = schemas.get("Event")
+    if envelope is None:
+        print("❌ Event envelope schema not found in spec")
         sys.exit(1)
 
-    config_path = Path(sys.argv[1])
-    repo_root = Path(sys.argv[2])
+    envelope_example = envelope.get("example", {})
+
+    # Pattern to extract event type from description like:
+    # "Payload for `deployment.deployed` events."
+    type_pattern = re.compile(r"Payload for `([^`]+)` events\.")
+
+    discovered = []
+    for name, schema in schemas.items():
+        # Skip the envelope itself and non-Event schemas
+        if name == "Event" or not name.endswith("Event"):
+            continue
+
+        desc = schema.get("description", "")
+        match = type_pattern.search(desc)
+        if not match:
+            continue
+
+        event_type = match.group(1)
+        slug = event_type.replace(".", "-")
+        data_example = schema.get("example", {})
+
+        # Compose example: envelope fields + event type + data payload
+        composed_example = {
+            "object": envelope_example.get("object", "event"),
+            "id": envelope_example.get("id", 1),
+            "type": event_type,
+            "occurred_at": envelope_example.get("occurred_at", ""),
+            "data": data_example,
+        }
+
+        discovered.append({
+            "schema_name": name,
+            "type": event_type,
+            "slug": slug,
+            "schema": schema,
+            "example": composed_example,
+        })
+
+    return discovered
+
+
+def main():
+    if len(sys.argv) != 4:
+        print("Usage: python3 generate_event_pages.py <spec.yaml> <config.yaml> <repo-root>")
+        sys.exit(1)
+
+    spec_path = Path(sys.argv[1])
+    config_path = Path(sys.argv[2])
+    repo_root = Path(sys.argv[3])
+
+    if not spec_path.exists():
+        print(f"❌ OpenAPI spec not found: {spec_path}")
+        sys.exit(1)
 
     if not config_path.exists():
         print(f"❌ Config file not found: {config_path}")
-        sys.exit(1)
-
-    with open(config_path, "r", encoding="utf-8") as f:
-        config = yaml.safe_load(f)
-
-    spec_path = repo_root / config["spec"]
-    if not spec_path.exists():
-        print(f"❌ OpenAPI spec not found: {spec_path}")
         sys.exit(1)
 
     with open(spec_path, "r", encoding="utf-8") as f:
         spec = yaml.safe_load(f)
 
     schemas = spec.get("components", {}).get("schemas", {})
+
+    with open(config_path, "r", encoding="utf-8") as f:
+        config = yaml.safe_load(f)
+
     output_dir = repo_root / config["output_dir"]
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    for event in config["events"]:
-        schema_name = event["schema"]
-        if schema_name not in schemas:
-            print(f"❌ Schema '{schema_name}' not found in spec")
-            sys.exit(1)
+    events_config = config.get("events", {})
+    discovered = discover_events(spec, schemas)
 
-        schema = schemas[schema_name]
-        mdx = build_mdx(event, schema, schemas)
+    # Warn about config entries with no matching spec schema
+    discovered_types = {e["type"] for e in discovered}
+    for event_type in events_config:
+        if event_type not in discovered_types:
+            print(f"⚠️  Config entry '{event_type}' has no matching schema in spec")
+
+    for event in discovered:
+        event_type = event["type"]
+        config_entry = events_config.get(event_type)
+        if config_entry is None:
+            print(f"⚠️  Schema '{event['schema_name']}' ({event_type}) has no config entry, skipping")
+            continue
+
+        # Merge discovered fields with config fields for build_mdx()
+        event_cfg = {
+            "type": event["type"],
+            "example": event["example"],
+            **config_entry,
+        }
+
+        mdx = build_mdx(event_cfg, event["schema"], schemas)
 
         out_file = output_dir / f"{event['slug']}.mdx"
         with open(out_file, "w", encoding="utf-8") as f:
