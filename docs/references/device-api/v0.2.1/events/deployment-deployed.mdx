@@ -1,0 +1,64 @@
+---
+title: "deployment.deployed"
+description: "The deployment's config instances have been written to the device's filesystem."
+---
+
+Emitted when a deployment successfully transitions to the `deployed` activity status, indicating that the deployment's config instances have been written to the device's filesystem and are available for consumption.
+
+## Event Data
+
+<ResponseExample>
+```json Example
+{
+  "object": "event",
+  "id": 42,
+  "type": "deployment.deployed",
+  "occurred_at": "2026-03-10T12:00:00Z",
+  "data": {
+    "deployment_id": "dpl_123",
+    "release_id": "rls_123",
+    "status": "deployed",
+    "activity_status": "deployed",
+    "error_status": "none",
+    "target_status": "deployed",
+    "deployed_at": "2026-03-10T12:00:00Z"
+  }
+}
+```
+</ResponseExample>
+
+<ResponseField name="deployment_id" type="string" required>
+  ID of the deployment.
+</ResponseField>
+
+<ResponseField name="release_id" type="string" required>
+  ID of the release associated with this deployment.
+</ResponseField>
+
+<ResponseField name="status" type="enum<string>" required>
+  This status merges the 'activity_status' and 'error_status' fields, with error states taking precedence over activity states when errors are present. For example, if the activity status is 'deployed' but the error status is 'failed', the status is 'failed'. However, if the error status is 'none' and the activity status is 'deployed', the status is 'deployed'.
+
+  Available options: `drifted`, `staged`, `queued`, `deployed`, `removing`, `archived`, `failed`, `retrying`
+</ResponseField>
+
+<ResponseField name="activity_status" type="enum<string>" required>
+  Last known activity state of the deployment. Always `deployed` for this event type.
+
+  Available options: `drifted`, `staged`, `queued`, `deployed`, `removing`, `archived`
+</ResponseField>
+
+<ResponseField name="error_status" type="enum<string>" required>
+  Last known error state of the deployment. Always `none` for this event type.
+
+  Available options: `none`, `failed`, `retrying`
+</ResponseField>
+
+<ResponseField name="target_status" type="enum<string>" required>
+  Desired state of the deployment.
+
+  Available options: `staged`, `deployed`, `archived`
+</ResponseField>
+
+<ResponseField name="deployed_at" type="string<datetime>">
+  Timestamp of when the deployment was deployed.
+</ResponseField>

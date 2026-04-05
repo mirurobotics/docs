@@ -1,0 +1,920 @@
+openapi: 3.0.3
+info:
+  title: Miru Agent API
+  description: The API between the Miru Agent and any external client living on the
+    same device as the Miru Agent
+  version: v0.2
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  x-release-version: v0.2.0-beta.1
+  x-git-commit:
+    sha: f32bac0eb62ffe2f2518528fe973ce47fba7f737
+    url: https://github.com/mirurobotics/openapi/commit/f32bac0eb62ffe2f2518528fe973ce47fba7f737
+    message: 'refactor(device): update SSE event schemas for v0.2.1 (#14)
+
+
+      ## Summary
+
+
+      - Drop `.beta1` suffix from event type strings — events are now
+
+      versioned with the API version (`deployment.deployed` instead of
+
+      `deployment.deployed.beta1`)
+
+      - Rename schemas: `DeploymentDeployedBeta1Event` →
+
+      `DeploymentDeployedEvent`, `DeploymentRemovedBeta1Event` →
+
+      `DeploymentRemovedEvent`
+
+      - Add `release_id`, `status`, and `error_status` fields to both
+
+      deployment event data schemas
+
+      - Remove 400/410 error responses from `GET /events` for consistency with
+
+      other Device API endpoints
+
+
+      ## Test plan
+
+
+      - [x] `make -C apis/apps/device-server bundle` succeeds
+
+      - [x] `make -C apis/apps/device-server validate` passes (no new
+
+      warnings)
+
+      - [x] `scripts/lint.sh` passes (all custom MIRU rules clean)
+
+      - [x] No `beta1` references remain in device-server source files
+
+      - [ ] Downstream codegen produces updated schema names and fields
+
+
+      🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+
+      Co-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>'
+    author: ben-miru
+    branch: HEAD
+    dirty: false
+  x-build:
+    built_at: '2026-04-04T23:50:27.621227+00:00'
+servers:
+- url: http://localhost/v0.2
+  description: localhost
+security: []
+paths:
+  /health:
+    get:
+      tags:
+      - Agent
+      summary: Health
+      description: Retrieve the health of the agent.
+      operationId: health
+      responses:
+        '200':
+          description: Successfully retrieved the health of the agent.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /version:
+    get:
+      tags:
+      - Agent
+      summary: Version
+      description: Retrieve the version of the agent.
+      operationId: version
+      responses:
+        '200':
+          description: Successfully retrieved the version of the agent.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionResponse'
+  /deployments/{deployment_id}:
+    get:
+      tags:
+      - Deployments
+      summary: Get
+      operationId: getDeployment
+      description: Retrieve a deployment by its ID.
+      parameters:
+      - $ref: '#/components/parameters/deployment_id'
+      responses:
+        '200':
+          description: Successfully retrieved the deployment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deployment'
+  /deployments/current:
+    get:
+      tags:
+      - Deployments
+      summary: Get Current
+      operationId: getCurrentDeployment
+      description: Get the current deployment for the device.
+      responses:
+        '200':
+          description: Successfully retrieved the current deployment.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deployment'
+  /device:
+    get:
+      tags:
+      - Device
+      summary: Get
+      description: Retrieve the device.
+      operationId: getDevice
+      responses:
+        '200':
+          description: Successfully retrieved the device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+  /device/sync:
+    post:
+      tags:
+      - Device
+      summary: Sync
+      description: Manually force a device sync with the edits made in the dashboard.
+      operationId: syncDevice
+      responses:
+        '200':
+          description: Successfully synced the device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncDeviceResponse'
+  /git_commits/{git_commit_id}:
+    get:
+      tags:
+      - Git Commits
+      summary: Get
+      description: Retrieve a git commit by its ID.
+      operationId: getGitCommit
+      parameters:
+      - $ref: '#/components/parameters/git_commit_id'
+      responses:
+        '200':
+          description: Successfully retrieved the git commit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GitCommit'
+  /releases/{release_id}:
+    get:
+      tags:
+      - Releases
+      summary: Get
+      description: Retrieve a release by its ID.
+      operationId: getRelease
+      parameters:
+      - $ref: '#/components/parameters/release_id'
+      responses:
+        '200':
+          description: Successfully retrieved the release.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Release'
+  /releases/current:
+    get:
+      tags:
+      - Releases
+      summary: Get Current
+      description: Retrieve the current release.
+      operationId: getCurrentRelease
+      responses:
+        '200':
+          description: Successfully retrieved the current release.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Release'
+  /events:
+    get:
+      tags:
+      - Events
+      summary: Stream Events
+      operationId: streamEvents
+      description: 'Subscribe to a Server-Sent Events (SSE) stream of agent lifecycle
+        events.
+
+
+        The stream replays retained historical events after the cursor, then
+
+        delivers live events as they occur. Events are delivered at-least-once;
+
+        clients should deduplicate by event `id`.
+
+
+        Use the `after` query parameter or `Last-Event-ID` header to resume
+
+        from a previous position. If the cursor is older than the earliest
+
+        retained event, the server returns `410 Gone`.
+
+        '
+      parameters:
+      - name: after
+        in: query
+        required: false
+        description: Event ID cursor. Only events with `id` greater than this value
+          are returned. Takes precedence over the `Last-Event-ID` header.
+        schema:
+          type: integer
+          format: int64
+        example: 42
+      - name: types
+        in: query
+        required: false
+        description: Event types to receive. If omitted, all event types are sent.
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+        - deployment.deployed
+        - deployment.removed
+      - name: Last-Event-ID
+        in: header
+        required: false
+        description: Standard SSE reconnection header. Used as the replay cursor if
+          `after` query parameter is not provided.
+        schema:
+          type: string
+        example: '42'
+      responses:
+        '200':
+          description: SSE event stream. Each event is delivered as an SSE frame with
+            `id`, `event`, and `data` fields.
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/Event'
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          $ref: '#/components/schemas/Error'
+    APIVersion:
+      type: string
+      enum:
+      - v0.2
+      x-enum-varnames:
+      - API_VERSION
+      x-stainless-const: true
+    APIGitCommit:
+      type: string
+      enum:
+      - f32bac0eb62ffe2f2518528fe973ce47fba7f737
+      x-enum-varnames:
+      - API_GIT_COMMIT
+      x-stainless-const: true
+    DeploymentDeployedEvent:
+      title: DeploymentDeployedEvent
+      type: object
+      description: Payload for `deployment.deployed` events.
+      required:
+      - deployment_id
+      - release_id
+      - status
+      - activity_status
+      - error_status
+      - target_status
+      properties:
+        deployment_id:
+          type: string
+          description: ID of the deployment.
+          example: dpl_123
+        release_id:
+          type: string
+          description: ID of the release associated with this deployment.
+          example: rls_123
+        status:
+          $ref: '#/components/schemas/DeploymentStatus'
+        activity_status:
+          $ref: '#/components/schemas/DeploymentActivityStatus'
+        error_status:
+          $ref: '#/components/schemas/DeploymentErrorStatus'
+        target_status:
+          $ref: '#/components/schemas/DeploymentTargetStatus'
+        deployed_at:
+          type: string
+          format: date-time
+          description: Timestamp of when the deployment was deployed.
+          example: '2026-03-10T12:00:00Z'
+      example:
+        deployment_id: dpl_123
+        release_id: rls_123
+        status: deployed
+        activity_status: deployed
+        error_status: none
+        target_status: deployed
+        deployed_at: '2026-03-10T12:00:00Z'
+    DeploymentRemovedEvent:
+      title: DeploymentRemovedEvent
+      type: object
+      description: Payload for `deployment.removed` events.
+      required:
+      - deployment_id
+      - release_id
+      - status
+      - activity_status
+      - error_status
+      - target_status
+      properties:
+        deployment_id:
+          type: string
+          description: ID of the deployment.
+          example: dpl_123
+        release_id:
+          type: string
+          description: ID of the release associated with this deployment.
+          example: rls_123
+        status:
+          $ref: '#/components/schemas/DeploymentStatus'
+        activity_status:
+          $ref: '#/components/schemas/DeploymentActivityStatus'
+        error_status:
+          $ref: '#/components/schemas/DeploymentErrorStatus'
+        target_status:
+          $ref: '#/components/schemas/DeploymentTargetStatus'
+        archived_at:
+          type: string
+          format: date-time
+          description: Timestamp of when the deployment was archived.
+          example: '2026-03-10T12:00:00Z'
+      example:
+        deployment_id: dpl_123
+        release_id: rls_123
+        status: archived
+        activity_status: archived
+        error_status: none
+        target_status: archived
+        archived_at: '2026-03-10T12:00:00Z'
+    HealthResponse:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          description: The status of the agent.
+          example: ok
+      example:
+        status: ok
+    VersionResponse:
+      type: object
+      required:
+      - version
+      - git_commit
+      - api_version
+      - api_git_commit
+      - rust_version
+      - build_date
+      - os
+      - arch
+      properties:
+        version:
+          type: string
+          description: The version of the agent.
+          example: v1.0.0
+        git_commit:
+          type: string
+          description: The git commit of the agent.
+          example: a1b2c3d4
+        api_version:
+          type: string
+          description: The API version of the agent.
+          example: v1-0
+        api_git_commit:
+          type: string
+          description: The git commit of the API.
+          example: a1b2c3d4
+        rust_version:
+          type: string
+          description: The version of Rust.
+          example: 1.93.0
+        build_date:
+          type: string
+          format: date-time
+          description: The build date of the agent.
+          example: '2026-02-24T10:30:00Z'
+        os:
+          type: string
+          description: The operating system of the agent.
+          example: linux
+        arch:
+          type: string
+          description: The architecture of the agent.
+          example: aarch64
+      example:
+        version: v1.0.0
+        git_commit: a1b2c3d4
+        api_version: v1-0
+        api_git_commit: a1b2c3d4
+        rust_version: 1.93.0
+        build_date: '2026-02-24T10:30:00Z'
+        os: linux
+        arch: aarch64
+    DeploymentStatus:
+      type: string
+      description: 'This status merges the ''activity_status'' and ''error_status''
+        fields, with error states taking precedence over activity states when errors
+        are present. For example, if the activity status is ''deployed'' but the error
+        status is ''failed'', the status is ''failed''. However, if the error status
+        is ''none'' and the activity status is ''deployed'', the status is ''deployed''.
+
+        '
+      enum:
+      - drifted
+      - staged
+      - queued
+      - deployed
+      - removing
+      - archived
+      - failed
+      - retrying
+      x-enum-varnames:
+      - DEPLOYMENT_STATUS_DRIFTED
+      - DEPLOYMENT_STATUS_STAGED
+      - DEPLOYMENT_STATUS_QUEUED
+      - DEPLOYMENT_STATUS_DEPLOYED
+      - DEPLOYMENT_STATUS_REMOVING
+      - DEPLOYMENT_STATUS_ARCHIVED
+      - DEPLOYMENT_STATUS_FAILED
+      - DEPLOYMENT_STATUS_RETRYING
+    DeploymentActivityStatus:
+      type: string
+      description: 'Last known activity state of the deployment.
+
+
+        `drifted` means the device''s configurations have drifted since this deployment
+        was staged, and the deployment needs to be reviewed before it can be deployed.
+
+
+        `staged` means the deployment is ready to be deployed.
+
+
+        `queued` means the deployment''s config instances are waiting to be received
+        by the device and will be deployed as soon as the device is online.
+
+
+        `deployed` means the deployment''s config instances are currently available
+        for consumption on the device.
+
+
+        `removing` means the deployment''s config instances are being removed from
+        the device.
+
+
+        `archived` means the deployment is available for historical reference but
+        cannot be deployed and is not active on the device.
+
+        '
+      enum:
+      - drifted
+      - staged
+      - queued
+      - deployed
+      - removing
+      - archived
+      x-enum-varnames:
+      - DEPLOYMENT_ACTIVITY_STATUS_DRIFTED
+      - DEPLOYMENT_ACTIVITY_STATUS_STAGED
+      - DEPLOYMENT_ACTIVITY_STATUS_QUEUED
+      - DEPLOYMENT_ACTIVITY_STATUS_DEPLOYED
+      - DEPLOYMENT_ACTIVITY_STATUS_REMOVING
+      - DEPLOYMENT_ACTIVITY_STATUS_ARCHIVED
+    DeploymentErrorStatus:
+      type: string
+      description: 'Last known error state of the deployment.
+
+
+        `none` means there are no errors.
+
+
+        `retrying` means an error has been encountered and the agent is retrying to
+        reach the target status.
+
+
+        `failed` means a fatal error has been encountered; the deployment is archived
+        and, if deployed, removed from the device.
+
+        '
+      enum:
+      - none
+      - failed
+      - retrying
+      x-enum-varnames:
+      - DEPLOYMENT_ERROR_STATUS_NONE
+      - DEPLOYMENT_ERROR_STATUS_FAILED
+      - DEPLOYMENT_ERROR_STATUS_RETRYING
+    DeploymentTargetStatus:
+      type: string
+      description: 'Desired state of the deployment.
+
+
+        `staged` means the deployment is ready to be deployed.
+
+
+        `deployed` means all config instances in the deployment are available for
+        consumption on the device.
+
+
+        `archived` means the deployment is available for historical reference but
+        cannot be deployed and is not active on the device.
+
+        '
+      enum:
+      - staged
+      - deployed
+      - archived
+      x-enum-varnames:
+      - DEPLOYMENT_TARGET_STATUS_STAGED
+      - DEPLOYMENT_TARGET_STATUS_DEPLOYED
+      - DEPLOYMENT_TARGET_STATUS_ARCHIVED
+    Deployment:
+      title: Deployment
+      type: object
+      required:
+      - object
+      - id
+      - description
+      - status
+      - activity_status
+      - error_status
+      - target_status
+      - device_id
+      - release_id
+      - created_at
+      properties:
+        object:
+          type: string
+          enum:
+          - deployment
+          example: deployment
+          x-stainless-const: true
+          description: The object type, which is always `deployment`.
+        id:
+          type: string
+          example: dpl_123
+          description: ID of the deployment.
+        description:
+          type: string
+          example: Deployment for the motion control config instance
+          description: The description of the deployment.
+        status:
+          $ref: '#/components/schemas/DeploymentStatus'
+        activity_status:
+          $ref: '#/components/schemas/DeploymentActivityStatus'
+        error_status:
+          $ref: '#/components/schemas/DeploymentErrorStatus'
+        target_status:
+          $ref: '#/components/schemas/DeploymentTargetStatus'
+        device_id:
+          type: string
+          example: dvc_123
+          description: ID of the device.
+        release_id:
+          type: string
+          example: rls_123
+          description: ID of the release.
+        created_at:
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00Z'
+          description: Timestamp of when the device release was created.
+      example:
+        object: deployment
+        id: dpl_123
+        description: Deployment for the motion control config instance
+        status: staged
+        activity_status: staged
+        error_status: none
+        target_status: staged
+        device_id: dvc_123
+        release_id: rls_123
+        created_at: '2024-01-01T00:00:00Z'
+    DeviceStatus:
+      type: string
+      description: 'The status of the device.
+
+        - Online: The miru agent is connected
+
+        - Offline: The miru agent is disconnected (e.g. network issues, device is
+        powered off, etc.)
+
+        '
+      enum:
+      - online
+      - offline
+      x-enum-varnames:
+      - DEVICE_STATUS_ONLINE
+      - DEVICE_STATUS_OFFLINE
+    Device:
+      title: Device
+      type: object
+      required:
+      - object
+      - id
+      - name
+      - status
+      - last_synced_at
+      - last_connected_at
+      - last_disconnected_at
+      properties:
+        object:
+          type: string
+          enum:
+          - device
+          example: device
+          x-stainless-const: true
+          description: The object type, which is always `device`.
+        id:
+          type: string
+          example: dvc_123
+          description: ID of the device.
+        name:
+          type: string
+          example: My Device
+          description: Name of the device.
+        status:
+          $ref: '#/components/schemas/DeviceStatus'
+        last_synced_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the device was last synced.
+        last_connected_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of the last successful connection event with the
+            backend.
+        last_disconnected_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of the last successful disconnection event with the
+            backend.
+      example:
+        object: device
+        id: dvc_123
+        name: My Device
+        status: online
+        last_synced_at: '2021-01-01T00:00:00Z'
+        last_connected_at: '2021-01-01T00:00:00Z'
+        last_disconnected_at: '2021-01-01T00:00:00Z'
+    SyncDeviceResult:
+      type: string
+      description: The result of attempting to sync the device.
+      enum:
+      - success
+      - network_connection_error
+      - in_cooldown
+      x-enum-varnames:
+      - SYNC_DEVICE_RESULT_SUCCESS
+      - SYNC_DEVICE_RESULT_NETWORK_CONNECTION_ERROR
+      - SYNC_DEVICE_RESULT_IN_COOLDOWN
+    SyncDeviceResponse:
+      title: Sync Device Response
+      type: object
+      required:
+      - code
+      - message
+      - last_synced_at
+      - last_attempted_sync_at
+      - in_cooldown
+      - cooldown_ends_at
+      properties:
+        code:
+          $ref: '#/components/schemas/SyncDeviceResult'
+        message:
+          type: string
+          example: Device is not connected to the backend.
+          description: The message of the result.
+        last_synced_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the device was last synced.
+        last_attempted_sync_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the last *attempted* sync occurred.
+        in_cooldown:
+          type: boolean
+          example: true
+          description: Whether the device is currently in cooldown.
+        cooldown_ends_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the cooldown will end.
+      example:
+        code: in_cooldown
+        message: Device is not connected to the backend.
+        last_synced_at: '2021-01-01T00:00:00Z'
+        last_attempted_sync_at: '2021-01-01T00:00:00Z'
+        in_cooldown: true
+        cooldown_ends_at: '2021-01-01T00:00:00Z'
+    GitCommit:
+      title: Git Commit
+      type: object
+      required:
+      - object
+      - id
+      - sha
+      - message
+      - commit_url
+      - created_at
+      properties:
+        object:
+          type: string
+          enum:
+          - git_commit
+          example: git_commit
+          x-stainless-const: true
+          description: The object type, which is always `git_commit`.
+        id:
+          type: string
+          example: git_commit_123
+          description: ID of the git commit.
+        sha:
+          type: string
+          example: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0
+          description: The SHA hash of the git commit.
+        message:
+          type: string
+          example: Add basic motion configurations
+          description: The commit message.
+        commit_url:
+          type: string
+          example: https://github.com/user/repo/commit/a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0
+          description: The URL of the git commit.
+        created_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the git commit was created.
+      example:
+        object: git_commit
+        id: git_commit_123
+        sha: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0
+        message: Add basic motion configurations
+        commit_url: https://github.com/user/repo/commit/a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0
+        created_at: '2021-01-01T00:00:00Z'
+    Release:
+      title: Release
+      type: object
+      required:
+      - object
+      - id
+      - version
+      - git_commit_id
+      - created_at
+      properties:
+        object:
+          type: string
+          enum:
+          - release
+          example: release
+          x-stainless-const: true
+          description: The object type, which is always `release`.
+        id:
+          type: string
+          example: rls_123
+          description: ID of the release.
+        version:
+          type: string
+          example: v1.0.0
+          description: The version of the release.
+        git_commit_id:
+          type: string
+          nullable: true
+          example: git_commit_123
+          description: The ID of the git commit associated with this release.
+        created_at:
+          type: string
+          format: date-time
+          example: '2024-01-01T00:00:00Z'
+          description: Timestamp of when the release was created.
+      example:
+        object: release
+        id: rls_123
+        version: v1.0.0
+        git_commit_id: git_commit_123
+        created_at: '2024-01-01T00:00:00Z'
+    Event:
+      title: Event
+      type: object
+      required:
+      - object
+      - id
+      - type
+      - occurred_at
+      - data
+      properties:
+        object:
+          type: string
+          enum:
+          - event
+          x-stainless-const: true
+          description: The object type, which is always `event`.
+          example: event
+        id:
+          type: integer
+          format: int64
+          description: Monotonically increasing event ID. Used as the SSE `id` field
+            and for replay cursors.
+          example: 42
+        type:
+          type: string
+          description: Event type string in the format `{resource}.{action}`.
+          example: deployment.deployed
+        occurred_at:
+          type: string
+          format: date-time
+          description: Timestamp of when the event occurred.
+          example: '2026-03-10T12:00:00Z'
+        data:
+          type: object
+          description: Event-specific payload. Shape varies by event type.
+      example:
+        object: event
+        id: 42
+        type: deployment.deployed
+        occurred_at: '2026-03-10T12:00:00Z'
+        data:
+          deployment_id: dpl_123
+          release_id: rls_123
+          status: deployed
+          activity_status: deployed
+          error_status: none
+          target_status: deployed
+          deployed_at: '2026-03-10T12:00:00Z'
+    Error:
+      type: object
+      required:
+      - code
+      - params
+      - message
+      properties:
+        code:
+          type: string
+          example: invalid_request
+          description: The error code identifying the type of error.
+        params:
+          type: object
+          additionalProperties: true
+          example:
+            param1: value1
+            param2: value2
+          description: Additional parameters providing context about the error.
+        message:
+          type: string
+          example: This is a message for a user
+          description: A human-readable message describing the error.
+  parameters:
+    deployment_id:
+      name: deployment_id
+      in: path
+      required: true
+      description: The unique identifier of the deployment.
+      schema:
+        type: string
+        example: dpl_123
+    git_commit_id:
+      name: git_commit_id
+      in: path
+      required: true
+      description: The unique identifier of the git commit.
+      schema:
+        type: string
+        example: git_commit_123
+    release_id:
+      name: release_id
+      in: path
+      required: true
+      description: The unique identifier of the release.
+      schema:
+        type: string
+        example: rls_123
