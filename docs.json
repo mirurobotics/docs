@@ -118,6 +118,7 @@
                   "docs/developers/device-api/overview",
                   "docs/developers/device-api/sdks",
                   "docs/developers/device-api/authn",
+                  "docs/developers/device-api/events",
                   "docs/developers/device-api/versioning"
                 ]
               },
@@ -359,7 +360,7 @@
   "redirects": [
     {
       "source": "/docs/references/device-api/latest/:slug*",
-      "destination": "/docs/references/device-api/v0.2.0/:slug*"
+      "destination": "/docs/references/device-api/v0.2.1/:slug*"
     },
     {
       "source": "/docs/references/platform-api/latest/:slug*",
