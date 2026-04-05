@@ -1,0 +1,52 @@
+spec: docs/references/device-api/v0.2.1/api.yaml
+output_dir: docs/references/device-api/v0.2.1/events
+events:
+  - type: "deployment.deployed"
+    schema: DeploymentDeployedEvent
+    slug: deployment-deployed
+    description: "The deployment's config instances have been written to the device's filesystem."
+    body: >-
+      Emitted when a deployment successfully transitions to the `deployed`
+      activity status, indicating that the deployment's config instances
+      have been written to the device's filesystem and are available for
+      consumption.
+    field_annotations:
+      activity_status: 'Always `deployed` for this event type.'
+      error_status: 'Always `none` for this event type.'
+    example:
+      object: event
+      id: 42
+      type: deployment.deployed
+      occurred_at: "2026-03-10T12:00:00Z"
+      data:
+        deployment_id: dpl_123
+        release_id: rls_123
+        status: deployed
+        activity_status: deployed
+        error_status: none
+        target_status: deployed
+        deployed_at: "2026-03-10T12:00:00Z"
+  - type: "deployment.removed"
+    schema: DeploymentRemovedEvent
+    slug: deployment-removed
+    description: "The deployment's config instances have been removed from the device's filesystem."
+    body: >-
+      Emitted when a deployment successfully transitions to the `archived`
+      activity status, indicating that the deployment's config instances
+      have been removed from the device's filesystem.
+    field_annotations:
+      activity_status: 'Always `archived` for this event type.'
+      error_status: 'Always `none` for this event type.'
+    example:
+      object: event
+      id: 43
+      type: deployment.removed
+      occurred_at: "2026-03-10T12:05:00Z"
+      data:
+        deployment_id: dpl_123
+        release_id: rls_123
+        status: archived
+        activity_status: archived
+        error_status: none
+        target_status: archived
+        archived_at: "2026-03-10T12:05:00Z"
