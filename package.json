@@ -8,8 +8,44 @@
   },
   "devDependencies": {
     "cspell": "9.7.0",
-    "eslint": "9.39.1",
-    "eslint-plugin-mdx": "3.6.2",
-    "mint": "4.2.188"
+    "eslint": "10.1.0",
+    "eslint-plugin-mdx": "3.7.0",
+    "mint": "4.2.460"
+  },
+  "pnpm": {
+    "overrides": {
+      "axios": ">=1.13.5",
+      "basic-ftp": ">=5.2.0",
+      "body-parser": ">=1.20.3",
+      "cookie": ">=0.7.0",
+      "express": ">=4.20.0",
+      "flatted": ">=3.4.2",
+      "glob": ">=10.5.0",
+      "js-yaml": ">=4.1.1",
+      "lodash": ">=4.18.0",
+      "mdast-util-to-hast": ">=13.2.1",
+      "minimatch": ">=9.0.7",
+      "picomatch": ">=4.0.4",
+      "smol-toml": ">=1.6.1",
+      "yaml": ">=2.8.3",
+      "brace-expansion": ">=5.0.5",
+      "path-to-regexp": ">=0.1.12",
+      "qs": ">=6.14.2",
+      "send": ">=0.19.0",
+      "serve-static": ">=1.16.0",
+      "socket.io-parser": ">=4.2.6",
+      "tar": ">=6.2.1 <7",
+      "zod": ">=3.22.3"
+    },
+    "auditConfig": {
+      "ignoreCves": [
+        "CVE-2026-23745",
+        "CVE-2026-23950",
+        "CVE-2026-24842",
+        "CVE-2026-26960",
+        "CVE-2026-29786",
+        "CVE-2026-31802"
+      ]
+    }
   }
 }

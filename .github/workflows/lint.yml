@@ -2,6 +2,13 @@ name: Lint
 
 on:
   pull_request:
+  push:
+    branches:
+      - main
+      - staging
+      - uat
+      - production
+  workflow_call:
 
 jobs:
   lint:
@@ -9,15 +16,46 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
+      - name: Set up Go
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
         with:
-          version: 10.17.0
+          go-version-file: tools/lint/go.mod
+
+      - name: Enable corepack
+        run: corepack enable
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Ensure scripts are executable
+        run: chmod +x scripts/lint.sh scripts/audit.sh tests/test-lint.sh
+
+      - name: Run lint smoke tests
+        run: pnpm run test:lint
+
+      - name: Run documentation lint
+        run: ./scripts/lint.sh
+
+  audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Set up Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: 22
           cache: pnpm
@@ -26,11 +64,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Ensure lint script is executable
-        run: chmod +x scripts/lint.sh tests/test-lint.sh
+      - name: Ensure audit script is executable
+        run: chmod +x scripts/audit.sh
 
-      - name: Run lint smoke tests
-        run: pnpm run test:lint
-
-      - name: Run documentation lint
-        run: ./scripts/lint.sh
+      - name: Run security audit
+        run: ./scripts/audit.sh
