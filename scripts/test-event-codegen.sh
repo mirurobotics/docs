@@ -29,7 +29,6 @@ while [[ $# -gt 0 ]]; do
 done
 
 events_dir="docs/references/device-api/v0.2.1/events"
-config_file="api/events.yaml"
 spec_file="docs/references/device-api/v0.2.1/api.yaml"
 generator="api/generate_event_pages.py"
 
@@ -38,14 +37,11 @@ test_zero_diff() {
 	local tmp_dir
 	tmp_dir="$(mktemp -d)"
 
-	# Back up the two MDX files
 	cp "${repo_root}/${events_dir}/deployment-deployed.mdx" "${tmp_dir}/deployment-deployed.mdx"
 	cp "${repo_root}/${events_dir}/deployment-removed.mdx" "${tmp_dir}/deployment-removed.mdx"
 
-	# Run the generator
-	python3 "${repo_root}/${generator}" "${repo_root}/${spec_file}" "${repo_root}/${config_file}" "${repo_root}" >/dev/null
+	python3 "${repo_root}/${generator}" "${repo_root}/${spec_file}" "${repo_root}/${events_dir}" >/dev/null
 
-	# Diff each generated file against backup
 	local failed=0
 	for f in deployment-deployed.mdx deployment-removed.mdx; do
 		if ! diff -u "${tmp_dir}/${f}" "${repo_root}/${events_dir}/${f}" >/dev/null 2>&1; then
@@ -55,11 +51,8 @@ test_zero_diff() {
 		fi
 	done
 
-	# Restore originals from backups
 	cp "${tmp_dir}/deployment-deployed.mdx" "${repo_root}/${events_dir}/deployment-deployed.mdx"
 	cp "${tmp_dir}/deployment-removed.mdx" "${repo_root}/${events_dir}/deployment-removed.mdx"
-
-	# Clean up temp dir
 	rm -rf "${tmp_dir}"
 
 	if [[ "${failed}" -ne 0 ]]; then
@@ -72,33 +65,27 @@ test_zero_diff() {
 test_idempotence() {
 	local name="test_idempotence"
 
-	# Run generator once
-	python3 "${repo_root}/${generator}" "${repo_root}/${spec_file}" "${repo_root}/${config_file}" "${repo_root}" >/dev/null
+	python3 "${repo_root}/${generator}" "${repo_root}/${spec_file}" "${repo_root}/${events_dir}" >/dev/null
 
-	# Capture sha256sum of both MDX files
 	local sum1_deployed sum1_removed
 	sum1_deployed="$(sha256sum "${repo_root}/${events_dir}/deployment-deployed.mdx" | awk '{print $1}')"
 	sum1_removed="$(sha256sum "${repo_root}/${events_dir}/deployment-removed.mdx" | awk '{print $1}')"
 
-	# Run generator again
-	python3 "${repo_root}/${generator}" "${repo_root}/${spec_file}" "${repo_root}/${config_file}" "${repo_root}" >/dev/null
+	python3 "${repo_root}/${generator}" "${repo_root}/${spec_file}" "${repo_root}/${events_dir}" >/dev/null
 
-	# Capture sha256sum again
 	local sum2_deployed sum2_removed
 	sum2_deployed="$(sha256sum "${repo_root}/${events_dir}/deployment-deployed.mdx" | awk '{print $1}')"
 	sum2_removed="$(sha256sum "${repo_root}/${events_dir}/deployment-removed.mdx" | awk '{print $1}')"
 
-	# Assert checksums match
 	if [[ "${sum1_deployed}" != "${sum2_deployed}" ]]; then
-		echo "FAIL: ${name} - deployment-deployed.mdx checksum changed (${sum1_deployed} != ${sum2_deployed})"
+		echo "FAIL: ${name} - deployment-deployed.mdx checksum changed"
 		exit 1
 	fi
 	if [[ "${sum1_removed}" != "${sum2_removed}" ]]; then
-		echo "FAIL: ${name} - deployment-removed.mdx checksum changed (${sum1_removed} != ${sum2_removed})"
+		echo "FAIL: ${name} - deployment-removed.mdx checksum changed"
 		exit 1
 	fi
 
-	# Assert git diff --stat is empty
 	local diff_stat
 	diff_stat="$(cd "${repo_root}" && git diff --stat "${events_dir}/")"
 	if [[ -n "${diff_stat}" ]]; then
@@ -112,9 +99,9 @@ test_idempotence() {
 
 test_extensibility() {
 	local name="test_extensibility"
-	local tmp_spec tmp_config
+	local tmp_spec tmp_outdir
 	tmp_spec="$(mktemp --suffix=.yaml)"
-	tmp_config="$(mktemp --suffix=.yaml)"
+	tmp_outdir="$(mktemp -d)"
 
 	# Inject a synthetic event schema into a temp copy of the spec
 	python3 -c "
@@ -137,41 +124,26 @@ with open(sys.argv[2], 'w') as f:
     yaml.dump(spec, f, default_flow_style=False, sort_keys=False)
 " "${repo_root}/${spec_file}" "${tmp_spec}"
 
-	# Create a temp config with the synthetic event entry
-	cat > "${tmp_config}" <<-YAML
-	output_dir: ${events_dir}
-	events:
-	  test.synthetic:
-	    description: "A synthetic event for testing."
-	    body: "This is synthetic body prose."
-	    field_annotations:
-	      status: 'Always deployed for this test event.'
-	YAML
+	python3 "${repo_root}/${generator}" "${tmp_spec}" "${tmp_outdir}" >/dev/null
 
-	# Run generator with temp spec and temp config
-	python3 "${repo_root}/${generator}" "${tmp_spec}" "${tmp_config}" "${repo_root}" >/dev/null
+	local synth_file="${tmp_outdir}/test-synthetic.mdx"
 
-	local synth_file="${repo_root}/${events_dir}/test-synthetic.mdx"
-
-	# Assert test-synthetic.mdx exists
 	if [[ ! -f "${synth_file}" ]]; then
 		echo "FAIL: ${name} - test-synthetic.mdx was not created"
-		rm -f "${tmp_spec}" "${tmp_config}"
+		rm -f "${tmp_spec}"
+		rm -rf "${tmp_outdir}"
 		exit 1
 	fi
 
-	# Grep for expected content
 	local patterns=(
 		'title: "test.synthetic"'
-		'description: "A synthetic event for testing."'
-		'This is synthetic body prose.'
+		'Payload for `test.synthetic` events.'
 		'## Event Data'
 		'<ResponseExample>'
 		'<ResponseField name="deployment_id"'
 		'type="enum<string>"'
 		'Available options:'
 		'type="string<datetime>"'
-		'Always deployed for this test event.'
 	)
 
 	local failed=0
@@ -182,30 +154,10 @@ with open(sys.argv[2], 'w') as f:
 		fi
 	done
 
-	# Clean up: remove test-synthetic.mdx and temp files
-	rm -f "${synth_file}"
-	rm -f "${tmp_spec}" "${tmp_config}"
+	rm -f "${tmp_spec}"
+	rm -rf "${tmp_outdir}"
 
 	if [[ "${failed}" -ne 0 ]]; then
-		exit 1
-	fi
-
-	echo "PASS: ${name}"
-}
-
-test_error_missing_config() {
-	local name="test_error_missing_config"
-	local output
-	local rc=0
-
-	output="$(python3 "${repo_root}/${generator}" "${repo_root}/${spec_file}" /nonexistent/config.yaml "${repo_root}" 2>&1)" || rc=$?
-
-	if [[ "${rc}" -ne 1 ]]; then
-		echo "FAIL: ${name} - expected exit code 1, got ${rc}"
-		exit 1
-	fi
-	if [[ "${output}" != *"Config file not found"* ]]; then
-		echo "FAIL: ${name} - output missing 'Config file not found': ${output}"
 		exit 1
 	fi
 
@@ -217,7 +169,7 @@ test_error_missing_spec() {
 	local output
 	local rc=0
 
-	output="$(python3 "${repo_root}/${generator}" /nonexistent/spec.yaml "${repo_root}/${config_file}" "${repo_root}" 2>&1)" || rc=$?
+	output="$(python3 "${repo_root}/${generator}" /nonexistent/spec.yaml /tmp/out 2>&1)" || rc=$?
 
 	if [[ "${rc}" -ne 1 ]]; then
 		echo "FAIL: ${name} - expected exit code 1, got ${rc}"
@@ -233,10 +185,10 @@ test_error_missing_spec() {
 
 test_error_missing_event_envelope() {
 	local name="test_error_missing_event_envelope"
-	local tmp_spec
+	local tmp_spec tmp_outdir
 	tmp_spec="$(mktemp --suffix=.yaml)"
+	tmp_outdir="$(mktemp -d)"
 
-	# Create a minimal spec with a data event schema but no Event envelope
 	cat > "${tmp_spec}" <<-'YAML'
 	openapi: 3.0.3
 	info:
@@ -258,9 +210,10 @@ test_error_missing_event_envelope() {
 
 	local output
 	local rc=0
-	output="$(python3 "${repo_root}/${generator}" "${tmp_spec}" "${repo_root}/${config_file}" "${repo_root}" 2>&1)" || rc=$?
+	output="$(python3 "${repo_root}/${generator}" "${tmp_spec}" "${tmp_outdir}" 2>&1)" || rc=$?
 
 	rm -f "${tmp_spec}"
+	rm -rf "${tmp_outdir}"
 
 	if [[ "${rc}" -ne 1 ]]; then
 		echo "FAIL: ${name} - expected exit code 1, got ${rc}"
@@ -293,13 +246,32 @@ test_error_wrong_args() {
 	echo "PASS: ${name}"
 }
 
+test_discovers_all_events() {
+	local name="test_discovers_all_events"
+
+	# Run generator and capture output to verify both events are discovered
+	local output
+	output="$(python3 "${repo_root}/${generator}" "${repo_root}/${spec_file}" "${repo_root}/${events_dir}" 2>&1)"
+
+	if [[ "${output}" != *"deployment-deployed.mdx"* ]]; then
+		echo "FAIL: ${name} - deployment-deployed.mdx not generated"
+		exit 1
+	fi
+	if [[ "${output}" != *"deployment-removed.mdx"* ]]; then
+		echo "FAIL: ${name} - deployment-removed.mdx not generated"
+		exit 1
+	fi
+
+	echo "PASS: ${name}"
+}
+
 main() {
 	cd "${repo_root}"
 
 	test_zero_diff
 	test_idempotence
 	test_extensibility
-	test_error_missing_config
+	test_discovers_all_events
 	test_error_missing_spec
 	test_error_missing_event_envelope
 	test_error_wrong_args
