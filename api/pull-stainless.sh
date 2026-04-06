@@ -58,3 +58,6 @@ python3 add_unix_socket_curl.py "$DEVICE_API_FILE"
 
 # insert the scopes into the platform-api.yaml file
 python3 inject_scopes.py "$PLATFORM_API_FILE"
+
+# generate the event pages
+python3 generate_event_pages.py "$DEVICE_API_FILE" "$git_repo_root_dir/api/events"
