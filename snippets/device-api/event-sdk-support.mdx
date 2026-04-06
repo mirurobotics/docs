@@ -1,0 +1,10 @@
+The Device API SDKs do NOT support Server-Sent Events natively. 
+
+While the SDKs do generate the event types from the OpenAPI specification, a dedicated SDK method for streaming events is not yet available.
+
+To consume the SSE stream, use a standard SSE client library for your language. Then, parse the `data` field of the event data object by discriminating on the `type` field in the event envelope (see [Event Data](/docs/developers/device-api/events#event-data)).
+
+
+<Info>
+  Support for SSE will be added to the Device API SDKs in a future release.
+</Info>

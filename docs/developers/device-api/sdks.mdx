@@ -3,6 +3,7 @@ title: "SDKs"
 ---
 
 import { LinkNewTab } from '/snippets/components/link.jsx';
+import EventSdkSupport from '/snippets/device-api/event-sdk-support.mdx';
 
 Miru provides SDKs to help you build local applications and on-device tooling on top of the Device API.
 
@@ -12,7 +13,7 @@ The SDKs provide typed request and response models, handle Unix socket access to
 
 Each SDK release is built against a specific Device API version. For example, Python SDK `v0.3.0` targets Device API `v0.2.0`.
 
-We recommend using an SDK for the API version it was built against. However, SDKs may be used with newer API versions as long as the API changes are backward-compatible (see [API Versioning](/docs/developers/device-api/versioning)). 
+We recommend using an SDK for the API version it was built against. However, SDKs may be used with newer API versions as long as the API changes are backward-compatible (see [API Versioning](/docs/developers/device-api/versions)). 
 
 For example, an SDK released for Device API `v0.2.0` can safely be used with Device API `v0.2.x` since it is guaranteed to be backward-compatible.
 
@@ -48,7 +49,7 @@ For detailed documentation, examples, and advanced usage, visit the Python Devic
 
 ## SSE support
 
-The Device API SDKs do not currently support the [Server-Sent Events (SSE)](/docs/developers/device-api/events) stream natively. To consume events, use a standard SSE client library for your language and parse the event frames using the `event` and `data` fields (see [Event Data](/docs/developers/device-api/events#event-data)).
+<EventSdkSupport />
 
 ## OpenAPI specifications
 

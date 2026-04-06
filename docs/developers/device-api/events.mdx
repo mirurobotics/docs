@@ -1,9 +1,11 @@
 ---
-title: "Events"
+title: "Server-sent events"
 description: "Subscribe to real-time deployment lifecycle events from the Miru Agent via Server-Sent Events (SSE)."
 ---
 
 import { LinkNewTab } from '/snippets/components/link.jsx';
+import EventSdkSupport from '/snippets/device-api/event-sdk-support.mdx';
+import StabilityGuarantees from '/snippets/device-api/stability-guarantees.mdx';
 
 The Miru Agent exposes a Server-Sent Events (SSE) stream at the `/events` endpoint that pushes deployment lifecycle notifications in real time. Instead of polling the deployments endpoint, your application can open a single, long-lived connection and react to state changes as they happen.
 
@@ -32,13 +34,23 @@ Ensure you have proper permissions to access the Unix socket. See [Authenticatio
 
 ## SDK support
 
-The Device API SDKs do NOT support Server-Sent Events natively. To consume the SSE stream use a standard SSE client library for your language, and parse the event frames using the `event` and `data` fields (see [Event Data](#event-data)).
+<EventSdkSupport />
 
-<Info>
-  Support for SSE will be added to the Device API SDKs in a future release.
-</Info>
+## Versioning
+Server-sent events are versioned alongside the Device API. The first Device API version that supports SSE events is [v0.2.1](/docs/changelogs/device-api#v0-2-1).
 
-## Event Frames
+So, the event envelope and event types streamed from endpoint `/v0.2/events` in `v0.2.1` may be different from the event envelope and event types streamed from endpoint `/v0.3/events` in `v0.3.0`. As an example, `deployment.deployed` in `v0.2.1` may contain different fields than `deployment.deployed` in `v0.3.0`.
+
+
+To be clear, Miru does not version individual event types using `{resource}.{action}.{version}` (e.g. `deployment.deployed.v1`, `deployment.removed.v1`) strings like some other APIs do. Instead, each Device API version exposes a particular set of event types in the form `{resource}.{action}` (e.g. `deployment.deployed`, `deployment.removed`).
+
+Miru's stability guarantees for event versioning adhere to the policy specified in the [Device API versioning](/docs/developers/device-api/versions#stability-guarantees) section.
+
+<StabilityGuarantees />
+
+## Event frames
+
+An *event frame* is the wire-level structure each event takes as it arrives on the SSE stream. Every event is delivered as a single frame composed of a small set of fields—an identifier, a type, and a JSON payload—following the standard SSE format.
 
 ### Format
 
@@ -66,7 +78,7 @@ If needed, clients can deduplicate by the event `id` field—it is a monotonical
 
 ### Heartbeats
 
-The agent sends SSE comment lines approximately every 30 seconds to keep the connection alive and prevent proxies or firewalls from closing idle connections. 
+The agent sends SSE comment lines approximately every 30 seconds to keep the connection alive and prevent idle connections from being closed. 
 
 ```text
 : heartbeat
@@ -78,7 +90,9 @@ Comment lines should be ignored by SSE client libraries.
 
 ### Envelope
 
-The JSON envelope has the following top-level fields:
+The envelope is the JSON object carried in the `data` field of every event frame. It wraps the event-specific payload in a small set of metadata fields that are common to every event regardless of type. This allows clients to identify the event, deduplicate by id, and dispatch on type before they need to know anything about a particular event type.
+
+The envelope has the following top-level fields:
 
 | Field         | Type              | Description |
 |---------------|-------------------|-------------|
@@ -88,16 +102,40 @@ The JSON envelope has the following top-level fields:
 | `occurred_at` | `string<datetime>`| Timestamp of when the event occurred. |
 | `data`        | `object`          | Event-specific payload. Shape varies by event type. |
 
+Below is an example of an envelope:
+
+```json
+{
+  "object": "event",
+  "id": 42,
+  "type": "deployment.deployed",
+  "occurred_at": "2026-03-10T12:00:00Z",
+  "data": { "...": "..." }
+}
+```
+
 ### Event types
 
-| Type | Description | Reference |
-|------|-------------|-----------|
-| `deployment.deployed` | Config instances written to the device's filesystem. | <LinkNewTab href="/docs/references/device-api/v0.2.1/events/deployment-deployed">deployment.deployed</LinkNewTab> |
-| `deployment.removed` | Config instances removed from the device's filesystem. | <LinkNewTab href="/docs/references/device-api/v0.2.1/events/deployment-removed">deployment.removed</LinkNewTab> |
+Every event has a *type*—a string in the form `{resource}.{action}` (e.g. `deployment.deployed`)—that identifies what happened on the device. The type is carried in both the SSE `event` field and the envelope's `type` field, so clients can dispatch on it without parsing the rest of the payload.
+
+For example, when a deployment's config instances are written to the device's filesystem, the agent emits a `deployment.deployed` event:
+
+```
+event: deployment.deployed
+data: {"object":"event","id":42,"type":"deployment.deployed","occurred_at":"2026-03-10T12:00:00Z","data":{...}}
+```
+
+For the full list of event types supported by a Device API version, visit the [Event Types](/docs/references/device-api/latest/events) section in the Device API reference.
+
+## Subscription options
 
 ### Cursor-based replay
 
-Clients can resume from a known position after reconnection using a cursor. The cursor is the `id` of the last event the client successfully processed.
+A *cursor* is a bookmark into the event stream—specifically, the `id` of the last event a client has successfully processed. Because event ids are monotonically increasing integers, the cursor uniquely identifies a position in the stream and lets the agent know exactly which events the client has already seen.
+
+Clients can use a cursor to resume from a known position after reconnection, picking up where they left off without missing or re-processing events (subject to retention; see [Retention and compaction](#retention-and-compaction)).
+
+When providing a cursor, the stream begins by replaying all retained events after the given cursor (non-inclusive), then continues to deliver live events as they occur.
 
 Pass the cursor in one of two ways:
 
@@ -122,9 +160,9 @@ Pass the cursor in one of two ways:
       --header "Last-Event-ID: 42"
     ```
 
-The stream begins by replaying all retained events after the given cursor, then continues to deliver live events as they occur.
-
 ### Type filtering
+
+It's often the case that clients only need to subscribe to a subset of all possible event types. For example, an application may only need to know when a deployment is deployed, but not when it is removed.
 
 To subscribe to specific event types, pass a comma-separated list via the `types` query parameter:
 
