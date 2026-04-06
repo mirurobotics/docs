@@ -66,10 +66,10 @@ If needed, clients can deduplicate by the event `id` field—it is a monotonical
 
 ### Heartbeats
 
-The agent sends SSE comment lines (`:heartbeat`) approximately every 30 seconds to keep the connection alive and prevent proxies or firewalls from closing idle connections. 
+The agent sends SSE comment lines approximately every 30 seconds to keep the connection alive and prevent proxies or firewalls from closing idle connections. 
 
 ```text
-:heartbeat
+: heartbeat
 ```
 
 Comment lines should be ignored by SSE client libraries.
