@@ -8,9 +8,9 @@
   },
   "devDependencies": {
     "cspell": "9.7.0",
-    "eslint": "10.1.0",
+    "eslint": "10.2.0",
     "eslint-plugin-mdx": "3.7.0",
-    "mint": "4.2.460"
+    "mint": "4.2.489"
   },
   "pnpm": {
     "overrides": {
