@@ -39,7 +39,7 @@ def mintlify_type(prop, schemas):
     return prop.get("type", "string"), None, None
 
 
-def build_mdx(event_type, schema_desc, example, schema, schemas):
+def build_mdx(event_type, summary, description, example, schema, schemas):
     """Build the full MDX string for one event page."""
     required_fields = set(schema.get("required", []))
     properties = schema.get("properties", {})
@@ -49,10 +49,10 @@ def build_mdx(event_type, schema_desc, example, schema, schemas):
     # Frontmatter
     lines.append("---")
     lines.append(f'title: "{event_type}"')
-    lines.append(f'description: "{schema_desc}"')
+    lines.append(f'description: "{summary}"')
     lines.append("---")
     lines.append("")
-    lines.append(schema_desc)
+    lines.append(description)
     lines.append("")
     lines.append("## Event Data")
     lines.append("")
@@ -91,6 +91,23 @@ def build_mdx(event_type, schema_desc, example, schema, schemas):
     return "\n".join(lines)
 
 
+def schema_name_to_event_type(name):
+    """Derive the event type string from a schema name.
+
+    DeploymentDeployedEvent -> deployment.deployed
+    DeploymentRemovedEvent  -> deployment.removed
+    """
+    # Strip trailing "Event", split on camel-case boundaries
+    stem = name.removesuffix("Event")
+    words = re.findall(r"[A-Z][a-z]+", stem)
+    if len(words) < 2:
+        return None
+    # resource = first word, action = remaining words joined
+    resource = words[0].lower()
+    action = "_".join(w.lower() for w in words[1:])
+    return f"{resource}.{action}"
+
+
 def discover_events(spec, schemas):
     """Discover event data schemas from the spec."""
     envelope = schemas.get("Event")
@@ -99,19 +116,18 @@ def discover_events(spec, schemas):
         sys.exit(1)
 
     envelope_example = envelope.get("example", {})
-    type_pattern = re.compile(r"Payload for `([^`]+)` events\.")
 
     discovered = []
     for name, schema in schemas.items():
         if name == "Event" or not name.endswith("Event"):
             continue
 
-        desc = schema.get("description", "")
-        match = type_pattern.search(desc)
-        if not match:
+        event_type = schema_name_to_event_type(name)
+        if not event_type:
             continue
 
-        event_type = match.group(1)
+        summary = schema.get("x-summary", "")
+        desc = schema.get("description", "")
         slug = event_type.replace(".", "-")
         data_example = schema.get("example", {})
 
@@ -128,6 +144,7 @@ def discover_events(spec, schemas):
             "type": event_type,
             "slug": slug,
             "schema": schema,
+            "summary": summary,
             "description": desc,
             "example": composed_example,
         })
@@ -158,6 +175,7 @@ def main():
     for event in discovered:
         mdx = build_mdx(
             event["type"],
+            event["summary"],
             event["description"],
             event["example"],
             event["schema"],

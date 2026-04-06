@@ -289,7 +289,12 @@ components:
     DeploymentDeployedEvent:
       title: DeploymentDeployedEvent
       type: object
-      description: Payload for `deployment.deployed` events.
+      x-summary: A deployment's config instances have been written to the device's filesystem.
+      description: >-
+        Emitted when a deployment's config instances have been written to the
+        device's filesystem and are available for consumption. Use this event
+        to reload configuration, restart dependent services, or confirm that
+        new configuration is live on the device.
       required:
       - deployment_id
       - release_id
@@ -330,7 +335,12 @@ components:
     DeploymentRemovedEvent:
       title: DeploymentRemovedEvent
       type: object
-      description: Payload for `deployment.removed` events.
+      x-summary: A deployment's config instances have been removed from the device's filesystem.
+      description: >-
+        Emitted when a deployment's config instances have been removed from
+        the device's filesystem and the deployment has been archived. Use
+        this event to clean up resources or stop services that depended on
+        the removed configuration.
       required:
       - deployment_id
       - release_id
