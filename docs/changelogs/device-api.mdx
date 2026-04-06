@@ -37,12 +37,14 @@ The SSE events endpoint supports cursor-based replay via the `?after=<id>` query
 
 ```bash
 # Resume from event ID 42 using the query parameter
-curl --unix-socket /run/miru/miru.sock \
+curl --no-buffer \
+  --unix-socket /run/miru/miru.sock \
   --request GET \
   --url http://localhost/v0.2/events?after=42
 
 # Or using the standard SSE reconnection header
-curl --unix-socket /run/miru/miru.sock \
+curl --no-buffer \
+  --unix-socket /run/miru/miru.sock \
   --request GET \
   --url http://localhost/v0.2/events \
   --header "Last-Event-ID: 42"
@@ -54,7 +56,8 @@ SSE events can be filtered by type using the `?types=` query parameter.
 
 ```bash
 # Only receive deployment.deployed events
-curl --unix-socket /run/miru/miru.sock \
+curl --no-buffer \
+  --unix-socket /run/miru/miru.sock \
   --request GET \
   --url http://localhost/v0.2/events?types=deployment.deployed
 ```

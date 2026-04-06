@@ -11,53 +11,34 @@ info:
   x-git-commit:
     sha: f32bac0eb62ffe2f2518528fe973ce47fba7f737
     url: https://github.com/mirurobotics/openapi/commit/f32bac0eb62ffe2f2518528fe973ce47fba7f737
-    message: 'refactor(device): update SSE event schemas for v0.2.1 (#14)
-
+    message: |-
+      refactor(device): update SSE event schemas for v0.2.1 (#14)
 
       ## Summary
 
-
       - Drop `.beta1` suffix from event type strings — events are now
-
       versioned with the API version (`deployment.deployed` instead of
-
       `deployment.deployed.beta1`)
-
       - Rename schemas: `DeploymentDeployedBeta1Event` →
-
       `DeploymentDeployedEvent`, `DeploymentRemovedBeta1Event` →
-
       `DeploymentRemovedEvent`
-
       - Add `release_id`, `status`, and `error_status` fields to both
-
       deployment event data schemas
-
       - Remove 400/410 error responses from `GET /events` for consistency with
-
       other Device API endpoints
-
 
       ## Test plan
 
-
       - [x] `make -C apis/apps/device-server bundle` succeeds
-
       - [x] `make -C apis/apps/device-server validate` passes (no new
-
       warnings)
-
       - [x] `scripts/lint.sh` passes (all custom MIRU rules clean)
-
       - [x] No `beta1` references remain in device-server source files
-
       - [ ] Downstream codegen produces updated schema names and fields
-
 
       🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-
-      Co-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>'
+      Co-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
     author: ben-miru
     branch: HEAD
     dirty: false
@@ -82,6 +63,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthResponse'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl \
+            --unix-socket /run/miru/miru.sock \
+            --request GET \
+            --url http://localhost/v0.2/health
   /version:
     get:
       tags:
@@ -96,6 +84,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl \
+            --unix-socket /run/miru/miru.sock \
+            --request GET \
+            --url http://localhost/v0.2/version
   /deployments/{deployment_id}:
     get:
       tags:
@@ -112,6 +107,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deployment'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl \
+            --unix-socket /run/miru/miru.sock \
+            --request GET \
+            --url http://localhost/v0.2/deployments/{deployment_id}
   /deployments/current:
     get:
       tags:
@@ -126,6 +128,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deployment'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl \
+            --unix-socket /run/miru/miru.sock \
+            --request GET \
+            --url http://localhost/v0.2/deployments/current
   /device:
     get:
       tags:
@@ -140,6 +149,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Device'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl \
+            --unix-socket /run/miru/miru.sock \
+            --request GET \
+            --url http://localhost/v0.2/device
   /device/sync:
     post:
       tags:
@@ -154,6 +170,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SyncDeviceResponse'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl \
+            --unix-socket /run/miru/miru.sock \
+            --request POST \
+            --url http://localhost/v0.2/device/sync
   /git_commits/{git_commit_id}:
     get:
       tags:
@@ -170,6 +193,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GitCommit'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl \
+            --unix-socket /run/miru/miru.sock \
+            --request GET \
+            --url http://localhost/v0.2/git_commits/{git_commit_id}
   /releases/{release_id}:
     get:
       tags:
@@ -186,6 +216,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Release'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl \
+            --unix-socket /run/miru/miru.sock \
+            --request GET \
+            --url http://localhost/v0.2/releases/{release_id}
   /releases/current:
     get:
       tags:
@@ -200,30 +237,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Release'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl \
+            --unix-socket /run/miru/miru.sock \
+            --request GET \
+            --url http://localhost/v0.2/releases/current
   /events:
     get:
       tags:
       - Events
       summary: Stream Events
       operationId: streamEvents
-      description: 'Subscribe to a Server-Sent Events (SSE) stream of agent lifecycle
-        events.
-
+      description: |
+        Subscribe to a Server-Sent Events (SSE) stream of agent lifecycle events.
 
         The stream replays retained historical events after the cursor, then
-
         delivers live events as they occur. Events are delivered at-least-once;
-
         clients should deduplicate by event `id`.
 
-
         Use the `after` query parameter or `Last-Event-ID` header to resume
-
         from a previous position. If the cursor is older than the earliest
-
         retained event, the server returns `410 Gone`.
-
-        '
       parameters:
       - name: after
         in: query
@@ -263,6 +299,14 @@ paths:
             text/event-stream:
               schema:
                 $ref: '#/components/schemas/Event'
+      x-codeSamples:
+      - lang: curl
+        source: |-
+          curl \
+            --no-buffer \
+            --unix-socket /run/miru/miru.sock \
+            --request GET \
+            --url http://localhost/v0.2/events
 components:
   schemas:
     ErrorResponse:
@@ -289,12 +333,12 @@ components:
     DeploymentDeployedEvent:
       title: DeploymentDeployedEvent
       type: object
-      x-summary: A deployment's config instances have been written to the device's filesystem.
-      description: >-
-        Emitted when a deployment's config instances have been written to the
-        device's filesystem and are available for consumption. Use this event
-        to reload configuration, restart dependent services, or confirm that
-        new configuration is live on the device.
+      x-summary: A deployment's config instances have been written to the device's
+        filesystem.
+      description: Emitted when a deployment's config instances have been written
+        to the device's filesystem and are available for consumption. Use this event
+        to reload configuration, restart dependent services, or confirm that new configuration
+        is live on the device.
       required:
       - deployment_id
       - release_id
@@ -335,12 +379,12 @@ components:
     DeploymentRemovedEvent:
       title: DeploymentRemovedEvent
       type: object
-      x-summary: A deployment's config instances have been removed from the device's filesystem.
-      description: >-
-        Emitted when a deployment's config instances have been removed from
-        the device's filesystem and the deployment has been archived. Use
-        this event to clean up resources or stop services that depended on
-        the removed configuration.
+      x-summary: A deployment's config instances have been removed from the device's
+        filesystem.
+      description: Emitted when a deployment's config instances have been removed
+        from the device's filesystem and the deployment has been archived. Use this
+        event to clean up resources or stop services that depended on the removed
+        configuration.
       required:
       - deployment_id
       - release_id
@@ -445,13 +489,8 @@ components:
         arch: aarch64
     DeploymentStatus:
       type: string
-      description: 'This status merges the ''activity_status'' and ''error_status''
-        fields, with error states taking precedence over activity states when errors
-        are present. For example, if the activity status is ''deployed'' but the error
-        status is ''failed'', the status is ''failed''. However, if the error status
-        is ''none'' and the activity status is ''deployed'', the status is ''deployed''.
-
-        '
+      description: |
+        This status merges the 'activity_status' and 'error_status' fields, with error states taking precedence over activity states when errors are present. For example, if the activity status is 'deployed' but the error status is 'failed', the status is 'failed'. However, if the error status is 'none' and the activity status is 'deployed', the status is 'deployed'.
       enum:
       - drifted
       - staged
@@ -472,32 +511,20 @@ components:
       - DEPLOYMENT_STATUS_RETRYING
     DeploymentActivityStatus:
       type: string
-      description: 'Last known activity state of the deployment.
+      description: |
+        Last known activity state of the deployment.
 
-
-        `drifted` means the device''s configurations have drifted since this deployment
-        was staged, and the deployment needs to be reviewed before it can be deployed.
-
+        `drifted` means the device's configurations have drifted since this deployment was staged, and the deployment needs to be reviewed before it can be deployed.
 
         `staged` means the deployment is ready to be deployed.
 
+        `queued` means the deployment's config instances are waiting to be received by the device and will be deployed as soon as the device is online.
 
-        `queued` means the deployment''s config instances are waiting to be received
-        by the device and will be deployed as soon as the device is online.
+        `deployed` means the deployment's config instances are currently available for consumption on the device.
 
+        `removing` means the deployment's config instances are being removed from the device.
 
-        `deployed` means the deployment''s config instances are currently available
-        for consumption on the device.
-
-
-        `removing` means the deployment''s config instances are being removed from
-        the device.
-
-
-        `archived` means the deployment is available for historical reference but
-        cannot be deployed and is not active on the device.
-
-        '
+        `archived` means the deployment is available for historical reference but cannot be deployed and is not active on the device.
       enum:
       - drifted
       - staged
@@ -514,20 +541,14 @@ components:
       - DEPLOYMENT_ACTIVITY_STATUS_ARCHIVED
     DeploymentErrorStatus:
       type: string
-      description: 'Last known error state of the deployment.
-
+      description: |
+        Last known error state of the deployment.
 
         `none` means there are no errors.
 
+        `retrying` means an error has been encountered and the agent is retrying to reach the target status.
 
-        `retrying` means an error has been encountered and the agent is retrying to
-        reach the target status.
-
-
-        `failed` means a fatal error has been encountered; the deployment is archived
-        and, if deployed, removed from the device.
-
-        '
+        `failed` means a fatal error has been encountered; the deployment is archived and, if deployed, removed from the device.
       enum:
       - none
       - failed
@@ -538,20 +559,14 @@ components:
       - DEPLOYMENT_ERROR_STATUS_RETRYING
     DeploymentTargetStatus:
       type: string
-      description: 'Desired state of the deployment.
-
+      description: |
+        Desired state of the deployment.
 
         `staged` means the deployment is ready to be deployed.
 
+        `deployed` means all config instances in the deployment are available for consumption on the device.
 
-        `deployed` means all config instances in the deployment are available for
-        consumption on the device.
-
-
-        `archived` means the deployment is available for historical reference but
-        cannot be deployed and is not active on the device.
-
-        '
+        `archived` means the deployment is available for historical reference but cannot be deployed and is not active on the device.
       enum:
       - staged
       - deployed
@@ -624,14 +639,10 @@ components:
         created_at: '2024-01-01T00:00:00Z'
     DeviceStatus:
       type: string
-      description: 'The status of the device.
-
+      description: |
+        The status of the device.
         - Online: The miru agent is connected
-
-        - Offline: The miru agent is disconnected (e.g. network issues, device is
-        powered off, etc.)
-
-        '
+        - Offline: The miru agent is disconnected (e.g. network issues, device is powered off, etc.)
       enum:
       - online
       - offline
