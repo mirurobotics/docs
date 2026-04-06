@@ -7,43 +7,48 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  x-release-version: v0.2.0-beta.1
+  x-release-version: v0.2.1
   x-git-commit:
-    sha: f32bac0eb62ffe2f2518528fe973ce47fba7f737
-    url: https://github.com/mirurobotics/openapi/commit/f32bac0eb62ffe2f2518528fe973ce47fba7f737
+    sha: 10dc72e22958a4851e7f6718f5b7542b0c7f62e1
+    url: https://github.com/mirurobotics/openapi/commit/10dc72e22958a4851e7f6718f5b7542b0c7f62e1
     message: |-
-      refactor(device): update SSE event schemas for v0.2.1 (#14)
+      feat(lint): add x-summary to event schemas and enforce via MIRU024 (#15)
 
       ## Summary
 
-      - Drop `.beta1` suffix from event type strings — events are now
-      versioned with the API version (`deployment.deployed` instead of
-      `deployment.deployed.beta1`)
-      - Rename schemas: `DeploymentDeployedBeta1Event` →
-      `DeploymentDeployedEvent`, `DeploymentRemovedBeta1Event` →
-      `DeploymentRemovedEvent`
-      - Add `release_id`, `status`, and `error_status` fields to both
-      deployment event data schemas
-      - Remove 400/410 error responses from `GET /events` for consistency with
-      other Device API endpoints
+      - Add `x-summary` extension field and richer `description` to all
+      `*Event` data schemas (`DeploymentDeployedEvent`,
+      `DeploymentRemovedEvent`, `ValidateDeploymentEvent`)
+      - Add MIRU024 lint rule (`event_schema_x_summary_required`) that
+      enforces `x-summary` on all `*Event` schemas (excluding the `Event`
+      envelope)
+      - Add 3 test fixtures and test class for MIRU024 (197 tests pass, 99%
+      coverage)
+
+      The `x-summary` field is consumed by the docs codegen
+      (`docs/api/generate_event_pages.py`) as the page subtitle, while
+      `description` provides the longer inline body text. This makes generated
+      event type reference pages more useful.
 
       ## Test plan
 
-      - [x] `make -C apis/apps/device-server bundle` succeeds
-      - [x] `make -C apis/apps/device-server validate` passes (no new
-      warnings)
-      - [x] `scripts/lint.sh` passes (all custom MIRU rules clean)
-      - [x] No `beta1` references remain in device-server source files
-      - [ ] Downstream codegen produces updated schema names and fields
+      - [x] `./tools/lint/test.sh` — 197 tests pass
+      - [x] `./tools/lint/covgate.sh` — 99% coverage (gate: 98%)
+      - [x] `./scripts/lint.sh` — all custom MIRU rules and Redocly clean
+      - [x] MIRU024 fires on `*Event` schema missing `x-summary`
+      - [x] MIRU024 passes when `x-summary` is present
+      - [x] MIRU024 exempts the `Event` envelope schema
 
       🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+      ---------
 
       Co-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
     author: ben-miru
     branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-04-04T23:50:27.621227+00:00'
+    built_at: '2026-04-06T19:21:53.148075+00:00'
 servers:
 - url: http://localhost/v0.2
   description: localhost
@@ -70,6 +75,13 @@ paths:
             --unix-socket /run/miru/miru.sock \
             --request GET \
             --url http://localhost/v0.2/health
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          response = client.agent.health()
+          print(response.status)
   /version:
     get:
       tags:
@@ -91,6 +103,13 @@ paths:
             --unix-socket /run/miru/miru.sock \
             --request GET \
             --url http://localhost/v0.2/version
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          response = client.agent.version()
+          print(response.api_git_commit)
   /deployments/{deployment_id}:
     get:
       tags:
@@ -114,6 +133,15 @@ paths:
             --unix-socket /run/miru/miru.sock \
             --request GET \
             --url http://localhost/v0.2/deployments/{deployment_id}
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          deployment = client.deployments.retrieve(
+              "dpl_123",
+          )
+          print(deployment.id)
   /deployments/current:
     get:
       tags:
@@ -135,6 +163,13 @@ paths:
             --unix-socket /run/miru/miru.sock \
             --request GET \
             --url http://localhost/v0.2/deployments/current
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          deployment = client.deployments.current()
+          print(deployment.id)
   /device:
     get:
       tags:
@@ -156,6 +191,13 @@ paths:
             --unix-socket /run/miru/miru.sock \
             --request GET \
             --url http://localhost/v0.2/device
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          device = client.device.retrieve()
+          print(device.id)
   /device/sync:
     post:
       tags:
@@ -177,6 +219,13 @@ paths:
             --unix-socket /run/miru/miru.sock \
             --request POST \
             --url http://localhost/v0.2/device/sync
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          response = client.device.sync()
+          print(response.code)
   /git_commits/{git_commit_id}:
     get:
       tags:
@@ -200,6 +249,15 @@ paths:
             --unix-socket /run/miru/miru.sock \
             --request GET \
             --url http://localhost/v0.2/git_commits/{git_commit_id}
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          git_commit = client.git_commits.retrieve(
+              "git_commit_123",
+          )
+          print(git_commit.id)
   /releases/{release_id}:
     get:
       tags:
@@ -223,6 +281,15 @@ paths:
             --unix-socket /run/miru/miru.sock \
             --request GET \
             --url http://localhost/v0.2/releases/{release_id}
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          release = client.releases.retrieve(
+              "rls_123",
+          )
+          print(release.id)
   /releases/current:
     get:
       tags:
@@ -244,6 +311,13 @@ paths:
             --unix-socket /run/miru/miru.sock \
             --request GET \
             --url http://localhost/v0.2/releases/current
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          release = client.releases.current()
+          print(release.id)
   /events:
     get:
       tags:
@@ -326,7 +400,7 @@ components:
     APIGitCommit:
       type: string
       enum:
-      - f32bac0eb62ffe2f2518528fe973ce47fba7f737
+      - 10dc72e22958a4851e7f6718f5b7542b0c7f62e1
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
