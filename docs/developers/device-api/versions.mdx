@@ -4,9 +4,10 @@ title: "Versions"
 
 import { SupportedBadge, DeprecatedBadge, EndOfLifeBadge } from '/snippets/components/support.jsx';
 import { LinkNewTab } from '/snippets/components/link.jsx';
+import { CardNewTab } from '/snippets/components/card.jsx';
 import BreakingChanges from '/snippets/references/apis/breaking.mdx';
 import NonBreakingChanges from '/snippets/references/apis/non-breaking.mdx';
-import { CardNewTab } from '/snippets/components/card.jsx';
+import StabilityGuarantees from '/snippets/device-api/stability-guarantees.mdx';
 
 
 The Device API adheres to [semantic versioning](https://semver.org/), which was chosen so that on-device applications can easily determine API version compatibility.
@@ -38,8 +39,8 @@ Each Miru Agent is compiled with a set of one or more API versions, which is doc
 
 | Agent Version  | API Version(s) |
 |----------------|----------------|
-| `v0.8.x`       | `v0.2.1`       |
-| `v0.7.x`       | `v0.2.0`       |
+| `v0.7.1`       | `v0.2.1`       |
+| `v0.7.0`       | `v0.2.0`       |
 | `v0.6.x`       | `v0.1.0`       |
 | `v0.5.x`       | `v0.1.0`       |
 
@@ -55,11 +56,11 @@ If a supported Miru Agent uses an API version, that API version is supported. Yo
 
 Below is a list of the currently supported versions:
 
-| API Version | Released     |       Status       |
-|-------------|--------------|--------------------|
-| <LinkNewTab href="/docs/references/device-api/v0.2.1">v0.2.1</LinkNewTab>    | 2026-04-04   | <SupportedBadge /> |
-| <LinkNewTab href="/docs/references/device-api/v0.2.0">v0.2.0</LinkNewTab>    | 2026-03-13   | <SupportedBadge /> |
-| <LinkNewTab href="/docs/references/device-api/v0.1.0">v0.1.0</LinkNewTab>    | 2025-09-21   | <DeprecatedBadge />|
+| API Version | Released     |     EOL      |       Status       |
+|-------------|--------------|--------------|---------------------|
+| <LinkNewTab href="/docs/references/device-api/v0.2.1">v0.2.1</LinkNewTab>    | 2026-04-04   | —            | <SupportedBadge /> |
+| <LinkNewTab href="/docs/references/device-api/v0.2.0">v0.2.0</LinkNewTab>    | 2026-03-13   | —            | <SupportedBadge /> |
+| <LinkNewTab href="/docs/references/device-api/v0.1.0">v0.1.0</LinkNewTab>    | 2025-09-21   | 2026-06-16   | <DeprecatedBadge /> |
 
 ## Changelog and migrations
 
@@ -82,13 +83,7 @@ Each version of the spec is available for download as a YAML file from the [Devi
 
 ## Stability guarantees
 
-During **beta** (`v0.x.y`)
-- Minor version bumps (e.g. `v0.1.0` to `v0.2.0`) may include breaking changes
-- Patch version bumps (e.g. `v0.2.0` to `v0.2.1`) are always backward-compatible
-
-After **stable** (`v1.0`+)
-- Major version bumps (e.g. `v1.x` to `v2.0`) may include breaking changes
-- Minor version bumps (e.g. `v1.0` to `v1.1`) are additive only—no breaking changes
+<StabilityGuarantees />
 
 ### Breaking changes
 

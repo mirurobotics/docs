@@ -91,10 +91,10 @@
                 "pages": [
                   "docs/developers/agent/overview",
                   "docs/developers/agent/install",
+                  "docs/developers/agent/versions",
                   "docs/developers/agent/commands",
-                  "docs/developers/agent/architecture",
                   "docs/developers/agent/security",
-                  "docs/developers/agent/versions"
+                  "docs/developers/agent/architecture"
                 ]
               },
               {
@@ -117,9 +117,9 @@
                 "pages": [
                   "docs/developers/device-api/overview",
                   "docs/developers/device-api/sdks",
+                  "docs/developers/device-api/versions",
                   "docs/developers/device-api/authn",
-                  "docs/developers/device-api/events",
-                  "docs/developers/device-api/versions"
+                  "docs/developers/device-api/events"
                 ]
               },
               {
