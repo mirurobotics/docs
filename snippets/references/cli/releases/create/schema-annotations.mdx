@@ -20,6 +20,8 @@
 <ParamField path="instance file path">
   The instance file path is the file system location that config instances for this schema are deployed to relative to the `/srv/miru/config_instances` directory.
 
+  Instance file paths control the type of file that config instances are deployed as. Currently, JSON (`.json`) and YAML (`.yaml`, `.yml`) are supported.
+
   This annotation is optional and defaults to `{config-type-slug}.json`, which deploys config instances to `/srv/miru/config_instances/{config-type-slug}.json` on a given device.
 
   <CodeGroup>
@@ -35,5 +37,5 @@
 
   </CodeGroup>
 
-  Examples: `/v1/mobility.json`, `/safety.json`, `configs/perception.json`
+  Examples: `/v1/mobility.json`, `/safety.yaml`
 </ParamField>
