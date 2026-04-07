@@ -1,6 +1,6 @@
 ---
 title: Document YAML support for config instances
-status: backlog
+status: active
 created: 2026-04-06
 owner: unassigned
 ---
