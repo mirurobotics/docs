@@ -34,12 +34,12 @@ After this change, a contributor editing any file under `docs/tools/lint/` will:
 
 ## Progress
 
-- [ ] Milestone 1: Add `tool` directives + helper script. Bump `docs/tools/lint/go.mod` to `go 1.25.3`, add `tool ( ... )` block listing all three tools (`github.com/mirurobotics/gotools/cmd/miru`, `mvdan.cc/gofumpt`, `github.com/golangci/golangci-lint/v2/cmd/golangci-lint`), and create `docs/tools/lint/scripts/lint.sh`.
-- [ ] Milestone 2: Run `LINT_FIX=1 ./tools/lint/scripts/lint.sh` to auto-fix the collapsible-expression, inlinable-function, and incidental gofumpt formatting violations.
-- [ ] Milestone 3: Manually fix the 7 remaining `line is N columns wide` violations in `main.go`, `rules_test.go`, and `scanner.go`, AND the 1 `errcheck` violation on `main.go: defer f.Close()` (change to `defer func() { _ = f.Close() }()`). Confirm `go test ./...` inside `docs/tools/lint/` still passes.
-- [ ] Milestone 4: Wire `LINT_FIX=0 ./tools/lint/scripts/lint.sh` into `docs/scripts/preflight.sh` (as a new `=== Go Lint (tools/lint) ===` step before the existing `./scripts/lint.sh` call).
-- [ ] Milestone 5: Wire `LINT_FIX=0 ./tools/lint/scripts/lint.sh` into `docs/.github/workflows/lint.yml` (as a new step in the `lint` job, after the existing "Ensure scripts are executable" step).
-- [ ] Milestone 6: Run full `./scripts/preflight.sh` from `docs/` and confirm all sections report clean, then commit the final state.
+- [x] Milestone 1: Add `tool` directives + helper script. Bump `docs/tools/lint/go.mod` to `go 1.25.3`, add `tool ( ... )` block listing all three tools (`github.com/mirurobotics/gotools/cmd/miru`, `mvdan.cc/gofumpt`, `github.com/golangci/golangci-lint/v2/cmd/golangci-lint`), and create `docs/tools/lint/scripts/lint.sh`. (2026-04-06, commit `20fc2f8`)
+- [x] Milestone 2: Run `LINT_FIX=1 ./tools/lint/scripts/lint.sh` to auto-fix the collapsible-expression, inlinable-function, and incidental gofumpt formatting violations. (2026-04-06, commit `5f36387`)
+- [x] Milestone 3: Manually fix the 7 remaining `line is N columns wide` violations in `main.go`, `rules_test.go`, and `scanner.go`, AND the 1 `errcheck` violation on `main.go: defer f.Close()` (change to `defer func() { _ = f.Close() }()`). Confirm `go test ./...` inside `docs/tools/lint/` still passes. (2026-04-06, commit `6100c58`)
+- [x] Milestone 4: Wire `LINT_FIX=0 ./tools/lint/scripts/lint.sh` into `docs/scripts/preflight.sh` (as a new `=== Go Lint (tools/lint) ===` step before the existing `./scripts/lint.sh` call). (2026-04-06, commit `1594fec`)
+- [x] Milestone 5: Wire `LINT_FIX=0 ./tools/lint/scripts/lint.sh` into `docs/.github/workflows/lint.yml` (as a new step in the `lint` job, after the existing "Ensure scripts are executable" step). (2026-04-06, commit `b855984`)
+- [x] Milestone 6: Run full `./scripts/preflight.sh` from `docs/` and confirm all sections report clean, then commit the final state. (2026-04-06, preflight clean — no additional commits required)
 
 Use timestamps when you complete steps. Split partially completed work into "done" and "remaining" as needed.
 
