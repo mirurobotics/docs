@@ -56,6 +56,45 @@ func TestTildeFence(t *testing.T) {
 	}
 }
 
+func TestFourBacktickFence(t *testing.T) {
+	s := NewScanner()
+
+	if spans := s.ScanLine("````mdx"); spans != nil {
+		t.Errorf("4-backtick fence open: expected nil, got %v", spans)
+	}
+	if spans := s.ScanLine("--flag"); spans != nil {
+		t.Errorf("4-backtick block body: expected nil, got %v", spans)
+	}
+	if spans := s.ScanLine("````"); spans != nil {
+		t.Errorf("4-backtick fence close: expected nil, got %v", spans)
+	}
+
+	spans := s.ScanLine("After 4-backtick block")
+	if len(spans) != 1 || spans[0].Text != "After 4-backtick block" {
+		t.Errorf("after 4-backtick block: expected prose, got %v", spans)
+	}
+}
+
+func TestFourBacktickFenceInnerTriple(t *testing.T) {
+	s := NewScanner()
+
+	if spans := s.ScanLine("````"); spans != nil {
+		t.Errorf("4-backtick open: expected nil, got %v", spans)
+	}
+	// A triple-backtick line inside must NOT close the block.
+	if spans := s.ScanLine("```"); spans != nil {
+		t.Errorf("inner triple backtick: expected nil (body), got %v", spans)
+	}
+	if spans := s.ScanLine("````"); spans != nil {
+		t.Errorf("4-backtick close: expected nil, got %v", spans)
+	}
+
+	spans := s.ScanLine("prose after")
+	if len(spans) != 1 || spans[0].Text != "prose after" {
+		t.Errorf("after block: expected prose, got %v", spans)
+	}
+}
+
 func TestInlineCode(t *testing.T) {
 	s := NewScanner()
 	// Skip frontmatter

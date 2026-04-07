@@ -99,12 +99,22 @@ func (s *Scanner) ScanLine(line string) []ProseSpan {
 func codeFenceOpen(line string) (string, bool) {
 	trimmed := strings.TrimLeft(line, " \t")
 
-	if len(trimmed) >= 3 && trimmed[:3] == "```" {
-		return "```", true
+	count := 0
+	for count < len(trimmed) && trimmed[count] == '`' {
+		count++
 	}
-	if len(trimmed) >= 3 && trimmed[:3] == "~~~" {
-		return "~~~", true
+	if count >= 3 {
+		return trimmed[:count], true
 	}
+
+	count = 0
+	for count < len(trimmed) && trimmed[count] == '~' {
+		count++
+	}
+	if count >= 3 {
+		return trimmed[:count], true
+	}
+
 	return "", false
 }
 
