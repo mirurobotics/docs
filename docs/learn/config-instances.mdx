@@ -3,6 +3,7 @@ title: "Config instances"
 ---
 
 import ConfigInstanceDef from '/snippets/definitions/config-instance.mdx';
+import AgentYamlSupport from '/snippets/agent/yaml-support.mdx';
 import {MutableBadge, ImmutableBadge} from '/snippets/components/badges.jsx';
 import {Framed} from '/snippets/components/framed.jsx';
 
@@ -14,7 +15,7 @@ import {Framed} from '/snippets/components/framed.jsx';
 <ParamField path="content" type="object">
   <ImmutableBadge />
 
-  The configuration values that are deployed to the device in the format of a JSON object.
+  The configuration values that are deployed to the device as a JSON or YAML file.
 </ParamField>
 
 <ParamField path="file path" type="string">
@@ -24,7 +25,7 @@ import {Framed} from '/snippets/components/framed.jsx';
 
   A file path of `/v1/motion-control.json` deploys the config instance to `/srv/miru/config_instances/v1/motion-control.json`.
 
-  Examples: `/v1/motion-control.json`, `/safety.json`
+  Examples: `/v1/motion-control.json`, `/safety.yaml`
 </ParamField>
 
 <ParamField path="config schema" type="Config Schema">
@@ -37,4 +38,8 @@ import {Framed} from '/snippets/components/framed.jsx';
 
 ## File formats
 
-Currently, config instances only support JSON. However, support for more formats, including YAML and JSON-C, is coming soon!
+Currently, config instances support JSON and YAML. However, support for more formats, including XML, is coming soon!
+
+Config instances support JSON and YAML. The Miru Agent parses both formats at deploy time and exposes the resulting data to on-device applications in the same way, so you can pick whichever format fits your workflow.
+
+<AgentYamlSupport />

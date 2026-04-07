@@ -6,6 +6,7 @@ import ConfigSchemaDef from '/snippets/definitions/config-schema.mdx';
 import SchemaFormats from '/snippets/schemas/formats.mdx';
 import {MutableBadge, ImmutableBadge, EditableBadge} from '/snippets/components/badges.jsx';
 import {Framed} from '/snippets/components/framed.jsx';
+import AgentYamlSupport from '/snippets/agent/yaml-support.mdx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v03/images/config-schemas/background.png" image="https://assets.mirurobotics.com/docs/v03/images/config-schemas/header:panel.png" borderWidth={"32px 56px 0 0"} innerRadius={"0 8px 0 0"} />
 
@@ -63,7 +64,9 @@ import {Framed} from '/snippets/components/framed.jsx';
 
   The default instance file path for a schema is `{config-type-slug}.json`, which deploys config instances to `/srv/miru/config_instances/{config-type-slug}.json`.
 
-  Examples: `/v1/mobility.json`, `/config/safety.json`
+  Examples: `/v1/mobility.json`, `/config/safety.yaml`
+
+  <AgentYamlSupport />
 </ParamField>
 
 <ParamField path="config type" type="Config Type">

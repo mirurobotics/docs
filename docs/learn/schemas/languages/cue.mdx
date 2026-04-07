@@ -3,6 +3,7 @@ title: "CUE"
 ---
 
 import {Framed} from '/snippets/components/framed.jsx';
+import AgentYamlSupport from '/snippets/agent/yaml-support.mdx';
 
 <Framed 
     background="https://assets.mirurobotics.com/docs/v03/images/schema-langs/cue/background.png"
@@ -72,3 +73,6 @@ Unlike JSON Schema, CUE can only be written in the CUE file format and must have
 Similar to JSON Schema, CUE schemas can validate config instances in formats other than CUE. The following formats are supported:
 
 - **JSON** (`.json`)
+- **YAML** (`.yaml`, `.yml`)
+
+<AgentYamlSupport />
