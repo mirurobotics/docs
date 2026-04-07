@@ -37,4 +37,8 @@ import {Framed} from '/snippets/components/framed.jsx';
 
 ## File formats
 
-Currently, config instances only support JSON. However, support for more formats, including YAML and JSON-C, is coming soon!
+Config instances can be authored as JSON or YAML. The Miru Agent parses both formats at deploy time and exposes the resulting data to on-device applications in the same way, so you can pick whichever format fits your workflow.
+
+<Info>
+  YAML support requires Miru Agent **v0.7.1** or newer. See the [agent changelog](/docs/changelogs/agent) for the release notes, and the [agent versions page](/docs/developers/agent/versions) to check which version your fleet is running.
+</Info>

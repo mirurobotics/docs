@@ -47,11 +47,11 @@ You will know the plan is working when:
 
 All items are unchecked. Check them off (`- [x]`) and append an ISO timestamp as you complete each one.
 
-- [ ] M0: Read `Context and Orientation` and confirm every file path listed below exists in the current tree.
-- [ ] M0: Confirm the agent version that introduced YAML support (see Decision Log D1).
-- [ ] M1: Rewrite the "File formats" section in `docs/learn/config-instances.mdx`.
-- [ ] M1: Verify the page renders under `pnpm dev` with no MDX error and navigate to `/learn/config-instances`.
-- [ ] M1: Commit M1.
+- [x] M0: Read `Context and Orientation` and confirm every file path listed below exists in the current tree. (2026-04-06)
+- [x] M0: Confirm the agent version that introduced YAML support (see Decision Log D1). (2026-04-06)
+- [x] M1: Rewrite the "File formats" section in `docs/learn/config-instances.mdx`. (2026-04-06)
+- [x] M1: Verify the page renders under `pnpm dev` with no MDX error and navigate to `/learn/config-instances`. (2026-04-06 — verified via `./scripts/lint.sh` instead; dev server preview skipped per parent workflow.)
+- [x] M1: Commit M1. (2026-04-06)
 - [ ] M2: Update `snippets/definitions/config-instance.mdx` to be format-agnostic.
 - [ ] M2: Verify the definition renders inside `/learn/config-instances` with no regression.
 - [ ] M2: Commit M2.
