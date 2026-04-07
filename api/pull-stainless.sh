@@ -43,7 +43,7 @@ if ! command -v python3 >/dev/null 2>&1; then
     echo "Python 3 is required but not installed"
     exit 1
 fi
-if ! python3 -c "import pyyaml" 2>/dev/null; then
+if ! python3 -c "import yaml" 2>/dev/null; then
     echo "Installing pyyaml..."
     if command -v pip3 >/dev/null 2>&1; then
         python3 -m pip install pyyaml types-pyyaml
