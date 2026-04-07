@@ -9,10 +9,10 @@ func TestNoDoubleDash(t *testing.T) {
 	rule := NoDoubleDash{}
 
 	tests := []struct {
-		name       string
-		input      string
-		wantCount  int
-		wantCols   []int // 1-based columns of expected violations
+		name      string
+		input     string
+		wantCount int
+		wantCols  []int // 1-based columns of expected violations
 	}{
 		{
 			name:      "double dash in prose",
@@ -20,21 +20,9 @@ func TestNoDoubleDash(t *testing.T) {
 			wantCount: 1,
 			wantCols:  []int{12},
 		},
-		{
-			name:      "triple dash not flagged",
-			input:     "use ---",
-			wantCount: 0,
-		},
-		{
-			name:      "quadruple dash not flagged",
-			input:     "use ----",
-			wantCount: 0,
-		},
-		{
-			name:      "single dash not flagged",
-			input:     "a-b",
-			wantCount: 0,
-		},
+		{name: "triple dash not flagged", input: "use ---", wantCount: 0},
+		{name: "quadruple dash not flagged", input: "use ----", wantCount: 0},
+		{name: "single dash not flagged", input: "a-b", wantCount: 0},
 		{
 			name:      "two separate double dashes",
 			input:     "a--b and c--d",
@@ -59,16 +47,8 @@ func TestNoDoubleDash(t *testing.T) {
 			wantCount: 1,
 			wantCols:  []int{1},
 		},
-		{
-			name:      "no dashes",
-			input:     "hello world",
-			wantCount: 0,
-		},
-		{
-			name:      "empty string",
-			input:     "",
-			wantCount: 0,
-		},
+		{name: "no dashes", input: "hello world", wantCount: 0},
+		{name: "empty string", input: "", wantCount: 0},
 	}
 
 	for _, tt := range tests {
@@ -113,64 +93,64 @@ func TestNoDoubleDashIntegration(t *testing.T) {
 		wantLines []int
 	}{
 		{
-			name: "double dash in prose after frontmatter",
-			content: "---\ntitle: Test\n---\n\nconfig type--it determines",
+			name:      "double dash in prose after frontmatter",
+			content:   "---\ntitle: Test\n---\n\nconfig type--it determines",
 			wantCount: 1,
 			wantLines: []int{5},
 		},
 		{
-			name: "double dash in code block not flagged",
-			content: "---\ntitle: Test\n---\n\n```bash\nmiru --version\n```",
+			name:      "double dash in code block not flagged",
+			content:   "---\ntitle: Test\n---\n\n```bash\nmiru --version\n```",
 			wantCount: 0,
 		},
 		{
-			name: "double dash in inline code not flagged",
-			content: "---\ntitle: Test\n---\n\nUse `--version` flag",
+			name:      "double dash in inline code not flagged",
+			content:   "---\ntitle: Test\n---\n\nUse `--version` flag",
 			wantCount: 0,
 		},
 		{
-			name: "double dash in frontmatter not flagged",
-			content: "---\ntitle: Test--Title\n---\n\nClean prose",
+			name:      "double dash in frontmatter not flagged",
+			content:   "---\ntitle: Test--Title\n---\n\nClean prose",
 			wantCount: 0,
 		},
 		{
-			name: "double dash in JSX attribute not flagged",
-			content: "---\ntitle: Test\n---\n\n<ParamField path=\"--version\" type=\"string\">",
+			name:      "double dash in JSX attribute not flagged",
+			content:   "---\ntitle: Test\n---\n\n<ParamField path=\"--version\" type=\"string\">",
 			wantCount: 0,
 		},
 		{
-			name: "frontmatter dashes not flagged",
-			content: "---\ntitle: Test\n---\n\nClean",
+			name:      "frontmatter dashes not flagged",
+			content:   "---\ntitle: Test\n---\n\nClean",
 			wantCount: 0,
 		},
 		{
-			name: "thematic break not flagged",
-			content: "---\ntitle: Test\n---\n\n---\n\nClean",
+			name:      "thematic break not flagged",
+			content:   "---\ntitle: Test\n---\n\n---\n\nClean",
 			wantCount: 0,
 		},
 		{
-			name: "table separator not flagged",
-			content: "---\ntitle: Test\n---\n\n| A | B |\n|---|---|\n| 1 | 2 |",
+			name:      "table separator not flagged",
+			content:   "---\ntitle: Test\n---\n\n| A | B |\n|---|---|\n| 1 | 2 |",
 			wantCount: 0,
 		},
 		{
-			name: "HTML comment not flagged",
-			content: "---\ntitle: Test\n---\n\n<!-- --test -->",
+			name:      "HTML comment not flagged",
+			content:   "---\ntitle: Test\n---\n\n<!-- --test -->",
 			wantCount: 0,
 		},
 		{
-			name: "multiline HTML comment not flagged",
-			content: "---\ntitle: Test\n---\n\n<!-- \n--test\n-->",
+			name:      "multiline HTML comment not flagged",
+			content:   "---\ntitle: Test\n---\n\n<!-- \n--test\n-->",
 			wantCount: 0,
 		},
 		{
-			name: "import not flagged",
-			content: "---\ntitle: Test\n---\n\nimport Foo from '--bar'",
+			name:      "import not flagged",
+			content:   "---\ntitle: Test\n---\n\nimport Foo from '--bar'",
 			wantCount: 0,
 		},
 		{
-			name: "mixed line with inline code and prose dash",
-			content: "---\ntitle: Test\n---\n\nUse `--flag` for type--detection",
+			name:      "mixed line with inline code and prose dash",
+			content:   "---\ntitle: Test\n---\n\nUse `--flag` for type--detection",
 			wantCount: 1,
 			wantLines: []int{5},
 		},

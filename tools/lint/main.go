@@ -12,9 +12,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	rules := []Rule{
-		NoDoubleDash{},
-	}
+	rules := []Rule{NoDoubleDash{}}
 
 	var allViolations []Violation
 	exitCode := 0
