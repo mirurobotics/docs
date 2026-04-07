@@ -24,21 +24,21 @@ After this change, a contributor editing any file under `docs/tools/lint/` will:
 2. Be blocked from landing a PR if any `custom-linter`, `gofumpt`, or `golangci-lint` violation remains, via both `docs/scripts/preflight.sh` (local preflight) and `docs/.github/workflows/lint.yml` (CI).
 3. Observe the new output section in the preflight transcript that reads roughly:
 
-        == Go Lint (tools/lint) ==
+        === Go Lint (tools/lint) ===
         Running custom linter on /home/.../docs/tools/lint...
-        Running gofumpt...
+        Checking gofumpt...
         Running golangci-lint...
         0 issues.
 
-4. See zero violations the very first time they run it, because this plan also fixes all 15 currently-reported violations as part of the same change set.
+4. See zero violations the very first time they run it, because this plan also fixes all 16 currently-reported issues (15 custom-linter violations + 1 golangci-lint `errcheck`) as part of the same change set.
 
 ## Progress
 
-- [ ] Milestone 1: Add `tool` directive + helper script. Bump `docs/tools/lint/go.mod` to `go 1.25.3`, add the `tool ( github.com/mirurobotics/gotools/cmd/miru )` directive, and create `docs/tools/lint/scripts/lint.sh`.
-- [ ] Milestone 2: Run `LINT_FIX=1 ./tools/lint/scripts/lint.sh` to auto-fix the collapsible-expression, inlinable-function, and incidental formatting violations.
-- [ ] Milestone 3: Manually fix the 7 remaining `line is N columns wide` violations in `main.go`, `rules_test.go`, and `scanner.go`. Confirm `go test ./...` inside `docs/tools/lint/` still passes.
-- [ ] Milestone 4: Wire `LINT_FIX=0 ./tools/lint/scripts/lint.sh` into `docs/scripts/preflight.sh` (as a new `== Go Lint (tools/lint) ==` step before the existing `./scripts/lint.sh` call).
-- [ ] Milestone 5: Wire `LINT_FIX=0 ./tools/lint/scripts/lint.sh` into `docs/.github/workflows/lint.yml` (as a new step in the `lint` job, before the existing "Run documentation lint" step).
+- [ ] Milestone 1: Add `tool` directives + helper script. Bump `docs/tools/lint/go.mod` to `go 1.25.3`, add `tool ( ... )` block listing all three tools (`github.com/mirurobotics/gotools/cmd/miru`, `mvdan.cc/gofumpt`, `github.com/golangci/golangci-lint/v2/cmd/golangci-lint`), and create `docs/tools/lint/scripts/lint.sh`.
+- [ ] Milestone 2: Run `LINT_FIX=1 ./tools/lint/scripts/lint.sh` to auto-fix the collapsible-expression, inlinable-function, and incidental gofumpt formatting violations.
+- [ ] Milestone 3: Manually fix the 7 remaining `line is N columns wide` violations in `main.go`, `rules_test.go`, and `scanner.go`, AND the 1 `errcheck` violation on `main.go: defer f.Close()` (change to `defer func() { _ = f.Close() }()`). Confirm `go test ./...` inside `docs/tools/lint/` still passes.
+- [ ] Milestone 4: Wire `LINT_FIX=0 ./tools/lint/scripts/lint.sh` into `docs/scripts/preflight.sh` (as a new `=== Go Lint (tools/lint) ===` step before the existing `./scripts/lint.sh` call).
+- [ ] Milestone 5: Wire `LINT_FIX=0 ./tools/lint/scripts/lint.sh` into `docs/.github/workflows/lint.yml` (as a new step in the `lint` job, after the existing "Ensure scripts are executable" step).
 - [ ] Milestone 6: Run full `./scripts/preflight.sh` from `docs/` and confirm all sections report clean, then commit the final state.
 
 Use timestamps when you complete steps. Split partially completed work into "done" and "remaining" as needed.
@@ -55,6 +55,10 @@ Use timestamps when you complete steps. Split partially completed work into "don
 - Decision: Use a `tool` directive in `docs/tools/lint/go.mod` rather than `go run github.com/mirurobotics/gotools/cmd/miru@<version>`.
   Rationale: This matches the pattern already in use in `cli-private/go.mod` lines 262-267 and `core/go.mod`. It gives a clean `go tool miru lint` invocation with pinned versions resolved through `go.sum`, avoids network access on every CI run, and keeps the gotools version upgrade story uniform across the monorepo. The downside (adding ~250 indirect dependencies to `docs/tools/lint/go.sum`) is the same trade-off already accepted by sibling Go repos, and the docs linter module is isolated from the Mintlify content, so bloat there does not affect docs build times.
   Date/Author: 2026-04-06 / author
+
+- Decision: Add `tool` directives for all three tools (`github.com/mirurobotics/gotools/cmd/miru`, `mvdan.cc/gofumpt`, `github.com/golangci/golangci-lint/v2/cmd/golangci-lint`), not just `miru`.
+  Rationale: Verified empirically. `go tool miru lint` internally invokes `go tool gofumpt` and `go tool golangci-lint` (see `gotools/internal/services/lint/lint.go` line 109 `RunExternal(out, errW, "go", "tool", "golangci-lint", "run")`). Without the `mvdan.cc/gofumpt` directive, the pipeline fails with `go: no such tool "gofumpt"`. Without the golangci-lint directive, it fails similarly at the golangci-lint step. All sibling repos (`cli-private/go.mod` lines 262-267, `core/go.mod`) declare the same three tools. `deadcode` is not added because the docs linter does not run `--deadcode`.
+  Date/Author: 2026-04-06 / author (added during refine pass after verification)
 
 - Decision: Bump `docs/tools/lint/go.mod` from `go 1.24` to `go 1.25.3`.
   Rationale: The `gotools` module declares `go 1.25.3` in its own `go.mod`. A consumer cannot take a `tool` dependency on it with a lower go directive — Go will refuse to build. CI resolves its Go toolchain from `go-version-file: tools/lint/go.mod` (see `docs/.github/workflows/lint.yml` line 24), so bumping the module's go directive also bumps the CI toolchain version, which is required for `go tool miru lint` to work. This matches `cli-private/go.mod` and `core/go.mod`, both of which are on `go 1.25.3`.
@@ -75,6 +79,18 @@ Use timestamps when you complete steps. Split partially completed work into "don
 - Decision: Do not pass `--deadcode` for the docs linter.
   Rationale: `cli-private/scripts/lint.sh` runs `--deadcode` because it has a large `internal,cmd,mock,tests` surface area where dead code accumulates. The docs linter has ~850 lines across 5 files and every exported symbol is reachable from `main.go`. Running deadcode would add build time with no signal. A future plan can add `--deadcode` if the module grows.
   Date/Author: 2026-04-06 / author
+
+- Decision: Use an absolute path for `--paths`, not `--paths=.`.
+  Rationale: Verified empirically. When the helper script runs `go tool miru lint --paths=.` from inside `docs/tools/lint/`, the custom linter reports `Running custom linter on ...` (literal dots) and silently finds **zero** violations regardless of source state. This would make the lint gate a no-op and defeat the entire purpose of this plan. Passing an absolute path (`--paths="${lint_dir}"`) — or any relative path that is not literally `.` (e.g. a subdirectory name) — works correctly. Since the script has just `cd`ed into `${lint_dir}`, the cleanest form is `--paths="${lint_dir}"`. This does not match `core/scripts/lint.sh`, which uses `--paths=pkg,mocks,tests` — but in that case the paths are subdirectories, not the module root itself.
+  Date/Author: 2026-04-06 / author (added during refine pass after verification)
+
+- Decision: Do NOT add a `.golangci.yml` file under `docs/tools/lint/`; rely on golangci-lint's default configuration.
+  Rationale: Verified empirically. Adding gotools' own `.golangci.yml` (which enables `exhaustruct`, `gosec`, `exhaustive`, and others) surfaces 10+ additional issues on the docs linter source (struct literal completeness, file-inclusion warnings, missing switch cases) that would require extensive refactoring disproportionate to the value for a 5-file MDX-checking tool. With no `.golangci.yml`, golangci-lint uses its modest defaults and surfaces exactly 1 issue: `errcheck` on `main.go:47 defer f.Close()`, which is trivially fixed by wrapping the close in `defer func() { _ = f.Close() }()`. A future plan can introduce a richer config if stronger checks become desirable; this plan keeps the blast radius small.
+  Date/Author: 2026-04-06 / author (added during refine pass after verification)
+
+- Decision: Fix `main.go:47 defer f.Close()` by wrapping in `defer func() { _ = f.Close() }()`, not by checking and logging the error.
+  Rationale: `lintFile` opens a file for reading only; `f.Close` on a read-only file handle cannot fail in any way that would change the linter's correctness (the file's contents have already been read by the time the defer fires). Logging a close error would add noise without signal. The idiomatic Go pattern for this case, and the pattern used elsewhere in Miru Go code, is to swallow the return value with `_ =`. This suppresses the `errcheck` linter while being explicit about intent.
+  Date/Author: 2026-04-06 / author (added during refine pass after verification)
 
 ## Outcomes & Retrospective
 
@@ -105,7 +121,7 @@ Read this section first if you have never touched the docs repo before.
 - Module path: `github.com/mirurobotics/gotools`. Source on disk: `/home/ben/miru/workbench3/gotools/`. Public.
 - Entrypoint: `./cmd/miru`. The `lint` subcommand runs three linters in sequence: a custom linter defined in `gotools/internal/customlinter/`, then `gofumpt`, then `golangci-lint`. All three must pass for the subcommand to exit 0.
 - Key flags:
-  - `--paths=<dirs>` — comma-separated directories the custom linter scans. Required.
+  - `--paths=<dirs>` — comma-separated directories the custom linter scans. Required. **Do not pass `.` as the path**: the custom linter has a quirk where a literal dot is not resolved, causing a silent zero-violation scan (verified empirically during plan authoring). Use an absolute path or a non-dot relative subdirectory.
   - `--fix` / `--fix=false` — auto-fix vs check-only. Default `--fix`. CI and preflight use `--fix=false`.
   - `--exclude=<rules>` — comma-separated rules to skip. Not used here.
   - `--max-line-width=88` — default soft limit for the line-width rule.
@@ -131,11 +147,21 @@ From `/home/ben/miru/workbench3/cli-private/go.mod` lines 262-267:
             mvdan.cc/gofumpt
         )
 
-Adding this block to a module's `go.mod` (via `go get -tool github.com/mirurobotics/gotools/cmd/miru@<version>`) allows that module to invoke the tool with `go tool miru <subcommand>`. The tool binary is built on demand and cached under `GOCACHE`.
+Adding a tool directive via `go get -tool <import-path>@<version>` allows the module to invoke the tool with `go tool <name> <subcommand>`. The tool binary is built on demand and cached under `GOCACHE`.
 
-### The 15 violations that must be fixed
+**For the docs linter, three directives are required**, not just `miru`: gotools internally invokes `go tool gofumpt` and `go tool golangci-lint` (see `gotools/internal/services/lint/lint.go`, which runs `RunExternal(out, errW, "go", "tool", "golangci-lint", "run")`). Without the `mvdan.cc/gofumpt` directive, `go tool miru lint` fails with `go: no such tool "gofumpt"`. The `deadcode` tool is optional and is omitted here because the docs linter does not run `--deadcode`. The final block in `docs/tools/lint/go.mod` must be:
 
-Running `go run ./cmd/miru lint --paths=/home/ben/miru/workbench3/docs/tools/lint --fix=false` (from `/home/ben/miru/workbench3/gotools`) today reports:
+        tool (
+            github.com/golangci/golangci-lint/v2/cmd/golangci-lint
+            github.com/mirurobotics/gotools/cmd/miru
+            mvdan.cc/gofumpt
+        )
+
+### The 16 violations that must be fixed
+
+The gotools pipeline runs three stages (custom linter, gofumpt, golangci-lint) in sequence. Running the complete pipeline against the pristine `docs/tools/lint/` source — via `go tool miru lint --paths=/home/ben/miru/workbench3/docs/tools/lint --fix=false` from inside the prepared module directory (i.e. after Milestone 1 has added the tool directives) — reports:
+
+**Stage 1: custom linter (15 violations)**
 
     /home/ben/miru/workbench3/docs/tools/lint/main.go:56: line is 90 columns wide, exceeds 88-column limit
     /home/ben/miru/workbench3/docs/tools/lint/main.go:15: multi-line expression can be collapsed to single line
@@ -153,15 +179,28 @@ Running `go run ./cmd/miru lint --paths=/home/ben/miru/workbench3/docs/tools/lin
     /home/ben/miru/workbench3/docs/tools/lint/scanner.go:30: function body can be inlined to single line
     /home/ben/miru/workbench3/docs/tools/lint/scanner.go:35: function body can be inlined to single line
 
-Total: 15 violations from the custom linter. `gofumpt` and `golangci-lint` are both clean. `scanner_test.go` and `rules.go` have no violations.
+**Stage 2: gofumpt** — reports unformatted files in `rules_test.go` (struct field alignment) and `scanner.go` (a Unicode-corrected backtick comment). Both auto-fix during `--fix`.
 
-A dry-run of `--fix` mode on a copy of the module showed:
+**Stage 3: golangci-lint (1 violation, default config)**
 
-- 8 violations auto-fix: all 5 "multi-line expression can be collapsed" in `rules_test.go`, both "function body can be inlined" in `scanner.go`, and `main.go:15` (which collapses `rules := []Rule{ NoDoubleDash{}, }` to `rules := []Rule{NoDoubleDash{}}`).
-- 7 violations remain and need manual wrapping, all "line is N columns wide":
+    main.go:47:15: Error return value of `f.Close` is not checked (errcheck)
+        defer f.Close()
+                     ^
+
+Total: 16 violations (15 custom-linter + 1 errcheck from golangci-lint). `scanner_test.go` and `rules.go` have no violations.
+
+An empirical dry-run on a copy of the module with all three tool directives added showed:
+
+- **8 of the 15 custom-linter violations auto-fix with `--fix`:** all 5 "multi-line expression can be collapsed" in `rules_test.go`, both "function body can be inlined" in `scanner.go`, and `main.go:15` (collapse `rules := []Rule{ NoDoubleDash{}, }` to `rules := []Rule{NoDoubleDash{}}`).
+- **gofumpt's 2 file reformats auto-apply during `--fix`.**
+- **7 line-width violations remain and need manual wrapping:**
   - `main.go` (after collapse): 1 long line where `violations = append(violations, rule.Check(path, scanner.LineNum(), spans)...)` is 90 columns wide. Wrap by extracting the `rule.Check(...)` call into a local variable.
-  - `rules_test.go`: 5 long lines — two `t.Errorf("expected %d violations, got %d: %v", ...)` calls (93 columns each), two `t.Errorf("violation %d: expected col %d, got %d", ...)` / `t.Errorf("violation %d: expected line %d, got %d", ...)` calls (85-88 columns each), and one test table entry with a long `content:` field containing `"---\ntitle: Test\n---\n\n<ParamField path=\"--version\" type=\"string\">"` (96 columns). Wrap the `t.Errorf` calls across multiple lines; for the test table entry, split the content string into concatenated pieces or move it to a package-level constant.
+  - `rules_test.go`: 5 long lines — two `t.Errorf("expected %d violations, got %d: %v", ...)` calls (~93 columns each), two `t.Errorf("violation %d: expected col %d, got %d", ...)` / `t.Errorf("violation %d: expected line %d, got %d", ...)` calls (~85-88 columns each), and one test table entry with a long `content:` field containing `"---\ntitle: Test\n---\n\n<ParamField path=\"--version\" type=\"string\">"` (~96 columns). Wrap the `t.Errorf` calls across multiple lines; for the test table entry, split the content string into concatenated pieces or move it to a package-level constant.
   - `scanner.go:6`: the comment `// StartCol is the 1-based byte offset of the span's first character in the original line.` is 90 columns wide. Rewrap to two lines.
+- **1 golangci-lint errcheck violation remains and needs manual fix:**
+  - `main.go:47 defer f.Close()` → change to `defer func() { _ = f.Close() }()`. The file handle is read-only, so a close error cannot corrupt data; swallowing the return is the idiomatic pattern.
+
+So the total manual-fix count after running `LINT_FIX=1` is **8 items** across 3 files: `main.go` (2 — long append + errcheck), `rules_test.go` (5 — four `t.Errorf` wraps + one long content field), `scanner.go` (1 — long doc comment).
 
 Note that after auto-fix, some line numbers shift. The above mapping is the "what needs to be done conceptually" — when actually running the lint, re-read the violation output, because line numbers will differ from the pre-fix list.
 
@@ -202,26 +241,31 @@ The `Set up Go` step already picks up the Go toolchain from `tools/lint/go.mod`,
 
 The change divides into six milestones. Each milestone produces exactly one commit inside the `docs/` repo.
 
-### Milestone 1: Tool directive + helper script
+### Milestone 1: Tool directives + helper script
 
 Edit `/home/ben/miru/workbench3/docs/tools/lint/go.mod`:
 
 - Change `go 1.24` to `go 1.25.3` on line 3.
-- After the new `go 1.25.3` line, add (separated by a blank line):
+- The `tool (` block will be written by `go get -tool`; do not hand-edit it.
+- Do not hand-edit the indirect requirement block — `go get` populates it.
 
-        tool (
-            github.com/mirurobotics/gotools/cmd/miru
-        )
-
-- Do not hand-edit the indirect requirement block — let `go get` populate it.
-
-From inside `/home/ben/miru/workbench3/docs/tools/lint/`, run:
+From inside `/home/ben/miru/workbench3/docs/tools/lint/`, run these three commands in order to register all three tool directives:
 
         go get -tool github.com/mirurobotics/gotools/cmd/miru@latest
+        go get -tool mvdan.cc/gofumpt
+        go get -tool github.com/golangci/golangci-lint/v2/cmd/golangci-lint
 
-This resolves the gotools version, downloads it and its transitive dependencies, and writes them to `go.sum`. If a specific version is preferred (e.g. `v0.1.3` which is what `cli-private` pins to), substitute `@v0.1.3`.
+Each command resolves the version, downloads transitive dependencies, and writes them to `go.sum`. After all three, `go.mod` should contain a block:
 
-Create `/home/ben/miru/workbench3/docs/tools/lint/scripts/lint.sh` with tab indentation and the following content:
+        tool (
+            github.com/golangci/golangci-lint/v2/cmd/golangci-lint
+            github.com/mirurobotics/gotools/cmd/miru
+            mvdan.cc/gofumpt
+        )
+
+(Entries are alphabetized by Go; the exact order in your file may differ slightly.) If a specific gotools version is preferred (e.g. `v0.1.3` which is what `cli-private` pins to), substitute `@v0.1.3` on the first command.
+
+Create `/home/ben/miru/workbench3/docs/tools/lint/scripts/lint.sh` with the following content (the indentation shown is four-space POSIX style, matching `gotools/scripts/lint.sh`, `core/scripts/lint.sh`, and `agent/tools/lint/scripts/lint.sh`):
 
         #!/usr/bin/env bash
         set -euo pipefail
@@ -253,13 +297,13 @@ Create `/home/ben/miru/workbench3/docs/tools/lint/scripts/lint.sh` with tab inde
         fi
 
         cd "${lint_dir}"
-        exec go tool miru lint --paths=. ${FIX}
+        exec go tool miru lint --paths="${lint_dir}" ${FIX}
 
 Mark it executable with `chmod +x docs/tools/lint/scripts/lint.sh`.
 
-Note the use of `--paths=.` — from inside `docs/tools/lint/`, the current directory IS the module, so passing `.` tells the custom linter to scan `main.go`, `rules.go`, `rules_test.go`, `scanner.go`, and `scanner_test.go`.
+**Important: use `--paths="${lint_dir}"` (absolute), NOT `--paths=.`.** When the custom linter is given `--paths=.`, it prints `Running custom linter on ...` (literal dots) and silently reports zero violations regardless of the source state — which would defeat the entire purpose of this plan. Passing an absolute path resolves correctly and the linter walks the directory as expected. This was verified empirically during plan authoring (see Decision Log). The `cd "${lint_dir}"` step is still necessary before `go tool miru lint` so that `go` can resolve the tool directive from the module's `go.mod`.
 
-**Commit Milestone 1:** from `/home/ben/miru/workbench3/docs/`, stage `tools/lint/go.mod`, `tools/lint/go.sum`, and `tools/lint/scripts/lint.sh`, then commit with message "lint: add gotools tool directive and per-tool lint script".
+**Commit Milestone 1:** from `/home/ben/miru/workbench3/docs/`, stage `tools/lint/go.mod`, `tools/lint/go.sum`, and `tools/lint/scripts/lint.sh`, then commit with message "lint: add gotools tool directives and per-tool lint script".
 
 ### Milestone 2: Run auto-fix
 
@@ -267,15 +311,15 @@ From `/home/ben/miru/workbench3/docs/`:
 
         LINT_FIX=1 ./tools/lint/scripts/lint.sh
 
-Expected: the custom linter prints "fixed: <path>" for each file it auto-fixes (at least `main.go`, `rules_test.go`, and `scanner.go`), then re-runs and reports the remaining (line-width) violations. The script exits non-zero because violations remain — this is expected for this milestone.
+Expected: in a single pass the custom linter prints `fixed: <path>` for each file it rewrites (at least `main.go`, `rules_test.go`, and `scanner.go`), then lists the remaining line-width violations it cannot auto-fix. Next, gofumpt runs and silently rewrites `rules_test.go` and `scanner.go` for struct-field alignment and backtick-comment corrections. Finally, golangci-lint runs and reports the 1 `errcheck` violation on `main.go: defer f.Close()`. The script exits non-zero because manual fixes still remain — this is expected for this milestone.
 
-Auto-fix is idempotent: running twice produces the same result as running once. If the script hangs or errors out on network access, re-run with `GOFLAGS=-mod=mod` to force module resolution.
+Auto-fix is idempotent: running twice produces the same result as running once (the custom linter converges in one pass, and gofumpt is naturally idempotent). If the script hangs or errors out on network access, re-run with `GOFLAGS=-mod=mod` to force module resolution.
 
-Inspect the diff to confirm:
+Inspect the diff to confirm auto-fixes landed:
 
 - `main.go` line 15 area: `rules := []Rule{NoDoubleDash{}}` is now a single line.
-- `rules_test.go`: the five flagged test table entries (`triple dash not flagged`, `quadruple dash not flagged`, `single dash not flagged`, `no dashes`, `empty string`) are now single-line literals.
-- `scanner.go`: `NewScanner` and `LineNum` are one-line function bodies.
+- `rules_test.go`: the five flagged test table entries (`triple dash not flagged`, `quadruple dash not flagged`, `single dash not flagged`, `no dashes`, `empty string`) are now single-line literals, and struct-field colons are aligned uniformly (gofumpt).
+- `scanner.go`: `NewScanner` and `LineNum` are one-line function bodies; the `findInlineCodeEnd` doc comment's backtick examples may have been rewritten slightly (gofumpt Unicode correction).
 
 Then run the tests to confirm nothing regressed:
 
@@ -284,19 +328,19 @@ Then run the tests to confirm nothing regressed:
 
 Expected: `ok  	github.com/mirurobotics/docs/tools/lint	0.0??s`.
 
-Return to `docs/` root.
+Return to `docs/` root (`cd ..`).
 
-**Commit Milestone 2:** stage the modified `.go` files under `tools/lint/`, commit with message "lint(tools): auto-fix collapsible expressions and inlinable bodies".
+**Commit Milestone 2:** stage the modified `.go` files under `tools/lint/`, commit with message "lint(tools): auto-fix collapsible expressions, inlinable bodies, and gofumpt formatting".
 
-### Milestone 3: Manually fix remaining line-width violations
+### Milestone 3: Manually fix remaining line-width and errcheck violations
 
 From `/home/ben/miru/workbench3/docs/`, rerun:
 
         LINT_FIX=0 ./tools/lint/scripts/lint.sh
 
-Read the remaining violations. Expect roughly 7 "line is N columns wide" findings (exact line numbers depend on what the auto-fix did in Milestone 2). For each one, edit the source file to bring it under 88 columns visually (tabs count as 4). Strategies:
+Read the remaining violations. Expect 7 "line is N columns wide" findings from the custom linter (exact line numbers depend on what the auto-fix did in Milestone 2) PLUS 1 `errcheck` finding on `main.go` from golangci-lint. For each one, edit the source file to bring it under 88 columns visually (tabs count as 4) or remove the errcheck. Strategies:
 
-- **`main.go` long append line**: rewrite
+- **`main.go` long append line** (custom linter, `line is 90 columns wide`): rewrite
 
         violations = append(violations, rule.Check(path, scanner.LineNum(), spans)...)
 
@@ -307,7 +351,17 @@ Read the remaining violations. Expect roughly 7 "line is N columns wide" finding
 
   Alternatively, cache `scanner.LineNum()` into a local variable before the inner `for _, rule := range rules` loop and inline that into the call. Pick whichever reads more naturally.
 
-- **`rules_test.go` `t.Errorf` calls**: wrap the format-string calls across multiple lines, e.g.
+- **`main.go:47` errcheck on `defer f.Close()`** (golangci-lint): replace
+
+        defer f.Close()
+
+  with
+
+        defer func() { _ = f.Close() }()
+
+  The file is opened read-only, so a close error cannot corrupt data. The `_ =` explicitly acknowledges the discarded return value and satisfies `errcheck`. Do not attempt to log or return the close error — it would add noise without actionable signal.
+
+- **`rules_test.go` `t.Errorf` calls** (custom linter, ~93 columns): wrap the format-string calls across multiple lines, e.g.
 
         t.Errorf(
             "expected %d violations, got %d: %v",
@@ -316,14 +370,14 @@ Read the remaining violations. Expect roughly 7 "line is N columns wide" finding
 
   `gofumpt` will accept this layout.
 
-- **`rules_test.go` long `content:` field**: the 96-column line is inside a test table entry. Break the string into concatenated pieces, e.g.
+- **`rules_test.go` long `content:` field** (custom linter, ~96 columns): the long line is inside a test table entry. Break the string into concatenated pieces, e.g.
 
         content: "---\ntitle: Test\n---\n\n" +
             "<ParamField path=\"--version\" type=\"string\">",
 
   or hoist it to a package-level `const` and reference by name.
 
-- **`scanner.go:6` long doc comment**: rewrap the comment to two lines, e.g.
+- **`scanner.go:6` long doc comment** (custom linter, 90 columns): rewrap the comment to two lines, e.g.
 
         // StartCol is the 1-based byte offset of the span's first
         // character in the original line.
@@ -331,18 +385,17 @@ Read the remaining violations. Expect roughly 7 "line is N columns wide" finding
 After each edit, rerun `LINT_FIX=0 ./tools/lint/scripts/lint.sh` from `/home/ben/miru/workbench3/docs/` until it prints `0 issues.` and exits with status 0. The final expected transcript tail is:
 
         Running custom linter on /home/ben/miru/workbench3/docs/tools/lint...
-        0 violation(s) found in ...
-        Running gofumpt...
+        Checking gofumpt...
         Running golangci-lint...
         0 issues.
 
 Then re-run the unit tests from `docs/tools/lint/`:
 
-        cd tools/lint && go test ./... && cd ../..
+        cd tools/lint && go test ./... && cd ..
 
 Expected: `ok` line with no failures.
 
-**Commit Milestone 3:** stage the modified `.go` files, commit with message "lint(tools): manually wrap remaining long lines".
+**Commit Milestone 3:** stage the modified `.go` files, commit with message "lint(tools): wrap long lines and fix f.Close errcheck".
 
 ### Milestone 4: Wire into `scripts/preflight.sh`
 
@@ -395,7 +448,7 @@ Edit `/home/ben/miru/workbench3/docs/.github/workflows/lint.yml`. In the `lint` 
             LINT_FIX: "0"
           run: ./tools/lint/scripts/lint.sh
 
-Rationale for placement: running the Go lint early (before pnpm-dependent steps) means CI fails fast on Go issues; it also matches the preflight ordering. The `LINT_FIX: "0"` env var forces check-only mode.
+Rationale for placement: this mirrors the order used by `scripts/preflight.sh` (Lint Smoke Tests → Go Lint → Documentation Lint → Audit), and it runs the Go lint before the longer-running documentation lint step so CI fails fast when a Go issue is the root cause. The `LINT_FIX: "0"` env var forces check-only mode. The Go toolchain and module cache have already been set up by the preceding `Set up Go` step (which uses `go-version-file: tools/lint/go.mod`), so no additional setup is needed. The existing "Ensure scripts are executable" step does NOT include `tools/lint/scripts/lint.sh` — that is why a separate chmod step is added rather than extending the existing one. (Extending the existing step would also work and is a valid alternative; keeping them separate makes the new wiring a pure addition with zero touch on existing lines, which is easier to review.)
 
 Do not touch the `audit` job.
 
@@ -419,11 +472,26 @@ From `/home/ben/miru/workbench3/docs/`:
 
         ./scripts/preflight.sh
 
-Expected: the script prints the four section headers, each section exits 0, and the transcript ends roughly with:
+Expected transcript shape (abbreviated):
 
+        === Lint Smoke Tests ===
+        ... (pnpm test:lint output) ...
+
+        === Go Lint (tools/lint) ===
+        Running custom linter on /home/ben/miru/workbench3/docs/tools/lint...
+        Checking gofumpt...
+        Running golangci-lint...
+        0 issues.
+
+        === Lint ===
+        == MDX Prose ==
+        ... (MDX + ESLint + CSpell + OpenAPI) ...
         All documentation lint checks passed.
 
-If preflight reports anything other than clean — any section fails or prints non-zero issue counts — stop and fix the root cause before proceeding. This is the hard gate (see Validation and Acceptance below).
+        === Audit ===
+        ... (pnpm audit output) ...
+
+Expected exit status: 0. If preflight reports anything other than clean — any section fails or prints non-zero issue counts — STOP and fix the root cause before proceeding. This is the hard gate (see Validation and Acceptance below).
 
 If there are no additional code changes to commit at this milestone (which is the expected steady state since the previous milestones already committed their artifacts), Milestone 6 has no commit and progress is marked done. If preflight did surface a late fix, stage only that fix and commit with message "lint: fix preflight-surfaced issue in <file>".
 
@@ -465,21 +533,35 @@ Expected:
 
     go 1.25.3
 
-Add the tool directive:
+Add all three tool directives (run sequentially):
 
     go get -tool github.com/mirurobotics/gotools/cmd/miru@latest
+    go get -tool mvdan.cc/gofumpt
+    go get -tool github.com/golangci/golangci-lint/v2/cmd/golangci-lint
 
-Expected output: `go: added github.com/mirurobotics/gotools v<X.Y.Z>` plus a long list of `go: added <indirect>` lines. `go.mod` now contains a `tool ( ... )` block and a large `require` block. `go.sum` now exists (or has many new entries).
+Expected output per command: `go: added <module> v<X.Y.Z>` plus a long list of `go: added <indirect>` lines (the first command adds the most because gotools has ~250 transitive dependencies; the later two are mostly no-ops because their deps are already resolved). `go.mod` now contains a `tool ( ... )` block with three entries and a large `require` block. `go.sum` now exists and contains checksums for all three tools.
 
-Verify the directive is present:
+Verify all three directives are present:
 
-    grep -A 2 '^tool (' go.mod
+    grep -A 4 '^tool (' go.mod
 
 Expected:
 
     tool (
+        github.com/golangci/golangci-lint/v2/cmd/golangci-lint
         github.com/mirurobotics/gotools/cmd/miru
+        mvdan.cc/gofumpt
     )
+
+(Line order is alphabetized by Go; if your output shows a different order it is fine — only the set of entries matters.)
+
+Quick sanity check that each tool is callable:
+
+    go tool miru lint --help | head -3
+    go tool gofumpt --version
+    go tool golangci-lint --version
+
+Expected: each command prints its help/version without errors like `go: no such tool "..."`.
 
 Create the per-tool lint script:
 
@@ -487,7 +569,9 @@ Working directory: `/home/ben/miru/workbench3/docs`.
 
     mkdir -p tools/lint/scripts
 
-Then create `tools/lint/scripts/lint.sh` with the content shown in the Plan of Work, Milestone 1 section. Make it executable:
+Then create `tools/lint/scripts/lint.sh` with the content shown verbatim in the Plan of Work, Milestone 1 section. Use the Write tool (or a heredoc) to emit the exact bytes — including the shebang line, the `usage()` function, the `case` block, the `cd "${lint_dir}"` call, and the final `exec go tool miru lint --paths="${lint_dir}" ${FIX}` line. Do not substitute `--paths=.` even though that looks equivalent (see the warning in Plan of Work Milestone 1).
+
+Make it executable:
 
     chmod +x tools/lint/scripts/lint.sh
 
@@ -497,16 +581,22 @@ Verify the script at least parses:
 
 Expected: `OK`.
 
-Smoke-test it (this may still report violations — that is expected until Milestone 3 is complete):
+Verify the script uses the absolute path form (defense against a silent regression):
+
+    grep -n 'paths=' tools/lint/scripts/lint.sh
+
+Expected: one match, and the match should contain `"${lint_dir}"` (NOT a literal `.`).
+
+Smoke-test the script end-to-end — this may still report violations because Milestones 2 and 3 have not run yet, and that is fine:
 
     LINT_FIX=0 ./tools/lint/scripts/lint.sh || true
 
-Expected: the script runs, prints "Running custom linter on /home/ben/miru/workbench3/docs/tools/lint...", lists 15 violations, runs gofumpt and golangci-lint successfully, and exits non-zero. That non-zero is fine at this milestone; it proves the wiring works.
+Expected: the script runs, prints something like `Running custom linter on /home/ben/miru/workbench3/docs/tools/lint...`, lists the 15 custom-linter violations, then runs gofumpt (which flags 2 files needing formatting and short-circuits the pipeline), then exits non-zero. This non-zero exit is fine at this milestone; it proves the wiring works. If instead the output shows zero violations or `Running custom linter on ....` (literal dots), the `--paths` argument is wrong — fix the script before proceeding.
 
 Commit:
 
     git add tools/lint/go.mod tools/lint/go.sum tools/lint/scripts/lint.sh
-    git commit -m "lint: add gotools tool directive and per-tool lint script"
+    git commit -m "lint: add gotools tool directives and per-tool lint script"
 
 Verify:
 
@@ -518,13 +608,13 @@ Working directory: `/home/ben/miru/workbench3/docs`.
 
     LINT_FIX=1 ./tools/lint/scripts/lint.sh || true
 
-Expected: the script prints lines like `fixed: /home/ben/miru/workbench3/docs/tools/lint/main.go`, `fixed: .../rules_test.go`, `fixed: .../scanner.go`, then reports the remaining line-width violations (roughly 7), and exits non-zero. Still fine.
+Expected: the script prints lines like `fixed: /home/ben/miru/workbench3/docs/tools/lint/main.go`, `fixed: .../rules_test.go`, `fixed: .../scanner.go`, then lists the 7 remaining line-width violations, then runs gofumpt (which silently rewrites `rules_test.go` and `scanner.go`), then runs golangci-lint which reports 1 `errcheck` on `main.go:<N> defer f.Close()`. Exit status is non-zero. This is expected — Milestone 3 fixes the 8 remaining items.
 
 Verify the fixes took effect by inspecting the diff:
 
     git diff --stat tools/lint
 
-Expected: `main.go`, `rules_test.go`, `scanner.go` all show a non-zero line delta.
+Expected: `main.go`, `rules_test.go`, `scanner.go` all show non-zero line deltas. `rules.go` and `scanner_test.go` are unchanged.
 
 Run the unit tests:
 
@@ -535,7 +625,7 @@ Expected: `ok  	github.com/mirurobotics/docs/tools/lint	0.???s`.
 Commit:
 
     git add tools/lint/main.go tools/lint/rules_test.go tools/lint/scanner.go
-    git commit -m "lint(tools): auto-fix collapsible expressions and inlinable bodies"
+    git commit -m "lint(tools): auto-fix collapsible expressions, inlinable bodies, and gofumpt formatting"
 
 ### Milestone 3 commands
 
@@ -543,17 +633,16 @@ Working directory: `/home/ben/miru/workbench3/docs`.
 
     LINT_FIX=0 ./tools/lint/scripts/lint.sh 2>&1 | tee /tmp/docs-go-lint.txt
 
-Expected: ~7 "line is N columns wide" violations listed, exit non-zero.
+Expected: 7 "line is N columns wide" violations from the custom linter plus 1 `errcheck` on `main.go:<N> defer f.Close()` from golangci-lint, exit non-zero.
 
-For each violation, open the file, rewrite the flagged line per the strategies in Plan of Work Milestone 3, save, then rerun:
+For each violation, open the file, apply the corresponding fix per Plan of Work Milestone 3 (long-line wraps for the 7 custom-linter findings; `defer func() { _ = f.Close() }()` for the errcheck finding), save, then rerun:
 
     LINT_FIX=0 ./tools/lint/scripts/lint.sh
 
 Repeat until the output is:
 
     Running custom linter on /home/ben/miru/workbench3/docs/tools/lint...
-    0 violation(s) found in /home/ben/miru/workbench3/docs/tools/lint.
-    Running gofumpt...
+    Checking gofumpt...
     Running golangci-lint...
     0 issues.
 
@@ -568,7 +657,7 @@ Expected: `ok`.
 Commit:
 
     git add tools/lint/main.go tools/lint/rules_test.go tools/lint/scanner.go
-    git commit -m "lint(tools): manually wrap remaining long lines"
+    git commit -m "lint(tools): wrap long lines and fix f.Close errcheck"
 
 ### Milestone 4 commands
 
@@ -724,5 +813,9 @@ Acceptance criteria (observable behavior a reviewer or subagent can verify):
 - **Recovery from a mid-milestone failure.** If the process dies between edits and a commit, `git status` will show the in-progress changes. Re-run the milestone's commands; they are designed to be idempotent. If the working tree is corrupted, `git stash` the WIP and re-plan from the last clean commit.
 
 - **Failed `go tool miru lint` invocation with "tool not declared"** usually means the helper script was run from a directory outside the `tools/lint` module. The script already `cd`s into `${lint_dir}` — if editing it, keep that `cd`. If running `go tool miru lint` directly, first `cd` into `/home/ben/miru/workbench3/docs/tools/lint`.
+
+- **Failed `go tool miru lint` invocation with `go: no such tool "gofumpt"` or `"golangci-lint"`** means only the `miru` tool directive was added. Rerun `go get -tool mvdan.cc/gofumpt` and/or `go get -tool github.com/golangci/golangci-lint/v2/cmd/golangci-lint` from `/home/ben/miru/workbench3/docs/tools/lint/` to register the missing tool.
+
+- **Linter reports zero violations unexpectedly** (output starts with `Running custom linter on ....`, literal dots): the helper script is passing `--paths=.` instead of an absolute path. The custom linter has a quirk where `.` is treated as an unresolvable literal directory, and the scan silently produces no findings. Fix by ensuring the script uses `--paths="${lint_dir}"` (absolute). Re-verify with `grep 'paths=' /home/ben/miru/workbench3/docs/tools/lint/scripts/lint.sh` — the match must contain `${lint_dir}`, not `.`.
 
 - **Failed YAML parse in CI** after editing `.github/workflows/lint.yml` is caught locally by the `python3 -c "import yaml; yaml.safe_load(...)"` check in Milestone 5. Always run that check before committing.
