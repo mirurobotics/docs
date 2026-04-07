@@ -321,14 +321,11 @@ Inspect the diff to confirm auto-fixes landed:
 - `rules_test.go`: the five flagged test table entries (`triple dash not flagged`, `quadruple dash not flagged`, `single dash not flagged`, `no dashes`, `empty string`) are now single-line literals, and struct-field colons are aligned uniformly (gofumpt).
 - `scanner.go`: `NewScanner` and `LineNum` are one-line function bodies; the `findInlineCodeEnd` doc comment's backtick examples may have been rewritten slightly (gofumpt Unicode correction).
 
-Then run the tests to confirm nothing regressed:
+Then run the tests to confirm nothing regressed (from `docs/` root):
 
-        cd tools/lint
-        go test ./...
+        cd tools/lint && go test ./... && cd -
 
-Expected: `ok  	github.com/mirurobotics/docs/tools/lint	0.0??s`.
-
-Return to `docs/` root (`cd ..`).
+Expected: `ok  	github.com/mirurobotics/docs/tools/lint	0.0??s`, and cwd is returned to `docs/` via `cd -`.
 
 **Commit Milestone 2:** stage the modified `.go` files under `tools/lint/`, commit with message "lint(tools): auto-fix collapsible expressions, inlinable bodies, and gofumpt formatting".
 
