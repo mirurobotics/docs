@@ -38,8 +38,16 @@ jobs:
       - name: Ensure scripts are executable
         run: chmod +x scripts/lint.sh scripts/audit.sh tests/test-lint.sh
 
+      - name: Ensure tools/lint script is executable
+        run: chmod +x tools/lint/scripts/lint.sh
+
       - name: Run lint smoke tests
         run: pnpm run test:lint
+
+      - name: Run Go lint on tools/lint
+        env:
+          LINT_FIX: "0"
+        run: ./tools/lint/scripts/lint.sh
 
       - name: Run documentation lint
         run: ./scripts/lint.sh
