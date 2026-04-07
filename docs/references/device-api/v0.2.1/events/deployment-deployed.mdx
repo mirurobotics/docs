@@ -1,0 +1,88 @@
+---
+title: "deployment.deployed"
+description: "A deployment's config instances have been written to the device's filesystem."
+---
+
+Emitted when a deployment's config instances have been written to the device's filesystem and are available for consumption. Use this event to reload configuration, restart dependent services, or confirm that new configuration is live on the device.
+
+## Event Data
+
+<ResponseExample>
+```json Example
+{
+  "object": "event",
+  "id": 42,
+  "type": "deployment.deployed",
+  "occurred_at": "2026-03-10T12:00:00Z",
+  "data": {
+    "deployment_id": "dpl_123",
+    "release_id": "rls_123",
+    "status": "deployed",
+    "activity_status": "deployed",
+    "error_status": "none",
+    "target_status": "deployed",
+    "deployed_at": "2026-03-10T12:00:00Z"
+  }
+}
+```
+</ResponseExample>
+
+<ResponseField name="deployment_id" type="string" required>
+  ID of the deployment.
+</ResponseField>
+
+<ResponseField name="release_id" type="string" required>
+  ID of the release associated with this deployment.
+</ResponseField>
+
+<ResponseField name="status" type="enum<string>" required>
+  This status merges the 'activity_status' and 'error_status' fields, with error states taking precedence over activity states when errors are present. For example, if the activity status is 'deployed' but the error status is 'failed', the status is 'failed'. However, if the error status is 'none' and the activity status is 'deployed', the status is 'deployed'.
+
+  Available options: `drifted`, `staged`, `queued`, `deployed`, `removing`, `archived`, `failed`, `retrying`
+</ResponseField>
+
+<ResponseField name="activity_status" type="enum<string>" required>
+  Last known activity state of the deployment.
+
+  `drifted` means the device's configurations have drifted since this deployment was staged, and the deployment needs to be reviewed before it can be deployed.
+
+  `staged` means the deployment is ready to be deployed.
+
+  `queued` means the deployment's config instances are waiting to be received by the device and will be deployed as soon as the device is online.
+
+  `deployed` means the deployment's config instances are currently available for consumption on the device.
+
+  `removing` means the deployment's config instances are being removed from the device.
+
+  `archived` means the deployment is available for historical reference but cannot be deployed and is not active on the device.
+
+  Available options: `drifted`, `staged`, `queued`, `deployed`, `removing`, `archived`
+</ResponseField>
+
+<ResponseField name="error_status" type="enum<string>" required>
+  Last known error state of the deployment.
+
+  `none` means there are no errors.
+
+  `retrying` means an error has been encountered and the agent is retrying to reach the target status.
+
+  `failed` means a fatal error has been encountered; the deployment is archived and, if deployed, removed from the device.
+
+  Available options: `none`, `failed`, `retrying`
+</ResponseField>
+
+<ResponseField name="target_status" type="enum<string>" required>
+  Desired state of the deployment.
+
+  `staged` means the deployment is ready to be deployed.
+
+  `deployed` means all config instances in the deployment are available for consumption on the device.
+
+  `archived` means the deployment is available for historical reference but cannot be deployed and is not active on the device.
+
+  Available options: `staged`, `deployed`, `archived`
+</ResponseField>
+
+<ResponseField name="deployed_at" type="string<datetime>">
+  Timestamp of when the deployment was deployed.
+</ResponseField>

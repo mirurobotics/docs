@@ -9,6 +9,60 @@ import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 import { DeviceApiReleaseLinks } from '/snippets/components/api-links.jsx';
 
+# v0.2.1
+
+*April 7, 2026*
+
+The `v0.2.1` release adds real-time event streaming via Server-Sent Events (SSE). On-device applications can subscribe to a persistent event stream instead of polling for deployment status changes.
+
+<DeviceApiReleaseLinks version="v0.2.1" />
+
+## New endpoints
+
+<Dropdown title="Events">
+  - <GET /> `/events` — stream events via Server-Sent Events (SSE)
+</Dropdown>
+
+## Additive changes
+
+<Dropdown title="Event types">
+Two event types are emitted for deployment lifecycle transitions:
+
+- `deployment.deployed` — a deployment's config instances have been written to the device's filesystem
+- `deployment.removed` — a deployment's config instances have been removed from the device's filesystem
+</Dropdown>
+<Separator />
+<Dropdown title="Event replay">
+The SSE events endpoint supports cursor-based replay via the `?after=<id>` query parameter or the `Last-Event-ID` HTTP header, allowing clients to resume from a known position after reconnection.
+
+```bash
+# Resume from event ID 42 using the query parameter
+curl --no-buffer \
+  --unix-socket /run/miru/miru.sock \
+  --request GET \
+  --url http://localhost/v0.2/events?after=42
+
+# Or using the standard SSE reconnection header
+curl --no-buffer \
+  --unix-socket /run/miru/miru.sock \
+  --request GET \
+  --url http://localhost/v0.2/events \
+  --header "Last-Event-ID: 42"
+```
+</Dropdown>
+<Separator />
+<Dropdown title="Event filtering">
+SSE events can be filtered by type using the `?types=` query parameter.
+
+```bash
+# Only receive deployment.deployed events
+curl --no-buffer \
+  --unix-socket /run/miru/miru.sock \
+  --request GET \
+  --url http://localhost/v0.2/events?types=deployment.deployed
+```
+</Dropdown>
+
 # v0.2.0
 
 *March 13, 2026*
@@ -95,7 +149,7 @@ Furthermore, SDK `v0.3.0` marks the major version rollout of the `v0.2.0` Device
 
 <Steps>
   <Step title="Verify agent compatibility">
-    Ensure all devices in your fleet are running **Miru Agent v0.7.0** or later. See the [agent compatibility matrix](/docs/developers/device-api/versioning#agent-compatibility-matrix) for details.
+    Ensure all devices in your fleet are running **Miru Agent v0.7.0** or later. See the [agent compatibility matrix](/docs/developers/device-api/versions#agent-compatibility-matrix) for details.
   </Step>
 
   <Step title="Migrate breaking changes">

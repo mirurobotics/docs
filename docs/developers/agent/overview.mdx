@@ -8,7 +8,7 @@ The Miru Agent is a lightweight [systemd](https://en.wikipedia.org/wiki/Systemd)
 
 - **Syncs configurations** from the cloud to the local filesystem in real-time
 - **Manages device state**, providing real-time updates of the device's status and the currently deployed configurations
-- **Exposes a [REST API](/docs/developers/device-api/overview)** over a Unix socket for programmatic access by applications running on the same machine
+- **Exposes a local REST API** with event streaming over a Unix socket for programmatic access by applications running on the same machine
 
 ## Key benefits
 
@@ -18,6 +18,20 @@ The Miru Agent offers the following key benefits:
 - **Secure communication** - all communication is outbound-only via HTTPS or MQTT over TLS, ensuring secure and private communication
 - **Lightweight footprint** - our rust-based agent consumes minimal resources and may be configured to only run on demand (via socket activation) for further optimization
 - **Open-source** - the agent is open-source and available on [GitHub](https://github.com/mirurobotics/agent)
+
+## REST API
+
+Applications running on the same machine as the Miru Agent can access it via the agent's [Device API](/docs/developers/device-api/overview). Use it to fetch the currently deployed configurations, trigger a manual sync, check the agent's status, or read device metadata—without round-tripping to the cloud.
+
+In addition to request/response endpoints, the Miru Agent exposes a [Server-Sent Events (SSE) stream](/docs/developers/device-api/events) that pushes notifications to your application in real time.
+
+<Card
+  title="Device API"
+  icon="bot"
+  href="/docs/developers/device-api/overview"
+>
+  Learn more about the Device API for programmatic access to the Miru Agent.
+</Card>
 
 ## Supported platforms
 

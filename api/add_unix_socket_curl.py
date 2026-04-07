@@ -20,13 +20,29 @@ def get_http_method(operation):
     return None
 
 
-def build_curl_command(path, method, base_url):
+def is_streaming_operation(operation):
+    """Return True if the operation produces a text/event-stream response."""
+    responses = operation.get('responses', {})
+    for status, resp in responses.items():
+        content = resp.get('content', {}) if isinstance(resp, dict) else {}
+        if 'text/event-stream' in content:
+            return True
+    return False
+
+
+def build_curl_command(path, method, base_url, *, streaming=False):
     """Build a curl command using Unix socket with explicit flags."""
     full_url = f"{base_url}{path}"
     method_flag = method.upper()
 
-    # Return as a multi-line string that will be formatted as a YAML literal block
-    return f"curl --unix-socket /run/miru/miru.sock \\\n  --request {method_flag} \\\n  --url {full_url}"
+    parts = ["curl"]
+    if streaming:
+        parts.append("--no-buffer")
+    parts.append("--unix-socket /run/miru/miru.sock")
+    parts.append(f"--request {method_flag}")
+    parts.append(f"--url {full_url}")
+
+    return " \\\n  ".join(parts)
 
 
 def has_curl_example(code_samples):
@@ -95,7 +111,8 @@ def add_curl_examples_to_spec(spec_path):
                 operation['x-codeSamples'] = code_samples
 
             # Build curl command using base_url from spec servers
-            curl_cmd = build_curl_command(path, method, base_url)
+            streaming = is_streaming_operation(operation)
+            curl_cmd = build_curl_command(path, method, base_url, streaming=streaming)
             
             # Check if curl example already exists
             curl_index = None

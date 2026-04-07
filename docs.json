@@ -91,10 +91,10 @@
                 "pages": [
                   "docs/developers/agent/overview",
                   "docs/developers/agent/install",
+                  "docs/developers/agent/versions",
                   "docs/developers/agent/commands",
-                  "docs/developers/agent/architecture",
                   "docs/developers/agent/security",
-                  "docs/developers/agent/versions"
+                  "docs/developers/agent/architecture"
                 ]
               },
               {
@@ -117,8 +117,9 @@
                 "pages": [
                   "docs/developers/device-api/overview",
                   "docs/developers/device-api/sdks",
+                  "docs/developers/device-api/versions",
                   "docs/developers/device-api/authn",
-                  "docs/developers/device-api/versioning"
+                  "docs/developers/device-api/events"
                 ]
               },
               {
@@ -175,6 +176,82 @@
       {
         "product": "Device API Reference",
         "dropdowns": [
+          {
+            "dropdown": "v0.2.1",
+            "groups": [
+              {
+                "group": "Agent",
+                "openapi": {
+                  "source": "docs/references/device-api/v0.2.1/api.yaml",
+                  "directory": "docs/references/device-api/v0.2.1/endpoints"
+                },
+                "pages": [
+                  "GET /health",
+                  "GET /version"
+                ]
+              },
+              {
+                "group": "Deployments",
+                "openapi": {
+                  "source": "docs/references/device-api/v0.2.1/api.yaml",
+                  "directory": "docs/references/device-api/v0.2.1/endpoints"
+                },
+                "pages": [
+                  "GET /deployments/{deployment_id}",
+                  "GET /deployments/current"
+                ]
+              },
+              {
+                "group": "Device",
+                "openapi": {
+                  "source": "docs/references/device-api/v0.2.1/api.yaml",
+                  "directory": "docs/references/device-api/v0.2.1/endpoints"
+                },
+                "pages": [
+                  "GET /device",
+                  "POST /device/sync"
+                ]
+              },
+              {
+                "group": "Events",
+                "openapi": {
+                  "source": "docs/references/device-api/v0.2.1/api.yaml",
+                  "directory": "docs/references/device-api/v0.2.1/endpoints"
+                },
+                "pages": [
+                  {
+                    "group": "Event Types",
+                    "pages": [
+                      "docs/references/device-api/v0.2.1/events/deployment-deployed",
+                      "docs/references/device-api/v0.2.1/events/deployment-removed"
+                    ]
+                  },
+                  "GET /events"
+                ]
+              },
+              {
+                "group": "Git Commits",
+                "openapi": {
+                  "source": "docs/references/device-api/v0.2.1/api.yaml",
+                  "directory": "docs/references/device-api/v0.2.1/endpoints"
+                },
+                "pages": [
+                  "GET /git_commits/{git_commit_id}"
+                ]
+              },
+              {
+                "group": "Releases",
+                "openapi": {
+                  "source": "docs/references/device-api/v0.2.1/api.yaml",
+                  "directory": "docs/references/device-api/v0.2.1/endpoints"
+                },
+                "pages": [
+                  "GET /releases/{release_id}",
+                  "GET /releases/current"
+                ]
+              }
+            ]
+          },
           {
             "dropdown": "v0.2.0",
             "openapi": {
@@ -283,7 +360,7 @@
   "redirects": [
     {
       "source": "/docs/references/device-api/latest/:slug*",
-      "destination": "/docs/references/device-api/v0.2.0/:slug*"
+      "destination": "/docs/references/device-api/v0.2.1/:slug*"
     },
     {
       "source": "/docs/references/platform-api/latest/:slug*",

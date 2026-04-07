@@ -7,6 +7,7 @@ openapitools.json
 
 # virtual environments
 .venv/
+__pycache__/
 
 # images
 images/
