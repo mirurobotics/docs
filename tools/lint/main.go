@@ -12,9 +12,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	rules := []Rule{
-		NoDoubleDash{},
-	}
+	rules := []Rule{NoDoubleDash{}}
 
 	var allViolations []Violation
 	exitCode := 0
@@ -44,7 +42,7 @@ func lintFile(path string, rules []Rule) ([]Violation, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	scanner := NewScanner()
 	lineScanner := bufio.NewScanner(f)
@@ -52,8 +50,9 @@ func lintFile(path string, rules []Rule) ([]Violation, error) {
 
 	for lineScanner.Scan() {
 		spans := scanner.ScanLine(lineScanner.Text())
+		lineNum := scanner.LineNum()
 		for _, rule := range rules {
-			violations = append(violations, rule.Check(path, scanner.LineNum(), spans)...)
+			violations = append(violations, rule.Check(path, lineNum, spans)...)
 		}
 	}
 

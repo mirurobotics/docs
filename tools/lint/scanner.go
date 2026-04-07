@@ -3,7 +3,8 @@ package main
 import "strings"
 
 // ProseSpan represents a contiguous segment of prose text within a line.
-// StartCol is the 1-based byte offset of the span's first character in the original line.
+// StartCol is the 1-based byte offset of the span's first character in
+// the original line.
 type ProseSpan struct {
 	StartCol int
 	Text     string
@@ -27,14 +28,10 @@ type Scanner struct {
 }
 
 // NewScanner returns a scanner ready to process lines from the start of a file.
-func NewScanner() *Scanner {
-	return &Scanner{}
-}
+func NewScanner() *Scanner { return &Scanner{} }
 
 // LineNum returns the 1-based line number of the most recently scanned line.
-func (s *Scanner) LineNum() int {
-	return s.lineNum
-}
+func (s *Scanner) LineNum() int { return s.lineNum }
 
 // ScanLine processes the next line of input and returns the prose spans found
 // on that line. Returns nil if the entire line is excluded.
@@ -235,8 +232,8 @@ func findTagEnd(line string, pos int) int {
 }
 
 // findInlineCodeEnd returns the byte index just past the closing backtick(s)
-// of inline code starting at pos. Handles both single and double backtick
-// delimiters (` and ``).
+// of inline code starting at pos. Handles both single-backtick and
+// double-backtick inline code delimiters.
 func findInlineCodeEnd(line string, pos int) int {
 	// Count opening backticks
 	ticks := 0

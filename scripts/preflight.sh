@@ -8,6 +8,10 @@ echo "=== Lint Smoke Tests ==="
 pnpm run test:lint
 echo ""
 
+echo "=== Go Lint (tools/lint) ==="
+LINT_FIX=0 ./tools/lint/scripts/lint.sh
+echo ""
+
 echo "=== Lint ==="
 ./scripts/lint.sh
 echo ""
