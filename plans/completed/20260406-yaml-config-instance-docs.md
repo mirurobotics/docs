@@ -1,6 +1,6 @@
 ---
 title: Document YAML support for config instances
-status: active
+status: completed
 created: 2026-04-06
 owner: unassigned
 ---
@@ -93,14 +93,17 @@ Log anything unexpected as you go. Pre-seeded entries from planning:
 
 ## Outcomes & Retrospective
 
-*To be filled in after the PR merges. Leave blank until then.*
+Filled in 2026-04-06 at the close of implementation, before the PR merges. Update after merge if anything material changes.
 
-Suggested prompts to answer at retrospective time:
+**What shipped.** The `## File formats` section of `docs/learn/config-instances.mdx` now states that JSON and YAML are both supported, with a Mintlify `<Info>` callout pinning YAML to Miru Agent v0.7.1 or newer and linking to both the agent changelog and the agent versions reference page. The shared definition snippet `snippets/definitions/config-instance.mdx` is now format-agnostic ("stored as text files (JSON or YAML)"), resolving the long-standing contradiction with the existing YAML example snippet.
 
-- Did the user confirm v0.7.1 (see D1)? If not, what version did we ultimately ship with?
-- Did preflight pass on the first try, or did lint/audit/spell check flag anything that required a fix?
-- Did the follow-up research into TOML/CUE get filed? Link it here.
-- Was anything in this plan unclear to the implementer? If so, what should the next plan of this shape do differently?
+**Was D1 confirmed?** Yes, v0.7.1. The implementing user authorized v0.7.1 explicitly when delegating the work, matching the changelog and the `agent` repo's `v0.7.1` git tag. There was no v0.7.0 patch backport.
+
+**Did preflight pass on the first try?** Yes. `./scripts/preflight.sh` exited 0 on its first run with no lint, broken-link, or spell check failures. Acceptance grep checks (`coming soon` removal, `stored as JSON files` removal, `v0.7.1` presence inside an `<Info>` block) all passed without iteration.
+
+**TOML/CUE follow-up.** Not yet filed. The deferral is documented in Surprises & Discoveries S2 and Decision Log D2; a separate research note in `research/` should be opened to determine whether TOML and CUE are officially supported config instance formats.
+
+**Lessons.** Pre-seeding the Decision Log with a "needs confirmation" entry (D1) for the version discrepancy proved valuable — the implementer received the resolution as part of the task delegation rather than blocking on a round-trip with the user. The pre-seeded Surprises & Discoveries S2 (TOML/CUE out of scope) similarly prevented scope creep without forcing the implementer to rediscover and re-judge the question.
 
 
 ## Context and Orientation
