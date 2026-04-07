@@ -110,6 +110,11 @@ func TestNoDoubleDashIntegration(t *testing.T) {
 			wantCount: 0,
 		},
 		{
+			name:      "double dash inside 4-backtick code block not flagged",
+			content:   "---\ntitle: Test\n---\n\n````bash\nmiru --version\n````",
+			wantCount: 0,
+		},
+		{
 			name:      "double dash in inline code not flagged",
 			content:   "---\ntitle: Test\n---\n\nUse `--version` flag",
 			wantCount: 0,
