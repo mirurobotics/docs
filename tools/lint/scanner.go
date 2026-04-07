@@ -232,8 +232,8 @@ func findTagEnd(line string, pos int) int {
 }
 
 // findInlineCodeEnd returns the byte index just past the closing backtick(s)
-// of inline code starting at pos. Handles both single and double backtick
-// delimiters (` and “).
+// of inline code starting at pos. Handles both single-backtick and
+// double-backtick inline code delimiters.
 func findInlineCodeEnd(line string, pos int) int {
 	// Count opening backticks
 	ticks := 0
