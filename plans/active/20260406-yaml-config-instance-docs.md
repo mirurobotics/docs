@@ -52,9 +52,9 @@ All items are unchecked. Check them off (`- [x]`) and append an ISO timestamp as
 - [x] M1: Rewrite the "File formats" section in `docs/learn/config-instances.mdx`. (2026-04-06)
 - [x] M1: Verify the page renders under `pnpm dev` with no MDX error and navigate to `/learn/config-instances`. (2026-04-06 — verified via `./scripts/lint.sh` instead; dev server preview skipped per parent workflow.)
 - [x] M1: Commit M1. (2026-04-06)
-- [ ] M2: Update `snippets/definitions/config-instance.mdx` to be format-agnostic.
-- [ ] M2: Verify the definition renders inside `/learn/config-instances` with no regression.
-- [ ] M2: Commit M2.
+- [x] M2: Update `snippets/definitions/config-instance.mdx` to be format-agnostic. (2026-04-06)
+- [x] M2: Verify the definition renders inside `/learn/config-instances` with no regression. (2026-04-06 — verified via `./scripts/lint.sh` instead; dev server preview skipped per parent workflow.)
+- [x] M2: Commit M2. (2026-04-06)
 - [ ] M3: Verify `snippets/definitions/config-instance-example.mdx` is still correct and needs no edit.
 - [ ] M3: Verify `docs.json` does not need updating (no new pages added).
 - [ ] M3: Verify `cspell.json` accepts the words introduced by this plan (or add them if not).
