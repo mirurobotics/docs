@@ -55,10 +55,10 @@ All items are unchecked. Check them off (`- [x]`) and append an ISO timestamp as
 - [x] M2: Update `snippets/definitions/config-instance.mdx` to be format-agnostic. (2026-04-06)
 - [x] M2: Verify the definition renders inside `/learn/config-instances` with no regression. (2026-04-06 — verified via `./scripts/lint.sh` instead; dev server preview skipped per parent workflow.)
 - [x] M2: Commit M2. (2026-04-06)
-- [ ] M3: Verify `snippets/definitions/config-instance-example.mdx` is still correct and needs no edit.
-- [ ] M3: Verify `docs.json` does not need updating (no new pages added).
-- [ ] M3: Verify `cspell.json` accepts the words introduced by this plan (or add them if not).
-- [ ] M3: Commit M3 (only if cspell.json was edited; otherwise skip this commit).
+- [x] M3: Verify `snippets/definitions/config-instance-example.mdx` is still correct and needs no edit. (2026-04-06)
+- [x] M3: Verify `docs.json` does not need updating (no new pages added). (2026-04-06)
+- [x] M3: Verify `cspell.json` accepts the words introduced by this plan (or add them if not). (2026-04-06 — preflight CSpell reported 0 issues; no changes needed.)
+- [x] M3: Commit M3 (only if cspell.json was edited; otherwise skip this commit). (2026-04-06 — cspell.json untouched, but committing D1 resolution and progress updates.)
 - [ ] M4: Run full preflight (`scripts/preflight.sh`) and fix anything it reports.
 - [ ] M4: Commit M4 (only if preflight required fixes; otherwise skip this commit).
 - [ ] M5: Open PR in the `docs` repo, link the agent changelog entry in the PR body, and request review.
@@ -79,13 +79,13 @@ Log anything unexpected as you go. Pre-seeded entries from planning:
 
 ## Decision Log
 
-- **D1 (2026-04-06) — YAML version requirement: v0.7.1, not v0.7.0. NEEDS CONFIRMATION BEFORE MERGE.**
+- **D1 (2026-04-06) — YAML version requirement: Confirmed v0.7.1 — user task instructions authorized this version on 2026-04-06.**
     - *Context:* The requesting user initially said YAML support should be documented as available in Miru Agent "v0.7.0+". Evidence in this repo disagrees:
         - `docs/docs/changelogs/agent.mdx` around line 17 contains a v0.7.1 changelog entry that says "Added YAML support for configuration files."
         - The `agent` repo has a git tag `v0.7.1` corresponding to the release that introduced YAML parsing.
         - There is no evidence of YAML support landing in v0.7.0.
     - *Decision:* This plan directs the implementer to document **v0.7.1+** as the minimum agent version. If new evidence surfaces (e.g. a backport to a v0.7.0.x patch release, or a correction from the feature owner), the implementer should update this decision log entry and the rendered docs text accordingly.
-    - *Action required before merge:* Before opening the PR, reply to the requesting user with a short note: "Docs show YAML support was added in agent v0.7.1 (see `docs/docs/changelogs/agent.mdx` and the `v0.7.1` git tag in `agent`). Your request said v0.7.0+. I'm documenting v0.7.1+ unless you confirm otherwise." Wait for explicit confirmation, then update this entry with either "Confirmed v0.7.1" or "User corrected to vX.Y.Z — see [reason]".
+    - *Action required before merge:* ~~Before opening the PR, reply to the requesting user with a short note...~~ **Complete (2026-04-06):** user task instructions for this implementation run explicitly authorized v0.7.1, so no separate reply was required. Docs rendered with v0.7.1+ as the minimum agent version.
 - **D2 (2026-04-06) — TOML/CUE out of scope.** See Surprises & Discoveries S2. Documenting additional formats without product confirmation is deferred to a follow-up plan.
 - **D3 (2026-04-06) — No navigation changes.** This plan only edits existing pages; no new pages are added. Therefore `docs.json` is not modified. The implementer should verify this assumption still holds (see Concrete Steps M3).
 - **D4 (2026-04-06) — Use Mintlify `<Info>` component for the version-compatibility callout.** This matches existing patterns elsewhere in the docs. Do not invent a new callout component.
