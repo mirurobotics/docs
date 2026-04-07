@@ -59,12 +59,18 @@ func TestNoDoubleDash(t *testing.T) {
 			}
 			violations := rule.Check("test.mdx", 1, spans)
 			if len(violations) != tt.wantCount {
-				t.Errorf("expected %d violations, got %d: %v", tt.wantCount, len(violations), violations)
+				t.Errorf(
+					"expected %d violations, got %d: %v",
+					tt.wantCount, len(violations), violations,
+				)
 				return
 			}
 			for i, wantCol := range tt.wantCols {
 				if violations[i].Col != wantCol {
-					t.Errorf("violation %d: expected col %d, got %d", i, wantCol, violations[i].Col)
+					t.Errorf(
+						"violation %d: expected col %d, got %d",
+						i, wantCol, violations[i].Col,
+					)
 				}
 			}
 		})
@@ -114,8 +120,9 @@ func TestNoDoubleDashIntegration(t *testing.T) {
 			wantCount: 0,
 		},
 		{
-			name:      "double dash in JSX attribute not flagged",
-			content:   "---\ntitle: Test\n---\n\n<ParamField path=\"--version\" type=\"string\">",
+			name: "double dash in JSX attribute not flagged",
+			content: "---\ntitle: Test\n---\n\n" +
+				"<ParamField path=\"--version\" type=\"string\">",
 			wantCount: 0,
 		},
 		{
@@ -170,12 +177,18 @@ func TestNoDoubleDashIntegration(t *testing.T) {
 				}
 			}
 			if len(violations) != tt.wantCount {
-				t.Errorf("expected %d violations, got %d: %v", tt.wantCount, len(violations), violations)
+				t.Errorf(
+					"expected %d violations, got %d: %v",
+					tt.wantCount, len(violations), violations,
+				)
 				return
 			}
 			for i, wantLine := range tt.wantLines {
 				if violations[i].Line != wantLine {
-					t.Errorf("violation %d: expected line %d, got %d", i, wantLine, violations[i].Line)
+					t.Errorf(
+						"violation %d: expected line %d, got %d",
+						i, wantLine, violations[i].Line,
+					)
 				}
 			}
 		})
