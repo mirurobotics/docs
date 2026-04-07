@@ -1,13 +1,13 @@
 ---
 title: "Server-sent events"
-description: "Subscribe to real-time deployment lifecycle events from the Miru Agent via Server-Sent Events (SSE)."
+description: "Subscribe to real-time events from the Miru Agent via Server-Sent Events (SSE)."
 ---
 
 import { LinkNewTab } from '/snippets/components/link.jsx';
 import EventSdkSupport from '/snippets/device-api/event-sdk-support.mdx';
 import StabilityGuarantees from '/snippets/device-api/stability-guarantees.mdx';
 
-The Miru Agent exposes a Server-Sent Events (SSE) stream at the `/events` endpoint that pushes deployment lifecycle notifications in real time. Instead of polling the deployments endpoint, your application can open a single, long-lived connection and react to state changes as they happen.
+The Miru Agent exposes a Server-Sent Events (SSE) stream at the `/events` endpoint that pushes notifications to your application in real time. Instead of polling the deployments endpoint, your application can open a single, long-lived connection and react to state changes as they happen.
 
 ## Events vs polling
 
