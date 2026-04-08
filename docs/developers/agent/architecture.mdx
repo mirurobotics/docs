@@ -91,7 +91,7 @@ sequenceDiagram
     participant L as On-Device App
     participant A as Agent
 
-    L->>A: POST /sync
+    L->>A: POST /device/sync
     Note over A: Sync
     A-->>L: 200 OK (sync result)
 ```
