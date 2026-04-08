@@ -153,7 +153,7 @@ curl -fsSL https://raw.githubusercontent.com/mirurobotics/agent/main/scripts/ins
 ```
 
 <Info>
-  You'll need to replace `<path/to/miru-agent_<version>_<architecture>.deb>` with the actual path to the package.
+  You'll need to replace `/path/to/miru-agent_<version>_<architecture>.deb` with the actual path to the package.
 </Info>
 
 **Dashboard**
@@ -169,9 +169,9 @@ This will give you an installation command similar to the following.
 curl -fsSL https://raw.githubusercontent.com/mirurobotics/agent/main/scripts/install/install.sh | \
 env MIRU_ACTIVATION_TOKEN=<activation-token> \
 sh -s -- \
---from-pkg=</path/to/agent.deb>
+--from-pkg=/path/to/agent.deb
 ```
 
 <Warning>
-  Do not copy the example command below. It will not work because it lacks the required activation token. Instead, follow the steps listed above.
+  Do not copy the example command above. It will not work because it lacks the required activation token. Instead, follow the steps listed above.
 </Warning>
