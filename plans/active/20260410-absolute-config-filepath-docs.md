@@ -20,24 +20,25 @@ After this change, all Miru documentation accurately describes the new absolute 
 
 ## Progress
 
-- [ ] M1: Structural changes (docs.json versioning, new CLI v0.10 reference page)
-- [ ] M2: Getting-started and learn docs updates
-- [ ] M3: Changelog entries (CLI, Agent, Device API, Platform API)
-- [ ] M4: Developer docs updates (GH Actions, security, versions tables)
-- [ ] M5: Platform API spec and query-param docs updates
-- [ ] M6: Validation — grep for stale references
+- [x] M1: Structural changes (docs.json versioning, new CLI v0.10 reference page)
+- [x] M2: Getting-started and learn docs updates
+- [x] M3: Changelog entries (CLI, Agent, Device API, Platform API)
+- [x] M4: Developer docs updates (GH Actions, security, versions tables)
+- [x] M5: Platform API spec and query-param docs updates
+- [x] M6: Validation — grep for stale references
 
 ## Surprises & Discoveries
 
-Add entries as work proceeds.
+- The v0.9 CLI reference snippet (`snippets/references/cli/releases/create/schema-annotations.mdx`) intentionally retains `config_instances` references since it documents the old v0.9 behavior.
+- The Platform API spec had two additional `instance_filepath` example values in the list schemas response example (lines 2230, 2240) beyond what the plan's line references indicated — caught and updated during M5.
 
 ## Decision Log
 
-Add entries as work proceeds.
+No deviations from the plan were needed.
 
 ## Outcomes & Retrospective
 
-Summarize at completion.
+All 6 milestones completed. All 7 validation tests pass. No stale references remain outside of intentionally preserved v0.9 docs and changelog entries documenting the old behavior.
 
 ## Context and Orientation
 
