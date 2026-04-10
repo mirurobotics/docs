@@ -21,11 +21,9 @@ import {Framed} from '/snippets/components/framed.jsx';
 <ParamField path="file path" type="string">
   <ImmutableBadge />
 
-  The file path the config instance is deployed to relative to the `/srv/miru/config_instances` directory.
+  The absolute filesystem path where the config instance is written on the device.
 
-  A file path of `/v1/motion-control.json` deploys the config instance to `/srv/miru/config_instances/v1/motion-control.json`.
-
-  Examples: `/v1/motion-control.json`, `/safety.yaml`
+  Examples: `/srv/miru/configs/v1/motion-control.json`, `/srv/miru/configs/safety.yaml`
 </ParamField>
 
 <ParamField path="config schema" type="Config Schema">

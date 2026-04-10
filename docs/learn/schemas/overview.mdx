@@ -60,13 +60,13 @@ import AgentYamlSupport from '/snippets/agent/yaml-support.mdx';
 <ParamField path="instance file path" type="string">
   <ImmutableBadge />
 
-  The instance file path is the file path to deploy config instances (for this schema) on a device, relative to the `/srv/miru/config_instances` directory.
+  The instance file path is the absolute filesystem path where config instances (for this schema) are written on the device.
 
   Instance file paths control the type of file that config instances are deployed as. Currently, JSON (`.json`) and YAML (`.yaml`, `.yml`) are supported.
 
-  The default instance file path for a schema is `{config-type-slug}.json`, which deploys config instances to `/srv/miru/config_instances/{config-type-slug}.json`.
+  The default instance file path is `/srv/miru/configs/{config-type-slug}.json`.
 
-  Examples: `/v1/mobility.json`, `/config/safety.yaml`
+  Examples: `/srv/miru/configs/v1/mobility.json`, `/srv/miru/configs/safety.yaml`
 
   <AgentYamlSupport />
 </ParamField>
