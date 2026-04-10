@@ -9,6 +9,14 @@ import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 import { PlatformApiReleaseLinks } from '/snippets/components/api-links.jsx';
 
+# Config filepath change
+
+*Unreleased*
+
+The `instance_filepath` field on config schemas and the `filepath` field on config instances now contain absolute filesystem paths (e.g., `/srv/miru/configs/v1/motion-control.json`). Previously, these fields contained paths relative to `/srv/miru/config_instances`. No new API version is required — the field type and name are unchanged.
+
+---
+
 # 2026-03-09.tetons
 
 *March 13, 2026*

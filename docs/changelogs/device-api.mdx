@@ -9,6 +9,44 @@ import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 import { DeviceApiReleaseLinks } from '/snippets/components/api-links.jsx';
 
+# v0.3.0
+
+*Unreleased*
+
+The `v0.3.0` release switches config instance filepaths from relative paths to absolute filesystem paths and adds new single-resource GET endpoints.
+
+<DeviceApiReleaseLinks version="v0.3.0" />
+
+## New endpoints
+
+<Dropdown title="Deployments">
+  - <GET /> `/deployments/{deployment_id}` — get a deployment by ID
+</Dropdown>
+<Separator />
+<Dropdown title="Releases">
+  - <GET /> `/releases/{release_id}` — get a release by ID
+</Dropdown>
+<Separator />
+<Dropdown title="Git commits">
+  - <GET /> `/git_commits/{git_commit_id}` — get a git commit by ID
+</Dropdown>
+
+## Breaking changes
+
+<Dropdown title="Absolute config instance filepaths">
+The `filepath` field on config instances is now an absolute filesystem path (e.g., `/srv/miru/configs/mobility.json`). In previous API versions, this field contained a path relative to `/srv/miru/config_instances`.
+
+Update any on-device code that joins filepaths to a base directory — the filepath is now usable as-is.
+</Dropdown>
+
+## Additive changes
+
+<Dropdown title="YAML config instance format">
+The `format` field on config instances now includes `yaml` as a valid value alongside `json`.
+</Dropdown>
+
+---
+
 # v0.2.1
 
 *April 7, 2026*

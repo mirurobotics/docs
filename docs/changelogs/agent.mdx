@@ -4,6 +4,29 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.8.0
+
+*Unreleased*
+
+`v0.8.0` switches the Miru Agent to absolute config instance filepaths, replaces the staging-directory deployment model with per-file transactional writes, and upgrades to Device API v0.3.0.
+
+[Device API v0.3.0 changelog »](/docs/changelogs/device-api#v0-3-0)
+
+## Breaking changes
+
+- Config instance filepaths must be absolute paths (e.g., `/srv/miru/configs/mobility.json`). Relative paths are rejected with a terminal deployment failure.
+- Removed `ProtectSystem=strict` and `ProtectHome=true` from the default systemd unit to support writing config files to arbitrary absolute paths. An opt-in [`lockdown.conf.example`](https://github.com/mirurobotics/agent/blob/main/build/debian/lockdown.conf.example) drop-in is provided for operators who want to re-enable filesystem sandboxing.
+- Upgraded to Device API `v0.3.0`, visit the [v0.3.0 changelog](/docs/changelogs/device-api#v0-3-0) for more details
+
+## Features
+
+- Config instance deployments are now written using per-file atomic writes with snapshot-based rollback. If any file fails to write, all previously written files in the deployment are restored to their prior state.
+- Deployments being removed now transition through a `Removing` intermediate status before archival
+- Config instance files are now deleted from disk when a deployment is removed (previously only the deployment state was updated)
+- Operator-friendly error messages for filesystem permission errors (EACCES) and read-only filesystem errors (EROFS)
+
+---
+
 # v0.7.1
 
 *April 7, 2026*
