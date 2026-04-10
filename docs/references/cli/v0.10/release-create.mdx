@@ -1,0 +1,57 @@
+---
+title: "Create"
+---
+import Usage from "/snippets/references/cli/releases/create/usage.mdx";
+import Flags from "/snippets/references/cli/releases/create/flags.mdx";
+import Annotations from "/snippets/references/cli/v0.10/releases/create/schema-annotations.mdx";
+import CuePackages from "/snippets/references/cli/releases/create/cue-packages.mdx";
+import PushNewSchemas from "/snippets/references/cli/releases/create/new-schemas.mdx";
+import PushExistingSchemas from "/snippets/references/cli/releases/create/existing-schemas.mdx";
+import Scopes from "/snippets/references/cli/releases/create/scopes.mdx";
+
+Create a release along with its associated git commit and schemas in Miru. 
+
+Both the git commit and the schemas associated with the release are created idempotently. If the git commit does not yet exist in Miru, it is created. If it already exists, it is not recreated and no error is returned.
+
+Similarly, if the provided schemas do not yet exist in Miru, they are created. If they already exist, they are not recreated and no error is returned.
+
+Git commits are identified by their SHA while schemas are identified by their content. Schemas with equivalent content are considered identical in Miru (even if the comments, spacing, or other formatting is different).
+
+For a more detailed guide on creating releases, visit the [create releases](/docs/learn/releases/create) documentation.
+
+### Requirements
+
+- The release's config schemas must be committed to a local Git repository
+- The schemas must be annotated with their config types (see [annotations](#schema-annotations) below)
+- The Git repository must have a remote URL (GitHub, GitLab, Bitbucket, etc.) configured
+
+### Usage
+
+<Usage />
+
+**Flags**
+
+<Flags />
+
+### API key scopes
+
+<Scopes />
+
+### Schema Annotations
+
+<Annotations />
+
+### CUE packages
+
+<CuePackages />
+
+### Examples
+
+<Tabs>
+  <Tab title="New Schemas">
+    <PushNewSchemas />
+  </Tab>
+  <Tab title="Existing Schemas">
+    <PushExistingSchemas />
+  </Tab>
+</Tabs>

@@ -164,11 +164,27 @@
       },
       {
         "product": "CLI Reference",
-        "groups": [
+        "dropdowns": [
           {
-            "group": "Releases",
-            "pages": [
-              "docs/references/cli/release-create"
+            "dropdown": "v0.10",
+            "groups": [
+              {
+                "group": "Releases",
+                "pages": [
+                  "docs/references/cli/v0.10/release-create"
+                ]
+              }
+            ]
+          },
+          {
+            "dropdown": "v0.9",
+            "groups": [
+              {
+                "group": "Releases",
+                "pages": [
+                  "docs/references/cli/release-create"
+                ]
+              }
             ]
           }
         ]
@@ -176,6 +192,13 @@
       {
         "product": "Device API Reference",
         "dropdowns": [
+          {
+            "dropdown": "v0.3.0",
+            "openapi": {
+              "source": "docs/references/device-api/v0.3.0/api.yaml",
+              "directory": "docs/references/device-api/v0.3.0/endpoints"
+            }
+          },
           {
             "dropdown": "v0.2.1",
             "groups": [
@@ -358,6 +381,10 @@
     "twitter:image": "/favicon-black.svg"
   },
   "redirects": [
+    {
+      "source": "/docs/references/cli/latest/:slug*",
+      "destination": "/docs/references/cli/v0.10/:slug*"
+    },
     {
       "source": "/docs/references/device-api/latest/:slug*",
       "destination": "/docs/references/device-api/v0.2.1/:slug*"
