@@ -1,0 +1,30 @@
+openapi: 3.0.3
+info:
+  title: Miru Agent API
+  description: The API between the Miru Agent and any external client living on the
+    same device as the Miru Agent
+  version: v0.3
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  x-release-version: v0.3.0
+servers:
+  - url: http://localhost/v0.3
+    description: Unix socket at /run/miru/miru.sock
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Get health
+      description: Returns the health status of the agent.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
