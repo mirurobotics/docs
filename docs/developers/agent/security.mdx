@@ -106,15 +106,18 @@ You can find the agent's service unit file in the [/build/debian/miru.service](h
 
 **Filesystem restrictions**
 
-The root filesystem is mounted read-only (`ProtectSystem=strict`). The agent can only write to three specific directories:
+By default, the agent's systemd unit does not restrict filesystem access beyond standard Unix permissions. The agent writes config instance files to absolute paths specified by the platform, so it needs write access to those target directories.
+
+For operators who want stricter confinement, the agent ships a [`lockdown.conf.example`](https://github.com/mirurobotics/agent/blob/main/build/debian/lockdown.conf.example) systemd drop-in that re-enables `ProtectSystem=strict`, `ProtectHome=true`, and configurable `ReadWritePaths`. Copy it to `/etc/systemd/system/miru.service.d/lockdown.conf` and adjust `ReadWritePaths` to include the directories your config instance filepaths target.
+
+The agent always requires write access to these internal directories:
 
 | Path | Purpose |
 |------|---------|
 | `/var/lib/miru` | Agent state / credentials (internal only) |
 | `/var/log/miru` | Log files (internal only) |
-| `/srv/miru` | Deployed configuration files |
 
-Home directories are inaccessible (`ProtectHome=true`), and the agent receives a private `/tmp` (`PrivateTmp=true`).
+The agent receives a private `/tmp` (`PrivateTmp=true`).
 
 **Kernel isolation**
 
