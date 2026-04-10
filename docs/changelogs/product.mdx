@@ -11,6 +11,97 @@ import { Separator } from '/snippets/components/separator.jsx'
 
 <div className="changelog-page">
 
+<Update label="April 10, 2026">
+    ## Compare Devices
+
+    You can now compare the configurations across any two devices to understand
+    exactly what's different between them. Open the Compare tab in the
+    sidebar, or select two devices directly on the Devices page and hit
+    Compare.
+
+    - **Summary at a glance:** See the total number of differences, how many
+      files changed, and expand into a per-file breakdown without opening each
+      one
+    - **Inline diffs:** Expand any configuration file to see highlighted diffs
+      with additions, modifications, and deletions color-coded inline
+    - **Select deployments:** Each device defaults to its current deployment,
+      but you can switch to any other deployment or compare two deployments on
+      the same device
+    - **Shareable URLs:** Your selections are persisted in the URL, so you can
+      share a comparison with your team
+
+    <LazyVideo
+        alt="Screen recording of comparing devices"
+        className="aspect-video rounded-xl"
+        src="https://assets.mirurobotics.com/docs/changelog/26-10-04/compare-devices.mp4"
+    />
+
+    ### YAML Support
+
+    You can now edit and view YAML configurations anywhere in the platform.
+    The config editor and viewer support YAML alongside JSON, and diffs are
+    YAML-aware, so changes are detected at the key and value levels instead of
+    as raw text. This gives you more accurate, meaningful comparisons across
+    deployments.
+
+    <Framed 
+        image="https://assets.mirurobotics.com/docs/changelog/26-10-04/yaml-support.png"
+        borderWidth="0px"
+        innerRadius="8px"
+    />
+
+    ### Agent SSE
+
+    The Miru Agent now exposes a real-time event stream over Server-Sent
+    Events. Instead of polling the Device API for changes, your application can
+    open a single persistent connection to the `/events` endpoint and get
+    notified the moment a deployment lands on the device or is removed.
+
+    {/* TODO: Add Agent SSE image */}
+
+    - **No more polling:** React instantly when a deployment's configs are
+      written to the device (`deployment.deployed`) or archived and cleaned up
+      (`deployment.removed`)
+    - **Cursor-based replay:** Reconnect from where you left off using the last
+      event ID, so you never miss an event
+    - **Type filtering:** Subscribe only to the event types you care about
+      instead of processing everything
+
+    <Framed 
+        image="https://assets.mirurobotics.com/docs/changelog/26-10-04/agent-sse.png"
+        borderWidth="0px"
+        innerRadius="8px"
+    />
+
+    [Read about Agent SSE »](/docs/developers/device-api/events)
+
+    <Separator />
+
+    <Dropdown title="Improvements">
+        <DropdownItem>
+            **Tooltips on disabled selection actions:** Disabled bulk actions in 
+            list views now show tooltips explaining why they're unavailable.
+        </DropdownItem>
+        <DropdownItem>
+            **Clearer whole-file diffs:** Added and removed config files now render 
+            as full-file changes with more consistent styling and badges.
+        </DropdownItem>
+    </Dropdown>
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+        <DropdownItem>
+            **Devices without a current release:** Devices with no current release 
+            now load correctly in overview and staging-related flows.
+        </DropdownItem>
+        <DropdownItem>
+            **Diff rendering collisions:** Array diffs are now more reliable when 
+            an item is deleted and added at the same index.
+        </DropdownItem>
+    </Dropdown>
+</Update>
+
 <Update label="March 23, 2026">
     ## Device Audit Trail
 
