@@ -1369,9 +1369,8 @@ components:
           description: The name of the config type.
         filepath:
           type: string
-          example: /v1/motion-control.json
-          description: The file path to deploy the config instance relative to `/srv/miru/config_instances`.
-            `v1/motion-control.json` would deploy to `/srv/miru/config_instances/v1/motion-control.json`.
+          example: /srv/miru/configs/v1/motion-control.json
+          description: The absolute filesystem path where this config instance is written.
         created_at:
           type: string
           format: date-time
@@ -1483,9 +1482,8 @@ components:
           description: The name of the config type.
         instance_filepath:
           type: string
-          description: The file path to deploy the config instance relative to `/srv/miru/config_instances`.
-            `v1/motion-control.json` would deploy to `/srv/miru/config_instances/v1/motion-control.json`.
-          example: /v1/motion-control.json
+          description: The absolute filesystem path where config instances for this schema are written.
+          example: /srv/miru/configs/v1/motion-control.json
         created_at:
           type: string
           format: date-time
@@ -1585,7 +1583,7 @@ components:
         id: cfg_sch_123
         digest: sha256:1234567890
         config_type_name: Motion Control
-        instance_filepath: /v1/motion-control.json
+        instance_filepath: /srv/miru/configs/v1/motion-control.json
         created_at: '2021-01-01T00:00:00Z'
         updated_at: '2021-01-01T00:00:00Z'
         config_type_id: cfg_typ_123
@@ -2229,7 +2227,7 @@ components:
               id: cfg_sch_123
               digest: sha256:1234567890
               config_type_name: Motion Control
-              instance_filepath: /v1/motion-control.json
+              instance_filepath: /srv/miru/configs/v1/motion-control.json
               created_at: '2021-01-01T00:00:00Z'
               updated_at: '2021-01-01T00:00:00Z'
               config_type_id: cfg_typ_123
@@ -2239,7 +2237,7 @@ components:
               id: cfg_sch_124
               digest: sha256:1234567890
               config_type_name: Localization
-              instance_filepath: /v1/localization.json
+              instance_filepath: /srv/miru/configs/v1/localization.json
               created_at: '2021-01-01T00:00:00Z'
               updated_at: '2021-01-01T00:00:00Z'
               config_type_id: cfg_typ_124
