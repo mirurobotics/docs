@@ -6,7 +6,7 @@ This page covers the Miru Agent's default file system permissions, how to grant 
 
 ## Default Permissions
 
-During installation, the debian package creates a `miru` system user and group with no login shell. The agent process runs as `miru:miru` under systemd.
+During installation, the `miru` system user and group are created with no login shell. The agent process runs as `miru:miru` under systemd.
 
 By default, the agent creates and owns the following directories:
 
@@ -21,6 +21,10 @@ The first two directories are only for internal use by the agent.
 The third directory is the default location for deploying config instances--deploying to any path inside `/srv/miru` is supported out-of-the-box, no additional configuration required.
 
 ## Custom File Paths
+
+<Warning>
+  You must use Miru Agent [v0.8.0](/docs/changelogs/agent#v0-8-0) or later to deploy configurations to a path that does not begin with `/srv/miru/config_instances/`.
+</Warning>
 
 The Miru Agent supports writing config instances to arbitrary file system paths. Some examples include:
 

@@ -91,9 +91,9 @@
                 "pages": [
                   "docs/developers/agent/overview",
                   "docs/developers/agent/install",
+                  "docs/developers/agent/file-permissions",
                   "docs/developers/agent/versions",
                   "docs/developers/agent/commands",
-                  "docs/developers/agent/file-permissions",
                   "docs/developers/agent/security",
                   "docs/developers/agent/architecture"
                 ]
@@ -165,27 +165,11 @@
       },
       {
         "product": "CLI Reference",
-        "dropdowns": [
+        "groups": [
           {
-            "dropdown": "v0.10",
-            "groups": [
-              {
-                "group": "Releases",
-                "pages": [
-                  "docs/references/cli/v0.10/release-create"
-                ]
-              }
-            ]
-          },
-          {
-            "dropdown": "v0.9",
-            "groups": [
-              {
-                "group": "Releases",
-                "pages": [
-                  "docs/references/cli/release-create"
-                ]
-              }
+            "group": "Releases",
+            "pages": [
+              "docs/references/cli/release-create"
             ]
           }
         ]
@@ -375,10 +359,6 @@
     "twitter:image": "/favicon-black.svg"
   },
   "redirects": [
-    {
-      "source": "/docs/references/cli/latest/:slug*",
-      "destination": "/docs/references/cli/v0.10/:slug*"
-    },
     {
       "source": "/docs/references/device-api/latest/:slug*",
       "destination": "/docs/references/device-api/v0.2.1/:slug*"
