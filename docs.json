@@ -94,6 +94,7 @@
                   "docs/developers/agent/versions",
                   "docs/developers/agent/commands",
                   "docs/developers/agent/security",
+                  "docs/developers/agent/file-system-permissions",
                   "docs/developers/agent/architecture"
                 ]
               },
