@@ -93,8 +93,8 @@
                   "docs/developers/agent/install",
                   "docs/developers/agent/versions",
                   "docs/developers/agent/commands",
+                  "docs/developers/agent/file-permissions",
                   "docs/developers/agent/security",
-                  "docs/developers/agent/file-system-permissions",
                   "docs/developers/agent/architecture"
                 ]
               },
@@ -193,13 +193,6 @@
       {
         "product": "Device API Reference",
         "dropdowns": [
-          {
-            "dropdown": "v0.3.0",
-            "openapi": {
-              "source": "docs/references/device-api/v0.3.0/api.yaml",
-              "directory": "docs/references/device-api/v0.3.0/endpoints"
-            }
-          },
           {
             "dropdown": "v0.2.1",
             "groups": [

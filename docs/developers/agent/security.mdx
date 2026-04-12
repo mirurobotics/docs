@@ -92,30 +92,17 @@ This prevents lateral access between devices. Even if two devices run the same a
 
 ## Process sandboxing
 
-The agent runs as a [systemd](https://en.wikipedia.org/wiki/Systemd) service with extensive hardening directives that restrict what the process can access, even if the application code is compromised. 
+The agent runs as a [systemd](https://en.wikipedia.org/wiki/Systemd) service with extensive hardening directives that restrict what the process can access. 
 
-**Dedicated service account**
+**Dedicated user**
 
 The agent runs as an unprivileged `miru` system user and group. The user has no login shell (`/bin/false`) and cannot be used for interactive access.
 
-You can find the agent's service unit file in the [/build/debian/miru.service](https://github.com/mirurobotics/agent/blob/main/build/debian/miru.service) file in the agent repository.
+You can find the agent's service unit file on [GitHub](https://github.com/mirurobotics/agent/blob/main/build/debian/miru.service) in the agent repository.
 
 **No privilege escalation**
 
 `NoNewPrivileges` is enabled, preventing the process from gaining additional privileges through setuid binaries or other mechanisms.
-
-**Filesystem restrictions**
-
-The agent's systemd unit enables `ProtectSystem=strict`, making the entire filesystem read-only except for paths listed in `ReadWritePaths`. The agent writes config instance files to absolute paths specified by the platform, so it needs write access to those target directories. If your config instances target paths outside the defaults, see [File System Permissions](/docs/developers/agent/file-system-permissions) for instructions on granting access.
-
-The agent always requires write access to these internal directories:
-
-| Path | Purpose |
-|------|---------|
-| `/var/lib/miru` | Agent state / credentials (internal only) |
-| `/var/log/miru` | Log files (internal only) |
-
-The agent receives a private `/tmp` (`PrivateTmp=true`).
 
 **Kernel isolation**
 
