@@ -106,9 +106,7 @@ You can find the agent's service unit file in the [/build/debian/miru.service](h
 
 **Filesystem restrictions**
 
-The agent's systemd unit restricts filesystem access using `ProtectSystem=strict`, which makes the entire filesystem read-only except for explicitly allowed paths. The agent writes config instance files to absolute paths specified by the platform, so it needs write access to those target directories.
-
-The agent's systemd unit enables `ProtectSystem=strict`, making the entire filesystem read-only except for paths listed in `ReadWritePaths`. If your config instances target paths outside the defaults, see [File System Permissions](/docs/developers/agent/file-system-permissions) for instructions on granting access.
+The agent's systemd unit enables `ProtectSystem=strict`, making the entire filesystem read-only except for paths listed in `ReadWritePaths`. The agent writes config instance files to absolute paths specified by the platform, so it needs write access to those target directories. If your config instances target paths outside the defaults, see [File System Permissions](/docs/developers/agent/file-system-permissions) for instructions on granting access.
 
 The agent always requires write access to these internal directories:
 
