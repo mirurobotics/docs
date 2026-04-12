@@ -8,7 +8,7 @@ description: "Changelog and migration steps for the Miru CLI"
 
 *Unreleased*
 
-`v0.10.0` requires config schema `instance_filepath` annotations to be absolute filesystem paths, aligning the CLI with the new absolute-path model used by Agent v0.8.0 and the platform.
+CLI `v0.10.0` specifies config instance file paths as an absolute path, allowing you to place config instances anywhere on the filesystem. File paths which do not live in `/srv/miru/config_instances/` require Miru Agent [v0.8.0](/docs/changelogs/agent#v0-8-0).
 
 ## Breaking changes
 
@@ -16,19 +16,33 @@ description: "Changelog and migration steps for the Miru CLI"
 
 The `instance_filepath` annotation must now be an absolute filesystem path. Relative paths are rejected by the backend.
 
-The default instance file path changed from `{config-type-slug}.json` to `/srv/miru/configs/{config-type-slug}.json`.
 
 Update all schema annotations:
 
 ```diff
 # JSON Schema
 - x-miru-instance-filepath: "mobility.json"
-+ x-miru-instance-filepath: "/srv/miru/configs/mobility.json"
++ x-miru-instance-filepath: "/srv/miru/config_instances/mobility.json"
 
 # CUE
 - @miru(instance_filepath="mobility.json")
-+ @miru(instance_filepath="/srv/miru/configs/mobility.json")
++ @miru(instance_filepath="/srv/miru/config_instances/mobility.json")
 ```
+
+**Default instance file path**
+
+The default instance file path has been updated from `{config-type-slug}.json` (which previously pointed to `/srv/miru/config_instances/{config-type-slug}.json`) to `/srv/miru/configs/{config-type-slug}.json`.
+
+## Fixes
+
+- Don't persist login tokens to disk until they've been successfully validated
+- Add missing out-of-bounds check in the create schema pipeline
+- Prevent double-close panic in async writer
+
+## Improvments
+
+- Improve performance of populating setting defaults to disk
+- Persist credentials with more restricted filesystem permissions
 
 ---
 
