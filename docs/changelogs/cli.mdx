@@ -4,6 +4,8 @@ mode: "center"
 description: "Changelog and migration steps for the Miru CLI"
 ---
 
+import { Dropdown } from '/snippets/components/api-dropdown.jsx';
+
 # v0.10.0
 
 *Unreleased*
@@ -12,12 +14,9 @@ CLI `v0.10.0` specifies config instance file paths as an absolute path, allowing
 
 ## Breaking changes
 
-**Absolute instance file paths**
+<Dropdown title="Absolute instance file paths">
 
-The `instance_filepath` annotation must now be an absolute filesystem path. Relative paths are rejected by the backend.
-
-
-Update all schema annotations:
+The `instance_filepath` annotation has been updated to be an absolute filesystem path instead of a relative path to `/srv/miru/config_instances/`. Update all schema annotations:
 
 ```diff
 # JSON Schema
@@ -29,9 +28,13 @@ Update all schema annotations:
 + @miru(instance_filepath="/srv/miru/config_instances/mobility.json")
 ```
 
-**Default instance file path**
+</Dropdown>
 
-The default instance file path has been updated from `{config-type-slug}.json` (which previously pointed to `/srv/miru/config_instances/{config-type-slug}.json`) to `/srv/miru/configs/{config-type-slug}.json`.
+<Dropdown title="Default instance file path">
+
+The default instance file path has been updated from `/srv/miru/config_instances/{config-type-slug}.json` to `/srv/miru/configs/{config-type-slug}.json`.
+
+</Dropdown>
 
 ## Fixes
 
