@@ -85,7 +85,7 @@ First, download the script to your current working directory using `curl`.
 
 ```bash
 curl -fsSL -o ./check-miru-access.sh \
-  https://raw.githubusercontent.com/mirurobotics/docs/blob/main/pub/scripts/agent/check-miru-access.sh
+  https://raw.githubusercontent.com/mirurobotics/docs/main/pub/scripts/agent/check-miru-access.sh
 ```
 
 Verify the script's contents with `less`.
@@ -146,7 +146,7 @@ The final line is `FINAL RESULT: PASS` or `FINAL RESULT: FAIL`.
     $ ./check-miru-access.sh /var/lib/myapp/configs/mobility.json
 
     Permission checks for: /var/lib/myapp/configs/mobility.json
-    Note: target file does not exist yet; skipping file checks.
+    Note: target file is not visible to this user (missing or not traversable); skipping file checks.
 
     | Target Type | Read | Write | Execute | Path
     | ----------- | ---- | ----- | ------- | ----

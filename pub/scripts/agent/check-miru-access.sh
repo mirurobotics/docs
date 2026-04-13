@@ -139,12 +139,16 @@ else
 			exit 2
 		fi
 		_tmpscript="$(mktemp)"
-		trap 'rm -f "$_tmpscript"' EXIT
 		printf '%s\n' "$_SELF_CONTENT" > "$_tmpscript"
 		chmod 644 "$_tmpscript"
+		# Open fd, then delete file so it's cleaned up even though exec
+		# replaces the process (EXIT traps don't fire after exec).
+		exec {_tmpfd}<"$_tmpscript"
+		rm -f "$_tmpscript"
+		export _CHECK_ACCESS_REEXEC=1
 		exec sudo -u "$target_user" \
-			_CHECK_ACCESS_REEXEC=1 \
-			bash -s -- --user "$target_user" "$target_path" < "$_tmpscript"
+			--preserve-env=_CHECK_ACCESS_REEXEC \
+			bash -s -- --user "$target_user" "$target_path" <&"$_tmpfd"
 	fi
 fi
 
