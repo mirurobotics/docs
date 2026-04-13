@@ -27,30 +27,21 @@ func parseSingleImport(lineNum int, line string) *ParsedImport {
 	if !strings.HasPrefix(line, "import ") {
 		return nil
 	}
-	rest := strings.TrimPrefix(line, "import ")
-	rest = strings.TrimLeft(rest, " \t")
+	rest := strings.TrimLeft(strings.TrimPrefix(line, "import "), " \t")
 
 	var names []ImportedName
-	var isNamed bool
-
 	if strings.HasPrefix(rest, "{") {
-		// Named import: import { A, B } from '/path'
-		isNamed = true
 		end := strings.Index(rest, "}")
 		if end < 0 {
 			return nil
 		}
-		bracketContent := rest[1:end]
-		for _, part := range strings.Split(bracketContent, ",") {
-			name := strings.TrimSpace(part)
-			if name == "" {
-				continue
+		for _, part := range strings.Split(rest[1:end], ",") {
+			if name := strings.TrimSpace(part); name != "" {
+				names = append(names, ImportedName{Name: name, IsNamed: true})
 			}
-			names = append(names, ImportedName{Name: name, IsNamed: true})
 		}
 		rest = rest[end+1:]
 	} else {
-		// Default import: import Name from '/path'
 		fromIdx := strings.Index(rest, " from ")
 		if fromIdx < 0 {
 			return nil
@@ -59,11 +50,20 @@ func parseSingleImport(lineNum int, line string) *ParsedImport {
 		if token == "" {
 			return nil
 		}
-		names = append(names, ImportedName{Name: token, IsNamed: false})
+		names = append(names, ImportedName{Name: token})
 		rest = rest[fromIdx:]
 	}
 
-	// Find the last quoted string for the path
+	path, ok := extractImportPath(rest)
+	if !ok {
+		return nil
+	}
+	return &ParsedImport{Line: lineNum, Raw: line, Names: names, Path: path}
+}
+
+// extractImportPath finds the last quoted string in rest (the "from '...'" part).
+// Returns the unquoted path and true, or ("", false) if not found.
+func extractImportPath(rest string) (string, bool) {
 	lastQuote := -1
 	var quoteChar byte
 	for i := len(rest) - 1; i >= 0; i-- {
@@ -74,30 +74,14 @@ func parseSingleImport(lineNum int, line string) *ParsedImport {
 		}
 	}
 	if lastQuote < 0 {
-		return nil
+		return "", false
 	}
-	// Find matching opening quote scanning backwards from lastQuote-1
-	openQuote := -1
 	for i := lastQuote - 1; i >= 0; i-- {
 		if rest[i] == quoteChar {
-			openQuote = i
-			break
+			return rest[i+1 : lastQuote], true
 		}
 	}
-	if openQuote < 0 {
-		return nil
-	}
-	path := rest[openQuote+1 : lastQuote]
-	// Strip trailing semicolon from path (shouldn't be inside quotes, but be safe)
-	path = strings.TrimSuffix(path, ";")
-
-	_ = isNamed
-	return &ParsedImport{
-		Line:  lineNum,
-		Raw:   line,
-		Names: names,
-		Path:  path,
-	}
+	return "", false
 }
 
 // parseImports extracts all successfully parsed imports from a slice of lines.
@@ -107,18 +91,14 @@ func parseImports(lines []string) []ParsedImport {
 		if !isImportLine(line) {
 			continue
 		}
-		pi := parseSingleImport(i+1, line)
-		if pi != nil {
+		if pi := parseSingleImport(i+1, line); pi != nil {
 			imports = append(imports, *pi)
 		}
 	}
 	return imports
 }
 
-// isImportLine returns true if the line is an MDX import statement.
-func isImportLine(line string) bool {
-	return strings.HasPrefix(line, "import ")
-}
+func isImportLine(line string) bool { return strings.HasPrefix(line, "import ") }
 
 // frontmatterEnd returns the 0-based index of the closing "---" line,
 // or -1 if no frontmatter block is present.
@@ -134,8 +114,7 @@ func frontmatterEnd(lines []string) int {
 	return -1
 }
 
-// bodyLines returns the non-frontmatter, non-import lines as a joined string
-// for word-search purposes, along with a map from 0-based line index to content.
+// bodyLines returns non-frontmatter, non-import lines for word-search purposes.
 func bodyLines(lines []string) []string {
 	fmEnd := frontmatterEnd(lines)
 	var body []string
@@ -161,16 +140,18 @@ func (r ImportResolvesRule) CheckFile(path string, lines []string) []Violation {
 	var violations []Violation
 	for _, imp := range imports {
 		if !strings.HasPrefix(imp.Path, "/") {
-			// Relative path — skip
-			continue
+			continue // relative path — skip
 		}
 		absPath := filepath.Join(r.ContentRoot, imp.Path)
 		if _, err := os.Stat(absPath); err != nil {
 			violations = append(violations, Violation{
-				File:    path,
-				Line:    imp.Line,
-				Col:     1,
-				Message: fmt.Sprintf("import-resolves: path %q does not exist on disk", imp.Path),
+				File: path,
+				Line: imp.Line,
+				Col:  1,
+				Message: fmt.Sprintf(
+					"import-resolves: path %q does not exist on disk",
+					imp.Path,
+				),
 			})
 		}
 	}
@@ -190,36 +171,35 @@ func (r ImportUsedRule) CheckFile(path string, lines []string) []Violation {
 	for _, imp := range imports {
 		for _, n := range imp.Names {
 			re := regexp.MustCompile(fmt.Sprintf(`\b%s\b`, regexp.QuoteMeta(n.Name)))
-			if !re.MatchString(body) {
-				violations = append(violations, Violation{
-					File:    path,
-					Line:    imp.Line,
-					Col:     1,
-					Message: fmt.Sprintf("import-used: %q is imported but never used", n.Name),
-				})
+			if re.MatchString(body) {
+				continue
 			}
+			msg := fmt.Sprintf("import-used: %q is imported but never used", n.Name)
+			violations = append(violations, Violation{
+				File: path, Line: imp.Line, Col: 1, Message: msg,
+			})
 		}
 	}
 	return violations
 }
 
-// ImportSortedRule checks that imports are sorted by path (case-insensitive, ascending).
+// ImportSortedRule checks imports are sorted by path (case-insensitive, ascending).
 type ImportSortedRule struct{}
 
 func (r ImportSortedRule) CheckFile(path string, lines []string) []Violation {
 	imports := parseImports(lines)
-	if len(imports) < 2 {
-		return nil
-	}
 	for i := 1; i < len(imports); i++ {
-		prev := strings.ToLower(imports[i-1].Path)
-		curr := strings.ToLower(imports[i].Path)
-		if curr < prev {
+		if strings.ToLower(imports[i].Path) < strings.ToLower(imports[i-1].Path) {
+			msg := fmt.Sprintf(
+				"import-sorted: import path %q is out of order (expected after %q)",
+				imports[i].Path,
+				imports[i-1].Path,
+			)
 			return []Violation{{
 				File:    path,
 				Line:    imports[i].Line,
 				Col:     1,
-				Message: fmt.Sprintf("import-sorted: import path %q is out of order (expected after %q)", imports[i].Path, imports[i-1].Path),
+				Message: msg,
 			}}
 		}
 	}
@@ -236,109 +216,103 @@ func (r ComponentImportStyleRule) CheckFile(path string, lines []string) []Viola
 		if !strings.HasPrefix(imp.Path, "/snippets/components/") {
 			continue
 		}
-		raw := imp.Raw
+		violations = append(violations, checkComponentStyle(path, imp)...)
+	}
+	return violations
+}
 
-		// Check 1: must use named import (braces)
-		openBrace := strings.Index(raw, "{")
-		if openBrace < 0 {
-			violations = append(violations, Violation{
-				File:    path,
-				Line:    imp.Line,
-				Col:     1,
-				Message: "import-component-style: component import must use named import syntax { }",
-			})
-			// Without braces, remaining checks can't apply
-			goto checkPath
+// checkComponentStyle validates a single component import line.
+func checkComponentStyle(path string, imp ParsedImport) []Violation {
+	raw := imp.Raw
+	ln := imp.Line
+	var vs []Violation
+
+	openBrace := strings.Index(raw, "{")
+	if openBrace < 0 {
+		msg := "import-component-style: component import must use named import syntax { }"
+		vs = append(vs, Violation{File: path, Line: ln, Col: 1, Message: msg})
+	} else {
+		vs = append(vs, checkBracketSpacing(path, ln, raw, openBrace)...)
+	}
+
+	if !strings.HasSuffix(imp.Path, ".jsx") {
+		msg := "import-component-style: component import path must end in '.jsx'"
+		vs = append(vs, Violation{File: path, Line: ln, Col: 1, Message: msg})
+	}
+	if !strings.HasSuffix(strings.TrimRight(raw, " \t"), ";") {
+		msg := "import-component-style: import statement must end with ';'"
+		vs = append(vs, Violation{File: path, Line: ln, Col: 1, Message: msg})
+	}
+	return vs
+}
+
+// checkBracketSpacing validates brace spacing and comma-space style.
+func checkBracketSpacing(
+	path string,
+	lineNum int,
+	raw string,
+	openBrace int,
+) []Violation {
+	closeBrace := strings.LastIndex(raw, "}")
+	if closeBrace < 0 {
+		msg := "import-component-style: component import must use named import syntax { }"
+		return []Violation{{File: path, Line: lineNum, Col: 1, Message: msg}}
+	}
+	body := raw[openBrace+1 : closeBrace]
+	var vs []Violation
+	if !strings.HasPrefix(body, " ") {
+		vs = append(vs, Violation{
+			File:    path,
+			Line:    lineNum,
+			Col:     openBrace + 2,
+			Message: "import-component-style: missing space after '{'",
+		})
+	}
+	if !strings.HasSuffix(body, " ") {
+		vs = append(vs, Violation{
+			File:    path,
+			Line:    lineNum,
+			Col:     closeBrace + 1,
+			Message: "import-component-style: missing space before '}'",
+		})
+	}
+	vs = append(vs, checkCommaSpacing(path, lineNum, body, openBrace)...)
+	return vs
+}
+
+// checkCommaSpacing validates commas have no preceding space and one following space.
+func checkCommaSpacing(
+	path string,
+	lineNum int,
+	body string,
+	openBrace int,
+) []Violation {
+	var vs []Violation
+	for i := range body {
+		if body[i] != ',' {
+			continue
 		}
-
-		{
-			closeBrace := strings.LastIndex(raw, "}")
-			if closeBrace < 0 {
-				violations = append(violations, Violation{
-					File:    path,
-					Line:    imp.Line,
-					Col:     1,
-					Message: "import-component-style: component import must use named import syntax { }",
-				})
-				goto checkPath
-			}
-			bracketBody := raw[openBrace+1 : closeBrace]
-
-			// Check 2: space after {
-			if !strings.HasPrefix(bracketBody, " ") {
-				violations = append(violations, Violation{
-					File:    path,
-					Line:    imp.Line,
-					Col:     openBrace + 2, // 1-based col of char after {
-					Message: "import-component-style: missing space after '{'",
-				})
-			}
-
-			// Check 3: space before }
-			if !strings.HasSuffix(bracketBody, " ") {
-				violations = append(violations, Violation{
-					File:    path,
-					Line:    imp.Line,
-					Col:     closeBrace + 1, // 1-based col of }
-					Message: "import-component-style: missing space before '}'",
-				})
-			}
-
-			// Check 4: each comma must have exactly one space after and no space before
-			for i := 0; i < len(bracketBody); i++ {
-				if bracketBody[i] != ',' {
-					continue
-				}
-				// No space before comma
-				if i > 0 && bracketBody[i-1] == ' ' {
-					violations = append(violations, Violation{
-						File:    path,
-						Line:    imp.Line,
-						Col:     openBrace + 1 + i, // 1-based col of char before comma
-						Message: "import-component-style: unexpected space before ','",
-					})
-				}
-				// Exactly one space after comma
-				if i+1 >= len(bracketBody) || bracketBody[i+1] != ' ' {
-					violations = append(violations, Violation{
-						File:    path,
-						Line:    imp.Line,
-						Col:     openBrace + 1 + i + 2, // 1-based col of char after comma
-						Message: "import-component-style: expected single space after ','",
-					})
-				} else if i+2 < len(bracketBody) && bracketBody[i+2] == ' ' {
-					violations = append(violations, Violation{
-						File:    path,
-						Line:    imp.Line,
-						Col:     openBrace + 1 + i + 2, // 1-based col of extra space
-						Message: "import-component-style: expected single space after ','",
-					})
-				}
-			}
-		}
-
-	checkPath:
-		// Check 5: path ends in .jsx
-		if !strings.HasSuffix(imp.Path, ".jsx") {
-			violations = append(violations, Violation{
+		if i > 0 && body[i-1] == ' ' {
+			vs = append(vs, Violation{
 				File:    path,
-				Line:    imp.Line,
-				Col:     1,
-				Message: "import-component-style: component import path must end in '.jsx'",
+				Line:    lineNum,
+				Col:     openBrace + 1 + i,
+				Message: "import-component-style: unexpected space before ','",
 			})
 		}
-
-		// Check 6: raw line (trimmed) ends with ;
-		if !strings.HasSuffix(strings.TrimRight(raw, " \t"), ";") {
-			violations = append(violations, Violation{
+		after := i + 1
+		tooFew := after >= len(body) || body[after] != ' '
+		tooMany := !tooFew && after+1 < len(body) && body[after+1] == ' '
+		if tooFew || tooMany {
+			vs = append(vs, Violation{
 				File:    path,
-				Line:    imp.Line,
-				Col:     1,
-				Message: "import-component-style: import statement must end with ';'",
+				Line:    lineNum,
+				Col:     openBrace + 2 + i,
+				Message: "import-component-style: expected single space after ','",
 			})
 		}
 	}
-	return violations
+	return vs
 }
 
 // MDXImportStyleRule checks style of imports ending in .mdx.
@@ -351,16 +325,12 @@ func (r MDXImportStyleRule) CheckFile(path string, lines []string) []Violation {
 		if !strings.HasSuffix(imp.Path, ".mdx") {
 			continue
 		}
-		// Check 1: must NOT use named import (no braces)
 		if strings.Contains(imp.Raw, "{") {
+			msg := "import-mdx-style: .mdx imports must use default import syntax"
 			violations = append(violations, Violation{
-				File:    path,
-				Line:    imp.Line,
-				Col:     1,
-				Message: "import-mdx-style: MDX import must use default import syntax (no braces)",
+				File: path, Line: imp.Line, Col: 1, Message: msg,
 			})
 		}
-		// Check 2: raw line (trimmed) ends with ;
 		if !strings.HasSuffix(strings.TrimRight(imp.Raw, " \t"), ";") {
 			violations = append(violations, Violation{
 				File:    path,
@@ -373,35 +343,45 @@ func (r MDXImportStyleRule) CheckFile(path string, lines []string) []Violation {
 	return violations
 }
 
-// ImportBlockContiguousRule checks that no blank lines appear inside the import block.
+// ImportBlockContiguousRule checks that no blank lines appear inside a contiguous
+// import block. Two imports are "in the same block" when only blank lines (and
+// no other content) appear between them.
 type ImportBlockContiguousRule struct{}
 
 func (r ImportBlockContiguousRule) CheckFile(path string, lines []string) []Violation {
-	// Find first and last import line indices (0-based)
-	first := -1
-	last := -1
-	for i, line := range lines {
-		if isImportLine(line) {
-			if first < 0 {
-				first = i
-			}
-			last = i
-		}
-	}
-	if first < 0 || first == last {
+	imports := parseImports(lines)
+	if len(imports) < 2 {
 		return nil
 	}
 	var violations []Violation
-	for i := first + 1; i < last; i++ {
-		if strings.TrimSpace(lines[i]) == "" {
-			violations = append(violations, Violation{
-				File:    path,
-				Line:    i + 1, // 1-based
-				Col:     1,
-				Message: "import-block-contiguous: blank line inside import block",
-			})
+	for i := 1; i < len(imports); i++ {
+		prev := imports[i-1].Line // 1-based
+		curr := imports[i].Line   // 1-based
+		// Check whether the lines strictly between prev and curr are all blank.
+		// If any non-blank, non-import line exists, these imports are in
+		// separate blocks and no violation is reported.
+		onlyBlanks := true
+		for j := prev; j < curr-1; j++ { // j is 0-based index = line (j+1)
+			line := lines[j]
+			if strings.TrimSpace(line) != "" && !isImportLine(line) {
+				onlyBlanks = false
+				break
+			}
+		}
+		if !onlyBlanks {
+			continue
+		}
+		// All inter-import lines are blank — flag them.
+		for j := prev; j < curr-1; j++ {
+			if strings.TrimSpace(lines[j]) == "" {
+				violations = append(violations, Violation{
+					File:    path,
+					Line:    j + 1,
+					Col:     1,
+					Message: "import-block-contiguous: blank line inside import block",
+				})
+			}
 		}
 	}
 	return violations
 }
-

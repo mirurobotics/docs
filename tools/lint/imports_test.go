@@ -71,8 +71,7 @@ func TestParseSingleImport(t *testing.T) {
 	})
 
 	t.Run("non-import line returns nil", func(t *testing.T) {
-		line := "This is not an import"
-		pi := parseSingleImport(1, line)
+		pi := parseSingleImport(1, "This is not an import")
 		if pi != nil {
 			t.Error("expected nil for non-import line")
 		}
@@ -81,7 +80,6 @@ func TestParseSingleImport(t *testing.T) {
 
 func TestImportResolvesRule(t *testing.T) {
 	root := t.TempDir()
-	// Create a real file
 	snippetsDir := filepath.Join(root, "snippets", "components")
 	if err := os.MkdirAll(snippetsDir, 0o755); err != nil {
 		t.Fatal(err)
@@ -94,7 +92,7 @@ func TestImportResolvesRule(t *testing.T) {
 	rule := ImportResolvesRule{ContentRoot: root}
 
 	t.Run("file exists", func(t *testing.T) {
-		lines := strings.Split("import { Framed } from '/snippets/components/framed.jsx';", "\n")
+		lines := []string{"import { Framed } from '/snippets/components/framed.jsx';"}
 		vs := rule.CheckFile("test.mdx", lines)
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations, got %d: %v", len(vs), vs)
@@ -102,7 +100,7 @@ func TestImportResolvesRule(t *testing.T) {
 	})
 
 	t.Run("file missing", func(t *testing.T) {
-		lines := strings.Split("import { Missing } from '/snippets/components/missing.jsx';", "\n")
+		lines := []string{"import { Missing } from '/snippets/components/missing.jsx';"}
 		vs := rule.CheckFile("test.mdx", lines)
 		if len(vs) != 1 {
 			t.Errorf("expected 1 violation, got %d", len(vs))
@@ -113,7 +111,7 @@ func TestImportResolvesRule(t *testing.T) {
 	})
 
 	t.Run("relative path skipped", func(t *testing.T) {
-		lines := strings.Split("import Foo from './relative.mdx';", "\n")
+		lines := []string{"import Foo from './relative.mdx';"}
 		vs := rule.CheckFile("test.mdx", lines)
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations for relative path, got %d", len(vs))
@@ -121,8 +119,7 @@ func TestImportResolvesRule(t *testing.T) {
 	})
 
 	t.Run("no imports", func(t *testing.T) {
-		lines := strings.Split("# Hello world", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		vs := rule.CheckFile("test.mdx", []string{"# Hello world"})
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations, got %d", len(vs))
 		}
@@ -136,8 +133,7 @@ func TestImportUsedRule(t *testing.T) {
 		content := `import Framed from '/snippets/components/framed.jsx';
 
 <Framed />`
-		lines := strings.Split(content, "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		vs := rule.CheckFile("test.mdx", strings.Split(content, "\n"))
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations, got %d: %v", len(vs), vs)
 		}
@@ -147,8 +143,7 @@ func TestImportUsedRule(t *testing.T) {
 		content := `import Framed from '/snippets/components/framed.jsx';
 
 <Framed>some content</Framed>`
-		lines := strings.Split(content, "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		vs := rule.CheckFile("test.mdx", strings.Split(content, "\n"))
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations, got %d: %v", len(vs), vs)
 		}
@@ -158,8 +153,7 @@ func TestImportUsedRule(t *testing.T) {
 		content := `import Unused from '/snippets/foo.mdx';
 
 Some text without the component.`
-		lines := strings.Split(content, "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		vs := rule.CheckFile("test.mdx", strings.Split(content, "\n"))
 		if len(vs) != 1 {
 			t.Errorf("expected 1 violation, got %d", len(vs))
 		}
@@ -169,8 +163,7 @@ Some text without the component.`
 		content := `import { A, B } from '/snippets/components/badges.jsx';
 
 <A />`
-		lines := strings.Split(content, "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		vs := rule.CheckFile("test.mdx", strings.Split(content, "\n"))
 		if len(vs) != 1 {
 			t.Errorf("expected 1 violation, got %d: %v", len(vs), vs)
 		}
@@ -180,8 +173,7 @@ Some text without the component.`
 	})
 
 	t.Run("no imports", func(t *testing.T) {
-		lines := strings.Split("# Hello", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		vs := rule.CheckFile("test.mdx", []string{"# Hello"})
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations, got %d", len(vs))
 		}
@@ -194,10 +186,12 @@ title: "Framed content"
 import Framed from '/snippets/components/framed.jsx';
 
 No component used here.`
-		lines := strings.Split(content, "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		vs := rule.CheckFile("test.mdx", strings.Split(content, "\n"))
 		if len(vs) != 1 {
-			t.Errorf("expected 1 violation (frontmatter excluded), got %d: %v", len(vs), vs)
+			t.Errorf(
+				"expected 1 violation (frontmatter excluded), got %d: %v",
+				len(vs), vs,
+			)
 		}
 	})
 }
@@ -206,28 +200,23 @@ func TestImportSortedRule(t *testing.T) {
 	rule := ImportSortedRule{}
 
 	t.Run("single import", func(t *testing.T) {
-		lines := strings.Split("import A from '/snippets/a.mdx';", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		vs := rule.CheckFile("test.mdx", []string{"import A from '/snippets/a.mdx';"})
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations, got %d", len(vs))
 		}
 	})
 
 	t.Run("two imports in order", func(t *testing.T) {
-		content := `import A from '/snippets/a.mdx';
-import B from '/snippets/b.mdx';`
-		lines := strings.Split(content, "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		content := "import A from '/snippets/a.mdx';\nimport B from '/snippets/b.mdx';"
+		vs := rule.CheckFile("test.mdx", strings.Split(content, "\n"))
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations, got %d", len(vs))
 		}
 	})
 
 	t.Run("two imports out of order", func(t *testing.T) {
-		content := `import B from '/snippets/b.mdx';
-import A from '/snippets/a.mdx';`
-		lines := strings.Split(content, "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		content := "import B from '/snippets/b.mdx';\nimport A from '/snippets/a.mdx';"
+		vs := rule.CheckFile("test.mdx", strings.Split(content, "\n"))
 		if len(vs) != 1 {
 			t.Errorf("expected 1 violation, got %d", len(vs))
 		}
@@ -237,11 +226,12 @@ import A from '/snippets/a.mdx';`
 	})
 
 	t.Run("three imports first pair out of order", func(t *testing.T) {
-		content := `import B from '/snippets/b.mdx';
-import A from '/snippets/a.mdx';
-import C from '/snippets/c.mdx';`
-		lines := strings.Split(content, "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		content := strings.Join([]string{
+			"import B from '/snippets/b.mdx';",
+			"import A from '/snippets/a.mdx';",
+			"import C from '/snippets/c.mdx';",
+		}, "\n")
+		vs := rule.CheckFile("test.mdx", strings.Split(content, "\n"))
 		if len(vs) != 1 {
 			t.Errorf("expected 1 violation (only first out-of-order), got %d", len(vs))
 		}
@@ -251,8 +241,7 @@ import C from '/snippets/c.mdx';`
 	})
 
 	t.Run("no imports", func(t *testing.T) {
-		lines := strings.Split("# Hello", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		vs := rule.CheckFile("test.mdx", []string{"# Hello"})
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations, got %d", len(vs))
 		}
@@ -262,38 +251,38 @@ import C from '/snippets/c.mdx';`
 func TestComponentImportStyleRule(t *testing.T) {
 	rule := ComponentImportStyleRule{}
 
+	good := "import { Framed } from '/snippets/components/framed.jsx';"
+
 	t.Run("correct", func(t *testing.T) {
-		lines := strings.Split("import { Framed } from '/snippets/components/framed.jsx';", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		vs := rule.CheckFile("test.mdx", []string{good})
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations, got %d: %v", len(vs), vs)
 		}
 	})
 
 	t.Run("missing space after brace", func(t *testing.T) {
-		lines := strings.Split("import {Framed} from '/snippets/components/framed.jsx';", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
-		hasSpaceAfter := false
-		hasSpaceBefore := false
+		line := "import {Framed} from '/snippets/components/framed.jsx';"
+		vs := rule.CheckFile("test.mdx", []string{line})
+		hasAfter, hasBefore := false, false
 		for _, v := range vs {
 			if strings.Contains(v.Message, "after '{'") {
-				hasSpaceAfter = true
+				hasAfter = true
 			}
 			if strings.Contains(v.Message, "before '}'") {
-				hasSpaceBefore = true
+				hasBefore = true
 			}
 		}
-		if !hasSpaceAfter {
+		if !hasAfter {
 			t.Error("expected violation for missing space after '{'")
 		}
-		if !hasSpaceBefore {
+		if !hasBefore {
 			t.Error("expected violation for missing space before '}'")
 		}
 	})
 
 	t.Run("missing space before close brace", func(t *testing.T) {
-		lines := strings.Split("import { Framed} from '/snippets/components/framed.jsx';", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		line := "import { Framed} from '/snippets/components/framed.jsx';"
+		vs := rule.CheckFile("test.mdx", []string{line})
 		found := false
 		for _, v := range vs {
 			if strings.Contains(v.Message, "before '}'") {
@@ -306,8 +295,8 @@ func TestComponentImportStyleRule(t *testing.T) {
 	})
 
 	t.Run("no comma-space", func(t *testing.T) {
-		lines := strings.Split("import { A,B } from '/snippets/components/badges.jsx';", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		line := "import { A,B } from '/snippets/components/badges.jsx';"
+		vs := rule.CheckFile("test.mdx", []string{line})
 		found := false
 		for _, v := range vs {
 			if strings.Contains(v.Message, "single space after ','") {
@@ -320,8 +309,8 @@ func TestComponentImportStyleRule(t *testing.T) {
 	})
 
 	t.Run("space before comma", func(t *testing.T) {
-		lines := strings.Split("import { A , B } from '/snippets/components/badges.jsx';", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		line := "import { A , B } from '/snippets/components/badges.jsx';"
+		vs := rule.CheckFile("test.mdx", []string{line})
 		found := false
 		for _, v := range vs {
 			if strings.Contains(v.Message, "before ','") {
@@ -334,8 +323,8 @@ func TestComponentImportStyleRule(t *testing.T) {
 	})
 
 	t.Run("default import used", func(t *testing.T) {
-		lines := strings.Split("import Framed from '/snippets/components/framed.jsx';", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		line := "import Framed from '/snippets/components/framed.jsx';"
+		vs := rule.CheckFile("test.mdx", []string{line})
 		found := false
 		for _, v := range vs {
 			if strings.Contains(v.Message, "named import syntax") {
@@ -348,8 +337,8 @@ func TestComponentImportStyleRule(t *testing.T) {
 	})
 
 	t.Run("path ends in .mdx not .jsx", func(t *testing.T) {
-		lines := strings.Split("import { Framed } from '/snippets/components/framed.mdx';", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		line := "import { Framed } from '/snippets/components/framed.mdx';"
+		vs := rule.CheckFile("test.mdx", []string{line})
 		found := false
 		for _, v := range vs {
 			if strings.Contains(v.Message, ".jsx") {
@@ -362,8 +351,8 @@ func TestComponentImportStyleRule(t *testing.T) {
 	})
 
 	t.Run("missing semicolon", func(t *testing.T) {
-		lines := strings.Split("import { Framed } from '/snippets/components/framed.jsx'", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		line := "import { Framed } from '/snippets/components/framed.jsx'"
+		vs := rule.CheckFile("test.mdx", []string{line})
 		found := false
 		for _, v := range vs {
 			if strings.Contains(v.Message, "';'") {
@@ -376,10 +365,10 @@ func TestComponentImportStyleRule(t *testing.T) {
 	})
 
 	t.Run("non-component import no violations", func(t *testing.T) {
-		lines := strings.Split("import Foo from '/snippets/definitions/foo.mdx';", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		line := "import Foo from '/snippets/definitions/foo.mdx';"
+		vs := rule.CheckFile("test.mdx", []string{line})
 		if len(vs) != 0 {
-			t.Errorf("expected 0 violations for non-component import, got %d: %v", len(vs), vs)
+			t.Errorf("non-component import: expected 0 violations, got %d", len(vs))
 		}
 	})
 }
@@ -388,34 +377,37 @@ func TestMDXImportStyleRule(t *testing.T) {
 	rule := MDXImportStyleRule{}
 
 	t.Run("correct", func(t *testing.T) {
-		lines := strings.Split("import DeviceDef from '/snippets/definitions/device.mdx';", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		line := "import DeviceDef from '/snippets/definitions/device.mdx';"
+		vs := rule.CheckFile("test.mdx", []string{line})
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations, got %d: %v", len(vs), vs)
 		}
 	})
 
 	t.Run("missing semicolon", func(t *testing.T) {
-		lines := strings.Split("import DeviceDef from '/snippets/definitions/device.mdx'", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		line := "import DeviceDef from '/snippets/definitions/device.mdx'"
+		vs := rule.CheckFile("test.mdx", []string{line})
 		if len(vs) != 1 {
 			t.Errorf("expected 1 violation, got %d: %v", len(vs), vs)
 		}
 	})
 
 	t.Run("named import violation", func(t *testing.T) {
-		lines := strings.Split("import { DeviceDef } from '/snippets/definitions/device.mdx';", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		line := "import { DeviceDef } from '/snippets/definitions/device.mdx';"
+		vs := rule.CheckFile("test.mdx", []string{line})
 		if len(vs) != 1 {
 			t.Errorf("expected 1 violation, got %d: %v", len(vs), vs)
 		}
 	})
 
 	t.Run("non-mdx import no violations", func(t *testing.T) {
-		lines := strings.Split("import { Framed } from '/snippets/components/framed.jsx';", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		line := "import { Framed } from '/snippets/components/framed.jsx';"
+		vs := rule.CheckFile("test.mdx", []string{line})
 		if len(vs) != 0 {
-			t.Errorf("expected 0 violations for non-mdx import, got %d: %v", len(vs), vs)
+			t.Errorf(
+				"expected 0 violations for non-mdx import, got %d: %v",
+				len(vs), vs,
+			)
 		}
 	})
 }
@@ -424,21 +416,20 @@ func TestImportBlockContiguousRule(t *testing.T) {
 	rule := ImportBlockContiguousRule{}
 
 	t.Run("no blank lines between imports", func(t *testing.T) {
-		content := `import A from '/snippets/a.mdx';
-import B from '/snippets/b.mdx';`
-		lines := strings.Split(content, "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		content := "import A from '/snippets/a.mdx';\nimport B from '/snippets/b.mdx';"
+		vs := rule.CheckFile("test.mdx", strings.Split(content, "\n"))
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations, got %d", len(vs))
 		}
 	})
 
 	t.Run("one blank line between first and second import", func(t *testing.T) {
-		content := `import A from '/snippets/a.mdx';
-
-import B from '/snippets/b.mdx';`
-		lines := strings.Split(content, "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		content := strings.Join([]string{
+			"import A from '/snippets/a.mdx';",
+			"",
+			"import B from '/snippets/b.mdx';",
+		}, "\n")
+		vs := rule.CheckFile("test.mdx", strings.Split(content, "\n"))
 		if len(vs) != 1 {
 			t.Errorf("expected 1 violation, got %d: %v", len(vs), vs)
 		}
@@ -448,51 +439,52 @@ import B from '/snippets/b.mdx';`
 	})
 
 	t.Run("blank line before first import", func(t *testing.T) {
-		content := `
-import A from '/snippets/a.mdx';
-import B from '/snippets/b.mdx';`
-		lines := strings.Split(content, "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		content := strings.Join([]string{
+			"",
+			"import A from '/snippets/a.mdx';",
+			"import B from '/snippets/b.mdx';",
+		}, "\n")
+		vs := rule.CheckFile("test.mdx", strings.Split(content, "\n"))
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations (blank before first), got %d", len(vs))
 		}
 	})
 
 	t.Run("blank line after last import", func(t *testing.T) {
-		content := `import A from '/snippets/a.mdx';
-import B from '/snippets/b.mdx';
-
-Some content`
-		lines := strings.Split(content, "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		content := strings.Join([]string{
+			"import A from '/snippets/a.mdx';",
+			"import B from '/snippets/b.mdx';",
+			"",
+			"Some content",
+		}, "\n")
+		vs := rule.CheckFile("test.mdx", strings.Split(content, "\n"))
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations (blank after last), got %d", len(vs))
 		}
 	})
 
 	t.Run("two blank lines in import block", func(t *testing.T) {
-		content := `import A from '/snippets/a.mdx';
-
-
-import B from '/snippets/b.mdx';`
-		lines := strings.Split(content, "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		content := strings.Join([]string{
+			"import A from '/snippets/a.mdx';",
+			"",
+			"",
+			"import B from '/snippets/b.mdx';",
+		}, "\n")
+		vs := rule.CheckFile("test.mdx", strings.Split(content, "\n"))
 		if len(vs) != 2 {
 			t.Errorf("expected 2 violations, got %d: %v", len(vs), vs)
 		}
 	})
 
 	t.Run("single import", func(t *testing.T) {
-		lines := strings.Split("import A from '/snippets/a.mdx';", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		vs := rule.CheckFile("test.mdx", []string{"import A from '/snippets/a.mdx';"})
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations, got %d", len(vs))
 		}
 	})
 
 	t.Run("no imports", func(t *testing.T) {
-		lines := strings.Split("# Hello world", "\n")
-		vs := rule.CheckFile("test.mdx", lines)
+		vs := rule.CheckFile("test.mdx", []string{"# Hello world"})
 		if len(vs) != 0 {
 			t.Errorf("expected 0 violations, got %d", len(vs))
 		}
