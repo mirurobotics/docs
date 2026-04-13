@@ -33,21 +33,6 @@ Miru uses stable URL version aliases so clients can target a compatibility track
     For historical reasons, API version `v0.1.0` uses the breaking change alias of `v1` instead of `v0.1`. API version `v0.1.0` will be retired before the `v1` release to prevent compatibility issues.
 </Warning>
 
-## Agent compatibility matrix
-
-Each Miru Agent is compiled with a set of one or more API versions, which is documented in the following table:
-
-| Agent Version  | API Version(s) |
-|----------------|----------------|
-| `v0.7.1`       | `v0.2.1`       |
-| `v0.7.0`       | `v0.2.0`       |
-| `v0.6.x`       | `v0.1.0`       |
-| `v0.5.x`       | `v0.1.0`       |
-
-Be careful when updating your client application to a new API version. Even if API changes are backward-compatible, if the agent is not compiled with the new features, your client may not work as expected.
-
-As rule of thumb, use the API version of the oldest agent version that is deployed to your fleet in your client application. This ensures that the agent was compiled with all the features of the API version you are using.
-
 ## Supported versions
 
 The Device API does not have its own support policy—its support is inherited from the Miru Agent. 
@@ -61,6 +46,22 @@ Below is a list of the currently supported versions:
 | <LinkNewTab href="/docs/references/device-api/v0.2.1">v0.2.1</LinkNewTab>    | 2026-04-07   | —            | <SupportedBadge /> |
 | <LinkNewTab href="/docs/references/device-api/v0.2.0">v0.2.0</LinkNewTab>    | 2026-03-13   | —            | <SupportedBadge /> |
 | <LinkNewTab href="/docs/references/device-api/v0.1.0">v0.1.0</LinkNewTab>    | 2025-09-21   | 2026-06-16   | <DeprecatedBadge /> |
+
+## Agent compatibility matrix
+
+Each Miru Agent is compiled with a set of one or more API versions, which is documented in the following table:
+
+| Agent Version  | API Version(s) |
+|----------------|----------------|
+| `v0.8.0`       | `v0.2.1`       |
+| `v0.7.1`       | `v0.2.1`       |
+| `v0.7.0`       | `v0.2.0`       |
+| `v0.6.x`       | `v0.1.0`       |
+| `v0.5.x`       | `v0.1.0`       |
+
+Be careful when updating your client application to a new API version. Even if API changes are backward-compatible, if the agent is not compiled with the new features, your client may not work as expected.
+
+As rule of thumb, use the API version of the oldest agent version that is deployed to your fleet in your client application. This ensures that the agent was compiled with all the features of the API version you are using.
 
 ## Changelog and migrations
 

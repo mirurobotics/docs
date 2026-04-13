@@ -18,3 +18,7 @@ echo ""
 
 echo "=== Audit ==="
 ./scripts/audit.sh
+echo ""
+
+echo "=== Shell Script Tests ==="
+bats pub/scripts/agent/check-miru-access_test.bats

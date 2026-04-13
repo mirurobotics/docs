@@ -14,28 +14,38 @@
 
   </CodeGroup>
 
-  Examples: `mobility`, `safety-features`, `perception`
+  Examples: `mobility`, `communication`, `perception`
 </ParamField>
 
 <ParamField path="instance file path">
-  The instance file path is the file system location that config instances for this schema are deployed to relative to the `/srv/miru/config_instances` directory.
+  The instance file path is the absolute file system path where config instances for this schema are written on the device.
+
+  <Warning>
+    The Miru Agent ships with out-of-the-box access to `/srv/miru`. To deploy configurations to a custom directory, please visit the [File Permissions](/docs/developers/agent/file-permissions) page.
+  </Warning>
 
   Instance file paths control the type of file that config instances are deployed as. Currently, JSON (`.json`) and YAML (`.yaml`, `.yml`) are supported.
 
-  This annotation is optional and defaults to `{config-type-slug}.json`, which deploys config instances to `/srv/miru/config_instances/{config-type-slug}.json` on a given device.
+  This annotation is optional and defaults to `/srv/miru/configs/{config-type-slug}.json`.
 
   <CodeGroup>
 
   ```yaml JSON Schema
-  x-miru-instance-filepath: "{instance-file-path}"
+  x-miru-instance-filepath: "/srv/miru/configs/{config-type-slug}.json"
   ```
 
   
   ```cue CUE
-  @miru(instance_filepath="{instance-file-path}")
+  @miru(instance_filepath="/srv/miru/configs/{config-type-slug}.json")
   ```
 
   </CodeGroup>
 
-  Examples: `/v1/mobility.json`, `/safety.yaml`
+  Examples: 
+
+      - `/srv/miru/configs/mobility.json`
+      - `/home/myapp/configs/communication.yaml`
+      - `/var/lib/myapp/configs/safety.yaml`
+
+
 </ParamField>

@@ -31,7 +31,7 @@ steps:
   - name: Setup Miru CLI
     uses: mirurobotics/setup-cli@v0.2
     with:
-      version: 'v0.9'
+      version: 'v0.10'
 
   - name: Run your CI task here
     env:
@@ -43,7 +43,7 @@ steps:
 
 ### Pin a minor version
 
-Pinning to a minor version of the CLI will install the latest release within that minor version range. For example, pinning to CLI version `v0.9` will install the latest `v0.9.x` release.
+Pinning to a minor version of the CLI will install the latest release within that minor version range. For example, pinning to CLI version `v0.10` will install the latest `v0.10.x` release.
 
 This is the recommended approach to receive the latest bug fixes and improvements while avoiding breaking changes.
 
@@ -51,10 +51,10 @@ This is the recommended approach to receive the latest bug fixes and improvement
 steps:
   - uses: actions/checkout@v6
 
-  - name: Setup Miru CLI (latest v0.9.x)
+  - name: Setup Miru CLI (latest v0.10.x)
     uses: mirurobotics/setup-cli@v0.2
     with:
-      version: 'v0.9'
+      version: 'v0.10'
 ```
 
 ### Pin a specific version
@@ -68,13 +68,13 @@ steps:
   - name: Setup Miru CLI
     uses: mirurobotics/setup-cli@v0.2
     with:
-      version: 'v0.9.1'
+      version: 'v0.10.0'
 ```
 
 ## Inputs
 
 <ParamField path="version" type="string">
-  Miru version of the CLI to install. Supports exact (`v0.9.1`) and minor (`v0.9`) versions. We recommend using a minor version to avoid breaking changes.
+  Miru version of the CLI to install. Supports exact (`v0.10.0`) and minor (`v0.10`) versions. We recommend using a minor version to avoid breaking changes.
   
   Omit or use `latest` for the most recent release. However, this is not recommended as it may introduce breaking changes.
 </ParamField>
@@ -120,7 +120,7 @@ jobs:
       - name: Setup Miru CLI
         uses: mirurobotics/setup-cli@v0.2
         with:
-          version: 'v0.9'
+          version: 'v0.10'
 
       - name: Create the release
         env:

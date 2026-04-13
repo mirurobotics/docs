@@ -31,7 +31,9 @@
     "sunsetting",
     "tunables",
     "usermod",
+    "chgrp",
     "newgrp",
+    "setfacl",
     "zeroizes",
     "Npfzv"
   ]

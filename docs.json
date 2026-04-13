@@ -91,6 +91,7 @@
                 "pages": [
                   "docs/developers/agent/overview",
                   "docs/developers/agent/install",
+                  "docs/developers/agent/file-permissions",
                   "docs/developers/agent/versions",
                   "docs/developers/agent/commands",
                   "docs/developers/agent/security",

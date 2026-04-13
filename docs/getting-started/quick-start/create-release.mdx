@@ -9,6 +9,7 @@ import EmptyJsonSchemas from '/snippets/getting-started/empty-json-schemas.mdx'
 import StrictJsonSchemas from '/snippets/getting-started/strict-json-schemas.mdx'
 import EmptyCueSchemas from '/snippets/getting-started/empty-cue-schemas.mdx'
 import StrictCueSchemas from '/snippets/getting-started/strict-cue-schemas.mdx'
+import SchemaAnnotations from '/snippets/references/cli/releases/create/schema-annotations.mdx'
 
 To keep things simple, we've provided a [getting-started repository](https://github.com/mirurobotics/getting-started) that contains everything you need to create a release. Follow along with us by cloning the repository.
 
@@ -47,9 +48,11 @@ If you're unfamiliar with schema languages, we recommend starting with [JSON Sch
 
 </Tabs>
 
-<Note>
-  The instance file path annotation controls the type of file that config instances are deployed as. Currently, JSON (`.json`) and YAML (`.yaml`, `.yml`) are supported.
-</Note>
+### Schema annotations
+
+Each of the above schema examples are annotated with the `x-miru-config-type` and `x-miru-instance-filepath` fields. These annotations are crucial metadata that Miru uses to process the schema and deploy config instances to the correct location on the device.
+
+<SchemaAnnotations />
 
 ## Create the config types
 

@@ -4,6 +4,34 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.8.0
+
+*April 12, 2026*
+
+Miru Agent `v0.8.0` allows config instances to be written to paths outside of the `/srv/miru/config_instances/` directory—any valid file system path is now supported. Configs deployed to paths outside of the `/srv/miru` directory require additional file system permissions to be granted to the `miru` user.
+
+To learn more, visit the [file permissions](/docs/developers/agent/file-permissions) documentation.
+
+## Breaking changes
+
+- Removed `ProtectSystem=strict` and `ProtectHome=true` from the default systemd unit to allow writing config files to arbitrary absolute paths if desired
+
+## Features
+
+- Config instances can be deployed anywhere on the filesystem, not just in the `/srv/miru/` directory
+- Deployments being removed now transition through an intermediate `removing` status when removal begins
+
+## Fixes
+
+- Fixed graceful shutdown handling when SSE streams are active
+- Scope cooldown periods to be per-deployment so that new deployments are not unnecessarily delayed by other deployment failures
+
+## Improvements
+
+- Default all file system write operations to atomic mode for improved reliability
+
+---
+
 # v0.7.1
 
 *April 7, 2026*

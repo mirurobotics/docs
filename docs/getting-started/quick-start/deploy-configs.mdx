@@ -34,26 +34,11 @@ Finally, provide a description for the deployment, then click **Deploy**.
 
 ## Verify the deployment
 
-To verify a config seen in the editor is deployed to the device, drop down the deployed config instance (the one with the green dot) in the editor.
+To verify a config seen in the editor is deployed to the device, open a terminal on the device that has the Miru Agent installed and run `cat` on the file path of the config instance.
 
-<Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/editor/history-entry.png)
-</Frame>
-
-The `File Path` field shows the file system path that the config instance is deployed to, relative to `/srv/miru/config_instances`.
-
-Since the `File Path` is `/mobility.json`, the config instance is deployed to `/srv/miru/config_instances/mobility.json`.
-
-To verify the config instance is deployed to the device's file system, open a terminal on the device and navigate to the `/srv/miru/config_instances` directory.
 
 ```bash
-cd /srv/miru/config_instances
-```
-
-Then `cat` the config instance by copying the `File Path` displayed in the editor.
-
-```bash
-cat mobility.json
+cat /srv/miru/configs/mobility.json
 ```
 
 You should find that the editor's content is identical to the config instance on the device.
