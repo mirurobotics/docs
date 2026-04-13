@@ -138,9 +138,9 @@ The final line is `FINAL RESULT: PASS` or `FINAL RESULT: FAIL`.
   </Tab>
 
   <Tab title="File doesn't exist">
-    If the input file does not exist yet, the script will skip the file permission checks and check the parent/ancestor directory permissions required to create it. 
+    If the input file does not exist yet, the script will skip the file checks and only check the parent/ancestor directory permissions required to create it. 
 
-    As long as the directory has the required permissions, the Miru Agent will be able to create the file inside the directory with the proper permissions.
+    As long as the directory has the required permissions, the Miru Agent will create the file inside the directory with the appropriate permissions.
 
     ```bash
     $ ./check-miru-access.sh /var/lib/myapp/configs/mobility.json
@@ -161,7 +161,7 @@ The final line is `FINAL RESULT: PASS` or `FINAL RESULT: FAIL`.
   </Tab>
 
   <Tab title="Directory">
-    Testing a directory checks that the `miru` user has the required permissions to create files inside the directory.
+    Testing a directory checks that the `miru` user has the required permissions to create files in the directory.
 
     ```bash
     $ ./check-miru-access.sh /var/lib/myapp/configs
@@ -184,20 +184,19 @@ The final line is `FINAL RESULT: PASS` or `FINAL RESULT: FAIL`.
 
 ## Granting access
 
-There are two methods for granting the `miru` user access to a given path:
+Once you've determined the necessary permissions, you need to grant them to the `miru` user. There are two common methods for granting the `miru` user access to a given path:
 
 1. Standard Unix permissions - basic owner/group/other mode bits on a file or directory
-
 2. ACLs - per-user or per-group access rules beyond mode bits
 
-Since standard Unix permissions are the ones you're most familiar with, you'll likely find them simpler to work with.
+Since standard Unix permissions are the most familiar, you'll likely find them simpler to work with. We recommend starting here.
 
-However, ACLs provide flexibility not supported by standard Unix permissions. If you need to retain existing permissions for a given path while granting the `miru` user or group the required permissions, you might find ACLs to be a better fit.
+However, you may find that changing ownership or group is not possible or desirable. In this case, ACLs may be a better fit. ACLs provide flexibility by allowing you to retain existing permissions for a given path while granting the `miru` user or group the required permissions.
 
 
 ### Standard Unix permissions
 
-When using standard Unix permissions, the two recommended approaches are:
+For standard Unix permissions, there are two approaches we recommend:
 
 1. Grant the `miru` group the appropriate permissions
 2. Transfer ownership to the `miru` user
@@ -209,8 +208,8 @@ To keep things simple, we generally recommend granting the `miru` group the appr
 <Tabs>
   <Tab title="Transfer ownership">
     ```bash
-    sudo chown miru /path/to/file
-    sudo chmod u+rw /path/to/file
+    sudo chown miru /path/to/file.json
+    sudo chmod u+rw /path/to/file.json
     ```
 
     - `chown miru` sets `miru` as the file owner user (group unchanged)
@@ -219,8 +218,8 @@ To keep things simple, we generally recommend granting the `miru` group the appr
   </Tab>
   <Tab title="Group access">
     ```bash
-    sudo chgrp miru /path/to/file
-    sudo chmod g+rw /path/to/file
+    sudo chgrp miru /path/to/file.json
+    sudo chmod g+rw /path/to/file.json
     ```
 
     - `chgrp miru` sets the file's group to `miru`
@@ -255,20 +254,23 @@ To keep things simple, we generally recommend granting the `miru` group the appr
 
 When you cannot change the ownership or the group of a path (e.g., a directory shared between multiple services), use POSIX Access Control Lists (ACLs) for fine-grained permission control.
 
-<Note>
-  ACLs require the `acl` package. Install it with `sudo apt install acl` if `setfacl` is not available.
-</Note>
+ACLs require the `acl` package. If `setfacl` is not available, install it with:
+
+```bash
+sudo apt install acl
+```
 
 **Files**
 
-Modify the permissions of a file to grant the `miru` user read and write access.
+Grant the `miru` user read and write access to a file.
 ```bash
 sudo setfacl -m u:miru:rw /path/to/file.json
 ```
 
 **Directories**
 
-Modify the permissions of a directory to grant the `miru` user read/write/execute access.
+Grant the `miru` user read/write/execute access to a directory.
+
 ```bash
 sudo setfacl -m u:miru:rwx /path/to/dir
 ```
