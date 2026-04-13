@@ -42,3 +42,9 @@ func (r NoDoubleDash) Check(file string, line int, spans []ProseSpan) []Violatio
 	}
 	return violations
 }
+
+// FileRule checks an entire file's lines at once and returns any violations.
+// It is used for rules that require multi-line context, such as import analysis.
+type FileRule interface {
+	CheckFile(path string, lines []string) []Violation
+}
