@@ -34,11 +34,11 @@ Finally, provide a description for the deployment, then click **Deploy**.
 
 ## Verify the deployment
 
-To verify a config seen in the editor is deployed to the device, open a terminal on the device that has the Miru Agent installed and run `cat` or `less` for the file path of the config instance.
+To verify a config seen in the editor is deployed to the device, open a terminal on the device that has the Miru Agent installed and run `cat` on the file path of the config instance.
 
 
 ```bash
-less /srv/miru/configs/mobility.json
+cat /srv/miru/configs/mobility.json
 ```
 
 You should find that the editor's content is identical to the config instance on the device.

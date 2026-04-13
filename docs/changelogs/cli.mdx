@@ -8,15 +8,17 @@ import { Dropdown } from '/snippets/components/api-dropdown.jsx';
 
 # v0.10.0
 
-*Unreleased*
+*April 12, 2026*
 
-CLI `v0.10.0` specifies config instance file paths as an absolute path, allowing you to place config instances anywhere on the filesystem. File paths which do not live in `/srv/miru/config_instances/` require Miru Agent [v0.8.0](/docs/changelogs/agent#v0-8-0).
+CLI `v0.10.0` adds support for specifying config instance file paths anywhere on your devices' file system, not just in the `/srv/miru/config_instances/` directory.
+
+Note that file paths which do not live in `/srv/miru/config_instances/` require Miru Agent [v0.8.0](/docs/changelogs/agent#v0-8-0).
 
 ## Breaking changes
 
 <Dropdown title="Absolute instance file paths">
 
-The `instance_filepath` annotation has been updated to be an absolute filesystem path instead of a relative path to `/srv/miru/config_instances/`. Update all schema annotations:
+The `instance_filepath` annotation has been updated to be an absolute filesystem path instead of a path relative to `/srv/miru/config_instances/`. Update all schema annotations:
 
 ```diff
 # JSON Schema
@@ -33,6 +35,16 @@ The `instance_filepath` annotation has been updated to be an absolute filesystem
 <Dropdown title="Default instance file path">
 
 The default instance file path has been updated from `/srv/miru/config_instances/{config-type-slug}.json` to `/srv/miru/configs/{config-type-slug}.json`.
+
+We recommend adding the instance file path annotation to maintain the same default file path as before.
+
+```diff
+# JSON Schema
++ x-miru-instance-filepath: "/srv/miru/config_instances/mobility.json"
+
+# CUE
++ @miru(instance_filepath="/srv/miru/config_instances/mobility.json")
+```
 
 </Dropdown>
 

@@ -4,12 +4,12 @@
   <CodeGroup>
 
   ```yaml JSON Schema
-  x-miru-config-type: "planning"
+  x-miru-config-type: "{config-type-slug}"
   ```
 
   
   ```cue CUE
-  @miru(config_type="planning")
+  @miru(config_type="{config-type-slug}")
   ```
 
   </CodeGroup>
@@ -18,7 +18,7 @@
 </ParamField>
 
 <ParamField path="instance file path">
-  The instance file path is the absolute filesystem path where config instances for this schema are written on the device.
+  The instance file path is the absolute file system path where config instances for this schema are written on the device.
 
   <Warning>
     The Miru Agent ships with out-of-the-box access to `/srv/miru`. To deploy configurations to a custom directory, please visit the [File Permissions](/docs/developers/agent/file-permissions) page.
@@ -26,17 +26,17 @@
 
   Instance file paths control the type of file that config instances are deployed as. Currently, JSON (`.json`) and YAML (`.yaml`, `.yml`) are supported.
 
-  This annotation is optional and defaults to `/srv/miru/configs/planning.json`.
+  This annotation is optional and defaults to `/srv/miru/configs/{config-type-slug}.json`.
 
   <CodeGroup>
 
   ```yaml JSON Schema
-  x-miru-instance-filepath: "/srv/miru/configs/planning.json"
+  x-miru-instance-filepath: "/srv/miru/configs/{config-type-slug}.json"
   ```
 
   
   ```cue CUE
-  @miru(instance_filepath="/srv/miru/configs/planning.json")
+  @miru(instance_filepath="/srv/miru/configs/{config-type-slug}.json")
   ```
 
   </CodeGroup>
