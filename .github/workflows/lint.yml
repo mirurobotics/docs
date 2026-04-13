@@ -52,6 +52,22 @@ jobs:
       - name: Run documentation lint
         run: ./scripts/lint.sh
 
+  shell-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install bats
+        run: sudo apt-get install -y bats
+
+      - name: Ensure scripts are executable
+        run: chmod +x pub/scripts/agent/check-miru-access.sh
+
+      - name: Run shell script tests
+        run: bats pub/scripts/agent/check-miru-access_test.bats
+
   audit:
     runs-on: ubuntu-latest
 
