@@ -21,3 +21,9 @@ export const DEPLOYED_TOOLTIP = {
     cta: "Learn more",
     href: "/docs/learn/deployments#activity-status"
 };
+
+export const REMOVING_TOOLTIP = {
+    tip: "Deployment's configurations are being removed from the device",
+    cta: "Learn more",
+    href: "/docs/learn/deployments#activity-status"
+};
