@@ -175,12 +175,6 @@ perm_cell() {
 		return
 	fi
 
-	# Distinguish missing paths from permission denials (finding 8).
-	if ! [ -e "$target" ]; then
-		printf -- "N/A"
-		return
-	fi
-
 	if test "$flag" "$target"; then
 		printf -- "OK"
 	else

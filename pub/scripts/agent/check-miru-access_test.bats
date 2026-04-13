@@ -190,27 +190,16 @@ run_check() {
 }
 
 # ---------------------------------------------------------------------------
-# N/A for missing paths vs NO for permission denials
+# Missing paths report NO (not accessible)
 # ---------------------------------------------------------------------------
 
-@test "non-existent path under non-existent parent shows N/A not NO" {
+@test "non-existent path under non-existent parent shows NO" {
 	local f="$TMPDIR/no_such_parent/no_such_file"
 
 	run_check "$f"
-	# Parent doesn't exist so permissions can't be checked — should show N/A
-	[[ "$output" == *"N/A"* ]]
-	[[ "$output" == *"parent"* ]]
-}
-
-@test "existing file with no read shows NO not N/A" {
-	local f="$TMPDIR/exists_no_read"
-	touch "$f"
-	chmod 000 "$f"
-
-	run_check "$f"
-	# File exists — should show NO, not N/A
 	[[ "$output" == *"NO"* ]]
-	[[ "$output" != *"N/A"* ]]
+	[[ "$output" == *"parent"* ]]
+	[[ "$output" == *"FINAL RESULT: FAIL"* ]]
 }
 
 # ---------------------------------------------------------------------------
