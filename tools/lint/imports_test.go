@@ -76,6 +76,34 @@ func TestParseSingleImport(t *testing.T) {
 			t.Error("expected nil for non-import line")
 		}
 	})
+
+	t.Run("named import unclosed brace", func(t *testing.T) {
+		pi := parseSingleImport(1, "import { Foo from '/snippets/a.mdx';")
+		if pi != nil {
+			t.Error("expected nil for named import with no closing brace")
+		}
+	})
+
+	t.Run("default import missing from keyword", func(t *testing.T) {
+		pi := parseSingleImport(1, "import Foo '/snippets/a.mdx';")
+		if pi != nil {
+			t.Error("expected nil for import without 'from' keyword")
+		}
+	})
+
+	t.Run("no quotes in import path", func(t *testing.T) {
+		pi := parseSingleImport(1, "import { Foo } from /snippets/a.mdx;")
+		if pi != nil {
+			t.Error("expected nil when import path has no quotes")
+		}
+	})
+
+	t.Run("unmatched closing quote in path", func(t *testing.T) {
+		pi := parseSingleImport(1, "import { Foo } from path.mdx';")
+		if pi != nil {
+			t.Error("expected nil for unmatched closing quote in path")
+		}
+	})
 }
 
 func TestImportResolvesRule(t *testing.T) {
@@ -489,4 +517,40 @@ func TestImportBlockContiguousRule(t *testing.T) {
 			t.Errorf("expected 0 violations, got %d", len(vs))
 		}
 	})
+
+	t.Run("non-blank content between imports no violation", func(t *testing.T) {
+		content := strings.Join([]string{
+			"import A from '/snippets/a.mdx';",
+			"## Heading",
+			"import B from '/snippets/b.mdx';",
+		}, "\n")
+		vs := rule.CheckFile("test.mdx", strings.Split(content, "\n"))
+		if len(vs) != 0 {
+			t.Errorf(
+				"expected 0 violations with non-blank content between imports, got %d",
+				len(vs),
+			)
+		}
+	})
+}
+
+func TestFrontmatterEndNeverCloses(t *testing.T) {
+	lines := []string{"---", "title: foo", "description: bar"}
+	got := frontmatterEnd(lines)
+	if got != -1 {
+		t.Errorf("expected -1 for unclosed frontmatter, got %d", got)
+	}
+}
+
+func TestCheckBracketSpacingNoClosure(t *testing.T) {
+	// Raw has opening brace but no closing brace; should report
+	// "must use named import syntax { }" rather than spacing errors.
+	raw := "import {Foo from '/snippets/components/foo.jsx'"
+	vs := checkBracketSpacing("f.mdx", 1, raw, strings.Index(raw, "{"))
+	if len(vs) != 1 {
+		t.Fatalf("expected 1 violation, got %d: %v", len(vs), vs)
+	}
+	if !strings.Contains(vs[0].Message, "named import syntax") {
+		t.Errorf("unexpected message: %q", vs[0].Message)
+	}
 }
