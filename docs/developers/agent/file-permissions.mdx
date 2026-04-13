@@ -18,7 +18,7 @@ By default, the agent creates and owns the following directories:
 
 The first two directories are only for internal use by the agent. 
 
-The third directory is the default location for deploying config instances--deploying to any path inside `/srv/miru` is supported out-of-the-box, no additional configuration required.
+The third directory is the default location for deploying config instances—deploying to any path inside `/srv/miru` is supported out-of-the-box, no additional configuration required.
 
 ## Custom File Paths
 
@@ -116,8 +116,8 @@ The final line is `FINAL RESULT: PASS` or `FINAL RESULT: FAIL`.
 
 <Tabs>
 
-  <Tab title="File">
-    The most common use case is to test a file path. If a file passes, then the Miru Agent will be able to access the file appropriately.
+  <Tab title="Existing File">
+    To test an existing file, run the script with the file path as an argument.
 
     ```bash
     $ ./check-miru-access.sh /var/lib/myapp/configs/mobility.yaml
@@ -138,9 +138,9 @@ The final line is `FINAL RESULT: PASS` or `FINAL RESULT: FAIL`.
   </Tab>
 
   <Tab title="File doesn't exist">
-    If the input file does not exist yet, the script will skip the file permission checks for the file itself and check the parent/ancestor directory permissions required to create it. 
+    If the input file does not exist yet, the script will skip the file permission checks and check the parent/ancestor directory permissions required to create it. 
 
-    As long as the parent directory has the required permissions, the Miru Agent will be able to create the file with the proper permissions.
+    As long as the directory has the required permissions, the Miru Agent will be able to create the file inside the directory with the proper permissions.
 
     ```bash
     $ ./check-miru-access.sh /var/lib/myapp/configs/mobility.json
@@ -161,7 +161,7 @@ The final line is `FINAL RESULT: PASS` or `FINAL RESULT: FAIL`.
   </Tab>
 
   <Tab title="Directory">
-    If a directory passes, then the `miru` user will be able to create configuration files in the directory and access them appropriately.
+    Testing a directory checks that the `miru` user has the required permissions to create files inside the directory.
 
     ```bash
     $ ./check-miru-access.sh /var/lib/myapp/configs
