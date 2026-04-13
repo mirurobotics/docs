@@ -6,7 +6,7 @@ This page covers the Miru Agent's default file system permissions, how to grant 
 
 ## Default Permissions
 
-During installation, the `miru` system user and group are created with no login shell. The agent process runs as `miru:miru` under systemd.
+During installation, the `miru` system user and group are created (no login shell). The agent process runs as `miru:miru` under systemd.
 
 By default, the agent creates and owns the following directories:
 
@@ -41,16 +41,17 @@ To write to a given file, the `miru` user requires specific permissions to
 1. The file itself
 2. The directories along the path to the file
 
-To explain this, first consider the file `/home/myapp/configs/planning.yaml` as an example. The permissions required to grant the `miru` user access to this file are:
+Let's consider the file `/var/lib/myapp/configs/planning.yaml` as an example. The required read and write permissions to grant the `miru` user access to this file are shown in the table below.
 
 | Path | Permissions | 
 |------|----------------------|
-| `/home/myapp/configs/planning.yaml` | read (`r`), write (`w`) |
-| `/home/myapp/configs` | read (`r`), write (`w`), execute (`x`) |
-| `/home/myapp` | execute (`x`) |
-| `/home` | execute (`x`) |
+| `/var/lib/myapp/configs/planning.yaml` | read (`r`), write (`w`) |
+| `/var/lib/myapp/configs` | read (`r`), write (`w`), execute (`x`) |
+| `/var/lib/myapp` | execute (`x`) |
+| `/var/lib` | execute (`x`) |
+| `/var` | execute (`x`) |
 
-As a written list of rules, for the `miru` user to write to a given file, the following Unix permissions are required:
+To write to a given file, the `miru` user requires the following Unix permissions:
 
 1. Read (`r`) and write (`w`) access to the *file* itself 
 
@@ -69,6 +70,117 @@ As a written list of rules, for the `miru` user to write to a given file, the fo
 3. Execute (`x`) access to all directories along the path to the file
 
     - `x` (execute) is required to access directories within the path to the file.
+
+    <Info>
+      Many directories, such as `/var/lib`, are world-readable by default and need no special permissions. Other directories, such as `/home/myapp`, will not grant `miru` user access by default and must be specifically configured.
+    </Info>
+
+## Testing access
+
+To help you navigate the necessary permissions, we've provided an automated script that reports any gaps in the permissions for the `miru` user to access a given file or directory.
+
+### Run the script
+
+First, download the script to your current working directory using `curl`.
+
+```bash
+curl -fsSL -o ./check-miru-access.sh \
+  https://raw.githubusercontent.com/mirurobotics/docs/blob/main/pub/scripts/agent/check-miru-access.sh
+```
+
+Verify the script's contents with `less`.
+```bash
+less ./check-miru-access.sh
+```
+
+<Note>
+  You can also view the script on [GitHub](https://github.com/mirurobotics/docs/blob/main/pub/scripts/agent/check-miru-access.sh).
+</Note>
+
+Then run the script with the path you want to test.
+```bash
+bash ./check-miru-access.sh /path/to/config-instance.yaml
+```
+
+### Understand the output
+
+The script outputs a table of the permissions required to access the target path. Each row shows a path unit (`file`, `directory`, `parent`, `ancestor`) and required permissions. 
+
+- `-` means that permission is not required for that path unit
+- `OK` means the required permission is present
+- `NO` means the required permission is missing
+
+The final line is `FINAL RESULT: PASS` or `FINAL RESULT: FAIL`.
+
+### Example outputs
+
+<Tabs>
+
+  <Tab title="File">
+    The most common use case is to test a file path. If a file passes, then the Miru Agent will be able to access the file appropriately.
+
+    ```bash
+    $ ./check-miru-access.sh /var/lib/myapp/configs/mobility.yaml
+
+    Permission checks for: /var/lib/myapp/configs/mobility.yaml
+
+    | Target Type | Read | Write | Execute | Path
+    | ----------- | ---- | ----- | ------- | ----
+    | file        | OK   | OK    | -       | /var/lib/myapp/configs/mobility.yaml
+    | parent      | OK   | OK    | OK      | /var/lib/myapp/configs
+    | ancestor    | -    | -     | OK      | /var/lib/myapp
+    | ancestor    | -    | -     | OK      | /var/lib
+    | ancestor    | -    | -     | OK      | /var
+    | ancestor    | -    | -     | OK      | /
+
+    FINAL RESULT: PASS
+    ```
+  </Tab>
+
+  <Tab title="File doesn't exist">
+    If the input file does not exist yet, the script will skip the file permission checks for the file itself and check the parent/ancestor directory permissions required to create it. 
+
+    As long as the parent directory has the required permissions, the Miru Agent will be able to create the file with the proper permissions.
+
+    ```bash
+    $ ./check-miru-access.sh /var/lib/myapp/configs/mobility.json
+
+    Permission checks for: /var/lib/myapp/configs/mobility.json
+    Note: target file does not exist yet; skipping file checks.
+
+    | Target Type | Read | Write | Execute | Path
+    | ----------- | ---- | ----- | ------- | ----
+    | parent      | OK   | OK    | OK      | /var/lib/myapp/configs
+    | ancestor    | -    | -     | OK      | /var/lib/myapp
+    | ancestor    | -    | -     | OK      | /var/lib
+    | ancestor    | -    | -     | OK      | /var
+    | ancestor    | -    | -     | OK      | /
+
+    FINAL RESULT: PASS
+    ```
+  </Tab>
+
+  <Tab title="Directory">
+    If a directory passes, then the `miru` user will be able to create configuration files in the directory and access them appropriately.
+
+    ```bash
+    $ ./check-miru-access.sh /var/lib/myapp/configs
+    Permission checks for: /var/lib/myapp/configs
+
+    | Target Type | Read | Write | Execute | Path
+    | ----------- | ---- | ----- | ------- | ----
+    | directory   | OK   | OK    | OK      | /var/lib/myapp/configs
+    | ancestor    | -    | -     | OK      | /var/lib/myapp
+    | ancestor    | -    | -     | OK      | /var/lib
+    | ancestor    | -    | -     | OK      | /var
+    | ancestor    | -    | -     | OK      | /
+
+    FINAL RESULT: PASS
+    ```
+  </Tab>
+
+</Tabs>
+
 
 ## Granting access
 
@@ -160,109 +272,3 @@ Modify the permissions of a directory to grant the `miru` user read/write/execut
 ```bash
 sudo setfacl -m u:miru:rwx /path/to/dir
 ```
-
-## Testing access
-
-To help you verify you've granted the proper permissions to the `miru` user, we've provided a small script to help you out. It checks each permission required to access the target path and reports the result.
-
-### Run the script
-
-To run the script, first download it to your current working directory using `curl`.
-
-```bash
-curl -fsSL -o ./check-miru-access.sh \
-  https://raw.githubusercontent.com/mirurobotics/docs/main/pub/scripts/agent/check-miru-access.sh
-```
-
-Verify the script's contents with `less`.
-```bash
-less ./check-miru-access.sh
-```
-
-<Info>
-  You can also view the script on [GitHub](https://github.com/mirurobotics/docs/blob/main/pub/scripts/agent/check-miru-access.sh).
-</Info>
-
-Then run the script with the path you want to test.
-```bash
-bash ./check-miru-access.sh /path/to/config-instance.yaml
-```
-
-### Understand the output
-
-The script outputs a table of the permissions required to access the target path. Each row shows a path unit (`file`, `directory`, `parent`, `ancestor`) and required permissions. 
-
-- `-` means that permission is not required for that path unit
-- `OK` means the required permission is present
-- `NO` means the required permission is missing
-
-The final line is `FINAL RESULT: PASS` or `FINAL RESULT: FAIL`.
-
-### Example outputs
-
-<Tabs>
-
-  <Tab title="File">
-    The most common use case is to test a file path. If a file passes, then the Miru Agent will be able to access the file appropriately.
-
-    ```bash
-    $ ./check-miru-access.sh /var/lib/myapp/configs/mobility.yaml
-
-    Permission checks for: /var/lib/myapp/configs/mobility.yaml
-
-    | Target Type | Read | Write | Execute | Path
-    | ----------- | ---- | ----- | ------- | ----
-    | file        | OK   | OK    | -       | /var/lib/myapp/configs/mobility.yaml
-    | parent      | OK   | OK    | OK      | /var/lib/myapp/configs
-    | ancestor    | -    | -     | OK      | /var/lib/myapp
-    | ancestor    | -    | -     | OK      | /var/lib
-    | ancestor    | -    | -     | OK      | /var
-    | ancestor    | -    | -     | OK      | /
-
-    FINAL RESULT: PASS
-    ```
-  </Tab>
-
-  <Tab title="File doesn't exist">
-    If the input file does not exist yet, the script will skip the file permission checks for the file itself and check the parent/ancestor directory permissions required to create it. 
-
-    As long as the parent directory has the required permissions, the Miru Agent will be able to create the file with the proper permissions.
-
-    ```bash
-    $ ./check-miru-access.sh /var/lib/myapp/configs/mobility.json
-
-    Permission checks for: /var/lib/myapp/configs/mobility.json
-    Note: target file does not exist yet; skipping file checks.
-
-    | Target Type | Read | Write | Execute | Path
-    | ----------- | ---- | ----- | ------- | ----
-    | parent      | OK   | OK    | OK      | /var/lib/myapp/configs
-    | ancestor    | -    | -     | OK      | /var/lib/myapp
-    | ancestor    | -    | -     | OK      | /var/lib
-    | ancestor    | -    | -     | OK      | /var
-    | ancestor    | -    | -     | OK      | /
-
-    FINAL RESULT: PASS
-    ```
-  </Tab>
-
-  <Tab title="Directory">
-    If a directory passes, then the `miru` user will be able to create configuration files in the directory and access them appropriately.
-
-    ```bash
-    $ ./check-miru-access.sh /var/lib/myapp/configs
-    Permission checks for: /var/lib/myapp/configs
-
-    | Target Type | Read | Write | Execute | Path
-    | ----------- | ---- | ----- | ------- | ----
-    | directory   | OK   | OK    | OK      | /var/lib/myapp/configs
-    | ancestor    | -    | -     | OK      | /var/lib/myapp
-    | ancestor    | -    | -     | OK      | /var/lib
-    | ancestor    | -    | -     | OK      | /var
-    | ancestor    | -    | -     | OK      | /
-
-    FINAL RESULT: PASS
-    ```
-  </Tab>
-
-</Tabs>
