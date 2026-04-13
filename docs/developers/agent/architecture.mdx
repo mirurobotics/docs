@@ -8,18 +8,8 @@ The Miru Agent is a background service that keeps your device's configurations i
 
 The Miru Agent communicates with the Miru control plane through outbound-only channels. All traffic is initiated by the agent—no inbound ports need to be opened on the device.
 
-```mermaid
-flowchart BT
-    subgraph cloud["☁ Cloud"]
-        Backend("Control Plane")
-        Broker("MQTT Broker")
-    end
-
-    Agent("Agent")
-
-    Agent -- "HTTPS" --> Backend
-    Agent -- "MQTT over TLS" --> Broker
-```
+<img src="https://assets.mirurobotics.com/docs/v03/images/agent/architecture/comms.light.svg" alt="Agent communication protocols overview" className="block dark:hidden" />
+<img src="https://assets.mirurobotics.com/docs/v03/images/agent/architecture/comms.dark.svg" alt="Agent communication protocols overview" className="hidden dark:block" />
 
 ### HTTPS
 
@@ -46,19 +36,8 @@ During a sync cycle, the agent:
 5. Emits events for deployment transitions
 6. Reports the updated deployment status(es) to the control plane
 
-```mermaid
-%%{init: {'sequence': {'actorMargin': 120, 'diagramMarginX': 60, 'messageMargin': 45}}}%%
-sequenceDiagram
-    participant A as Agent
-    participant S as Control Plane
-
-    A->>S: Pull deployments
-    S-->>A: Deployments
-    Note right of A: Evaluate actions
-    Note right of A: Apply changes
-    Note right of A: Emit events
-    A->>S: Report status
-```
+<img src="https://assets.mirurobotics.com/docs/v03/images/agent/architecture/sync-cycle.light.svg" alt="Agent sync cycle sequence" className="block dark:hidden" />
+<img src="https://assets.mirurobotics.com/docs/v03/images/agent/architecture/sync-cycle.dark.svg" alt="Agent sync cycle sequence" className="hidden dark:block" />
 
 ### Triggers
 
@@ -68,33 +47,15 @@ While sync cycles are performed completely over HTTPS, they may be triggered by 
 
 When a deployment is deployed from the dashboard or Platform API, the control plane publishes an MQTT notification instructing the agent to immediately perform a sync cycle.
 
-```mermaid
-sequenceDiagram
-    participant A as Agent
-    participant B as MQTT Broker
-    participant S as Control Plane
-
-    A->>B: Connect (persistent session)
-
-    S->>B: Push sync trigger notification
-
-    B-->>A: Deliver sync trigger notification
-    Note over A: Sync
-```
+<img src="https://assets.mirurobotics.com/docs/v03/images/agent/architecture/mqtt-trigger.light.svg" alt="MQTT trigger sequence" className="block dark:hidden" />
+<img src="https://assets.mirurobotics.com/docs/v03/images/agent/architecture/mqtt-trigger.dark.svg" alt="MQTT trigger sequence" className="hidden dark:block" />
 
 **2. Manual request (REST API)**
 
 Oftentimes it's beneficial to manually trigger a sync cycle from an on-device application to ensure that the local state is in sync with the control plane's state. A local application can request the agent perform a sync cycle via the [Device API](/docs/developers/device-api/overview).
 
-```mermaid
-sequenceDiagram
-    participant L as On-Device App
-    participant A as Agent
-
-    L->>A: POST /device/sync
-    Note over A: Sync
-    A-->>L: 200 OK (sync result)
-```
+<img src="https://assets.mirurobotics.com/docs/v03/images/agent/architecture/rest-trigger.light.svg" alt="REST trigger sequence" className="block dark:hidden" />
+<img src="https://assets.mirurobotics.com/docs/v03/images/agent/architecture/rest-trigger.dark.svg" alt="REST trigger sequence" className="hidden dark:block" />
 
 **3. Polling (HTTPS)**
 

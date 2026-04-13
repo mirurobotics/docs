@@ -2,6 +2,8 @@
 title: 'Security'
 ---
 
+import { Dropdown } from '/snippets/components/api-dropdown.jsx';
+
 The Miru Agent is designed to run with minimal privileges and a restricted system footprint. This page describes the agent's authentication model, authorizations, and the security measures applied at the process, filesystem, network, and credential layers.
 
 ## Authentication
@@ -13,18 +15,8 @@ When the agent is first installed on a device, it goes through an activation pro
 3. The agent sends the public key to the Miru control plane with its activation token
 4. The control plane verifies the activation token, stores the public key, and registers the device
 
-```mermaid
-sequenceDiagram
-    participant P as Provisioning
-    participant A as Agent
-    participant S as Control Plane
-
-    P->>A: Activation token
-    Note over A: Generate RSA-4096 key pair
-    A->>S: Public key + token
-    Note over S: Verify & store public key
-    S-->>A: Device registered
-```
+<img src="https://assets.mirurobotics.com/docs/v03/images/agent/security/activation.light.svg" alt="Agent authentication and activation sequence" className="block dark:hidden" />
+<img src="https://assets.mirurobotics.com/docs/v03/images/agent/security/activation.dark.svg" alt="Agent authentication and activation sequence" className="hidden dark:block" />
 
 After activation, the device's identity is tied to its RSA key pair. Notably, the key pair is generated on-device and the private key never leaves the device. 
 
@@ -40,18 +32,8 @@ After activation, the agent authenticates API requests using short-lived JSON We
 4. The control plane verifies the signature against the device's registered public key
 5. If valid, the control plane issues a short-lived JWT that the agent can use for subsequent API requests
 
-```mermaid
-%%{init: {'sequence': {'actorMargin': 120, 'diagramMarginX': 60, 'messageMargin': 45}}}%%
-sequenceDiagram
-    participant A as Agent
-    participant S as Control Plane
-
-    Note over A: Prepare claims
-    Note over A: Sign with private key
-    A->>S: Signed claims
-    Note over S: Verify with public key
-    S-->>A: JWT (Bearer token)
-```
+<img src="https://assets.mirurobotics.com/docs/v03/images/agent/security/token-lifecycle.light.svg" alt="Agent token lifecycle sequence" className="block dark:hidden" />
+<img src="https://assets.mirurobotics.com/docs/v03/images/agent/security/token-lifecycle.dark.svg" alt="Agent token lifecycle sequence" className="hidden dark:block" />
 
 ### Token refresh
 
@@ -94,27 +76,37 @@ This prevents lateral access between devices. Even if two devices run the same a
 
 The agent runs as a [systemd](https://en.wikipedia.org/wiki/Systemd) service with extensive hardening directives that restrict what the process can access. 
 
-**Dedicated user**
+<Dropdown title="Dedicated user">
 
 The agent runs as an unprivileged `miru` system user and group. The user has no login shell (`/bin/false`) and cannot be used for interactive access.
 
 You can find the agent's service unit file on [GitHub](https://github.com/mirurobotics/agent/blob/main/build/debian/miru.service) in the agent repository.
 
-**No privilege escalation**
+</Dropdown>
+
+<Dropdown title="No privilege escalation">
 
 `NoNewPrivileges` is enabled, preventing the process from gaining additional privileges through setuid binaries or other mechanisms.
 
-**Kernel isolation**
+</Dropdown>
+
+<Dropdown title="Kernel isolation">
 
 The agent cannot load kernel modules, modify kernel tunables (`/proc/sys`, `/sys`), or alter control groups. Other processes are hidden from the agent's view of `/proc`.
 
-**Device restrictions**
+</Dropdown>
+
+<Dropdown title="Device restrictions">
 
 Access to `/dev` is limited to essential pseudo-devices. Physical hardware devices are inaccessible.
 
-**Network restrictions**
+</Dropdown>
+
+<Dropdown title="Network restrictions">
 
 The agent can only create Unix domain sockets and IPv4/IPv6 connections. All other socket types (Netlink, packet sockets, etc.) are blocked.
+
+</Dropdown>
 
 ## Transport security
 
