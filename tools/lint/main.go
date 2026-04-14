@@ -1,10 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/mirurobotics/docs/tools/lint/linter"
+	"github.com/mirurobotics/docs/tools/lint/linter/analysis"
 )
 
 func main() {
@@ -13,28 +15,17 @@ func main() {
 		os.Exit(2)
 	}
 
-	rules := []Rule{NoDoubleDash{}}
-
 	contentRoot, err := findContentRoot(os.Args[1])
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "lint: cannot determine content root: %v\n", err)
 		os.Exit(2)
 	}
 
-	fileRules := []FileRule{
-		ImportResolvesRule{ContentRoot: contentRoot},
-		ImportUsedRule{},
-		ImportSortedRule{},
-		ComponentImportStyleRule{},
-		MDXImportStyleRule{},
-		ImportBlockContiguousRule{},
-	}
-
-	var allViolations []Violation
+	var allViolations []analysis.Violation
 	exitCode := 0
 
 	for _, path := range os.Args[1:] {
-		violations, err := lintFile(path, rules, fileRules)
+		violations, err := linter.ProcessFile(path, contentRoot)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "lint: %s: %v\n", path, err)
 			exitCode = 2
@@ -51,39 +42,6 @@ func main() {
 		exitCode = 1
 	}
 	os.Exit(exitCode)
-}
-
-func lintFile(path string, rules []Rule, fileRules []FileRule) ([]Violation, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = f.Close() }()
-
-	var lines []string
-	lineScanner := bufio.NewScanner(f)
-	for lineScanner.Scan() {
-		lines = append(lines, lineScanner.Text())
-	}
-	if err := lineScanner.Err(); err != nil {
-		return nil, err
-	}
-
-	scanner := NewScanner()
-	var violations []Violation
-	for _, line := range lines {
-		spans := scanner.ScanLine(line)
-		lineNum := scanner.LineNum()
-		for _, rule := range rules {
-			violations = append(violations, rule.Check(path, lineNum, spans)...)
-		}
-	}
-
-	for _, fr := range fileRules {
-		violations = append(violations, fr.CheckFile(path, lines)...)
-	}
-
-	return violations, nil
 }
 
 // findContentRoot walks up the directory tree from startPath until it finds

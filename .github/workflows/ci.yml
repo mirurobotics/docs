@@ -30,8 +30,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Ensure scripts are executable
-        run: chmod +x scripts/lint.sh scripts/audit.sh tests/test-lint.sh
 
       - name: Run lint smoke tests
         run: pnpm run test:lint
@@ -41,8 +39,8 @@ jobs:
 
   audit:
     runs-on: ubuntu-latest
-
     steps:
+
       - name: Check out repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
@@ -58,9 +56,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Ensure audit script is executable
-        run: chmod +x scripts/audit.sh
 
       - name: Run security audit
         run: ./scripts/audit.sh
@@ -78,9 +73,8 @@ jobs:
       - name: Run shell script tests
         run: bats pub/scripts/agent/check-miru-access_test.bats
 
-  lint-tool:
+  lint-custom-linter:
     timeout-minutes: 10
-    name: lint-tool
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -96,9 +90,8 @@ jobs:
           LINT_FIX: "0"
         run: ./tools/lint/scripts/lint.sh
 
-  lint-tool-covgate:
+  test-custom-linter:
     timeout-minutes: 10
-    name: lint-tool-covgate
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
