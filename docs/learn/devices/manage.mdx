@@ -4,6 +4,7 @@ title: "Manage devices"
 
 import { ONLINE_TOOLTIP, OFFLINE_TOOLTIP } from '/snippets/components/devices/statuses.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
+import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v03/images/devices/background.jpeg" image="https://assets.mirurobotics.com/docs/v03/images/devices/header:list2.png" borderWidth={"24px 30px 0 30px"} innerRadius="12px 12px 0 0" outerRadius="14px" />
 
@@ -27,7 +28,7 @@ Update the desired fields, then click **Save**.
 
 **Platform API**
 
-To edit a device programmatically, use the [update device endpoint »](/docs/references/platform-api/latest/endpoints/devices/update)
+To edit a device programmatically, use the <PlatformApiLink endpoint="devices/update">update device endpoint »</PlatformApiLink>
 
 ## Ping a device
 

@@ -2,7 +2,9 @@
 title: "Pagination"
 ---
 
-API resources support bulk fetching through list endpoints. For example, you can [**list config instances**](/docs/references/platform-api/latest/endpoints/config-instances/list) in a workspace. At a minimum, all list endpoints accept the **`limit`** and **`offset`** query parameters.
+import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+
+API resources support bulk fetching through list endpoints. For example, you can <PlatformApiLink endpoint="config-instances/list"><strong>list config instances</strong></PlatformApiLink> in a workspace. At a minimum, all list endpoints accept the **`limit`** and **`offset`** query parameters.
 
 The Miru API paginates results to efficiently manage large datasets, returning a subset of items along with metadata to help you retrieve additional pages.
 

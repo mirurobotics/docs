@@ -4,6 +4,7 @@ title: "Versions"
 
 import { CardNewTab } from '/snippets/components/card.jsx';
 import { LinkNewTab } from '/snippets/components/link.jsx';
+import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
 import { SupportedBadge, DeprecatedBadge, EndOfLifeBadge } from '/snippets/components/support.jsx';
 
 The Miru Agent follows [semantic versioning](https://semver.org/) for its releases. 
@@ -66,7 +67,7 @@ miru-agent --version
 
 **Platform API**
 
-To check the agent version from the Platform API, query the <LinkNewTab href="/docs/references/platform-api/latest/endpoints/devices/list#query-parameters">list devices</LinkNewTab> endpoint and <LinkNewTab href="/docs/developers/platform-api/query-params/filtering">filter</LinkNewTab> by the `agent_version` field.
+To check the agent version from the Platform API, query the <PlatformApiLink endpoint="devices/list#query-parameters" newTab>list devices</PlatformApiLink> endpoint and <LinkNewTab href="/docs/developers/platform-api/query-params/filtering">filter</LinkNewTab> by the `agent_version` field.
 
 ## Support policy
 

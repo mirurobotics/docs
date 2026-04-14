@@ -2,6 +2,8 @@
 title: "Expansions"
 ---
 
+import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+
 The Miru API uses expansions to retrieve related objects in a single request rather than making multiple API calls. This simplifies code and minimizes the number of API calls.
 
 Response objects only include the core fields by default. Related objects (such as the device associated with a deployment) are included with their IDs, but not their complete object data. Using the `expand` query parameter, you can include related objects directly in the response.
@@ -12,7 +14,7 @@ Expansions are powerful but add latency. As such, they should be used strategica
 
 Many response objects reference objects that are not included in the default response.
 
-For example, a [deployment](/docs/references/platform-api/latest/endpoints/deployments/get) has the following default response structure:
+For example, a <PlatformApiLink endpoint="deployments/get">deployment</PlatformApiLink> has the following default response structure:
 
 ```json
 {
@@ -34,8 +36,8 @@ The `device`, `release`, and `config_instances` objects are not included in the 
 
 To retrieve the device for a given deployment, you could make two separate requests:
 
-- First, fetch the [**deployment**](/docs/references/platform-api/latest/endpoints/deployments/get) using its ID (assuming you already know it).
-- Then, having obtained the **`device_id`** from the deployment response, fetch the [**device**](/docs/references/platform-api/latest/endpoints/devices/get) using the device ID.
+- First, fetch the <PlatformApiLink endpoint="deployments/get"><strong>deployment</strong></PlatformApiLink> using its ID (assuming you already know it).
+- Then, having obtained the **`device_id`** from the deployment response, fetch the <PlatformApiLink endpoint="devices/get"><strong>device</strong></PlatformApiLink> using the device ID.
 
 This is workable but adds both latency and complexity to your code. A better approach is to use the `expand` parameter to include the `device` object directly in the deployment response, avoiding a second request.
 
@@ -205,7 +207,7 @@ When expanding nested fields, there's no need to expand the parent field. Since 
 
 ### Items
 
-When listing deployments, you can expand fields in the same way you would for a single deployment. By default, [listing deployments](/docs/references/platform-api/latest/endpoints/deployments/list) returns the following response structure.
+When listing deployments, you can expand fields in the same way you would for a single deployment. By default, <PlatformApiLink endpoint="deployments/list">listing deployments</PlatformApiLink> returns the following response structure.
 
 ```json
 {

@@ -2,15 +2,17 @@
 title: "Filtering"
 ---
 
+import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+
 All list endpoints in the Miru API support filtering to help you retrieve specific resources.
 
-For example, when [listing devices](/docs/references/platform-api/latest/endpoints/devices/list), you can filter by `id`, `name`, and other fields.
+For example, when <PlatformApiLink endpoint="devices/list">listing devices</PlatformApiLink>, you can filter by `id`, `name`, and other fields.
 
 ## Single value filters
 
 Each list endpoint supports its own set of filter names. To see the filters supported by a specific endpoint, look for query parameters in the **Query Parameters** section containing _filter by_ in their description.
 
-`id` is a common filter amongst all list endpoints. It allows you to filter by a resource's unique identifier. For example, when listing devices, you can filter by the [**device id**](/docs/references/platform-api/latest/endpoints/devices/list#parameter-id) using **`id=<device-id>`** in the request URL.
+`id` is a common filter amongst all list endpoints. It allows you to filter by a resource's unique identifier. For example, when listing devices, you can filter by the <PlatformApiLink endpoint="devices/list#parameter-id"><strong>device id</strong></PlatformApiLink> using **`id=<device-id>`** in the request URL.
 
 The following uses the `id=dvc_123` filter to include only the device with the `dvc_123` `id`:
 
@@ -21,7 +23,7 @@ curl --request GET \
   --header 'Miru-Version: 2026-03-09.tetons'
 ```
 
-Filtering by ID will return at most one resource, since IDs are unique. Other fields, like [deployment activity status](/docs/references/platform-api/latest/endpoints/deployments/list#parameter-activity-status), can return multiple results.
+Filtering by ID will return at most one resource, since IDs are unique. Other fields, like <PlatformApiLink endpoint="deployments/list#parameter-activity-status">deployment activity status</PlatformApiLink>, can return multiple results.
 
 ## Multi-value filters
 
