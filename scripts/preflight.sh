@@ -12,10 +12,6 @@ echo "=== Go Lint (tools/lint) ==="
 LINT_FIX=0 ./tools/lint/scripts/lint.sh
 echo ""
 
-echo "=== Go Test (tools/lint) ==="
-./tools/lint/scripts/test.sh
-echo ""
-
 echo "=== Go Coverage (tools/lint) ==="
 ./tools/lint/scripts/covgate.sh
 echo ""
