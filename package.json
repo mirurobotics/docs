@@ -10,7 +10,7 @@
     "cspell": "10.0.0",
     "eslint": "10.2.0",
     "eslint-plugin-mdx": "3.7.0",
-    "mint": "4.2.489"
+    "mint": "4.2.509"
   },
   "pnpm": {
     "overrides": {
