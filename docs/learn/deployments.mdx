@@ -47,6 +47,7 @@ import DeploymentStatus from '/snippets/deployments/status.mdx';
   - `drifted`
   - `queued`
   - `deployed`
+  - `removing`
   - `archived`
 
 </ParamField>
@@ -67,7 +68,7 @@ import DeploymentStatus from '/snippets/deployments/status.mdx';
 
   <DeploymentStatus />
 
-  Enum: `staged`, `drifted`, `queued`, `deployed`, `archived`, `failed`, `retrying`
+  Enum: `staged`, `drifted`, `queued`, `deployed`, `removing`, `archived`, `failed`, `retrying`
 </ParamField>
 
 <ParamField path="parent" type="Deployment">
@@ -163,7 +164,7 @@ The activity status is the _last known_ state of a deployment.
 
 We use _the last known state_ intentionally—poor network connectivity can prevent devices from immediately syncing their activity state with the cloud. In practice, this isn't too common. However, it's still a critical point to keep in mind.
 
-There are five possible activity states for a deployment.
+There are six possible activity states for a deployment.
 
 | Activity Status | Description                                                                                                                     |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------- |
@@ -171,6 +172,7 @@ There are five possible activity states for a deployment.
 | `drifted`       | Deployment has [drifted](/docs/learn/releases/staging-area#deployment-drift) and needs to be reviewed                           |
 | `queued`        | Deployment is waiting for the device to be <Tooltip tip={ONLINE_TOOLTIP.tip} cta={ONLINE_TOOLTIP.cta} href={ONLINE_TOOLTIP.href}>online</Tooltip> so it can be delivered to the device |
 | `deployed`      | Deployment has been delivered to the device, and its configurations are available for consumption                               |
+| `removing`      | Deployment's configurations are being removed from the device                                                                   |
 | `archived`      | Deployment is available for historical reference, but can never be deployed again                                               |
 
 **With Staging**
@@ -182,14 +184,14 @@ During the review phase, a staged deployment may [drift](/docs/learn/releases/st
 <img src="https://assets.mirurobotics.com/docs/v03/images/deployments/activity-status-review.light.svg" alt="Deployment activity status during review phase" className="block dark:hidden" />
 <img src="https://assets.mirurobotics.com/docs/v03/images/deployments/activity-status-review.dark.svg" alt="Deployment activity status during review phase" className="hidden dark:block" />
 
-Once the deployment is approved, it enters the deployment phase. The deployment is queued for delivery to the device, delivered, and eventually archived.
+Once the deployment is approved, it enters the deployment phase. The deployment is queued for delivery to the device, delivered, and eventually removed and archived.
 
 <img src="https://assets.mirurobotics.com/docs/v03/images/deployments/activity-status-staging.light.svg" alt="Deployment activity status during deployment phase" className="block dark:hidden" />
 <img src="https://assets.mirurobotics.com/docs/v03/images/deployments/activity-status-staging.dark.svg" alt="Deployment activity status during deployment phase" className="hidden dark:block" />
 
 **Without Staging**
 
-Deployments which are immediately deployed and skip the `staged` state have a simpler lifecycle. They simply go through the primary deployment lifecycle from `queued` to `archived`.
+Deployments which are immediately deployed and skip the `staged` state have a simpler lifecycle. They simply go through the primary deployment lifecycle from `queued` to `archived`, passing through `removing` when being taken off the device.
 
 <img src="https://assets.mirurobotics.com/docs/v03/images/deployments/activity-status-no-staging.light.svg" alt="Deployment activity status without staging" className="block dark:hidden" />
 <img src="https://assets.mirurobotics.com/docs/v03/images/deployments/activity-status-no-staging.dark.svg" alt="Deployment activity status without staging" className="hidden dark:block" />
