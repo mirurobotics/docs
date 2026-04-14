@@ -78,9 +78,9 @@ jobs:
       - name: Run shell script tests
         run: bats pub/scripts/agent/check-miru-access_test.bats
 
-  go-lint:
+  lint-tool:
     timeout-minutes: 10
-    name: go-lint
+    name: lint-tool
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -96,9 +96,9 @@ jobs:
           LINT_FIX: "0"
         run: ./tools/lint/scripts/lint.sh
 
-  go-covgate:
+  lint-tool-covgate:
     timeout-minutes: 10
-    name: go-covgate
+    name: lint-tool-covgate
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
