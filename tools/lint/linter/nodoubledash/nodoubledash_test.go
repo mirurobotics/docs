@@ -1,13 +1,13 @@
-package main
+package nodoubledash
 
 import (
 	"strings"
 	"testing"
+
+	"github.com/mirurobotics/docs/tools/lint/linter/analysis"
 )
 
-func TestNoDoubleDash(t *testing.T) {
-	rule := NoDoubleDash{}
-
+func TestCheck(t *testing.T) {
 	tests := []struct {
 		name      string
 		input     string
@@ -53,11 +53,13 @@ func TestNoDoubleDash(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			spans := []ProseSpan{{StartCol: 1, Text: tt.input}}
+			var spans [][]analysis.ProseSpan
 			if tt.input == "" {
-				spans = nil
+				spans = [][]analysis.ProseSpan{nil}
+			} else {
+				spans = [][]analysis.ProseSpan{{{StartCol: 1, Text: tt.input}}}
 			}
-			violations := rule.Check("test.mdx", 1, spans)
+			violations := Check("test.mdx", spans)
 			if len(violations) != tt.wantCount {
 				t.Errorf(
 					"expected %d violations, got %d: %v",
@@ -77,12 +79,10 @@ func TestNoDoubleDash(t *testing.T) {
 	}
 }
 
-func TestNoDoubleDashWithOffset(t *testing.T) {
-	rule := NoDoubleDash{}
-
+func TestCheckWithOffset(t *testing.T) {
 	// Simulate a span that starts at column 10 (e.g. after inline code)
-	spans := []ProseSpan{{StartCol: 10, Text: "a--b"}}
-	violations := rule.Check("test.mdx", 1, spans)
+	spans := [][]analysis.ProseSpan{{{StartCol: 10, Text: "a--b"}}}
+	violations := Check("test.mdx", spans)
 	if len(violations) != 1 {
 		t.Fatalf("expected 1 violation, got %d", len(violations))
 	}
@@ -91,7 +91,7 @@ func TestNoDoubleDashWithOffset(t *testing.T) {
 	}
 }
 
-func TestNoDoubleDashIntegration(t *testing.T) {
+func TestCheckIntegration(t *testing.T) {
 	tests := []struct {
 		name      string
 		content   string
@@ -168,19 +168,15 @@ func TestNoDoubleDashIntegration(t *testing.T) {
 		},
 	}
 
-	rule := NoDoubleDash{}
-	rules := []Rule{rule}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			scanner := NewScanner()
-			var violations []Violation
-			for i, line := range strings.Split(tt.content, "\n") {
-				spans := scanner.ScanLine(line)
-				for _, r := range rules {
-					violations = append(violations, r.Check("test.mdx", i+1, spans)...)
-				}
+			scanner := analysis.NewScanner()
+			lines := strings.Split(tt.content, "\n")
+			spans := make([][]analysis.ProseSpan, len(lines))
+			for i, line := range lines {
+				spans[i] = scanner.ScanLine(line)
 			}
+			violations := Check("test.mdx", spans)
 			if len(violations) != tt.wantCount {
 				t.Errorf(
 					"expected %d violations, got %d: %v",

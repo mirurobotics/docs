@@ -1,4 +1,4 @@
-package main
+package analysis
 
 import (
 	"testing"
@@ -298,5 +298,61 @@ func TestProseLineColumns(t *testing.T) {
 	}
 	if spans[0].Text != "plain prose line" {
 		t.Errorf("expected 'plain prose line', got %q", spans[0].Text)
+	}
+}
+
+// TestWhitespaceOnlyBeforeTag verifies that a whitespace-only span before a
+// JSX tag is silently dropped (appendSpan early-exit branch).
+func TestWhitespaceOnlyBeforeTag(t *testing.T) {
+	s := NewScanner()
+	s.ScanLine("---")
+	s.ScanLine("---")
+
+	// Three leading spaces before <Tag> — the spaces-only span must not appear.
+	spans := s.ScanLine("   <Tag> prose text")
+	if len(spans) != 1 {
+		t.Fatalf("expected 1 span (spaces dropped), got %d: %v", len(spans), spans)
+	}
+	if spans[0].Text != " prose text" {
+		t.Errorf("expected ' prose text', got %q", spans[0].Text)
+	}
+}
+
+// TestUnclosedBacktick verifies that a backtick with no matching close is
+// treated as a literal character and the rest of the line is prose.
+func TestUnclosedBacktick(t *testing.T) {
+	s := NewScanner()
+	s.ScanLine("---")
+	s.ScanLine("---")
+
+	spans := s.ScanLine("before `unclosed")
+	if len(spans) != 2 {
+		t.Fatalf("expected 2 spans, got %d: %v", len(spans), spans)
+	}
+	if spans[0].Text != "before " {
+		t.Errorf("span 0: expected 'before ', got %q", spans[0].Text)
+	}
+	if spans[1].Text != "unclosed" {
+		t.Errorf("span 1: expected 'unclosed', got %q", spans[1].Text)
+	}
+}
+
+// TestMismatchedBacktickCount verifies that a single backtick inside
+// double-backtick inline code does not close the span.
+func TestMismatchedBacktickCount(t *testing.T) {
+	s := NewScanner()
+	s.ScanLine("---")
+	s.ScanLine("---")
+
+	// "``code`more``" — the interior single backtick must be skipped over.
+	spans := s.ScanLine("before ``code`more`` after")
+	if len(spans) != 2 {
+		t.Fatalf("expected 2 spans, got %d: %v", len(spans), spans)
+	}
+	if spans[0].Text != "before " {
+		t.Errorf("span 0: expected 'before ', got %q", spans[0].Text)
+	}
+	if spans[1].Text != " after" {
+		t.Errorf("span 1: expected ' after', got %q", spans[1].Text)
 	}
 }
