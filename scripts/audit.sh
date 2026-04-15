@@ -13,4 +13,4 @@ fi
 cd "${repo_root}"
 
 echo "== Security Audit =="
-pnpm audit
+pnpm audit --ignore-registry-errors
