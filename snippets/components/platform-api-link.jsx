@@ -1,5 +1,3 @@
-import { PLATFORM_API_LATEST_VERSION } from '/snippets/constants/platform-api.jsx';
-
 /**
  * Link to a Platform API endpoint using the latest API version.
  *
@@ -8,7 +6,7 @@ import { PLATFORM_API_LATEST_VERSION } from '/snippets/constants/platform-api.js
  * @param {React.ReactNode} children - Link text
  */
 export const PlatformApiLink = ({ endpoint, newTab, children }) => {
-  const href = `/docs/references/platform-api/${PLATFORM_API_LATEST_VERSION}/endpoints/${endpoint}`;
+  const href = `/docs/references/platform-api/2026-03-09/endpoints/${endpoint}`;
   if (newTab) {
     return <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>;
   }
