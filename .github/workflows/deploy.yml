@@ -19,7 +19,7 @@ on:
           - production
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   deploy:
@@ -29,11 +29,19 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - name: Generate app token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.WATERFALL_APP_ID }}
+          private-key: ${{ secrets.WATERFALL_APP_PRIVATE_KEY }}
+
       - name: Check out main with full history
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: main
           fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Deploy ${{ inputs.ref }} → ${{ inputs.environment }}
         run: ./scripts/deploy.sh "${{ inputs.ref }}" "${{ inputs.environment }}"
