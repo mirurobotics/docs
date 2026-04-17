@@ -1,0 +1,104 @@
+name: Deploy docs to an environment
+run-name: Deploy ${{ inputs.ref }} → ${{ inputs.environment }} (by @${{ github.actor }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref to deploy (tag, commit SHA, or branch). Must be reachable from main.'
+        required: true
+        type: string
+        default: main
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - staging
+          - uat
+          - production
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.ref }} → ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out main with full history
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Resolve ref and verify it is reachable from main
+        id: resolve
+        run: |
+          set -euo pipefail
+          git fetch origin --tags --force
+
+          if ! sha=$(git rev-parse --verify "${{ inputs.ref }}^{commit}" 2>/dev/null); then
+            echo "::error::Could not resolve '${{ inputs.ref }}' to a commit."
+            exit 1
+          fi
+
+          if ! git merge-base --is-ancestor "$sha" origin/main; then
+            echo "::error::Commit $sha is not reachable from main. Only code merged to main can be deployed."
+            exit 1
+          fi
+
+          echo "Resolved ${{ inputs.ref }} → $sha (verified on main)"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+
+      - name: Check target branch state
+        id: target
+        run: |
+          set -euo pipefail
+          target="${{ inputs.environment }}"
+          new_sha="${{ steps.resolve.outputs.sha }}"
+
+          if git ls-remote --exit-code --heads origin "$target" >/dev/null 2>&1; then
+            git fetch origin "$target:refs/remotes/origin/$target"
+            target_sha=$(git rev-parse "origin/$target")
+          else
+            target_sha=""
+          fi
+
+          if [ "$target_sha" = "$new_sha" ]; then
+            echo "Target $target already at $new_sha — no-op."
+            echo "noop=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "noop=false" >> "$GITHUB_OUTPUT"
+            echo "target_sha=$target_sha" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Push to target branch
+        if: steps.target.outputs.noop != 'true'
+        run: |
+          set -euo pipefail
+          if [ -n "${{ steps.target.outputs.target_sha }}" ]; then
+            git push --force-with-lease="refs/heads/${{ inputs.environment }}:${{ steps.target.outputs.target_sha }}" \
+              origin "${{ steps.resolve.outputs.sha }}:refs/heads/${{ inputs.environment }}"
+          else
+            git push origin "${{ steps.resolve.outputs.sha }}:refs/heads/${{ inputs.environment }}"
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Deploy ${{ inputs.ref }} → ${{ inputs.environment }}"
+            echo ""
+            echo "- **Triggered by:** @${{ github.actor }}"
+            echo "- **Ref:** \`${{ inputs.ref }}\` → \`${{ steps.resolve.outputs.sha }}\`"
+            echo "- **Previous ${{ inputs.environment }} SHA:** \`${{ steps.target.outputs.target_sha || '(none — first deploy)' }}\`"
+            if [ "${{ steps.target.outputs.noop }}" = "true" ]; then
+              echo "- **Result:** no-op"
+            else
+              echo "- **Result:** deployed"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
