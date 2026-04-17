@@ -1,0 +1,47 @@
+name: Deploy docs to an environment
+run-name: Deploy ${{ inputs.ref }} → ${{ inputs.environment }} (by @${{ github.actor }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref to deploy (tag, commit SHA, or branch). Must be reachable from main.'
+        required: true
+        type: string
+        default: main
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - staging
+          - uat
+          - production
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.ref }} → ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    timeout-minutes: 10
+
+    steps:
+      - name: Generate app token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.WATERFALL_APP_ID }}
+          private-key: ${{ secrets.WATERFALL_APP_PRIVATE_KEY }}
+
+      - name: Check out main with full history
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Deploy ${{ inputs.ref }} → ${{ inputs.environment }}
+        run: ./scripts/deploy.sh "${{ inputs.ref }}" "${{ inputs.environment }}"
