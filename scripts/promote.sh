@@ -9,10 +9,10 @@ usage() {
   cat <<EOF
 Usage: $(basename "$0") <ref> <environment>
 
-Deploy a git ref to a target environment branch.
+Promote a git ref to a target environment branch.
 
 Arguments:
-  ref           Git ref to deploy (tag, commit SHA, or branch).
+  ref           Git ref to promote (tag, commit SHA, or branch).
                 Must be reachable from main.
   environment   Target environment (staging, uat, production).
 
@@ -61,7 +61,7 @@ if ! sha=$(git rev-parse --verify "${ref}^{commit}" 2>/dev/null); then
 fi
 
 if ! git merge-base --is-ancestor "$sha" origin/main; then
-  echo "::error::Commit ${sha} is not reachable from main. Only code merged to main can be deployed."
+  echo "::error::Commit ${sha} is not reachable from main. Only code merged to main can be promoted."
   exit 1
 fi
 
@@ -105,14 +105,14 @@ fi
 # ---------------------------------------------------------------------------
 if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
   {
-    echo "### Deploy ${ref} → ${environment}"
+    echo "### Promote ${ref} → ${environment}"
     echo ""
     echo "- **Ref:** \`${ref}\` → \`${sha}\`"
-    echo "- **Previous ${environment} SHA:** \`${target_sha:-"(none — first deploy)"}\`"
+    echo "- **Previous ${environment} SHA:** \`${target_sha:-"(none — first promote)"}\`"
     if [[ "${noop}" == "true" ]]; then
       echo "- **Result:** no-op"
     else
-      echo "- **Result:** deployed"
+      echo "- **Result:** promoted"
     fi
   } >> "$GITHUB_STEP_SUMMARY"
 fi
