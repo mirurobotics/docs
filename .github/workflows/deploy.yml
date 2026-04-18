@@ -1,4 +1,4 @@
-name: Deploy docs to an environment
+name: Deploy
 run-name: Deploy ${{ inputs.ref }} → ${{ inputs.environment }} (by @${{ github.actor }})
 
 on:
