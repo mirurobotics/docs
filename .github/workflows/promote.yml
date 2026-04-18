@@ -1,11 +1,11 @@
-name: Deploy
-run-name: Deploy ${{ inputs.ref }} → ${{ inputs.environment }} (by @${{ github.actor }})
+name: Promote
+run-name: Promote ${{ inputs.ref }} → ${{ inputs.environment }} (by @${{ github.actor }})
 
 on:
   workflow_dispatch:
     inputs:
       ref:
-        description: 'Git ref to deploy (tag, commit SHA, or branch). Must be reachable from main.'
+        description: 'Git ref to promote (tag, commit SHA, or branch). Must be reachable from main.'
         required: true
         type: string
         default: main
@@ -22,8 +22,8 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
-    name: Deploy ${{ inputs.ref }} → ${{ inputs.environment }}
+  promote:
+    name: Promote ${{ inputs.ref }} → ${{ inputs.environment }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     timeout-minutes: 10
@@ -43,5 +43,5 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
 
-      - name: Deploy ${{ inputs.ref }} → ${{ inputs.environment }}
-        run: ./scripts/deploy.sh "${{ inputs.ref }}" "${{ inputs.environment }}"
+      - name: Promote ${{ inputs.ref }} → ${{ inputs.environment }}
+        run: ./scripts/promote.sh "${{ inputs.ref }}" "${{ inputs.environment }}"
