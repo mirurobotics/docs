@@ -12,7 +12,16 @@ import Install from '/snippets/references/cli/install.mdx';
 To upgrade the Miru CLI to the latest version, run the upgrade command in your local machine's terminal.
 
 <Tabs>
-  <Tab title="Linux">
+  <Tab title="Linux (apt)">
+    ```bash
+    sudo apt-get update && sudo apt-get upgrade miru
+    ```
+
+    <Info>
+      If you originally installed via `curl … install.sh`, you can switch to apt by following the [Linux (apt) install instructions](#install). Both installation methods are kept in sync so switching is safe.
+    </Info>
+  </Tab>
+  <Tab title="Linux (script)">
     ```bash
     curl -fsSL https://raw.githubusercontent.com/mirurobotics/cli/main/install.sh | sh
     ```
@@ -45,13 +54,30 @@ You can find the CLI release changelog in the [CLI changelog](/docs/changelogs/c
 
 ## Uninstall
 
-Remove the binary from your system.
-
 <Tabs>
   <Tab title="Linux">
+    To remove the CLI but keep the apt source and keyring, run:
+
     ```bash
-    sudo rm "$(which miru)"
+    sudo apt remove miru
     ```
+
+    To remove the CLI and purge configuration files, run:
+
+    ```bash
+    sudo apt purge miru
+    ```
+
+    To also remove the apt source and keyring (clean removal), run:
+
+    ```bash
+    sudo rm /etc/apt/sources.list.d/miru-cli.list /usr/share/keyrings/miru-cli.gpg
+    sudo apt-get update
+    ```
+
+    <Info>
+      If you installed via `curl … install.sh` instead of apt, run `sudo rm "$(which miru)"` to remove the binary.
+    </Info>
   </Tab>
   <Tab title="macOS">
     ```bash
@@ -60,7 +86,7 @@ Remove the binary from your system.
   </Tab>
 </Tabs>
 
-Remove any configuration files.
+Remove any local configuration files.
 
 ```bash
 rm -rf ~/.miru

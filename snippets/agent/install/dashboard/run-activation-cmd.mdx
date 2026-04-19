@@ -11,7 +11,8 @@ The installation command is composed of several parts:
 
 Executing the installation script performs the following actions:
 
-1. **Downloads the agent** - fetches the latest Miru Agent Debian package
+1. **Configures the apt repository** - adds the Miru apt source list and signing key (`/usr/share/keyrings/miru-agent.gpg`) if not already present
+1. **Installs the agent** - installs `miru-agent` via `apt-get install`
 1. **Installs the service** - installs the agent as a `systemd` service
 1. **Activates the device** - registers the agent with Miru servers using the activation token
 
