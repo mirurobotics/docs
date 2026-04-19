@@ -100,6 +100,72 @@ The provision script supports the following parameters to tune your installation
 
 <Verify />
 
+## Fleet provisioning
+
+The [API Keys](#api-keys) flow above is the simplest way to provision a device — it's well suited to individual devices, evaluation, and getting started. For a production fleet, where you're provisioning hundreds of devices and want pinned versions, audit trails, and no live network dependency on third-party hosts at provision time, we recommend one of the two patterns below.
+
+This is the same separation Docker draws between its convenience installation script (intended for development and testing) and the manual apt setup (intended for production). The Miru `provision.sh` script is a convenience wrapper; the patterns below decompose it into the underlying steps that production tooling can run directly.
+
+### Vendor the install script
+
+If you provision devices through orchestration tooling — Ansible, cloud-init, Terraform, or similar — vendor the install script into your automation repository instead of fetching it from `raw.githubusercontent.com` at provision time.
+
+1. Download `provision.sh` (for API-key activation) or `install.sh` (for dashboard activation tokens) from a specific tagged release of the agent repository:
+
+    ```bash
+    curl -fsSL -o provision.sh \
+      https://raw.githubusercontent.com/mirurobotics/agent/v0.7.3/scripts/install/provision.sh
+    ```
+
+2. Commit the downloaded script to your automation repository alongside your playbooks or modules.
+3. Audit the script once. From then on, treat it as regular code in your repo — review changes through your normal pull-request process when you upgrade.
+4. Call the local copy from your playbooks instead of curl-piping the upstream URL.
+
+Benefits:
+
+- **Pinned to a known script version.** Survives upstream script changes — your playbooks behave identically run after run.
+- **No live network dependency on `raw.githubusercontent.com`.** The only network calls at provision time are to `apt.mirurobotics.com` (apt repo) and the Miru backend (activation).
+- **Audit-once-then-trust.** The script becomes regular code in your repo, reviewed through your normal pull-request process.
+
+<Info>
+  Replace `v0.7.3` with the agent release you want to pin to. Browse [GitHub Releases](https://github.com/mirurobotics/agent/releases) for the full list of tagged versions.
+</Info>
+
+### Pre-bake the apt repository into a base image
+
+For production fleets at scale — Packer pipelines, custom Yocto builds, golden Raspberry Pi or Jetson images — pre-bake the Miru apt repository into the base image and install the agent at first boot. This decomposes the wrapper script into two operations: a one-time setup at image-bake time and a per-device install at first boot.
+
+**One-time, per image** (during image bake):
+
+```bash
+sudo apt-get install -y apt-transport-https gnupg curl ca-certificates
+curl -fsSL https://apt.mirurobotics.com/miru-apt.gpg.pub \
+  | sudo gpg --dearmor -o /usr/share/keyrings/miru-agent.gpg
+echo "deb [signed-by=/usr/share/keyrings/miru-agent.gpg] https://apt.mirurobotics.com/agent stable main" \
+  | sudo tee /etc/apt/sources.list.d/miru-agent.list
+sudo apt-get update
+```
+
+**Per device** (at first boot, or via your API-key provisioning step):
+
+```bash
+sudo apt-get install -y miru-agent=<pinned-version>
+sudo miru-agent --install --activation-token=$MIRU_ACTIVATION_TOKEN
+```
+
+<Info>
+  `<pinned-version>` is illustrative — production fleets typically pin to a specific version for reproducibility. To get the latest version available in the repo, omit `=<pinned-version>`. Use `apt-cache madison miru-agent` on a configured machine to list available versions.
+
+  The bare `miru-agent --install` activation defaults to the production Miru backend and MQTT hosts. For non-production environments (staging, development), pass the additional backend and MQTT host flags that `provision.sh` normally injects — see the source of [`provision.sh`](https://github.com/mirurobotics/agent/blob/main/scripts/install/provision.sh) for the exact flag names.
+</Info>
+
+Benefits:
+
+- **Pinned versions reproducible across the fleet.** Every device that boots from the image installs exactly the same `miru-agent` version.
+- **Faster first-boot.** Apt repo setup and key import happen once at image-bake time, not on every device.
+- **No live curl into shell at provision time.** Every install is GPG-verified by apt against the keyring baked into the image.
+- **One fewer network dependency at provisioning time.** First-boot only needs to reach `apt.mirurobotics.com` and the Miru backend.
+
 ## Poor Connectivity
 
 Some environments may have a poor internet connection. Whether located in a remote area or using a cellular connection, downloading the Miru Agent over a network may be impractical in some environments.
