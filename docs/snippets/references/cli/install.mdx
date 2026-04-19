@@ -1,7 +1,23 @@
 To install the Miru CLI, run the installation command in your local machine's terminal.
 
 <Tabs>
-  <Tab title="Linux">
+  <Tab title="Linux (apt)">
+    Install the prerequisites, add the Miru apt repository, then install the CLI.
+
+    ```bash
+    sudo apt-get install -y apt-transport-https gnupg curl
+    curl -fsSL https://apt.mirurobotics.com/miru-apt.gpg.pub \
+      | sudo gpg --dearmor -o /usr/share/keyrings/miru-cli.gpg
+    echo "deb [signed-by=/usr/share/keyrings/miru-cli.gpg] https://apt.mirurobotics.com/cli stable main" \
+      | sudo tee /etc/apt/sources.list.d/miru-cli.list
+    sudo apt-get update && sudo apt-get install miru
+    ```
+
+    <Info>
+      The CLI is signed by the same key as the Miru Agent but installed under a separate keyring (`/usr/share/keyrings/miru-cli.gpg`) so you can manage the two apt sources independently.
+    </Info>
+  </Tab>
+  <Tab title="Linux (script)">
     ```bash
     curl -fsSL https://raw.githubusercontent.com/mirurobotics/cli/main/install.sh | sh
     ```
