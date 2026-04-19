@@ -65,7 +65,8 @@ curl -fsSL https://raw.githubusercontent.com/mirurobotics/agent/main/scripts/ins
 The provision script performs the following actions:
 
 1. **Creates the device** - creates a new device in the Miru dashboard if a device with the provided name doesn't already exist
-1. **Downloads the agent** - fetches the latest Miru Agent Debian package
+1. **Configures the apt repository** - adds the Miru apt source list and signing key (`/usr/share/keyrings/miru-agent.gpg`) if not already present
+1. **Installs the agent** - installs `miru-agent` via `apt-get install`
 1. **Installs the service** - installs the agent as a `systemd` service
 1. **Activates the device** - registers the agent with Miru servers using the activation token
 
@@ -88,7 +89,7 @@ The provision script supports the following parameters to tune your installation
 <ParamField path="--version" type="string">
   The agent version to install (e.g., `v0.6.0`).
 
-  Defaults to the [latest release](https://github.com/mirurobotics/agent/releases/latest). See all [available versions](https://github.com/mirurobotics/agent/releases).
+  Defaults to the latest version available in the apt repository. To list all available versions on a configured machine run `apt-cache madison miru-agent`. The full release list is also browsable on [GitHub Releases](https://github.com/mirurobotics/agent/releases).
 </ParamField>
 
 <ParamField path="--from-pkg" type="string">
@@ -113,23 +114,28 @@ While this method circumvents the need to _download_ the Miru Agent over a netwo
 
 ### Download the Agent
 
-All Miru Agent releases are available as Debian packages [on GitHub](https://github.com/mirurobotics/agent/releases). You can find the latest release [here](https://github.com/mirurobotics/agent/releases/latest).
+On a machine with a stable internet connection that already has the Miru apt repository configured, download the agent `.deb` without installing it.
+
+```bash
+sudo apt-get update
+apt-get download miru-agent
+```
+
+This produces a file named `miru-agent_<version>_<arch>.deb` in the current directory, matching the host architecture.
+
+<Info>
+  To download a specific version, pass it explicitly: `apt-get download miru-agent=<version>`. Use `apt-cache madison miru-agent` to list available versions.
+</Info>
+
+To download for a different architecture (for example a Jetson `arm64` device from an `amd64` workstation), see [GitHub Releases](https://github.com/mirurobotics/agent/releases) where every architecture's `.deb` is published as a release asset. You can find the latest release [here](https://github.com/mirurobotics/agent/releases/latest).
 
 <Info>
   Releases with the `Pre-release` tag are not yet considered stable and may contain bugs or other issues. Use at your own risk.
 </Info>
 
-To download the agent, drop down the **Assets** section for the desired release. The assets ending with the `.deb` extension are the Debian packages for the Miru Agent.
-
 <Frame>
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/agent/github-assets.png)
 </Frame>
-
-The Debian packages are all the same version of the Miru Agent, but built for different architectures (i.e. `amd64`, `arm64`, etc.). Find the architecture that matches your target machine's architecture and download the package.
-
-For example, if your robot is an `x86_64` machine, you'll want to download the `miru-agent_<version>_amd64.deb` package. If your robot is an `aarch64` machine, you'll want to download the `miru-agent_<version>_arm64.deb` package.
-
-To download a package, click on the filename in GitHub.
 
 ### Transfer the Agent
 
