@@ -64,7 +64,14 @@
                 "group": "Devices",
                 "pages": [
                   "docs/learn/devices/overview",
-                  "docs/learn/devices/provision",
+                  {
+                    "group": "Provision devices",
+                    "pages": [
+                      "docs/learn/devices/provision/dashboard",
+                      "docs/learn/devices/provision/api-keys",
+                      "docs/learn/devices/provision/poor-connectivity"
+                    ]
+                  },
                   "docs/learn/devices/manage",
                   "docs/learn/devices/initial-deployment",
                   "docs/learn/devices/config-editor",
