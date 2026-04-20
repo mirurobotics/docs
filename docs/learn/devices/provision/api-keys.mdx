@@ -1,38 +1,8 @@
 ---
-title: "Provision devices"
+title: "API Keys"
 ---
 
-import RunCmd from '/snippets/agent/install/dashboard/run-activation-cmd.mdx';
 import Verify from '/snippets/agent/install/verify.mdx';
-import { Framed } from '/snippets/components/framed.jsx';
-import CreateDevice from '/snippets/devices/create.mdx';
-import RetrieveCmd from '/snippets/devices/retrieve-activation-cmd.mdx';
-
-<Framed background="https://assets.mirurobotics.com/docs/v03/images/devices/background.jpeg" image="https://assets.mirurobotics.com/docs/v03/images/devices/header:create-panel.png" borderWidth={"36px 100px 0 0"} innerRadius={"0 8px 0 0"} />
-
-Provisioning a device is the process of creating it in Miru and installing the Miru Agent on it. Once provisioned, a device is ready to receive deployments.
-
-## Dashboard
-
-The Miru dashboard is the simplest way to provision devices, ideal for getting started or managing individual devices.
-
-For automated deployments or provisioning devices at scale, consider using [API Keys](#api-keys) instead.
-
-### Create a Device
-
-<CreateDevice />
-
-### Install the Agent
-
-<RetrieveCmd />
-
-<RunCmd />
-
-### Verify the Installation
-
-<Verify />
-
-## API Keys
 
 To programmatically provision devices, Miru offers API keys.
 
@@ -42,11 +12,11 @@ Unlike the dashboard installation, which requires manual interaction with the we
 - **Integrate with existing infrastructure** management tools and workflows
 - **Use in headless environments** where a web browser isn't available
 
-### Create the API Key
+## Create the API Key
 
 To create an API key, follow the instructions for [creating an API key](/docs/admin/apikeys#create-an-api-key) and select the `devices:provision` scope.
 
-### Provision the Device
+## Provision the Device
 
 On the device you want to install the Miru Agent, set the `MIRU_API_KEY` environment variable to your API key.
 
@@ -96,7 +66,7 @@ The provision script supports the following parameters to tune your installation
   The file path to the Miru Agent Debian package to use for installation. Useful for installing the agent in poor connectivity scenarios.
 </ParamField>
 
-### Verify Installation
+## Verify Installation
 
 <Verify />
 
@@ -165,83 +135,3 @@ Benefits:
 - **Faster first-boot.** Apt repo setup and key import happen once at image-bake time, not on every device.
 - **No live curl into shell at provision time.** Every install is GPG-verified by apt against the keyring baked into the image.
 - **One fewer network dependency at provisioning time.** First-boot only needs to reach `apt.mirurobotics.com` and the Miru backend.
-
-## Poor Connectivity
-
-Some environments may have a poor internet connection. Whether located in a remote area or using a cellular connection, downloading the Miru Agent over a network may be impractical in some environments.
-
-In such scenarios, we recommend downloading the Miru Agent to a computer with a stable connection and then transferring it to the target machine.
-
-While this method circumvents the need to _download_ the Miru Agent over a network, _activating_ the agent still requires some level of connectivity to register the device with the Miru servers.
-
-<Warning>
-  Some connectivity (however weak) is required to activate the agent. If a device is not connected, the agent cannot be activated.
-</Warning>
-
-### Download the Agent
-
-On a machine with a stable internet connection that already has the Miru apt repository configured, download the agent `.deb` without installing it.
-
-```bash
-sudo apt-get update
-apt-get download miru-agent
-```
-
-This produces a file named `miru-agent_<version>_<arch>.deb` in the current directory, matching the host architecture.
-
-<Info>
-  To download a specific version, pass it explicitly: `apt-get download miru-agent=<version>`. Use `apt-cache madison miru-agent` to list available versions.
-</Info>
-
-To download for a different architecture (for example a Jetson `arm64` device from an `amd64` workstation), see [GitHub Releases](https://github.com/mirurobotics/agent/releases) where every architecture's `.deb` is published as a release asset. You can find the latest release [here](https://github.com/mirurobotics/agent/releases/latest).
-
-<Info>
-  Releases with the `Pre-release` tag are not yet considered stable and may contain bugs or other issues. Use at your own risk.
-</Info>
-
-<Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/agent/github-assets.png)
-</Frame>
-
-### Transfer the Agent
-
-Once you've downloaded the appropriate Debian package, transfer it to your target machine. This can be done via a variety of methods, such as a USB drive.
-
-### Install the Agent
-
-After transferring the package to your target machine, install it by adding the `--from-pkg` argument to the installation command.
-
-**API keys**
-
-If installing via an [API key](#api-keys), add the `--from-pkg` argument to the provision script.
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/mirurobotics/agent/main/scripts/install/provision.sh | sh -s -- \
---device-name=$HOSTNAME \
---allow-reactivation=true \
---from-pkg=/path/to/miru-agent_<version>_<architecture>.deb
-```
-
-<Info>
-  You'll need to replace `/path/to/miru-agent_<version>_<architecture>.deb` with the actual path to the package.
-</Info>
-
-**Dashboard**
-
-If installing via the dashboard, follow these steps.
-
-1. Copy the [installation command](#install-the-agent) from the dashboard
-2. Append `-s -- --from-pkg=/path/to/agent.deb` and replace the `<path/to/agent.deb>` with the actual path to the agent package
-
-This will give you an installation command similar to the following.
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/mirurobotics/agent/main/scripts/install/install.sh | \
-env MIRU_ACTIVATION_TOKEN=<activation-token> \
-sh -s -- \
---from-pkg=/path/to/agent.deb
-```
-
-<Warning>
-  Do not copy the example command above. It will not work because it lacks the required activation token. Instead, follow the steps listed above.
-</Warning>
