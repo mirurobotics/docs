@@ -63,12 +63,19 @@
               {
                 "group": "Devices",
                 "pages": [
-                  "learn/devices/overview",
-                  "learn/devices/provision",
-                  "learn/devices/manage",
-                  "learn/devices/initial-deployment",
-                  "learn/devices/config-editor",
-                  "learn/devices/deployment-history"
+                  "docs/learn/devices/overview",
+                  {
+                    "group": "Provision devices",
+                    "pages": [
+                      "docs/learn/devices/provision/dashboard",
+                      "docs/learn/devices/provision/api-keys",
+                      "docs/learn/devices/provision/poor-connectivity"
+                    ]
+                  },
+                  "docs/learn/devices/manage",
+                  "docs/learn/devices/initial-deployment",
+                  "docs/learn/devices/config-editor",
+                  "docs/learn/devices/deployment-history"
                 ]
               },
               {
