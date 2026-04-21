@@ -23,6 +23,7 @@
     "costmap",
     "dearmor",
     "diffable",
+    "distros",
     "idempotently",
     "inlines",
     "journalctl",
