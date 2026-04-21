@@ -165,6 +165,8 @@ Render-check is covered by the lint pipeline: the custom linter and ESLint both 
 
 All commands run from `/home/ben/miru/workbench3/docs` (the docs repo root) unless stated otherwise.
 
+**Indent reminder for MDX edits.** When a step below shows content to insert into a `<Tab>` (for example the `<Warning>`, the supported-distros `<Info>`, or the version-pinning fenced block), each line of that content must be indented 4 spaces in the target file — see the Context and Orientation section. Content inserted at the top level of the snippet (for example the primary-method `<Note>` in M2 Step 2.1, which goes above `<Tabs>`) is at column 0 with no indent. The indented code blocks shown below in this plan illustrate the textual content only; replicate the indent the Context section specifies for that location.
+
 ### M1 — Fix the broken apt upgrade command
 
 **Step 1.1.** Edit `docs/developers/cli/install.mdx`. Inside the `## Upgrade` section, `Linux (apt)` tab, change:
@@ -182,7 +184,7 @@ to:
 
 ### M2 — Primary-method callout and script security note
 
-**Step 2.1.** Edit `snippets/references/cli/install.mdx`. Immediately above the opening `<Tabs>` tag (line 3), insert a `<Note>` block:
+**Step 2.1.** Edit `snippets/references/cli/install.mdx`. Immediately above the opening `<Tabs>` tag (line 3), insert a `<Note>` block. This is a top-level insertion: the `<Note>` sits at column 0 (not inside any tab), with 2-space indent only for the prose body inside the `<Note>`:
 
     <Note>
       **apt is the recommended path on Linux.** The install script on the `Linux (script)` tab is provided for containers, Alpine, and CI environments without apt. On a Debian-based host, prefer the `Linux (apt)` tab.
