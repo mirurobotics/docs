@@ -35,7 +35,7 @@ curl -fsSL https://raw.githubusercontent.com/mirurobotics/agent/main/scripts/ins
 The provision script performs the following actions:
 
 1. **Creates the device** - creates a new device in the Miru dashboard if a device with the provided name doesn't already exist
-1. **Configures the apt repository** - adds the Miru apt source list and signing key (`/usr/share/keyrings/miru-agent.gpg`) if not already present
+1. **Configures the apt repository** - adds the Miru apt source list and signing key (`/etc/apt/keyrings/miru.gpg`) if not already present
 1. **Installs the agent** - installs `miru-agent` via `apt-get install`
 1. **Installs the service** - installs the agent as a `systemd` service
 1. **Activates the device** - registers the agent with Miru servers using the activation token
@@ -94,7 +94,7 @@ If you provision devices through orchestration tooling — Ansible, cloud-init, 
 Benefits:
 
 - **Pinned to a known script version.** Survives upstream script changes — your playbooks behave identically run after run.
-- **No live network dependency on `raw.githubusercontent.com`.** The only network calls at provision time are to `apt.mirurobotics.com` (apt repo) and the Miru backend (activation).
+- **No live network dependency on `raw.githubusercontent.com`.** The only network calls at provision time are to `packages.mirurobotics.com` (apt repo) and the Miru backend (activation).
 - **Audit-once-then-trust.** The script becomes regular code in your repo, reviewed through your normal pull-request process.
 
 <Info>
@@ -108,10 +108,10 @@ For production fleets at scale — Packer pipelines, custom Yocto builds, golden
 **One-time, per image** (during image bake):
 
 ```bash
-sudo apt-get install -y apt-transport-https gnupg curl ca-certificates
-curl -fsSL https://apt.mirurobotics.com/miru-apt.gpg.pub \
-  | sudo gpg --dearmor -o /usr/share/keyrings/miru-agent.gpg
-echo "deb [signed-by=/usr/share/keyrings/miru-agent.gpg] https://apt.mirurobotics.com/agent stable main" \
+sudo apt-get install -y ca-certificates curl gnupg
+curl -fsSL https://packages.mirurobotics.com/apt/miru.gpg \
+  | sudo gpg --dearmor -o /etc/apt/keyrings/miru.gpg
+echo "deb [signed-by=/etc/apt/keyrings/miru.gpg] https://packages.mirurobotics.com/apt/agent stable main" \
   | sudo tee /etc/apt/sources.list.d/miru-agent.list
 sudo apt-get update
 ```
@@ -134,4 +134,4 @@ Benefits:
 - **Pinned versions reproducible across the fleet.** Every device that boots from the image installs exactly the same `miru-agent` version.
 - **Faster first-boot.** Apt repo setup and key import happen once at image-bake time, not on every device.
 - **No live curl into shell at provision time.** Every install is GPG-verified by apt against the keyring baked into the image.
-- **One fewer network dependency at provisioning time.** First-boot only needs to reach `apt.mirurobotics.com` and the Miru backend.
+- **One fewer network dependency at provisioning time.** First-boot only needs to reach `packages.mirurobotics.com` and the Miru backend.
