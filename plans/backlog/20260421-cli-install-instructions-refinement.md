@@ -7,7 +7,7 @@ This ExecPlan is a living document. The sections Progress, Surprises & Discoveri
 | Repository | Access | Description |
 |-----------|--------|-------------|
 | `docs/` | read-write | All edits happen here, on branch `docs/apt-repository-install-instructions`. |
-| `cli` (mirurobotics/cli) | read-only | Referenced for the `install.sh` script and `--version=` flag behavior. No changes to `install.sh`. |
+| `cli` (mirurobotics/cli) | read-only | Referenced for `install.sh` and its `--version=` flag. No changes to `install.sh`. |
 
 This plan lives in `docs/plans/` because every file edited is under the docs repo.
 
@@ -16,9 +16,9 @@ This plan lives in `docs/plans/` because every file edited is under the docs rep
 After this change, the Miru CLI install page at `https://docs.mirurobotics.com/docs/developers/cli/install` will mirror industry-standard install flows (Docker, Tailscale, GitHub CLI, Cloudflare, fly.io, Supabase, Bun):
 
 - The page steers new users toward apt on Linux and calls out that the `curl … | sh` script is for containers/Alpine/CI environments without apt.
-- The broken `apt-get upgrade miru` command (which would upgrade all packages and treat `miru` as a positional argument) is replaced with `apt-get install --only-upgrade miru`, which upgrades only the CLI.
-- The reader can verify the key fingerprint before trusting the apt repo, pin the CLI to a specific version, and see a security note on the curl-piped script.
-- Section order on the install page flows Install → Verify → Upgrade → Uninstall, matching the order of operations a user actually performs.
+- The broken `apt-get upgrade miru` command (upgrades all packages, treats `miru` as a positional argument) is replaced with `apt-get install --only-upgrade miru`.
+- The reader can verify the key fingerprint, pin the CLI to a specific version, and see a security note on the curl-piped script.
+- Section order on the install page flows Install → Verify → Upgrade → Uninstall.
 
 Verifiable outcome: after running the refreshed apt recipe on a fresh Debian-based VM, the user can run `miru version`, see the pinned version, and run `sudo apt-get install --only-upgrade miru` to move forward one version without upgrading unrelated packages.
 
@@ -53,20 +53,20 @@ Use timestamps when you complete steps. Split partially completed work into "don
 
 ## Context and Orientation
 
-**Framework.** This is a Mintlify static docs site. Content lives in MDX files (Markdown + JSX components). Mintlify ships built-in callout components `<Note>`, `<Info>`, `<Warning>`, `<Tip>`, and `<Check>`, plus layout components `<Tabs>` and `<Tab>`.
+**Framework.** Mintlify static docs site. Content is MDX (Markdown + JSX). Built-in callouts: `<Note>`, `<Info>`, `<Warning>`, `<Tip>`, `<Check>`. Layout: `<Tabs>` / `<Tab>`.
 
 **Files changed by this plan:**
 
-- `snippets/references/cli/install.mdx` — the shared install snippet imported by the public CLI install page. Contains three `<Tab>` entries: `Linux (apt)`, `Linux (script)`, `macOS`.
-- `docs/developers/cli/install.mdx` — the install page itself. Imports the snippet above, then has `## Upgrade`, `## Verify`, and `## Uninstall` sections.
+- `snippets/references/cli/install.mdx` — shared install snippet imported by the public CLI install page. Three `<Tab>` entries: `Linux (apt)`, `Linux (script)`, `macOS`.
+- `docs/developers/cli/install.mdx` — the install page. Imports the snippet, then has `## Upgrade`, `## Verify`, `## Uninstall` sections.
 
-**Branch.** All work happens on the already-checked-out branch `docs/apt-repository-install-instructions` in `/home/ben/miru/workbench3/docs`.
+**Branch.** `docs/apt-repository-install-instructions` in `/home/ben/miru/workbench3/docs` (already checked out).
 
-**How the page renders.** Mintlify renders each `<Tab>` as a tab header; the first tab (`Linux (apt)`) is the default. Indentation in the MDX source: `<Tabs>` sits at column 0, each `<Tab title=…>` at column 2, and content *inside* a tab (prose, callouts, fenced code-block fences) at column 4. The body lines of a fenced code block inside a tab are NOT further indented beyond the fence — the 4-space indent on the opening/closing fence defines the block's indentation level. Callouts (`<Note>`, `<Info>`, `<Warning>`) inside a tab must follow the same 4-space indent on every line, or the MDX parser rejects them.
+**MDX indent rules.** `<Tabs>` at column 0, `<Tab title=…>` at column 2, content *inside* a tab (prose, callouts, fenced code-block fences) at column 4. Body lines inside a fenced code block are NOT further indented beyond the fence. Callouts inside a tab must follow the 4-space indent on every line or the MDX parser rejects them.
 
-**Existing patterns to mirror.** `docs/learn/devices/provision/api-keys.mdx` lines 110–129 already demonstrate version pinning for the agent: `sudo apt-get install -y miru-agent=<pinned-version>` with `apt-cache madison miru-agent` for listing. The same shape applies to the CLI. That file also uses the prerequisite line `sudo apt-get install -y apt-transport-https gnupg curl ca-certificates` (agent side, unchanged by this plan).
+**Existing patterns to mirror.** `docs/learn/devices/provision/api-keys.mdx` lines 110–129 already demonstrate version pinning for the agent (`sudo apt-get install -y miru-agent=<pinned-version>`, `apt-cache madison miru-agent`). The same shape applies to the CLI. That file also uses the prerequisite line `sudo apt-get install -y apt-transport-https gnupg curl ca-certificates` on the agent side (unchanged by this plan).
 
-**What `install.sh` supports.** The upstream installer at `https://raw.githubusercontent.com/mirurobotics/cli/main/install.sh` accepts `--version=<semver>` via `sh -s -- --version=<semver>`. The plan references this but does **not** modify `install.sh`.
+**What `install.sh` supports.** Upstream at `https://raw.githubusercontent.com/mirurobotics/cli/main/install.sh` accepts `--version=<semver>` via `sh -s -- --version=<semver>`. This plan does **not** modify `install.sh`.
 
 **Preflight entrypoint.** `./scripts/preflight.sh` in the docs repo. It runs:
 
@@ -79,103 +79,27 @@ Use timestamps when you complete steps. Split partially completed work into "don
 
 **Preflight gate is load-bearing.** Preflight must report "All documentation lint checks passed." (and the other sub-commands must exit 0) before this work can be merged. This is a hard gate: do not open a PR if preflight reports any failures. The author of this plan has embedded that requirement here so it is visible to every downstream agent regardless of context loss.
 
-**CSpell words.** `cspell.json` at the docs repo root contains a `words` list. If the plan introduces new jargon the linter flags (`.gpg.pub` components are already accepted via existing content; `fingerprint` is a normal English word), add the flagged word to `words` rather than adding in-file `// cSpell:ignore` comments.
-
-## Plan of Work
-
-The plan is organized into six small milestones. Each milestone ends with a single commit so the PR is reviewable as discrete units and bisectable.
-
-### M1 — Fix the broken apt upgrade command
-
-In `docs/developers/cli/install.mdx`, the `Linux (apt)` tab under `## Upgrade` contains:
-
-    sudo apt-get update && sudo apt-get upgrade miru
-
-`apt-get upgrade` ignores the trailing `miru` (it upgrades all packages). Replace with:
-
-    sudo apt-get update && sudo apt-get install --only-upgrade miru
-
-This upgrades only the `miru` package.
-
-### M2 — Primary-method callout and script security note
-
-**Primary-method callout.** In `snippets/references/cli/install.mdx`, insert a `<Note>` directly above the `<Tabs>` block stating that apt is the recommended path for Linux and that the install script is intended for containers, Alpine, and CI-without-apt environments. Prose should not invent supported distros; it points readers to the Linux (apt) tab.
-
-**Script security note.** Inside the `Linux (script)` tab, immediately after the `curl -fsSL … | sh` code block and before the "The script requires `curl`, `tar`, …" sentence, add a `<Warning>` stating that the command pipes remote code into a shell and that apt is preferred when available. Use `<Warning>` (not `<Info>`) to match the strongest-callout convention elsewhere in the docs for security-flavored notices (see `snippets/references/cli/login.mdx` line 11).
-
-### M3 — Section order: Install → Verify → Upgrade → Uninstall
-
-In `docs/developers/cli/install.mdx`, move the `## Verify` block (currently lines 42–53, between `## Upgrade` and `## Uninstall`) to appear immediately after the `<Install />` import and before `## Upgrade`. The page import order becomes:
-
-1. Frontmatter + `import Install`
-2. `<Install />`
-3. `## Verify`
-4. `## Upgrade`
-5. `## Uninstall`
-
-### M4 — Modernize the apt recipe
-
-Edits to the `Linux (apt)` tab in `snippets/references/cli/install.mdx`:
-
-1. **Supported distros note.** Immediately below the tab's introductory sentence ("Install the prerequisites, add the Miru apt repository, then install the CLI."), add a single-sentence `<Info>` callout stating "Supported on recent Debian-based distributions." and insert an MDX comment `{/* TODO: list exact supported distros once the CLI release matrix is published */}` on the line after the callout so the user can fill in specifics without hunting. Do not invent version numbers.
-
-2. **Prerequisite trim.** Change the first line of the code block from:
-
-        sudo apt-get install -y apt-transport-https gnupg curl
-
-   to:
-
-        sudo apt-get install -y ca-certificates curl gnupg
-
-   Rationale: `apt-transport-https` is a no-op on any apt version from the last several years (HTTPS transport is built in); `ca-certificates` is the actually-needed package so apt can verify the TLS chain to `apt.mirurobotics.com`.
-
-3. **Fingerprint verification step.** Immediately after the `gpg --dearmor -o /usr/share/keyrings/miru-cli.gpg` line and before the `echo "deb …"` line, add a line:
-
-        gpg --show-keys /usr/share/keyrings/miru-cli.gpg
-
-   Follow the code block with a new `<Info>` callout stating that the command prints the imported key so the reader can confirm the fingerprint matches the published value. Because the published fingerprint is not available in this repo or on `apt.mirurobotics.com`, include an MDX comment `{/* TODO: publish fingerprint */}` inside the callout (or on the line above it) so a future author knows to fill in the expected value. Do not invent a fingerprint.
-
-### M5 — Document version pinning
-
-**apt pinning.** Directly after the existing `Linux (apt)` tab's `<Info>` about the shared signing key (the paragraph beginning "The CLI is signed by the same key…"), add a short subsection inside the tab. A natural pattern:
-
-    To install or downgrade to a specific version, list available versions and pin the install:
-
-        sudo apt list -a miru
-        sudo apt-get install miru=<version>
-
-No `##` heading inside the tab — keep it as a prose paragraph followed by a code block, matching how the agent API-keys page does it.
-
-**Script pinning.** In the `Linux (script)` tab, directly after the `<Warning>` added in M2 and before the "The script requires `curl`, `tar`, …" paragraph, add a sentence explaining that the script accepts a `--version` flag, with an example:
-
-    To install a specific version, pass `--version=<semver>` to the script:
-
-        curl -fsSL https://raw.githubusercontent.com/mirurobotics/cli/main/install.sh \
-          | sh -s -- --version=0.10.0
-
-Use the same code-block style as the rest of the tab.
-
-### M6 — Preflight and validation
-
-Run `./scripts/preflight.sh` from the docs repo root. If any check reports a failure, resolve it (CSpell additions to `cspell.json` if a new word is flagged; MDX syntax fix if the custom linter or ESLint flags a structural issue) and re-run until the output ends with "All documentation lint checks passed." and the other sub-commands exit 0.
-
-Render-check is covered by the lint pipeline: the custom linter and ESLint both parse MDX, so a malformed `<Tabs>` block or orphan JSX will fail CI.
+**CSpell words.** `cspell.json` at the docs repo root contains a `words` list. If the linter flags new jargon, add the word to `words` rather than using in-file `// cSpell:ignore` comments.
 
 ## Concrete Steps
 
-All commands run from `/home/ben/miru/workbench3/docs` (the docs repo root) unless stated otherwise.
+All commands run from `/home/ben/miru/workbench3/docs` unless stated otherwise.
 
-**Indent reminder for MDX edits.** When a step below shows content to insert into a `<Tab>` (for example the `<Warning>`, the supported-distros `<Info>`, or the version-pinning fenced block), each line of that content must be indented 4 spaces in the target file — see the Context and Orientation section. Content inserted at the top level of the snippet (for example the primary-method `<Note>` in M2 Step 2.1, which goes above `<Tabs>`) is at column 0 with no indent. The indented code blocks shown below in this plan illustrate the textual content only; replicate the indent the Context section specifies for that location.
+**Indent reminder.** Content inserted inside a `<Tab>` (the `<Warning>`, the supported-distros `<Info>`, version-pinning blocks) must be indented 4 spaces. Content at snippet top level (the primary-method `<Note>` in Step 2.1, above `<Tabs>`) is at column 0. The code blocks shown below illustrate textual content only; apply the indent the target location requires.
+
+Each milestone ends with a single commit so the PR is reviewable as discrete units and bisectable.
 
 ### M1 — Fix the broken apt upgrade command
 
-**Step 1.1.** Edit `docs/developers/cli/install.mdx`. Inside the `## Upgrade` section, `Linux (apt)` tab, change:
+**Step 1.1.** In `docs/developers/cli/install.mdx`, `## Upgrade` section, `Linux (apt)` tab, change:
 
     sudo apt-get update && sudo apt-get upgrade miru
 
 to:
 
     sudo apt-get update && sudo apt-get install --only-upgrade miru
+
+Rationale: `apt-get upgrade` ignores the trailing `miru` (it upgrades all packages); `--only-upgrade` upgrades only the `miru` package.
 
 **Step 1.2.** Commit.
 
@@ -184,21 +108,21 @@ to:
 
 ### M2 — Primary-method callout and script security note
 
-**Step 2.1.** Edit `snippets/references/cli/install.mdx`. Immediately above the opening `<Tabs>` tag (line 3), insert a `<Note>` block. This is a top-level insertion: the `<Note>` sits at column 0 (not inside any tab), with 2-space indent only for the prose body inside the `<Note>`:
+**Step 2.1.** In `snippets/references/cli/install.mdx`, immediately above the opening `<Tabs>` tag (line 3), insert at column 0 (2-space indent for the prose body inside the `<Note>`):
 
     <Note>
       **apt is the recommended path on Linux.** The install script on the `Linux (script)` tab is provided for containers, Alpine, and CI environments without apt. On a Debian-based host, prefer the `Linux (apt)` tab.
     </Note>
 
-Leave one blank line above and below the `<Note>`.
+Leave one blank line above and below.
 
-**Step 2.2.** In the same file, inside the `Linux (script)` tab, immediately after the closing triple-backtick of the `curl -fsSL … | sh` code block, insert:
+**Step 2.2.** In the same file, inside the `Linux (script)` tab, immediately after the closing triple-backtick of the `curl -fsSL … | sh` code block, insert (4-space indent on each line to match the tab):
 
     <Warning>
       This command pipes remote code into a shell. On systems with apt, prefer the `Linux (apt)` tab, which uses GPG-verified packages.
     </Warning>
 
-Maintain the tab's 4-space indent on each line of the `<Warning>` (matching the existing prose inside the tab).
+Use `<Warning>` (not `<Info>`) to match the strongest-callout convention for security-flavored notices (see `snippets/references/cli/login.mdx` line 11).
 
 **Step 2.3.** Commit.
 
@@ -207,9 +131,9 @@ Maintain the tab's 4-space indent on each line of the `<Warning>` (matching the 
 
 ### M3 — Reorder Install → Verify → Upgrade → Uninstall
 
-**Step 3.1.** Edit `docs/developers/cli/install.mdx`. Cut the three existing elements of the current `## Verify` section: (1) the `## Verify` heading, (2) the prose paragraph plus the `miru version` fenced code block, and (3) the trailing "You can find the CLI release changelog…" paragraph. These three elements currently sit between `## Verify` and `## Uninstall`. Paste the cut content immediately after the `<Install />` line (and its blank line) and before `## Upgrade`.
+**Step 3.1.** In `docs/developers/cli/install.mdx`, cut the three existing elements of the current `## Verify` section (currently between `## Upgrade` and `## Uninstall`): (1) the `## Verify` heading, (2) the prose paragraph plus the `miru version` fenced code block, (3) the trailing "You can find the CLI release changelog…" paragraph. Paste immediately after the `<Install />` line (and its blank line) and before `## Upgrade`.
 
-After the edit, the file's top-level order must read:
+After the edit, the file's top-level order reads:
 
     import Install from '/snippets/references/cli/install.mdx';
 
@@ -234,12 +158,14 @@ After the edit, the file's top-level order must read:
 
 ### M4 — Modernize the apt recipe
 
-**Step 4.1.** Edit `snippets/references/cli/install.mdx`, `Linux (apt)` tab. Below the sentence "Install the prerequisites, add the Miru apt repository, then install the CLI." insert:
+**Step 4.1.** In `snippets/references/cli/install.mdx`, `Linux (apt)` tab, below the sentence "Install the prerequisites, add the Miru apt repository, then install the CLI.", insert:
 
     <Info>
       Supported on recent Debian-based distributions.
     </Info>
     {/* TODO: list exact supported distros once the CLI release matrix is published */}
+
+Do not invent version numbers.
 
 **Step 4.2.** In the same tab's code block, change:
 
@@ -248,6 +174,8 @@ After the edit, the file's top-level order must read:
 to:
 
     sudo apt-get install -y ca-certificates curl gnupg
+
+Rationale: `apt-transport-https` is a no-op on any apt version from the last several years; `ca-certificates` is the actually-needed package so apt can verify the TLS chain to `apt.mirurobotics.com`.
 
 **Step 4.3.** In the same code block, insert a new line after the `gpg --dearmor -o /usr/share/keyrings/miru-cli.gpg` line (and its continuation) and before the `echo "deb [signed-by=…]"` line:
 
@@ -260,6 +188,8 @@ to:
       `gpg --show-keys` prints the imported key. Confirm the fingerprint matches the published value before proceeding.
     </Info>
 
+Do not invent a fingerprint.
+
 **Step 4.5.** Commit.
 
     git add snippets/references/cli/install.mdx
@@ -267,7 +197,7 @@ to:
 
 ### M5 — Version pinning
 
-**Step 5.1.** Edit `snippets/references/cli/install.mdx`, `Linux (apt)` tab. Anchor: the existing `<Info>` beginning "The CLI is signed by the same key…" (NOT the fingerprint `<Info>` added in M4.4). After that shared-signing-key `<Info>`, add a blank line and then:
+**Step 5.1.** In `snippets/references/cli/install.mdx`, `Linux (apt)` tab. Anchor: the existing `<Info>` beginning "The CLI is signed by the same key…" (NOT the fingerprint `<Info>` added in M4.4). After that shared-signing-key `<Info>`, add a blank line and then (4-space indent on each line; body lines inside the fence are NOT further indented):
 
     To install or downgrade to a specific version, list available versions and pin the install:
 
@@ -276,11 +206,11 @@ to:
     sudo apt-get install miru=<version>
     ```
 
-Maintain the tab's 4-space indent on each line (fence and prose). The body lines inside the fenced code block are NOT further indented.
+No `##` heading inside the tab — prose paragraph followed by a code block, matching the agent API-keys page.
 
 Final apt-tab content order after M4 + M5: intro prose → supported-distros `<Info>` → apt code block (with `gpg --show-keys` line) → fingerprint `<Info>` (with TODO) → shared-signing-key `<Info>` → version-pinning prose → version-pinning code block.
 
-**Step 5.2.** In the `Linux (script)` tab of the same file, after the `<Warning>` added in M2 and before the paragraph beginning "The script requires `curl`, `tar`, …", add:
+**Step 5.2.** In the `Linux (script)` tab, after the `<Warning>` added in M2 and before the paragraph beginning "The script requires `curl`, `tar`, …", add:
 
     To install a specific version, pass `--version=<semver>`:
 
@@ -289,7 +219,7 @@ Final apt-tab content order after M4 + M5: intro prose → supported-distros `<I
       | sh -s -- --version=0.10.0
     ```
 
-`0.10.0` is illustrative. Substitute a version that exists in the apt repo — use the `Linux (apt)` tab's `sudo apt list -a miru` snippet on a host with the repo configured to see what is available. If `0.10.0` has not shipped by the time this plan is executed, update the literal to a real version before committing. Test 9's `grep` assertion below checks for the literal `--version=0.10.0`, so update the test to match whatever version literal ends up in the snippet.
+`0.10.0` is illustrative. Substitute a version that exists in the apt repo — use `sudo apt list -a miru` on a host with the repo configured. If `0.10.0` has not shipped by the time this plan is executed, update the literal to a real version before committing. Test 9's `grep` assertion below checks for the literal `--version=0.10.0`, so update the test to match whatever version literal ends up in the snippet.
 
 **Step 5.3.** Commit.
 
@@ -309,21 +239,23 @@ Expected tail of output:
     All documentation lint checks passed.
     ...
 
-**Step 6.2.** If CSpell flags a new word, add it to the `words` array in `cspell.json` (alphabetical order is not required but match existing case). Re-run `./scripts/preflight.sh` until clean.
+**Step 6.2.** If CSpell flags a new word, add it to the `words` array in `cspell.json` (alphabetical order not required, match existing case). Re-run `./scripts/preflight.sh` until clean.
 
 **Step 6.3.** If ESLint or the custom MDX linter flags a structural problem (most commonly: inconsistent indentation of a callout inside a `<Tab>`, or an unterminated JSX element), fix the offending file and re-run preflight. Do not suppress lint rules to pass.
 
-**Step 6.4.** Final commit *only if* fixes were needed in 6.2 or 6.3. First run `git status` to confirm what changed; stage only those files:
+**Step 6.4.** Final commit *only if* fixes were needed in 6.2 or 6.3:
 
     git status
     git add <only-the-files-git-status-shows-as-modified>
     git commit -m "docs(cli): preflight fixups"
 
-If `git status` shows no changes, skip this step — preflight-clean is the acceptance criterion, not an empty commit.
+If `git status` shows no changes, skip — preflight-clean is the acceptance criterion, not an empty commit.
+
+Render-check is covered by the lint pipeline: the custom linter and ESLint both parse MDX, so a malformed `<Tabs>` block or orphan JSX will fail CI.
 
 ## Validation and Acceptance
 
-**Test 1 — Preflight is clean.** From the docs repo root:
+**Test 1 — Preflight is clean.**
 
     ./scripts/preflight.sh ; echo "exit=$?"
 
@@ -355,17 +287,17 @@ Expected: `ok`.
 
 Expected: exactly one match, inside the `Linux (script)` tab.
 
-**Test 5 — Section order on the install page.** Check that `## Verify` appears before `## Upgrade`:
+**Test 5 — Section order on the install page.**
 
     grep -n "^## " docs/developers/cli/install.mdx
 
-Expected output (order matters):
+Expected (order matters):
 
     <N1>:## Verify
     <N2>:## Upgrade
     <N3>:## Uninstall
 
-where `<N1>`, `<N2>`, `<N3>` are the actual line numbers grep emits. The relative order of the three headings (`Verify` first, then `Upgrade`, then `Uninstall`) is what is being checked — absolute line numbers do not matter.
+The relative order of the three headings is what is checked — absolute line numbers do not matter.
 
 **Test 6 — Prerequisite package list is trimmed and correct.**
 
@@ -415,9 +347,9 @@ Expected: exactly one match.
 
 Expected: exactly one match.
 
-**Test 10 — MDX renders.** The ESLint/custom-linter checks inside preflight (Test 1) cover parse-level MDX validity. As a quick local visual check, run `npx mint dev` from the docs repo root and open `http://localhost:3000/docs/developers/cli/install` — confirm each tab opens without a console error and the callouts render. This visual step is optional (preflight is the gate) but recommended for the three callouts added in M2 and M4.
+**Test 10 — MDX renders.** Preflight (Test 1) covers parse-level MDX validity. As an optional visual check, run `npx mint dev` from the docs repo root and open `http://localhost:3000/docs/developers/cli/install` — confirm each tab opens without a console error and the callouts render. Preflight is the gate; the visual step is recommended for the callouts added in M2 and M4.
 
-**Test 11 — Tab structure preserved.** Quick sanity check that none of the edits dropped or duplicated a `<Tab>`:
+**Test 11 — Tab structure preserved.**
 
     grep -c "<Tab title=" snippets/references/cli/install.mdx
 
@@ -432,12 +364,12 @@ Expected: each returns `1`.
 
 ## Idempotence and Recovery
 
-All changes in this plan are text edits to two MDX files (plus possibly `cspell.json`). Every step is safe to re-run:
+All changes are text edits to two MDX files (plus possibly `cspell.json`). Every step is safe to re-run:
 
 - **Re-running an edit** produces the same file state because each edit replaces a specific literal string.
 - **Re-running a milestone's commit step** after its edits were already committed is a no-op (`git add` followed by `git commit` with nothing staged errors out harmlessly; verify with `git status`).
-- **If a milestone goes wrong mid-flight**, restore the affected file with `git checkout -- <path>` (only on files whose latest change is not yet committed) and redo the edits. This is not destructive beyond discarding the current milestone's in-progress edits.
+- **If a milestone goes wrong mid-flight**, restore the affected file with `git checkout -- <path>` (only on files whose latest change is not yet committed) and redo the edits.
 
-There are no database migrations, deployments, or destructive filesystem operations. The only network operation is `./scripts/audit.sh` which queries the npm audit registry; it does not modify state.
+There are no database migrations, deployments, or destructive filesystem operations. The only network operation is `./scripts/audit.sh` (queries the npm audit registry; no state change).
 
-Rollback for a completed milestone is `git revert <sha>` against that milestone's commit, which produces a new commit undoing the change. Because each milestone is a single commit, revert granularity matches the milestone granularity.
+Rollback for a completed milestone is `git revert <sha>` against that milestone's commit. Because each milestone is a single commit, revert granularity matches milestone granularity.
