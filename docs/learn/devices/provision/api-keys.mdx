@@ -72,7 +72,7 @@ The provision script supports the following parameters to tune your installation
 
 ## Fleet provisioning
 
-The [API Keys](#api-keys) flow above is the simplest way to provision a device — it's well suited to individual devices, evaluation, and getting started. For a production fleet, where you're provisioning hundreds of devices and want pinned versions, audit trails, and no live network dependency on third-party hosts at provision time, we recommend one of the two patterns below.
+The [API Keys](#provision-the-device) flow above is the simplest way to provision a device — it's well suited to individual devices, evaluation, and getting started. For a production fleet, where you're provisioning hundreds of devices and want pinned versions, audit trails, and no live network dependency on third-party hosts at provision time, we recommend one of the two patterns below.
 
 This is the same separation Docker draws between its convenience installation script (intended for development and testing) and the manual apt setup (intended for production). The Miru `provision.sh` script is a convenience wrapper; the patterns below decompose it into the underlying steps that production tooling can run directly.
 
