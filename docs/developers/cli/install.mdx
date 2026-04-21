@@ -27,7 +27,7 @@ To upgrade the Miru CLI to the latest version, run the upgrade command in your l
 <Tabs>
   <Tab title="Linux (apt)">
     ```bash
-    sudo apt-get update && sudo apt-get install --only-upgrade miru
+    sudo apt-get update && sudo apt-get install --only-upgrade miru-cli
     ```
 
     <Info>
@@ -59,21 +59,25 @@ To upgrade the Miru CLI to the latest version, run the upgrade command in your l
     To remove the CLI but keep the apt source and keyring, run:
 
     ```bash
-    sudo apt remove miru
+    sudo apt remove miru-cli
     ```
 
     To remove the CLI and purge configuration files, run:
 
     ```bash
-    sudo apt purge miru
+    sudo apt purge miru-cli
     ```
 
-    To also remove the apt source and keyring (clean removal), run:
+    To also remove the apt source (clean removal), run:
 
     ```bash
-    sudo rm /etc/apt/sources.list.d/miru-cli.list /usr/share/keyrings/miru-cli.gpg
+    sudo rm /etc/apt/sources.list.d/miru-cli.list
     sudo apt-get update
     ```
+
+    <Info>
+      The signing key at `/etc/apt/keyrings/miru.gpg` is shared with the Miru Agent. Only remove it if you have also uninstalled the Agent apt source.
+    </Info>
 
     <Info>
       If you installed via `curl … install.sh` instead of apt, run `sudo rm "$(which miru)"` to remove the binary.
