@@ -16,18 +16,21 @@ After this change, `mirurobotics/docs` has a single PR on branch `chore/combine-
 
 ## Progress
 
-- [ ] (YYYY-MM-DD HH:MMZ) Milestone 1: Baseline verification.
-- [ ] Milestone 2: Apply npm devDependency bumps in `package.json` and regenerate `pnpm-lock.yaml`.
-- [ ] Milestone 3: Update GitHub Actions workflow YAMLs for #64 and #65 (including create-github-app-token major-jump breaking-change scan).
-- [ ] Milestone 4: Full preflight validation.
-- [ ] Milestone 5: Push branch and open consolidated PR.
+- [x] (2026-04-21 20:17Z) Milestone 1: Baseline verification.
+- [x] (2026-04-21 20:17Z) Milestone 2: Apply npm devDependency bumps in `package.json` and regenerate `pnpm-lock.yaml`.
+- [x] (2026-04-21 20:17Z) Milestone 3: Update GitHub Actions workflow YAMLs for #64 and #65 (including create-github-app-token major-jump breaking-change scan).
+- [x] (2026-04-21 20:17Z) Milestone 4: Full preflight validation.
+- [ ] Milestone 5: Push branch and open consolidated PR. (Out of scope for implement — delivery handled separately.)
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds.)
+- Observation: Baseline preflight initially failed with `Command "eslint" not found` because `node_modules/` was not yet installed in this working tree.
+  Evidence: `pnpm install --frozen-lockfile` completed successfully (devDependencies cspell/eslint/eslint-plugin-mdx/mint installed, `Done in 1.3s`); subsequent `./scripts/preflight.sh` passed all seven sections including `All documentation lint checks passed.` and 26/26 bats tests ok.
+  Resolution: ran `pnpm install --frozen-lockfile` first, then re-ran preflight. No plan change; the plan's baseline verification was read-only and idempotent as documented.
 
-- Observation: …
-  Evidence: …
+- Observation: `pnpm install` after the Milestone 2 edits emitted peer-dep warnings (react-dom 18.3.1 and mint's transitive `@mintlify/mdx`/`next-mdx-remote-client` expecting react ^18.3.1 but finding react 19.2.3).
+  Evidence: full install output; warnings are marked with `WARN Issues with peer dependencies found`, but install completed (`Done in 6.2s`) without requiring `--force` or `--shamefully-hoist`. Identical warnings would be produced on the original unmodified branch (they stem from pre-existing transitive peer ranges in the mint dependency tree, not from the 4.2.509 -> 4.2.521 bump).
+  Resolution: per plan rule ("Do not blindly pass force flags"), proceeded without any flag. The lockfile regenerated cleanly and preflight must be the gate — validated in Milestone 4.
 
 ## Decision Log
 
@@ -45,7 +48,26 @@ After this change, `mirurobotics/docs` has a single PR on branch `chore/combine-
 
 ## Outcomes & Retrospective
 
-(Summarize at completion or major milestones.)
+**Implementation complete — local-only delivery (no push, no PR opened).**
+
+Milestones 1-4 executed exactly as planned on branch `chore/combine-dependabot-prs`:
+
+1. Baseline preflight (after a one-time `pnpm install --frozen-lockfile` to populate `node_modules/` on this fresh working tree) — clean, exit 0.
+2. Dependency bumps — committed as `f79c7e9 chore(deps-dev): bump eslint 10.2.1 and mint 4.2.521 (supersedes #66)`. Diff: `package.json` (4 lines), `pnpm-lock.yaml` (236 lines). No `--force` needed despite pre-existing transitive react-19-vs-18 peer-dep warnings.
+3. Workflow SHA bumps — committed as `3f8b7e7 chore(deps): bump github actions (supersedes #64, #65)`. Diff: `.github/workflows/ci.yml`, `codeql-analysis.yml`, `promote.yml`. create-github-app-token preconditions verified (single use, ubuntu-latest runner, no proxy env, `app-id`/`private-key` inputs, consumes `token` output) — the 1.x -> 3.1.1 major jump is inert for this repo.
+4. Full preflight — clean, exit 0. All seven sections pass: Lint Smoke Tests, Go Lint, Go Coverage (10/10 packages), Lint (MDX prose, ESLint, CSpell 0/121 issues, 5/5 OpenAPI specs), Audit (6 high / 6 ignored — all pre-existing entries from `auditConfig.ignoreCves`), Shell Script Tests (26/26).
+
+Final diff vs `main` — exactly the five files acceptance criterion 2 specifies, plus the living plan document:
+
+    .github/workflows/ci.yml              (+2/-2)
+    .github/workflows/codeql-analysis.yml (+3/-3)
+    .github/workflows/promote.yml         (+1/-1)
+    package.json                          (+2/-2)
+    pnpm-lock.yaml                        (+118/-118)
+
+No bumps were dropped; all three Dependabot PRs are cleanly superseded.
+
+Milestone 5 (push + `gh pr create`) is intentionally deferred — this implement pass is local-only and delivery is owned by the caller's subsequent step.
 
 ## Context and Orientation
 
