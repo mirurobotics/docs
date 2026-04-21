@@ -108,17 +108,13 @@ In `package.json` — two devDependency versions:
 
 ## Plan of Work
 
-Five milestones, each ending with a git commit so the PR history is reviewable and bisectable. All commands run from `/home/ben/miru/workbench5/repos/docs/` unless stated.
+Five milestones, each ending with a git commit (per policy — one commit per milestone). All commands run from `/home/ben/miru/workbench5/repos/docs/`.
 
-**Milestone 1 — Baseline verification.** Confirm the branch is clean and preflight passes on the unmodified tree. This rules out pre-existing failures being blamed on the bumps.
-
-**Milestone 2 — npm devDependency bumps.** Edit `package.json` with two string replacements (`eslint 10.2.0 → 10.2.1`, `mint 4.2.509 → 4.2.521`). Run `pnpm install` (not `pnpm install --frozen-lockfile`) to update `pnpm-lock.yaml`. Verify diff scope is limited to those two files. Commit.
-
-**Milestone 3 — GitHub Actions SHA bumps + breaking-change scan.** (a) Edit the two `setup-node` occurrences in `.github/workflows/ci.yml` and the three `codeql-action/*` occurrences in `.github/workflows/codeql-analysis.yml` (covers PR #64). (b) Scan repository usage of `actions/create-github-app-token` and confirm no reliance on v1-only behavior (covered in Decision Log — revisit if changes landed on main since research). (c) Edit the one `create-github-app-token` occurrence in `.github/workflows/promote.yml` (covers PR #65). Commit.
-
-**Milestone 4 — Full validation.** Run `./scripts/preflight.sh` and require exit 0 across all sections. Record any new audit advisories in Surprises & Discoveries.
-
-**Milestone 5 — Publish PR.** Push `chore/combine-dependabot-prs` to `origin`. Open the PR via `gh pr create` with a body that lists #64/#65/#66 as superseded with instruction to close them on merge. Record the resulting PR URL in Outcomes & Retrospective.
+1. **Baseline verification.** Preflight on the unmodified branch to establish a green starting point.
+2. **npm devDependency bumps (PR #66).** Edit `package.json` (eslint, mint), regenerate `pnpm-lock.yaml` via `pnpm install`, commit.
+3. **GitHub Actions SHA bumps (PRs #64 and #65).** Scan for breaking-change impact of `create-github-app-token` 1.x → 3.x, then edit `.github/workflows/ci.yml`, `.github/workflows/codeql-analysis.yml`, `.github/workflows/promote.yml`, commit.
+4. **Full preflight validation.** Re-run `./scripts/preflight.sh`; it must exit 0 before publishing.
+5. **Publish PR.** Push branch, open PR via `gh pr create` with body enumerating #64/#65/#66 as superseded.
 
 ## Concrete Steps
 
@@ -307,12 +303,7 @@ All commands run from `/home/ben/miru/workbench5/repos/docs/` unless otherwise n
 
     Expected: `gh` prints the new PR URL (`https://github.com/mirurobotics/docs/pull/<N>`).
 
-3. Record the PR URL in the Outcomes & Retrospective section of this plan as an amendment commit (optional — only if the plan has been promoted to `plans/active/` or `plans/completed/`):
-
-        # Promote plan to active/ before PR or completed/ after merge as appropriate
-        # (Out of scope for this milestone; left to maintainer discretion.)
-
-4. No additional commit beyond Milestone 3's workflow-bump commit; the PR itself is the deliverable.
+3. Record the PR URL in Outcomes & Retrospective. The PR itself is the deliverable; no additional commit beyond Milestone 3.
 
 ## Validation and Acceptance
 
