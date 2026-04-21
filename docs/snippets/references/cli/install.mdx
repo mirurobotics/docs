@@ -31,6 +31,13 @@ To install the Miru CLI, run the installation command in your local machine's te
     <Info>
       The CLI is signed by the same key as the Miru Agent but installed under a separate keyring (`/usr/share/keyrings/miru-cli.gpg`) so you can manage the two apt sources independently.
     </Info>
+
+    To install or downgrade to a specific version, list available versions and pin the install:
+
+    ```bash
+    sudo apt list -a miru
+    sudo apt-get install miru=<version>
+    ```
   </Tab>
   <Tab title="Linux (script)">
     ```bash
@@ -40,6 +47,13 @@ To install the Miru CLI, run the installation command in your local machine's te
     <Warning>
       This command pipes remote code into a shell. On systems with apt, prefer the `Linux (apt)` tab, which uses GPG-verified packages.
     </Warning>
+
+    To install a specific version, pass `--version=<semver>`:
+
+    ```bash
+    curl -fsSL https://raw.githubusercontent.com/mirurobotics/cli/main/install.sh \
+      | sh -s -- --version=0.9.2
+    ```
 
     The script requires `curl`, `tar`, `grep`, and `cut` to be installed. Review the contents of the installation script [here](https://github.com/mirurobotics/cli/blob/main/install.sh).
   </Tab>
