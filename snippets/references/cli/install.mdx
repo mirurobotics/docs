@@ -1,5 +1,9 @@
 To install the Miru CLI, run the installation command in your local machine's terminal.
 
+<Note>
+  **apt is the recommended path on Linux.** The install script on the `Linux (script)` tab is provided for containers, Alpine, and CI environments without apt. On a Debian-based host, prefer the `Linux (apt)` tab.
+</Note>
+
 <Tabs>
   <Tab title="Linux (apt)">
     Install the prerequisites, add the Miru apt repository, then install the CLI.
@@ -21,6 +25,10 @@ To install the Miru CLI, run the installation command in your local machine's te
     ```bash
     curl -fsSL https://raw.githubusercontent.com/mirurobotics/cli/main/install.sh | sh
     ```
+
+    <Warning>
+      This command pipes remote code into a shell. On systems with apt, prefer the `Linux (apt)` tab, which uses GPG-verified packages.
+    </Warning>
 
     The script requires `curl`, `tar`, `grep`, and `cut` to be installed. Review the contents of the installation script [here](https://github.com/mirurobotics/cli/blob/main/install.sh).
   </Tab>
