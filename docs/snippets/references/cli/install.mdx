@@ -15,12 +15,12 @@ To install the Miru CLI, run the installation command in your local machine's te
 
     ```bash
     sudo apt-get install -y ca-certificates curl gnupg
-    curl -fsSL https://apt.mirurobotics.com/miru-apt.gpg.pub \
-      | sudo gpg --dearmor -o /usr/share/keyrings/miru-cli.gpg
-    gpg --show-keys /usr/share/keyrings/miru-cli.gpg
-    echo "deb [signed-by=/usr/share/keyrings/miru-cli.gpg] https://apt.mirurobotics.com/cli stable main" \
+    curl -fsSL https://packages.mirurobotics.com/apt/miru.gpg \
+      | sudo gpg --dearmor -o /etc/apt/keyrings/miru.gpg
+    gpg --show-keys /etc/apt/keyrings/miru.gpg
+    echo "deb [signed-by=/etc/apt/keyrings/miru.gpg] https://packages.mirurobotics.com/apt/cli stable main" \
       | sudo tee /etc/apt/sources.list.d/miru-cli.list
-    sudo apt-get update && sudo apt-get install miru
+    sudo apt-get update && sudo apt-get install miru-cli
     ```
 
     <Info>
@@ -29,14 +29,14 @@ To install the Miru CLI, run the installation command in your local machine's te
     </Info>
 
     <Info>
-      The CLI is signed by the same key as the Miru Agent but installed under a separate keyring (`/usr/share/keyrings/miru-cli.gpg`) so you can manage the two apt sources independently.
+      The CLI and Agent share a signing key at `/etc/apt/keyrings/miru.gpg`. If you already installed the Miru Agent via apt, the key is present and the `gpg --dearmor` line is a no-op.
     </Info>
 
     To install or downgrade to a specific version, list available versions and pin the install:
 
     ```bash
-    sudo apt list -a miru
-    sudo apt-get install miru=<version>
+    sudo apt list -a miru-cli
+    sudo apt-get install miru-cli=<version>
     ```
   </Tab>
   <Tab title="Linux (script)">
