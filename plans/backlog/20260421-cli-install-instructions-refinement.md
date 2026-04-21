@@ -39,8 +39,6 @@ Use timestamps when you complete steps. Split partially completed work into "don
 
 ## Decision Log
 
-(Add entries as you go.)
-
 - Decision: Use `<Note>` for the primary-method callout and `<Warning>` for the script-security note.
   Rationale: Matches existing usage — `<Note>` is used at the bottom of `snippets/references/cli/install.mdx` for the platform-support statement, and `<Warning>` is the strongest visual callout in the file set, appropriate for flagging remote-code execution risk.
   Date/Author: 2026-04-21 / author.
@@ -64,7 +62,7 @@ Use timestamps when you complete steps. Split partially completed work into "don
 
 **Branch.** All work happens on the already-checked-out branch `docs/apt-repository-install-instructions` in `/home/ben/miru/workbench3/docs`.
 
-**How the page renders.** Mintlify renders each `<Tab>` as a tab header; the first tab (`Linux (apt)`) is the default. Content inside `<Tab>` is indented two spaces in the MDX source. Callouts inside a tab must be indented consistently with their surrounding content or the MDX parser rejects them.
+**How the page renders.** Mintlify renders each `<Tab>` as a tab header; the first tab (`Linux (apt)`) is the default. Indentation in the MDX source: `<Tabs>` sits at column 0, each `<Tab title=…>` at column 2, and content *inside* a tab (prose, callouts, fenced code-block fences) at column 4. The body lines of a fenced code block inside a tab are NOT further indented beyond the fence — the 4-space indent on the opening/closing fence defines the block's indentation level. Callouts (`<Note>`, `<Info>`, `<Warning>`) inside a tab must follow the same 4-space indent on every line, or the MDX parser rejects them.
 
 **Existing patterns to mirror.** `docs/learn/devices/provision/api-keys.mdx` lines 110–129 already demonstrate version pinning for the agent: `sudo apt-get install -y miru-agent=<pinned-version>` with `apt-cache madison miru-agent` for listing. The same shape applies to the CLI. That file also uses the prerequisite line `sudo apt-get install -y apt-transport-https gnupg curl ca-certificates` (agent side, unchanged by this plan).
 
@@ -198,7 +196,7 @@ Leave one blank line above and below the `<Note>`.
       This command pipes remote code into a shell. On systems with apt, prefer the `Linux (apt)` tab, which uses GPG-verified packages.
     </Warning>
 
-Maintain the tab's existing two-space indent on each line of the `<Warning>`.
+Maintain the tab's 4-space indent on each line of the `<Warning>` (matching the existing prose inside the tab).
 
 **Step 2.3.** Commit.
 
@@ -207,7 +205,7 @@ Maintain the tab's existing two-space indent on each line of the `<Warning>`.
 
 ### M3 — Reorder Install → Verify → Upgrade → Uninstall
 
-**Step 3.1.** Edit `docs/developers/cli/install.mdx`. Cut the `## Verify` section (the heading, prose, code block, and the trailing "You can find the CLI release changelog…" paragraph — everything currently between `## Verify` and `## Uninstall`). Paste the cut content immediately after the `<Install />` line (and its blank line) and before `## Upgrade`.
+**Step 3.1.** Edit `docs/developers/cli/install.mdx`. Cut the three existing elements of the current `## Verify` section: (1) the `## Verify` heading, (2) the prose paragraph plus the `miru version` fenced code block, and (3) the trailing "You can find the CLI release changelog…" paragraph. These three elements currently sit between `## Verify` and `## Uninstall`. Paste the cut content immediately after the `<Install />` line (and its blank line) and before `## Upgrade`.
 
 After the edit, the file's top-level order must read:
 
@@ -267,7 +265,7 @@ to:
 
 ### M5 — Version pinning
 
-**Step 5.1.** Edit `snippets/references/cli/install.mdx`, `Linux (apt)` tab. After the existing `<Info>` about the shared signing key (the paragraph beginning "The CLI is signed by the same key…"), add a blank line and then:
+**Step 5.1.** Edit `snippets/references/cli/install.mdx`, `Linux (apt)` tab. Anchor: the existing `<Info>` beginning "The CLI is signed by the same key…" (NOT the fingerprint `<Info>` added in M4.4). After that shared-signing-key `<Info>`, add a blank line and then:
 
     To install or downgrade to a specific version, list available versions and pin the install:
 
@@ -276,7 +274,9 @@ to:
     sudo apt-get install miru=<version>
     ```
 
-Maintain the tab's two-space indent on every line (including inside the fenced code block).
+Maintain the tab's 4-space indent on each line (fence and prose). The body lines inside the fenced code block are NOT further indented.
+
+Final apt-tab content order after M4 + M5: intro prose → supported-distros `<Info>` → apt code block (with `gpg --show-keys` line) → fingerprint `<Info>` (with TODO) → shared-signing-key `<Info>` → version-pinning prose → version-pinning code block.
 
 **Step 5.2.** In the `Linux (script)` tab of the same file, after the `<Warning>` added in M2 and before the paragraph beginning "The script requires `curl`, `tar`, …", add:
 
@@ -286,6 +286,8 @@ Maintain the tab's two-space indent on every line (including inside the fenced c
     curl -fsSL https://raw.githubusercontent.com/mirurobotics/cli/main/install.sh \
       | sh -s -- --version=0.10.0
     ```
+
+`0.10.0` is illustrative. Substitute a version that exists in the apt repo — use the `Linux (apt)` tab's `sudo apt list -a miru` snippet on a host with the repo configured to see what is available. If `0.10.0` has not shipped by the time this plan is executed, update the literal to a real version before committing. Test 9's `grep` assertion below checks for the literal `--version=0.10.0`, so update the test to match whatever version literal ends up in the snippet.
 
 **Step 5.3.** Commit.
 
@@ -309,12 +311,13 @@ Expected tail of output:
 
 **Step 6.3.** If ESLint or the custom MDX linter flags a structural problem (most commonly: inconsistent indentation of a callout inside a `<Tab>`, or an unterminated JSX element), fix the offending file and re-run preflight. Do not suppress lint rules to pass.
 
-**Step 6.4.** Final commit if any fixes were needed in 6.2 or 6.3:
+**Step 6.4.** Final commit *only if* fixes were needed in 6.2 or 6.3. First run `git status` to confirm what changed; stage only those files:
 
-    git add cspell.json snippets/references/cli/install.mdx docs/developers/cli/install.mdx
+    git status
+    git add <only-the-files-git-status-shows-as-modified>
     git commit -m "docs(cli): preflight fixups"
 
-(If no fixes were needed, skip this step — preflight-clean is the acceptance criterion, not an empty commit.)
+If `git status` shows no changes, skip this step — preflight-clean is the acceptance criterion, not an empty commit.
 
 ## Validation and Acceptance
 
@@ -360,7 +363,7 @@ Expected output (order matters):
     <N2>:## Upgrade
     <N3>:## Uninstall
 
-with `N1 < N2 < N3`.
+where `<N1>`, `<N2>`, `<N3>` are the actual line numbers grep emits. The relative order of the three headings (`Verify` first, then `Upgrade`, then `Uninstall`) is what is being checked — absolute line numbers do not matter.
 
 **Test 6 — Prerequisite package list is trimmed and correct.**
 
@@ -381,6 +384,10 @@ Expected: exactly one match.
     grep -n "TODO: publish fingerprint" snippets/references/cli/install.mdx
 
 Expected: exactly one match.
+
+    grep -n "Confirm the fingerprint matches" snippets/references/cli/install.mdx
+
+Expected: exactly one match (the prose body of the fingerprint `<Info>` callout).
 
 **Test 8 — Supported-distro phrasing and TODO are present.**
 
@@ -407,6 +414,17 @@ Expected: exactly one match.
 Expected: exactly one match.
 
 **Test 10 — MDX renders.** The ESLint/custom-linter checks inside preflight (Test 1) cover parse-level MDX validity. As a quick local visual check, run `npx mint dev` from the docs repo root and open `http://localhost:3000/docs/developers/cli/install` — confirm each tab opens without a console error and the callouts render. This visual step is optional (preflight is the gate) but recommended for the three callouts added in M2 and M4.
+
+**Test 11 — Tab structure preserved.** Quick sanity check that none of the edits dropped or duplicated a `<Tab>`:
+
+    grep -c "<Tab title=" snippets/references/cli/install.mdx
+
+Expected: `3` (Linux (apt), Linux (script), macOS).
+
+    grep -c "<Tabs>" snippets/references/cli/install.mdx
+    grep -c "</Tabs>" snippets/references/cli/install.mdx
+
+Expected: each returns `1`.
 
 **Preflight gate.** Preflight must report clean before the PR is opened. Preflight runs all the same commands CI runs (lint smoke tests, custom Go linter, coverage gate, MDX lint, audit, shell tests). This is a hard gate — do not open a PR if preflight reports any failures.
 
