@@ -12,11 +12,11 @@ Unlike the dashboard installation, which requires manual interaction with the we
 - **Integrate with existing infrastructure** management tools and workflows
 - **Use in headless environments** where a web browser isn't available
 
-## Create the API Key
+### Create the API Key
 
 To create an API key, follow the instructions for [creating an API key](/docs/admin/apikeys#create-an-api-key) and select the `devices:provision` scope.
 
-## Provision the Device
+### Provision the Device
 
 On the device you want to install the Miru Agent, set the `MIRU_API_KEY` environment variable to your API key.
 
@@ -35,8 +35,7 @@ curl -fsSL https://raw.githubusercontent.com/mirurobotics/agent/main/scripts/ins
 The provision script performs the following actions:
 
 1. **Creates the device** - creates a new device in the Miru dashboard if a device with the provided name doesn't already exist
-1. **Configures the apt repository** - adds the Miru apt source list and signing key (`/etc/apt/keyrings/miru.gpg`) if not already present
-1. **Installs the agent** - installs `miru-agent` via `apt-get install`
+1. **Downloads the agent** - fetches the latest Miru Agent Debian package
 1. **Installs the service** - installs the agent as a `systemd` service
 1. **Activates the device** - registers the agent with Miru servers using the activation token
 
@@ -59,79 +58,13 @@ The provision script supports the following parameters to tune your installation
 <ParamField path="--version" type="string">
   The agent version to install (e.g., `v0.6.0`).
 
-  Defaults to the latest version available in the apt repository. To list all available versions on a configured machine run `apt-cache madison miru-agent`. The full release list is also browsable on [GitHub Releases](https://github.com/mirurobotics/agent/releases).
+  Defaults to the [latest release](https://github.com/mirurobotics/agent/releases/latest). See all [available versions](https://github.com/mirurobotics/agent/releases).
 </ParamField>
 
 <ParamField path="--from-pkg" type="string">
   The file path to the Miru Agent Debian package to use for installation. Useful for installing the agent in poor connectivity scenarios.
 </ParamField>
 
-## Verify Installation
+### Verify Installation
 
 <Verify />
-
-## Fleet provisioning
-
-The [API Keys](#provision-the-device) flow above is the simplest way to provision a device — it's well suited to individual devices, evaluation, and getting started. For a production fleet, where you're provisioning hundreds of devices and want pinned versions, audit trails, and no live network dependency on third-party hosts at provision time, we recommend one of the two patterns below.
-
-This is the same separation Docker draws between its convenience installation script (intended for development and testing) and the manual apt setup (intended for production). The Miru `provision.sh` script is a convenience wrapper; the patterns below decompose it into the underlying steps that production tooling can run directly.
-
-### Vendor the install script
-
-If you provision devices through orchestration tooling — Ansible, cloud-init, Terraform, or similar — vendor the install script into your automation repository instead of fetching it from `raw.githubusercontent.com` at provision time.
-
-1. Download `provision.sh` (for API-key activation) or `install.sh` (for dashboard activation tokens) from a specific tagged release of the agent repository:
-
-    ```bash
-    curl -fsSL -o provision.sh \
-      https://raw.githubusercontent.com/mirurobotics/agent/v0.7.3/scripts/install/provision.sh
-    ```
-
-2. Commit the downloaded script to your automation repository alongside your playbooks or modules.
-3. Audit the script once. From then on, treat it as regular code in your repo — review changes through your normal pull-request process when you upgrade.
-4. Call the local copy from your playbooks instead of curl-piping the upstream URL.
-
-Benefits:
-
-- **Pinned to a known script version.** Survives upstream script changes — your playbooks behave identically run after run.
-- **No live network dependency on `raw.githubusercontent.com`.** The only network calls at provision time are to `packages.mirurobotics.com` (apt repo) and the Miru backend (activation).
-- **Audit-once-then-trust.** The script becomes regular code in your repo, reviewed through your normal pull-request process.
-
-<Info>
-  Replace `v0.7.3` with the agent release you want to pin to. Browse [GitHub Releases](https://github.com/mirurobotics/agent/releases) for the full list of tagged versions.
-</Info>
-
-### Pre-bake the apt repository into a base image
-
-For production fleets at scale — Packer pipelines, custom Yocto builds, golden Raspberry Pi or Jetson images — pre-bake the Miru apt repository into the base image and install the agent at first boot. This decomposes the wrapper script into two operations: a one-time setup at image-bake time and a per-device install at first boot.
-
-**One-time, per image** (during image bake):
-
-```bash
-sudo apt-get install -y ca-certificates curl gnupg
-curl -fsSL https://packages.mirurobotics.com/apt/miru.gpg \
-  | sudo gpg --dearmor -o /etc/apt/keyrings/miru.gpg
-echo "deb [signed-by=/etc/apt/keyrings/miru.gpg] https://packages.mirurobotics.com/apt/agent stable main" \
-  | sudo tee /etc/apt/sources.list.d/miru-agent.list
-sudo apt-get update
-```
-
-**Per device** (at first boot, or via your API-key provisioning step):
-
-```bash
-sudo apt-get install -y miru-agent=<pinned-version>
-sudo miru-agent --install --activation-token=$MIRU_ACTIVATION_TOKEN
-```
-
-<Info>
-  `<pinned-version>` is illustrative — production fleets typically pin to a specific version for reproducibility. To get the latest version available in the repo, omit `=<pinned-version>`. Use `apt-cache madison miru-agent` on a configured machine to list available versions.
-
-  The bare `miru-agent --install` activation defaults to the production Miru backend and MQTT hosts. For non-production environments (staging, development), pass the additional backend and MQTT host flags that `provision.sh` normally injects — see the source of [`provision.sh`](https://github.com/mirurobotics/agent/blob/main/scripts/install/provision.sh) for the exact flag names.
-</Info>
-
-Benefits:
-
-- **Pinned versions reproducible across the fleet.** Every device that boots from the image installs exactly the same `miru-agent` version.
-- **Faster first-boot.** Apt repo setup and key import happen once at image-bake time, not on every device.
-- **No live curl into shell at provision time.** Every install is GPG-verified by apt against the keyring baked into the image.
-- **One fewer network dependency at provisioning time.** First-boot only needs to reach `packages.mirurobotics.com` and the Miru backend.
