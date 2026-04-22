@@ -1,73 +1,72 @@
-To install the Miru CLI, run the installation command in your local machine's terminal.
-
-<Note>
-  **apt is the recommended path on Linux.** The install script on the `Linux (script)` tab is provided for containers, Alpine, and CI environments without apt. On a Debian-based host, prefer the `Linux (apt)` tab.
-</Note>
+The CLI is available through Homebrew on macOS and `apt` on Linux. Windows is not supported.
 
 <Tabs>
-  <Tab title="Linux (apt)">
-    Install the prerequisites, add the Miru apt repository, then install the CLI.
-
-    <Info>
-      Supported on recent Debian-based distributions.
-    </Info>
-    {/* TODO: list exact supported distros once the CLI release matrix is published */}
-
-    ```bash
-    sudo apt-get install -y ca-certificates curl gnupg
-    curl -fsSL https://packages.mirurobotics.com/apt/miru.gpg \
-      | sudo gpg --dearmor -o /etc/apt/keyrings/miru.gpg
-    gpg --show-keys /etc/apt/keyrings/miru.gpg
-    echo "deb [signed-by=/etc/apt/keyrings/miru.gpg] https://packages.mirurobotics.com/apt/cli stable main" \
-      | sudo tee /etc/apt/sources.list.d/miru-cli.list
-    sudo apt-get update && sudo apt-get install miru-cli
-    ```
-
-    <Info>
-      {/* TODO: publish fingerprint */}
-      `gpg --show-keys` prints the imported key. Confirm the fingerprint matches the published value before proceeding.
-    </Info>
-
-    <Info>
-      The CLI and Agent share a signing key at `/etc/apt/keyrings/miru.gpg`. If you already installed the Miru Agent via apt, the key is present and the `gpg --dearmor` line is a no-op.
-    </Info>
-
-    To install or downgrade to a specific version, list available versions and pin the install:
-
-    ```bash
-    sudo apt list -a miru-cli
-    sudo apt-get install miru-cli=<version>
-    ```
-  </Tab>
-  <Tab title="Linux (script)">
-    ```bash
-    curl -fsSL https://raw.githubusercontent.com/mirurobotics/cli/main/install.sh | sh
-    ```
-
-    <Warning>
-      This command pipes remote code into a shell. On systems with apt, prefer the `Linux (apt)` tab, which uses GPG-verified packages.
-    </Warning>
-
-    To install a specific version, pass `--version=<semver>`:
-
-    ```bash
-    curl -fsSL https://raw.githubusercontent.com/mirurobotics/cli/main/install.sh \
-      | sh -s -- --version=0.10.0
-    ```
-
-    The script requires `curl`, `tar`, `grep`, and `cut` to be installed. Review the contents of the installation script [here](https://github.com/mirurobotics/cli/blob/main/install.sh).
-  </Tab>
   <Tab title="macOS">
+
+    Install the CLI via Homebrew.
+
     ```bash
     brew install mirurobotics/cli/miru
     ```
 
     <Info>
-      If you are not seeing the latest CLI version, run `brew update` first to refresh your local Homebrew tap, then re-run the install or upgrade command.
+      If you are not seeing the latest CLI version, refresh Homebrew with `brew update`.
     </Info>
   </Tab>
-</Tabs>
 
-<Note>
-  The Miru CLI supports **macOS** and **Linux**. Windows is not supported.
-</Note>
+  <Tab title="Linux">
+
+    The CLI is distributed to Linux as a `deb` package. Other package formats are not yet supported.
+
+    We recommend using `apt` to install the CLI. However, you can manually install the `deb` package by downloading it from GitHub and installing it with `dpkg`.
+
+    #### APT
+
+    <Steps>
+      <Step title="Set up">
+
+        Set up Miru's `apt` repository.
+
+        ```bash
+        # update the apt repository
+        sudo apt-get update
+        sudo apt-get install -y ca-certificates curl gnupg
+        sudo install -m 0755 -d /etc/apt/keyrings
+        curl -fsSL https://packages.mirurobotics.com/apt/miru.gpg \
+          | sudo gpg --dearmor -o /etc/apt/keyrings/miru.gpg
+        sudo chmod a+r /etc/apt/keyrings/miru.gpg
+
+        # add the repository to your sources list
+        sudo tee /etc/apt/sources.list.d/miru-cli.sources > /dev/null <<EOF
+        Types: deb
+        URIs: https://packages.mirurobotics.com/apt/cli
+        Suites: stable
+        Components: main
+        Architectures: $(dpkg --print-architecture)
+        Signed-By: /etc/apt/keyrings/miru.gpg
+        EOF
+        ```
+      </Step>
+      <Step title="Install">
+
+        ```bash
+        sudo apt-get update && sudo apt-get install miru-cli
+        ```
+      </Step>
+    </Steps>
+
+    #### Manual
+
+    <Steps>
+      <Step title="Download">
+        Download the `deb` package from the [GitHub Releases](https://github.com/mirurobotics/cli/releases) page.
+      </Step>
+      <Step title="Install">
+
+        ```bash
+        sudo dpkg -i <...>.deb
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
