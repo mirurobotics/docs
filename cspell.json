@@ -22,7 +22,6 @@
     "costmap",
     "dearmor",
     "diffable",
-    "distros",
     "idempotently",
     "inlines",
     "journalctl",
@@ -38,7 +37,6 @@
     "newgrp",
     "setfacl",
     "zeroizes",
-    "Npfzv",
-    "Yocto"
+    "Npfzv"
   ]
 }
