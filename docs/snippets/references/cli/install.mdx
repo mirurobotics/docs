@@ -1,3 +1,5 @@
+import SetupApt from '/snippets/apt/setup.mdx';
+
 The CLI is available through Homebrew on macOS and `apt` on Linux. Windows is not supported.
 
 <Tabs>
@@ -26,29 +28,14 @@ The CLI is available through Homebrew on macOS and `apt` on Linux. Windows is no
       <Step title="Set up">
 
         Set up Miru's `apt` repository.
+        <SetupApt />
 
-        ```bash
-        # update the apt repository
-        sudo apt-get update
-        sudo apt-get install -y ca-certificates curl gnupg
-        sudo install -m 0755 -d /etc/apt/keyrings
-        curl -fsSL https://packages.mirurobotics.com/apt/miru.gpg \
-          | sudo gpg --dearmor -o /etc/apt/keyrings/miru.gpg
-        sudo chmod a+r /etc/apt/keyrings/miru.gpg
+        <Info>
+          The CLI's `apt` repository configuration is identical to the Miru Agent. If you installed the Miru Agent via `apt`, you can skip this step.
+        </Info>
 
-        # add the repository to your sources list
-        sudo tee /etc/apt/sources.list.d/miru-cli.sources > /dev/null <<EOF
-        Types: deb
-        URIs: https://packages.mirurobotics.com/apt/cli
-        Suites: stable
-        Components: main
-        Architectures: $(dpkg --print-architecture)
-        Signed-By: /etc/apt/keyrings/miru.gpg
-        EOF
-        ```
       </Step>
       <Step title="Install">
-
         ```bash
         sudo apt-get update && sudo apt-get install miru-cli
         ```
@@ -59,7 +46,7 @@ The CLI is available through Homebrew on macOS and `apt` on Linux. Windows is no
 
     <Steps>
       <Step title="Download">
-        Download the `deb` package from the [GitHub Releases](https://github.com/mirurobotics/cli/releases) page.
+        Download the `deb` package from the [GitHub Releases](https://github.com/mirurobotics/cli/releases/latest) page.
       </Step>
       <Step title="Install">
 
