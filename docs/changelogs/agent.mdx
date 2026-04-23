@@ -18,7 +18,7 @@ To learn more, visit the [file permissions](/docs/developers/agent/file-permissi
 
 ## Features
 
-- Config instances can be deployed anywhere on the filesystem, not just in the `/srv/miru/` directory
+- Config instances can be deployed anywhere on the file system, not just in the `/srv/miru/` directory
 - Deployments being removed now transition through an intermediate `removing` status when removal begins
 
 ## Fixes
@@ -61,7 +61,7 @@ To learn more, visit the [file permissions](/docs/developers/agent/file-permissi
 
 ## Features
 
-- Deployments are guaranteed to be atomic—all config instances for a deployment are written to the filesystem simultaneously or none of them are
+- Deployments are guaranteed to be atomic—all config instances for a deployment are written to the file system simultaneously or none of them are
 - The agent now explicitly tracks `deployed_at` and `archived_at` timestamps on device when deployments are applied
 - Config instances deployed to the device's file system are now identical (indents, spacing, etc.) to config instances edited in the config editor
 
@@ -145,4 +145,4 @@ First release with Device API v0.1.0 endpoints, MQTT-based real-time sync, and d
 - Activation script temporarily stops the agent during provisioning
 - Fixed errant `unwrap()` calls that could cause panics
 - Improved MQTT network connection error handling
-- Fixed unnecessary filesystem writes for device patches
+- Fixed unnecessary file system writes for device patches

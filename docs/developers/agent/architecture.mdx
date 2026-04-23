@@ -32,7 +32,7 @@ During a sync cycle, the agent:
 1. Pulls the list of active deployments from the control plane
 2. Downloads the configuration content for those deployments
 3. Evaluates the appropriate action for each deployment (deploy, remove, no-op)
-4. Applies the changes to the local filesystem
+4. Applies the changes to the local file system
 5. Emits events for deployment transitions
 6. Reports the updated deployment status(es) to the control plane
 
@@ -71,11 +71,11 @@ Miru takes a declarative approach to deployments. Each deployment has a [target 
 
 During each sync, the agent compares these two states and determines the appropriate action to transition a deployment from its current state to its target state.
 
-For example, when the control plane sets a deployment's target to `deployed`, the agent copies the configuration files to the appropriate location on the device's filesystem. When the control plane sets a target to `archived`, the agent removes the deployment's files from the filesystem.
+For example, when the control plane sets a deployment's target to `deployed`, the agent copies the configuration files to the appropriate location on the device's file system. When the control plane sets a target to `archived`, the agent removes the deployment's files from the file system.
 
 ### Atomicity
 
-Miru deployments are **atomic**. That is, when a new deployment replaces an existing one, either all of the new deployment's config instances are written to the filesystem or none of them are. 
+Miru deployments are **atomic**. That is, when a new deployment replaces an existing one, either all of the new deployment's config instances are written to the file system or none of them are. 
 
 It is not possible for some of the new deployment's config instances to be written to the file system and others to be skipped.
 
@@ -89,5 +89,5 @@ Once the cooldown expires, the agent retries the deployment on the next sync. If
 
 The agent persists all state locally on the device, including deployment metadata and configuration file content. If the device loses network connectivity:
 
-- Configurations that are already deployed remain on the filesystem and continue to be served by the local [REST API](/docs/developers/device-api/overview)
+- Configurations that are already deployed remain on the file system and continue to be served by the local [REST API](/docs/developers/device-api/overview)
 - Status updates are persisted on disk and sent to the control plane as soon as the agent reconnects
