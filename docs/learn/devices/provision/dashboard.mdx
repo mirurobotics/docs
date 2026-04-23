@@ -2,30 +2,27 @@
 title: "Dashboard"
 ---
 
-import RunCmd from '/snippets/agent/install/dashboard/run-activation-cmd.mdx';
 import Verify from '/snippets/agent/install/verify.mdx';
 import { Framed } from '/snippets/components/framed.jsx';
 import CreateDevice from '/snippets/devices/create.mdx';
-import RetrieveCmd from '/snippets/devices/retrieve-activation-cmd.mdx';
+import Provision from '/snippets/devices/provision/dashboard.mdx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v03/images/devices/background.jpeg" image="https://assets.mirurobotics.com/docs/v03/images/devices/header:create-panel.png" borderWidth={"36px 100px 0 0"} innerRadius={"0 8px 0 0"} />
 
-Provisioning a device is the process of creating it in Miru and installing the Miru Agent on it. Once provisioned, a device is ready to receive deployments.
+Provisioning a device is the process of installing the `miru-agent` package and activating the device in your workspace. Once provisioned, a device is ready to receive deployments.
 
-The Miru dashboard is the simplest way to provision devices, ideal for getting started or managing individual devices.
+The Miru dashboard is the simplest method, ideal for getting started or managing individual devices.
 
 For automated deployments or provisioning devices at scale, consider using [API Keys](/docs/learn/devices/provision/api-keys) instead.
 
-## Create a Device
+## Create a device
 
 <CreateDevice />
 
-## Install the Agent
+## Install and activate
 
-<RetrieveCmd />
+<Provision />
 
-<RunCmd />
-
-## Verify the Installation
+## Verify the installation
 
 <Verify />

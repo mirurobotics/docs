@@ -1,0 +1,22 @@
+import SetupApt from '/snippets/apt/setup.mdx';
+import AptInstall from '/snippets/agent/install/apt-install.mdx';
+
+<Steps>
+    <Step title="Set up">
+
+    Set up Miru's `apt` repository.
+    <SetupApt />
+
+    <Info>
+        If this device has already been installed with the Miru Agent or CLI via `apt`, you can skip this step.
+    </Info>
+
+    </Step>
+    <Step title="Install">
+
+    After configuring the `apt` repository, install the agent.
+
+    <AptInstall />
+
+    </Step>
+</Steps>

@@ -3,6 +3,7 @@ title: "API Keys"
 ---
 
 import Verify from '/snippets/agent/install/verify.mdx';
+import SetupApt from '/snippets/apt/setup.mdx';
 
 To programmatically provision devices, Miru offers API keys.
 
@@ -16,6 +17,26 @@ Unlike the dashboard installation, which requires manual interaction with the we
 
 To create an API key, follow the instructions for [creating an API key](/docs/admin/apikeys#create-an-api-key) and select the `devices:provision` scope.
 
+### Install the Agent
+
+First, we need to install the `miru-agent` package on the device. If the `miru-agent` package is already installed, you can skip this step.
+
+Configure the `apt` repository for this device.
+
+<SetupApt />
+
+Install the `miru-agent` package.
+
+```bash
+sudo apt-get update
+sudo apt-get install miru-agent
+```
+
+<Tip>
+  Install a specific version with `sudo apt-get install miru-agent=<version>` (e.g. `0.7.0`, `0.8.0`, etc.).
+</Tip>
+
+
 ### Provision the Device
 
 On the device you want to install the Miru Agent, set the `MIRU_API_KEY` environment variable to your API key.
@@ -24,27 +45,23 @@ On the device you want to install the Miru Agent, set the `MIRU_API_KEY` environ
 export MIRU_API_KEY=<your-api-key>
 ```
 
-Execute the [provisioning script](https://github.com/mirurobotics/agent/blob/main/scripts/install/provision.sh) to create and activate a device using your API key.
+Execute the Miru Agent's `provision` command to create and activate a device using your API key.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mirurobotics/agent/main/scripts/install/provision.sh | sh -s -- \
+/usr/sbin/miru-agent provision \
   --device-name=$HOSTNAME \
-  --allow-reactivation=true
+  --allow-reactivation=false
 ```
 
-The provision script performs the following actions:
+The provision command performs the following actions:
 
 1. **Creates the device** - creates a new device in the Miru dashboard if a device with the provided name doesn't already exist
-1. **Downloads the agent** - fetches the latest Miru Agent Debian package
-1. **Installs the service** - installs the agent as a `systemd` service
 1. **Activates the device** - registers the agent with Miru servers using the activation token
 
-The provision script supports the following parameters to tune your installation:
+The provision command supports the following parameters to tune your installation:
 
-<ParamField path="--device-name" type="string">
-  The name of the device in the Miru dashboard.
-
-  Default: `$HOSTNAME`
+<ParamField path="--device-name" type="string" required>
+  The name of the device in the Miru dashboard. This field is required.
 </ParamField>
 
 <ParamField path="--allow-reactivation" type="boolean">
@@ -53,16 +70,6 @@ The provision script supports the following parameters to tune your installation
   Without this flag, only `inactive` devices can be activated. With this flag, devices that have been previously activated (status `online`, `offline`, etc.) may be reactivated.
 
   Default: `false`
-</ParamField>
-
-<ParamField path="--version" type="string">
-  The agent version to install (e.g., `v0.6.0`).
-
-  Defaults to the [latest release](https://github.com/mirurobotics/agent/releases/latest). See all [available versions](https://github.com/mirurobotics/agent/releases).
-</ParamField>
-
-<ParamField path="--from-pkg" type="string">
-  The file path to the Miru Agent Debian package to use for installation. Useful for installing the agent in poor connectivity scenarios.
 </ParamField>
 
 ### Verify Installation

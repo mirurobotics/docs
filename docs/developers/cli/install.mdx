@@ -2,7 +2,7 @@
 title: 'Install'
 ---
 
-import Install from '/snippets/references/cli/install.mdx';
+import Install from '/snippets/references/cli/install/install.mdx';
 
 ## Install
 
@@ -32,39 +32,31 @@ To upgrade the Miru CLI to the latest version, run the upgrade command in your l
     ```
 
     <Info>
-      If you are not seeing the latest CLI version, run `brew update` first to refresh your local Homebrew tap, then re-run the install or upgrade command.
+      If you are not seeing the latest CLI version, refresh Homebrew with `brew update`.
     </Info>
   </Tab>
 
   <Tab title="Linux">
+    As with the installation process, you can upgrade the CLI via `apt` or manually by downloading and installing the new package. 
 
-    #### APT
+    Since both methods use Debian packages, manual installations can be upgraded via `apt` and vice versa.
 
-    Upgrade via `apt`.
-
-    ```bash
-    sudo apt-get update && sudo apt-get install --only-upgrade miru-cli
-    ```
-
-    <Info>
-      The `--only-upgrade` flag ensures the `miru-agent` package isn't unintentionally upgraded.
-    </Info>
-
-    #### Manual
-
-    Manual installations require installing the new package manually. The old package is automatically removed.
-
-    <Steps>
-      <Step title="Download">
-        Download the `deb` package from the [GitHub Releases](https://github.com/mirurobotics/cli/releases) page.
-      </Step>
-      <Step title="Install">
-
+    <Tabs>
+      <Tab title="APT">
         ```bash
-        sudo dpkg -i <...>.deb
+        sudo apt-get update
+        sudo apt-get install miru-cli
         ```
-      </Step>
-    </Steps>
+
+        <Tip>
+          Install a specific version with `sudo apt-get install miru-cli=<version>` (e.g. `0.9.1`, `0.10.0`, etc.).
+        </Tip>
+
+      </Tab>
+      <Tab title="Manual">
+        Manual installations do not have a native upgrade mechanism. Simply repeat the [installation steps](#install) to upgrade to the latest version.
+      </Tab>
+    </Tabs>
   </Tab>
 
 </Tabs>
@@ -81,7 +73,7 @@ To upgrade the Miru CLI to the latest version, run the upgrade command in your l
   </Tab>
 
   <Tab title="Linux">
-    Remove the `deb` package.
+    Remove the Debian package.
 
     ```bash
     sudo apt purge miru-cli
@@ -100,7 +92,7 @@ To upgrade the Miru CLI to the latest version, run the upgrade command in your l
   </Tab>
 </Tabs>
 
-Finally, remove any local configuration files.
+Remove any leftover configuration files.
 
 ```bash
 rm -rf ~/.miru

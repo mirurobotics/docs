@@ -2,6 +2,8 @@
 title: "Poor Connectivity"
 ---
 
+import GithubDownload from '/snippets/agent/install/github-download.mdx';
+
 Some environments may have a poor internet connection. Whether located in a remote area or using a cellular connection, downloading the Miru Agent over a network may be impractical in some environments.
 
 In such scenarios, we recommend downloading the Miru Agent to a computer with a stable connection and then transferring it to the target machine.
@@ -14,23 +16,7 @@ While this method circumvents the need to _download_ the Miru Agent over a netwo
 
 ## Download the Agent
 
-All Miru Agent releases are available as Debian packages [on GitHub](https://github.com/mirurobotics/agent/releases). You can find the latest release [here](https://github.com/mirurobotics/agent/releases/latest).
-
-<Info>
-  Releases with the `Pre-release` tag are not yet considered stable and may contain bugs or other issues. Use at your own risk.
-</Info>
-
-To download the agent, drop down the **Assets** section for the desired release. The assets ending with the `.deb` extension are the Debian packages for the Miru Agent.
-
-<Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/agent/github-assets.png)
-</Frame>
-
-The Debian packages are all the same version of the Miru Agent, but built for different architectures (i.e. `amd64`, `arm64`, etc.). Find the architecture that matches your target machine's architecture and download the package.
-
-For example, if your robot is an `x86_64` machine, you'll want to download the `miru-agent_<version>_amd64.deb` package. If your robot is an `aarch64` machine, you'll want to download the `miru-agent_<version>_arm64.deb` package.
-
-To download a package, click on the filename in GitHub.
+<GithubDownload />
 
 ## Transfer the Agent
 
