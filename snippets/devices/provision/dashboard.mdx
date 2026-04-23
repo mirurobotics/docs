@@ -1,0 +1,44 @@
+import { Dropdown } from '/snippets/components/api-dropdown.jsx';
+import { Separator } from '/snippets/components/separator.jsx';
+import SetupApt from '/snippets/apt/setup.mdx';
+import AptInstall from '/snippets/agent/install/apt-install.mdx';
+
+Click the **Activate** button on the device you just created.
+
+<Frame>
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/one-device-to-activate.png)
+</Frame>
+
+A dialog will appear walking you through the process of installing the `miru-agent` package and activating the device.
+
+<Dropdown title="1. Install the miru-agent package">
+
+    <Tip>
+        Visit the [agent install page](/docs/developers/agent/install) for more information, including alternative installation methods.
+    </Tip>
+
+    Configure the `apt` repository for this device.
+
+    <SetupApt />
+
+    Install the `miru-agent` package.
+
+    <AptInstall />
+
+</Dropdown>
+
+<Note>
+    If the correct `miru-agent` package is already installed on your device, you can skip this step.
+</Note>
+
+<Dropdown title="2. Activate the device">
+
+    After installing the `miru-agent` package, the device must be activated for your workspace. Invoke the package's `activate` command with the provided token to register the device with your workspace.
+
+    ```bash
+    ENV MIRU_ACTIVATION_TOKEN=<activation-token> \
+      /usr/sbin/miru-agent activate \
+      --allow-reactivation=true
+    ```
+
+</Dropdown>

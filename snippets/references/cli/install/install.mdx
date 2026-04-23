@@ -1,0 +1,70 @@
+import GithubDownload from '/snippets/references/cli/install/github-download.mdx';
+import SetupApt from '/snippets/apt/setup.mdx';
+
+The CLI is only available on macOS and Linux. Windows is not supported.
+
+<Tabs>
+  <Tab title="macOS">
+    Install via Homebrew.
+
+    ```bash
+    brew install mirurobotics/cli/miru
+    ```
+
+    <Info>
+      If you are not seeing the latest CLI version, refresh Homebrew with `brew update`.
+    </Info>
+  </Tab>
+
+  <Tab title="Linux">
+
+    The CLI is distributed to Linux as a Debian package. Other package formats are not yet supported.
+
+    We recommend using `apt` to install the CLI. However, you can manually install the Debian package by downloading it from GitHub and installing it with `dpkg`.
+
+    <Tabs>
+      <Tab title="APT">
+        <Steps>
+          <Step title="Set up">
+
+            Set up Miru's `apt` repository.
+            <SetupApt />
+
+            <Info>
+                If this device has already been installed with the Miru Agent or CLI via `apt`, you can skip this step.
+            </Info>
+
+          </Step>
+          <Step title="Install">
+
+            After configuring the `apt` repository, install the CLI.
+
+            ```bash
+            sudo apt-get update
+            sudo apt-get install miru-cli
+            ```
+
+            <Tip>
+                Install a specific version with `sudo apt-get install miru-cli=<version>` (e.g. `0.9.1`, `0.10.0`, etc.).
+            </Tip>
+          </Step>
+        </Steps>
+      </Tab>
+
+      <Tab title="Manual">
+        <Steps>
+          <Step title="Download">
+            <GithubDownload />
+          </Step>
+          <Step title="Install">
+            After downloading the package, install it using `dpkg`.
+
+            ```bash
+            sudo dpkg -i <...>.deb
+            ```
+          </Step>
+        </Steps>
+      </Tab>
+    </Tabs>
+  </Tab>
+</Tabs>

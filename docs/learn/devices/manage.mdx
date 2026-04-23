@@ -71,7 +71,11 @@ A dialog will appear with a pre-authenticated reactivation command. Copy this co
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/reactivate-dialog.png)
 </Frame>
 
-Outside the reactivation capability, this installation command is identical to the activation command used to provision a device. For more information on the installation command, visit the [dashboard device provisioning](/docs/learn/devices/provision/dashboard#install-the-agent) documentation.
+<Warning>
+  Reactivating a device assumes the `miru-agent` package has already been installed. If the `miru-agent` package is not installed, you must [install it](/docs/learn/devices/provision/dashboard#install-the-miru-agent-package) first.
+</Warning>
+
+This reactivation command is identical to the [activation step](/docs/learn/devices/provision/dashboard#install-and-activate) of provisioning a device. The only difference with reactivation is that we skip the `miru-agent` package installation step.
 
 **Platform API**
 

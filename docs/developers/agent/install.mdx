@@ -2,25 +2,78 @@
 title: 'Install'
 ---
 
-import Uninstall from '/snippets/agent/uninstall.mdx';
+import Install from '/snippets/agent/install/install.mdx';
+import SupportedPlatforms from '/snippets/agent/supported-platforms.mdx';
+import Uninstall from '/snippets/agent/install/uninstall.mdx';
+import Verify from '/snippets/agent/install/verify.mdx';
 
-To install the Miru Agent, please visit the [device provisioning](/docs/learn/devices/provision/dashboard) section, which provides detailed instructions for installing and activating the agent via the following methods:
+This page details how to install the Miru Agent Debian package. However, the Miru Agent will not work until it has been activated as a device in your workspace. 
 
-- [Dashboard](/docs/learn/devices/provision/dashboard) - a simple web interface for installing the agent on individual devices
-- [API Keys](/docs/learn/devices/provision/api-keys) - a programmatic way to install the agent on many devices
-- [Poor Connectivity](/docs/learn/devices/provision/poor-connectivity) - a method for installing the agent on devices with poor connectivity
+Once you have installed the `miru-agent` package, use the [device provisioning](/docs/learn/devices/provision/dashboard) documentation to activate the device.
+
+
+## Supported platforms
+
+<SupportedPlatforms />
+
+## Install
+
+<Warning>
+    After installing the Miru Agent, it will be inactive until it is registered and activated as a device in your workspace. See [device provisioning](/docs/learn/devices/provision/dashboard).
+</Warning>
+
+<Install />
 
 ## Upgrade
 
-To upgrade a device's Miru Agent to a new version, simply install the agent.
+To upgrade a device's Miru Agent to a new version, you MUST 
 
-**Dashboard**
+1. Upgrade the `miru-agent` package
+2. Reactivate the device
 
-To upgrade a device from the dashboard, follow the [dashboard provisioning](/docs/learn/devices/provision/dashboard) instructions as normal. The device will be automatically be reactivated and the agent upgraded to the latest version.
+Upgrading the `miru-agent` package without reactivating the device may leave it in a stale or corrupted state. 
 
-**API Keys**
+<Info>
+    We are working to remove the need to reactivate the device after upgrading the `miru-agent` package. However, this is not yet supported.
+</Info>
 
-To upgrade a device [via API Keys](/docs/learn/devices/provision/api-keys), rerun the provisioning process with the [`--allow-reactivation`](/docs/learn/devices/provision/api-keys#param-allow-reactivation) flag. This permits an already installed device to be reactivated and the agent upgraded to the chosen version.
+### 1. Package upgrade
+
+As with the installation process, you can upgrade the `miru-agent` package via `apt` or manually by downloading and installing the new package. 
+
+Since both methods use Debian packages, manual installations can be upgraded via `apt` and vice versa.
+
+<Warning>
+    You must [reactivate](#reactivation) the device after upgrading the `miru-agent` package. Otherwise, the device may be left in a stale or corrupted state.
+</Warning>
+
+<Tabs>
+    <Tab title="APT">
+    ```bash
+    sudo apt-get update && sudo apt-get install --only-upgrade miru-agent
+    ```
+
+    <Info>
+        The `--only-upgrade` flag ensures the `miru-cli` package isn't unintentionally upgraded.
+    </Info>
+    </Tab>
+    <Tab title="Manual">
+    Manual installations do not have a native upgrade mechanism. Simply repeat the [installation steps](#install) to upgrade to the latest version.
+    </Tab>
+</Tabs>
+
+### 2. Device Reactivation
+
+After upgrading the `miru-agent` package, you must reactivate the device to reset its state.
+
+<Tabs>
+    <Tab title="Dashboard">
+        To upgrade a device from the dashboard, follow the [reactivation instructions](/docs/learn/devices/provision/dashboard#reactivate-a-device).
+    </Tab>
+    <Tab title="API Keys">
+        To upgrade a device [via API Keys](/docs/learn/devices/provision/api-keys), rerun the provisioning process with the [`--allow-reactivation`](/docs/learn/devices/provision/api-keys#param-allow-reactivation) flag.
+    </Tab>
+</Tabs>
 
 ## Uninstall
 <Uninstall />
