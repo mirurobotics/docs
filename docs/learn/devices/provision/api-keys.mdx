@@ -13,13 +13,13 @@ Unlike the dashboard installation, which requires manual interaction with the we
 - **Integrate with existing infrastructure** management tools and workflows
 - **Use in headless environments** where a web browser isn't available
 
-### Create the API Key
+### Create the API key
 
 To create an API key, follow the instructions for [creating an API key](/docs/admin/apikeys#create-an-api-key) and select the `devices:provision` scope.
 
-### Install the Agent
+### Install the agent
 
-First, we need to install the `miru-agent` package on the device. If the `miru-agent` package is already installed, you can skip this step.
+First, install the `miru-agent` package on the device. If the `miru-agent` package is already installed, you can skip this step. You can read more about installing the `miru-agent` package [here](/docs/developers/agent/install).
 
 Configure the `apt` repository for this device.
 
@@ -37,7 +37,7 @@ sudo apt-get install miru-agent
 </Tip>
 
 
-### Provision the Device
+### Activate the device
 
 On the device you want to install the Miru Agent, set the `MIRU_API_KEY` environment variable to your API key.
 
@@ -45,7 +45,7 @@ On the device you want to install the Miru Agent, set the `MIRU_API_KEY` environ
 export MIRU_API_KEY=<your-api-key>
 ```
 
-Execute the Miru Agent's `provision` command to create and activate a device using your API key.
+Then execute the `provision` command bundled with the Miru Agent to create and activate a device using your API key.
 
 ```bash
 /usr/sbin/miru-agent provision \
@@ -72,6 +72,6 @@ The provision command supports the following parameters to tune your installatio
   Default: `false`
 </ParamField>
 
-### Verify Installation
+### Verify installation
 
 <Verify />

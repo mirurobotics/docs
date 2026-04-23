@@ -14,49 +14,30 @@ While this method circumvents the need to _download_ the Miru Agent over a netwo
   Some connectivity (however weak) is required to activate the agent. If a device is not connected, the agent cannot be activated.
 </Warning>
 
-## Download the Agent
+## Download the agent
 
 <GithubDownload />
 
-## Transfer the Agent
+## Transfer the agent
 
 Once you've downloaded the appropriate Debian package, transfer it to your target machine. This can be done via a variety of methods, such as a USB drive.
 
-## Install the Agent
+## Install the agent
 
-After transferring the package to your target machine, install it by adding the `--from-pkg` argument to the installation command.
+Once you've transferred the package to your target machine, install the `miru-agent` package by running:
+
+```bash
+sudo dpkg -i <...>.deb
+```
+
+## Activate the device
+
+Once the `miru-agent` package is installed, you still must activate the device in your workspace.
 
 **API keys**
 
-If installing via an [API key](/docs/learn/devices/provision/api-keys), add the `--from-pkg` argument to the provision script.
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/mirurobotics/agent/main/scripts/install/provision.sh | sh -s -- \
---device-name=$HOSTNAME \
---allow-reactivation=true \
---from-pkg=/path/to/miru-agent_<version>_<architecture>.deb
-```
-
-<Info>
-  You'll need to replace `/path/to/miru-agent_<version>_<architecture>.deb` with the actual path to the package.
-</Info>
+If installing via API key, follow the [API key instructions](/docs/learn/devices/provision/api-keys#activate-the-device), but skip the `miru-agent` package installation step (since you've already installed it).
 
 **Dashboard**
 
-If installing via the dashboard, follow these steps.
-
-1. Copy the [installation command](/docs/learn/devices/provision/dashboard#install-the-agent) from the dashboard
-2. Append `-s -- --from-pkg=/path/to/agent.deb` and replace the `<path/to/agent.deb>` with the actual path to the agent package
-
-This will give you an installation command similar to the following.
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/mirurobotics/agent/main/scripts/install/install.sh | \
-env MIRU_ACTIVATION_TOKEN=<activation-token> \
-sh -s -- \
---from-pkg=/path/to/agent.deb
-```
-
-<Warning>
-  Do not copy the example command above. It will not work because it lacks the required activation token. Instead, follow the steps listed above.
-</Warning>
+If activating via the dashboard, follow the [dashboard instructions](/docs/learn/devices/provision/dashboard#install-and-activate), but skip the `miru-agent` package installation step (since you've already installed it).
