@@ -7,10 +7,9 @@ import SupportedPlatforms from '/snippets/agent/supported-platforms.mdx';
 import Uninstall from '/snippets/agent/install/uninstall.mdx';
 import Verify from '/snippets/agent/install/verify.mdx';
 
-This page details how to install the Miru Agent Debian package. However, the Miru Agent will not work until it has been activated as a device in your workspace. 
+This page is the authoritative reference for installing the Miru Agent Debian package. 
 
-Once you have installed the `miru-agent` package, use the [device provisioning](/docs/learn/devices/provision/dashboard) documentation to activate the device.
-
+However, it does not cover activating devices for your workspace. For provisioning devices, visit the [device provisioning](/docs/learn/devices/provision/dashboard) documentation.
 
 ## Supported platforms
 
@@ -19,7 +18,7 @@ Once you have installed the `miru-agent` package, use the [device provisioning](
 ## Install
 
 <Warning>
-    After installing the Miru Agent, it will be inactive until it is registered and activated as a device in your workspace. See [device provisioning](/docs/learn/devices/provision/dashboard).
+    After installing the Miru Agent, it will be inactive until it is activated in your workspace. See [device provisioning](/docs/learn/devices/provision/dashboard).
 </Warning>
 
 <Install />
@@ -31,7 +30,7 @@ To upgrade a device's Miru Agent to a new version, you MUST
 1. Upgrade the `miru-agent` package
 2. Reactivate the device
 
-Upgrading the `miru-agent` package without reactivating the device may leave it in a stale or corrupted state. 
+Upgrading the `miru-agent` package without reactivating the device may leave the device in a stale or corrupted state. 
 
 <Info>
     We are working to remove the need to reactivate the device after upgrading the `miru-agent` package. However, this is not yet supported.
@@ -43,37 +42,36 @@ As with the installation process, you can upgrade the `miru-agent` package via `
 
 Since both methods use Debian packages, manual installations can be upgraded via `apt` and vice versa.
 
-<Warning>
-    You must [reactivate](#reactivation) the device after upgrading the `miru-agent` package. Otherwise, the device may be left in a stale or corrupted state.
-</Warning>
-
 <Tabs>
     <Tab title="APT">
-    ```bash
-    sudo apt-get update && sudo apt-get install --only-upgrade miru-agent
-    ```
+        Upgrade the existing `miru-agent` via `apt`.
 
-    <Info>
-        The `--only-upgrade` flag ensures the `miru-cli` package isn't unintentionally upgraded.
-    </Info>
+        ```bash
+        sudo apt-get update
+        sudo apt-get install miru-agent
+        ```
+
+        <Tip>
+            Upgrade to a specific version with `sudo apt-get install miru-agent=<version>` (e.g. `0.7.0`, `0.8.0`, etc.).
+        </Tip>
     </Tab>
+
     <Tab title="Manual">
-    Manual installations do not have a native upgrade mechanism. Simply repeat the [installation steps](#install) to upgrade to the latest version.
+        Manual installations do not have a native upgrade mechanism. Simply repeat the [installation steps](#install) to upgrade to the latest version.
     </Tab>
 </Tabs>
 
 ### 2. Device Reactivation
 
-After upgrading the `miru-agent` package, you must reactivate the device to reset its state.
+After upgrading the `miru-agent` package, reactivate the device it's installed on.
 
-<Tabs>
-    <Tab title="Dashboard">
-        To upgrade a device from the dashboard, follow the [reactivation instructions](/docs/learn/devices/provision/dashboard#reactivate-a-device).
-    </Tab>
-    <Tab title="API Keys">
-        To upgrade a device [via API Keys](/docs/learn/devices/provision/api-keys), rerun the provisioning process with the [`--allow-reactivation`](/docs/learn/devices/provision/api-keys#param-allow-reactivation) flag.
-    </Tab>
-</Tabs>
+**Dashboard**
+
+To reactivate a device from the dashboard, visit the [reactivation section](/docs/learn/devices/manage#reactivate-a-device).
+
+**API Keys**
+
+To reactivate a device [via API Keys](/docs/learn/devices/provision/api-keys), simply execute the provisioning process with the [`--allow-reactivation`](/docs/learn/devices/provision/api-keys#param-allow-reactivation) flag.
 
 ## Uninstall
 <Uninstall />

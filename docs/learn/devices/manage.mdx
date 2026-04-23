@@ -53,7 +53,7 @@ Reactivating a device is the process of reinstalling the Miru Agent on a device 
 1. Invalidates the device's current authentication session
 2. Creates a new authentication session for the device
 3. Resets the Miru Agent to a clean state
-4. Recreates the device's current deployments
+4. Recreates the device's current deployment
 
 Reactivating a device resets the Miru Agent to a clean state while preserving the device's full deployment history.
 
@@ -65,17 +65,17 @@ To reactivate a device, click the ellipsis (...) next to the device you want to 
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/ellipses-dropdown.png)
 </Frame>
 
-A dialog will appear with a pre-authenticated reactivation command. Copy this command and paste it into a terminal of the device you want to reactivate.
+A dialog will appear with a pre-authenticated command to reactivate the device using the `miru-agent` package's `activate` command.
+
+Copy this command and paste it into a terminal of the device you want to reactivate.
 
 <Frame>
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/reactivate-dialog.png)
 </Frame>
 
 <Warning>
-  Reactivating a device assumes the `miru-agent` package has already been installed. If the `miru-agent` package is not installed, you must [install it](/docs/learn/devices/provision/dashboard#install-the-miru-agent-package) first.
+  Reactivating a device assumes the `miru-agent` package has already been installed. If the `miru-agent` package is not installed, you must [install it](/docs/developers/agent/install) first.
 </Warning>
-
-This reactivation command is identical to the [activation step](/docs/learn/devices/provision/dashboard#install-and-activate) of provisioning a device. The only difference with reactivation is that we skip the `miru-agent` package installation step.
 
 **Platform API**
 
