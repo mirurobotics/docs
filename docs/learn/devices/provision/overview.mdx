@@ -1,0 +1,44 @@
+---
+title: "Overview"
+---
+
+import Verify from '/snippets/agent/install/verify.mdx';
+import { Framed } from '/snippets/components/framed.jsx';
+import CreateDevice from '/snippets/devices/create.mdx';
+import Provision from '/snippets/devices/provision/dashboard.mdx';
+
+<Framed background="https://assets.mirurobotics.com/docs/v03/images/devices/background.jpeg" image="https://assets.mirurobotics.com/docs/v03/images/devices/header:create-panel.png" borderWidth={"36px 100px 0 0"} innerRadius={"0 8px 0 0"} />
+
+Provisioning a device is the process of creating a device in Miru and registering it with Miru's servers. Once provisioned, a device is ready to receive deployments.
+
+## Methods
+
+There are two methods for provisioning a device:
+
+1. [Dashboard](/docs/learn/devices/provision/dashboard) - a manual method for provisioning devices one at a time via the Miru dashboard; great for getting started or managing individual devices.
+
+2. [Provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) - a programmatic method for securely provisioning devices at scale; great for automated provisioning or integrating with existing infrastructure management tools and workflows.
+
+## Miru Agent installation
+
+No matter which method you choose, the device requires the `miru-agent` package to be installed. For more information about installing the `miru-agent` package, visit the [agent installation](/docs/developers/agent/install) documentation.
+
+If you're having trouble downloading the `miru-agent` package to your device, refer to the [poor connectivity](/docs/learn/devices/provision/poor-connectivity) documentation for a workaround.
+
+## Poor connectivity
+
+Some environments may have a poor internet connection. Whether located in a remote area or using a cellular connection, downloading the Miru Agent over a network may be impractical in some environments.
+
+In such scenarios, we recommend downloading the Miru Agent to a computer with a stable connection. Then, transfer the package to your target machine and install it. See the agent installation's [poor connectivity](/docs/developers/agent/install#poor-connectivity) section for more details.
+
+Once you've installed the `miru-agent` package, proceed with the provisioning process via the [dashboard](/docs/learn/devices/provision/dashboard) or [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens).
+
+## Reactivation
+
+Reactivating a device is the process of reconnecting or reassociating a physical device with a device in Miru. Reactivating a device fully maintains a device's deployment history, even if reactivation occurs on a different physical device.
+
+To reactivate a device, visit the [reactivation documentation](/docs/learn/devices/provision/reactivate).
+
+## Authentication model
+
+If you're curious about Miru's authentication model, please consult the [agent security](/docs/developers/agent/security) documentation.

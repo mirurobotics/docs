@@ -6,6 +6,7 @@ import Install from '/snippets/agent/install/install.mdx';
 import SupportedPlatforms from '/snippets/agent/supported-platforms.mdx';
 import Uninstall from '/snippets/agent/install/uninstall.mdx';
 import Verify from '/snippets/agent/install/verify.mdx';
+import GithubDownload from '/snippets/agent/install/github-download.mdx';
 
 This page details the process of installing the Miru Agent Debian package. 
 
@@ -75,3 +76,31 @@ To reactivate a device [via API Keys](/docs/learn/devices/provision/api-keys), s
 
 ## Uninstall
 <Uninstall />
+
+## Poor connectivity
+
+Some environments may have a poor internet connection. Whether located in a remote area or using a cellular connection, downloading the Miru Agent over a network may be impractical in some environments.
+
+In such scenarios, we recommend downloading the Miru Agent to a computer with a stable connection. Then, transfer the package to your target machine and install it.
+
+While this method circumvents the need to _download_ the Miru Agent over a network, _activating_ the agent still requires some level of connectivity to register the device with the Miru servers.
+
+<Warning>
+  Some connectivity (however weak) is required to activate the agent. If a device is not connected, the agent cannot be activated.
+</Warning>
+
+<Steps>
+    <Step title="Download the agent">
+        Follow the [manual installation steps](#manual) to download the Miru Agent to a computer with a stable connection.
+    </Step>
+    <Step title="Transfer the agent">
+        Once you've downloaded the appropriate Debian package, transfer it to your target machine. This can be done via a variety of methods, such as a USB drive.
+    </Step>
+    <Step title="Install the agent">
+        Once you've transferred the package to your target machine, install the `miru-agent` package by running:
+
+        ```bash
+        sudo dpkg -i <...>.deb
+        ```
+    </Step>
+</Steps>
