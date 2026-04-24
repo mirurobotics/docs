@@ -1,0 +1,69 @@
+---
+title: "Provisioning tokens"
+---
+
+import Verify from '/snippets/agent/install/verify.mdx';
+import SetupApt from '/snippets/apt/setup.mdx';
+
+To programmatically provision devices, Miru offers provisioning tokens.
+
+Unlike the dashboard, which requires manual interaction with the web interface for each device, provisioning tokens allow you to:
+
+- **Provision multiple devices** without manual intervention
+- **Integrate with existing infrastructure** management tools and workflows
+- **Use in headless environments** where a web browser isn't available
+
+## Prerequisites
+
+Before provisioning a device via API keys, you must:
+
+1. Obtain an API key
+
+    To create an API key, follow the [creating an API key](/docs/admin/apikeys#create-an-api-key) documentation and select the `devices:provision` scope.
+
+2. Install the `miru-agent` package
+
+    The device you're provisioning must have the `miru-agent` package installed. If it doesn't, use the [agent installation](/docs/developers/agent/install) documentation to install via `apt`.
+
+## Provision the device
+
+First, obtain the provisioning token using the [issue provisioning token](/docs/admin/provisioning-tokens#issue-a-provisioning-token) API.
+
+On the device you want to provision, set the `MIRU_PROVISIONING_TOKEN` environment variable to your provisioning token.
+
+```bash
+export MIRU_PROVISIONING_TOKEN=<your-provisioning-token>
+```
+
+Then execute the `provision` command bundled with the Miru Agent to provision the device.
+
+```bash
+/usr/sbin/miru-agent provision \
+  --device-name=$HOSTNAME \
+  --allow-reactivation=false
+```
+
+The provision command performs the following actions:
+
+1. **Creates the device** - creates a new device in the Miru dashboard if a device with the provided name doesn't already exist.
+1. **Registers the device** - registers the agent with Miru servers. 
+
+The provision command supports the following parameters to tune your installation:
+
+<ParamField path="--device-name" type="string">
+  The name of the device in the Miru dashboard. Defaults to $HOSTNAME if the device is created and a name is not provided.
+
+  Default: `$HOSTNAME`
+</ParamField>
+
+<ParamField path="--allow-reactivation" type="boolean">
+  Allows reactivation of existing devices.
+
+  Without this flag, only `inactive` devices can be activated. With this flag, devices that have been previously activated (status `online`, `offline`, etc.) may be reactivated.
+
+  Default: `false`
+</ParamField>
+
+## Verify installation
+
+<Verify />

@@ -67,9 +67,10 @@
                   {
                     "group": "Provision devices",
                     "pages": [
+                      "docs/learn/devices/provision/overview",
                       "docs/learn/devices/provision/dashboard",
-                      "docs/learn/devices/provision/api-keys",
-                      "docs/learn/devices/provision/poor-connectivity"
+                      "docs/learn/devices/provision/provisioning-tokens",
+                      "docs/learn/devices/provision/reactivate"
                     ]
                   },
                   "docs/learn/devices/manage",

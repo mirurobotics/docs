@@ -9,32 +9,29 @@ Click the **Activate** button on the device you just created.
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/one-device-to-activate.png)
 </Frame>
 
-A dialog will appear walking you through the process of installing the `miru-agent` package and activating the device.
+A dialog will appear walking prompting you to install the `miru-agent`.
 
-<Dropdown title="1. Install the miru-agent package">
+If the device already has the correct `miru-agent` package installed, you can skip the installation step. 
 
-    Configure the `apt` repository for this device.
-
-    <SetupApt />
-
-    Install the `miru-agent` package.
-
-    <AptInstall />
-
-</Dropdown>
+[INSTALLATION DIALOG]
 
 <Note>
-    If the correct `miru-agent` package is already installed on your device, you can skip this step.
+  For more information about installing the `miru-agent` package, visit the [agent installation](/docs/developers/agent/install) documentation.
 </Note>
 
-<Dropdown title="2. Activate the device">
+Once the `miru-agent` package is installed, continue to the activation step.
 
-    After installing the `miru-agent` package, the device must be activated for your workspace. Invoke the package's `activate` command with the provided token to register the device with your workspace.
+[PROVISIONING DIALOG]
 
-    ```bash
-    ENV MIRU_ACTIVATION_TOKEN=<activation-token> \
-      /usr/sbin/miru-agent activate \
-      --allow-reactivation=true
-    ```
+The activation command invokes the `miru-agent` binary with a short-lived (5 minutes) provisioning token to activate the device for your workspace. The command will look similar to the following:
 
-</Dropdown>
+```bash
+MIRU_PROVISIONING_TOKEN=<provisioning-token> \
+  /usr/sbin/miru-agent provision
+```
+
+Copy the command from the dialog and paste it into a terminal of the device you want to provision.
+
+<Tip>
+  For more information about Miru's authentication model, visit the [agent security](/docs/developers/agent/security) documentation.
+</Tip>
