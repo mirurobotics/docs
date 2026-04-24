@@ -1,0 +1,47 @@
+---
+title: "Reactivate a device"
+---
+Reactivating a device is the process of reassociating a physical device with a device in Miru. This is typically the same physical device that was used to initially activate the device. However, it can be used to reassociate a device with a different physical device.
+
+## Use cases
+
+Reactivating a device fully maintains a device's deployment history, even if reactivation occurs on a different physical device. Reactivating a device is useful for:
+
+- Removing the `miru-agent` and cleanly installing again
+- Transferring a Miru device to a different physical device
+
+## Process
+
+Reactivating a device involves the following steps:
+
+1. Invalidates the old authentication session
+2. Creates a new authentication session for the device
+3. Recreates the device's current deployment
+
+Thus, if you attempt to reactivate a Miru device on a different physical device, the old device's authentication session is immediately invalidated and no longer connected to your workspace.
+
+## Dashboard
+
+To reactivate a device, click the ellipsis (...) next to the device you want to reactivate, then select **Reactivate**.
+
+[REACTIVATION DIALOG]
+
+A dialog will appear with a pre-authenticated reactivation command. 
+
+<Warning>
+  Reactivating a device assumes the `miru-agent` package has already been installed. If the `miru-agent` package is not installed, you must [install it](/docs/developers/agent/install) first.
+</Warning>
+
+The reactivation command invokes the `miru-agent` binary with a short-lived (5 minutes) provisioning token. The command will look similar to the following:
+
+```bash
+MIRU_PROVISIONING_TOKEN=<provisioning-token> \
+  /usr/sbin/miru-agent provision \
+  --allow-reactivation=true
+```
+
+Copy the command from the dialog and paste it into a terminal of the device you want to provision.
+
+## Provisioning tokens
+
+To reactivate a device programmatically, use the [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) workflow with the [`--allow-reactivation`](/docs/learn/devices/provision/provisioning-tokens#param-allow-reactivation) flag enabled.

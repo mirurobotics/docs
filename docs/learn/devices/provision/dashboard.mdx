@@ -9,19 +9,17 @@ import Provision from '/snippets/devices/provision/dashboard.mdx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v03/images/devices/background.jpeg" image="https://assets.mirurobotics.com/docs/v03/images/devices/header:create-panel.png" borderWidth={"36px 100px 0 0"} innerRadius={"0 8px 0 0"} />
 
-Provisioning a device is the process of installing the `miru-agent` package and activating the device in your workspace. Once provisioned, a device is ready to receive deployments.
-
-The Miru dashboard is the simplest method, ideal for getting started or managing individual devices. For automated deployments or provisioning devices at scale, consider using [API Keys](/docs/learn/devices/provision/api-keys) instead.
-
-<Tip>
-    To reactivate a device, visit the [reactivation](/docs/learn/devices/manage#reactivate-a-device) section of the manage devices page.
-</Tip>
+The Miru dashboard is the simplest method for provisioning a device, ideal for getting started or managing individual devices. For automated provisioning, consider using [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) instead.
 
 ## Create a device
 
+If you don't yet have a device in Miru, you'll need to create one.
+
 <CreateDevice />
 
-## Install and activate
+## Provision the device
+
+Next, we'll install the `miru-agent` package and provision the device.
 
 <Provision />
 
