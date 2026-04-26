@@ -408,9 +408,9 @@ components:
       title: DeploymentDeployedEvent
       type: object
       x-summary: A deployment's config instances have been written to the device's
-        filesystem.
+        file system.
       description: Emitted when a deployment's config instances have been written
-        to the device's filesystem and are available for consumption. Use this event
+        to the device's file system and are available for consumption. Use this event
         to reload configuration, restart dependent services, or confirm that new configuration
         is live on the device.
       required:
@@ -454,9 +454,9 @@ components:
       title: DeploymentRemovedEvent
       type: object
       x-summary: A deployment's config instances have been removed from the device's
-        filesystem.
+        file system.
       description: Emitted when a deployment's config instances have been removed
-        from the device's filesystem and the deployment has been archived. Use this
+        from the device's file system and the deployment has been archived. Use this
         event to clean up resources or stop services that depended on the removed
         configuration.
       required:
