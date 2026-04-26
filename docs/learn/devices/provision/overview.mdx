@@ -13,11 +13,13 @@ Provisioning a device is the process of creating a device in Miru and registerin
 
 ## Methods
 
-There are two methods for provisioning a device:
+There are three methods for provisioning a device:
 
-1. [Dashboard](/docs/learn/devices/provision/dashboard) - a manual method for provisioning devices one at a time via the Miru dashboard; great for getting started or managing individual devices.
+1. [Dashboard](/docs/learn/devices/provision/dashboard) - a manual method for provisioning devices one at a time via the Miru web interface; great for getting started or managing individual devices.
 
 2. [Provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) - a programmatic method for securely provisioning devices at scale; great for automated provisioning or integrating with existing infrastructure management tools and workflows.
+
+3. [API keys](/docs/learn/devices/provision/api-keys) - the legacy method for programmatically provisioning devices; unsupported with Miru Agent [v0.9.0](/docs/changelogs/cli#v0-9-0) or later.
 
 ## Miru Agent installation
 
@@ -35,9 +37,9 @@ Once you've installed the `miru-agent` package, proceed with the provisioning pr
 
 ## Reactivation
 
-Reactivating a device is the process of reconnecting or reassociating a physical device with a device in Miru. Reactivating a device fully maintains a device's deployment history, even if reactivation occurs on a different physical device.
+Reactivating a device is the process of reassociating a physical device with a device in Miru. Reactivating a device fully maintains the device's deployment history in Miru, even if reactivation occurs on a different physical device.
 
-To reactivate a device, visit the [reactivation documentation](/docs/learn/devices/provision/reactivate).
+Visit the [reactivation documentation](/docs/learn/devices/provision/reactivate) for more.
 
 ## Authentication model
 

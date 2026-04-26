@@ -10,7 +10,7 @@ import GithubDownload from '/snippets/agent/install/github-download.mdx';
 
 This page details the process of installing the Miru Agent Debian package. 
 
-It does not cover activating devices for your workspace. For provisioning devices, visit the [device provisioning](/docs/learn/devices/provision/dashboard) documentation.
+It does not cover provisioning devices for your workspace. Visit the [device provisioning](/docs/learn/devices/provision/dashboard) documentation to learn how to create and register devices with your workspace.
 
 ## Supported platforms
 
@@ -18,28 +18,15 @@ It does not cover activating devices for your workspace. For provisioning device
 
 ## Install
 
-<Warning>
-    After installing the Miru Agent, it must still be activated for your workspace. See [device provisioning](/docs/learn/devices/provision/dashboard).
-</Warning>
-
 <Install />
 
 ## Upgrade
 
-To upgrade a device's Miru Agent to a new version, you MUST 
-
-1. Upgrade the `miru-agent` package
-2. Reactivate the device
-
-Upgrading the `miru-agent` package without reactivating the device may leave the device in a stale or corrupted state. 
-
-<Info>
-    We are working to remove the need to reactivate the device after upgrading the `miru-agent` package. However, this is not yet supported.
-</Info>
-
-### 1. Package upgrade
-
 As with the installation process, you can upgrade the `miru-agent` package via `apt` or manually by downloading and installing the new package. 
+
+<Warning>
+    If you're upgrading to a `miru-agent` version that precedes `v0.9.0`, you MUST [reactivate](/docs/learn/devices/provision/reactivate) the device after upgrading the `miru-agent` package.
+</Warning>
 
 Since both methods use Debian packages, manual installations can be upgraded via `apt` and vice versa.
 
@@ -62,19 +49,8 @@ Since both methods use Debian packages, manual installations can be upgraded via
     </Tab>
 </Tabs>
 
-### 2. Device Reactivation
-
-After upgrading the `miru-agent` package, reactivate the device it's installed on.
-
-**Dashboard**
-
-To reactivate a device from the dashboard, visit the [reactivation section](/docs/learn/devices/manage#reactivate-a-device).
-
-**API Keys**
-
-To reactivate a device [via API Keys](/docs/learn/devices/provision/api-keys), simply execute the provisioning process with the [`--allow-reactivation`](/docs/learn/devices/provision/api-keys#param-allow-reactivation) flag.
-
 ## Uninstall
+
 <Uninstall />
 
 ## Poor connectivity
@@ -84,10 +60,6 @@ Some environments may have a poor internet connection. Whether located in a remo
 In such scenarios, we recommend downloading the Miru Agent to a computer with a stable connection. Then, transfer the package to your target machine and install it.
 
 While this method circumvents the need to _download_ the Miru Agent over a network, _activating_ the agent still requires some level of connectivity to register the device with the Miru servers.
-
-<Warning>
-  Some connectivity (however weak) is required to activate the agent. If a device is not connected, the agent cannot be activated.
-</Warning>
 
 <Steps>
     <Step title="Download the agent">
