@@ -4,7 +4,7 @@ title: 'Security'
 
 import { Dropdown } from '/snippets/components/api-dropdown.jsx';
 
-The Miru Agent is designed to run with minimal privileges and a restricted system footprint. This page describes the agent's authentication model, authorizations, and the security measures applied at the process, filesystem, network, and credential layers.
+The Miru Agent is designed to run with minimal privileges and a restricted system footprint. This page describes the agent's authentication model, authorizations, and the security measures applied at the process, file system, network, and credential layers.
 
 ## Authentication
 
@@ -43,7 +43,7 @@ If a token refresh fails due to a transient network issue, the agent retries aut
 
 ### Credential storage
 
-The agent's identity is bound to the RSA key pair generated on-device during [provisioning](/docs/learn/devices/provision). Currently, these credentials are protected at rest through filesystem permissions:
+The agent's identity is bound to the RSA key pair generated on-device during [provisioning](/docs/learn/devices/provision). Currently, these credentials are protected at rest through file system permissions:
 
 | File | Permissions | Access |
 |------|------------|--------|
@@ -125,7 +125,7 @@ The only local interface is a Unix domain socket at `/run/miru/miru.sock`, used 
 
 The agent's local REST API is exposed through a Unix domain socket, not a TCP port. It is not possible to access the agent's local API over a network—it is only accessible from processes running on the same device as the agent.
 
-Access is controlled through filesystem permissions:
+Access is controlled through file system permissions:
 
 - **Socket permissions** — the socket is created with mode `0660`, restricting access to the `miru` user and group
 - **Socket activation** — `systemd` manages the socket lifecycle, creating it before the agent starts and removing it when the agent stops

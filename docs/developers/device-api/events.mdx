@@ -117,7 +117,7 @@ Below is an example of an envelope:
 
 Every event has a *type*—a string in the form `{resource}.{action}` (e.g. `deployment.deployed`)—that identifies what happened on the device. The type is carried in both the SSE `event` field and the envelope's `type` field, so clients can dispatch on it without parsing the rest of the payload.
 
-For example, when a deployment's config instances are written to the device's filesystem, the agent emits a `deployment.deployed` event:
+For example, when a deployment's config instances are written to the device's file system, the agent emits a `deployment.deployed` event:
 
 ```
 event: deployment.deployed
