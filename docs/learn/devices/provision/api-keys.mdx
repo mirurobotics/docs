@@ -1,43 +1,17 @@
 ---
-title: "API Keys"
+title: "API keys"
 ---
 
 import Verify from '/snippets/agent/install/verify.mdx';
-import SetupApt from '/snippets/apt/setup.mdx';
+import CreateDevice from '/snippets/devices/create.mdx';
 
-To programmatically provision devices, Miru offers API keys.
+API keys are a legacy method for [programmatically provisioning](/docs/learn/devices/provision/provisioning-tokens) devices. API keys only support installing `miru-agent` versions that precede [v0.9.0](/docs/changelogs/cli#v0-9-0). 
 
-Unlike the dashboard installation, which requires manual interaction with the web interface for each device, provisioning devices via API keys allows you to:
+## Create the API key
 
-- **Provision multiple devices** at scale without manual intervention
-- **Integrate with existing infrastructure** management tools and workflows
-- **Use in headless environments** where a web browser isn't available
+To create an API key, follow the instructions for [creating an API key](/docs/admin/apikeys#create-an-api-key) and select the `devices:provision` scope.
 
-### Create the API key
-
-To create an API key, follow the instructions for [creating an API key](/admin/apikeys#create-an-api-key) and select the `devices:provision` scope.
-
-### Install the agent
-
-Next, install the `miru-agent` package on the device you want to provision. If the `miru-agent` package is already installed, you can skip this step. For more information on installing the `miru-agent` package, visit the [installation](/docs/developers/agent/install) documentation.
-
-Configure the `apt` repository for this device.
-
-<SetupApt />
-
-Install the `miru-agent` package.
-
-```bash
-sudo apt-get update
-sudo apt-get install miru-agent
-```
-
-<Tip>
-  Install a specific version with `sudo apt-get install miru-agent=<version>` (e.g. `0.7.0`, `0.8.0`, etc.).
-</Tip>
-
-
-### Activate the device
+## Provision the device
 
 On the device you want to install the Miru Agent, set the `MIRU_API_KEY` environment variable to your API key.
 
@@ -45,23 +19,31 @@ On the device you want to install the Miru Agent, set the `MIRU_API_KEY` environ
 export MIRU_API_KEY=<your-api-key>
 ```
 
-Then execute the `provision` command bundled with the Miru Agent to create and activate a device using your API key.
+<Warning>
+    API keys only support installing `miru-agent` versions that precede [v0.9.0](/docs/changelogs/cli#v0-9-0). If installing Miru Agent `v0.9.0` or later, please use [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) to provision devices.
+</Warning>
+
+Execute the [provisioning script](https://github.com/mirurobotics/agent/blob/main/scripts/install/provision.sh) to create and activate a device using your API key.
 
 ```bash
-/usr/sbin/miru-agent provision \
+curl -fsSL https://raw.githubusercontent.com/mirurobotics/agent/main/scripts/install/provision.sh | sh -s -- \
   --device-name=$HOSTNAME \
-  --allow-reactivation=false
+  --allow-reactivation=true
 ```
 
-The provision command performs the following actions:
+The provision script performs the following actions:
 
 1. **Creates the device** - creates a new device in the Miru dashboard if a device with the provided name doesn't already exist
+1. **Downloads the agent** - fetches the latest Miru Agent Debian package
+1. **Installs the service** - installs the agent as a `systemd` service
 1. **Activates the device** - registers the agent with Miru servers using the activation token
 
-The provision command supports the following parameters to tune your installation:
+The provision script supports the following parameters to tune your installation:
 
-<ParamField path="--device-name" type="string" required>
-  The name of the device in the Miru dashboard. This field is required.
+<ParamField path="--device-name" type="string">
+  The name of the device in the Miru dashboard.
+
+  Default: `$HOSTNAME`
 </ParamField>
 
 <ParamField path="--allow-reactivation" type="boolean">
@@ -72,6 +54,12 @@ The provision command supports the following parameters to tune your installatio
   Default: `false`
 </ParamField>
 
-### Verify installation
+<ParamField path="--version" type="string">
+  The agent version to install (e.g., `v0.6.0`).
+
+  Defaults to the [latest release](https://github.com/mirurobotics/agent/releases/latest). See all [available versions](https://github.com/mirurobotics/agent/releases).
+</ParamField>
+
+## Verify installation
 
 <Verify />
