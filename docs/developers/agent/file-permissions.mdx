@@ -206,16 +206,6 @@ To keep things simple, we generally recommend granting the `miru` group the appr
 **Files**
 
 <Tabs>
-  <Tab title="Transfer ownership">
-    ```bash
-    sudo chown miru /path/to/file.json
-    sudo chmod u+rw /path/to/file.json
-    ```
-
-    - `chown miru` sets `miru` as the file owner user (group unchanged)
-    - `chmod u+rw` gives the owner (`miru`) read and write access
-
-  </Tab>
   <Tab title="Group access">
     ```bash
     sudo chgrp miru /path/to/file.json
@@ -225,20 +215,20 @@ To keep things simple, we generally recommend granting the `miru` group the appr
     - `chgrp miru` sets the file's group to `miru`
     - `chmod g+rw` gives the group read and write access
   </Tab>
+  <Tab title="Transfer ownership">
+    ```bash
+    sudo chown miru /path/to/file.json
+    sudo chmod u+rw /path/to/file.json
+    ```
+
+    - `chown miru` sets `miru` as the file owner user (group unchanged)
+    - `chmod u+rw` gives the owner (`miru`) read and write access
+  </Tab>
 </Tabs>
 
 **Directories**
 
 <Tabs>
-  <Tab title="Transfer ownership">
-    ```bash
-    sudo chown miru /path/to/dir
-    sudo chmod u+rwx /path/to/dir
-    ```
-
-    - `chown miru` sets `miru` as the owner user for the directory and its contents
-    - `chmod u+rwx` gives the owner (`miru`) read, write, and execute access
-  </Tab>
   <Tab title="Group access">
     ```bash
     sudo chgrp miru /path/to/dir
@@ -247,6 +237,15 @@ To keep things simple, we generally recommend granting the `miru` group the appr
 
     - `chgrp miru` sets the directory group to `miru`
     - `chmod g+rwx` gives the group read, write, and execute access
+  </Tab>
+  <Tab title="Transfer ownership">
+    ```bash
+    sudo chown miru /path/to/dir
+    sudo chmod u+rwx /path/to/dir
+    ```
+
+    - `chown miru` sets `miru` as the owner user for the directory and its contents
+    - `chmod u+rwx` gives the owner (`miru`) read, write, and execute access
   </Tab>
 </Tabs>
 
