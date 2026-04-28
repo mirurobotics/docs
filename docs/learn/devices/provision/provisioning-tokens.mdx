@@ -6,7 +6,7 @@ import Verify from '/snippets/agent/install/verify.mdx';
 
 To programmatically provision devices, Miru offers provisioning tokens. 
 
-Provisioning tokens are only supported when installing `miru-agent` version [v0.9.0](/docs/changelogs/cli#v0-9-0) or later. If installing a version that precedes v0.9.0, continue to use [API keys](/docs/learn/devices/provision/api-keys).
+Provisioning tokens are only supported when installing `miru-agent` version [v0.9.0](/docs/changelogs/agent) or later. If installing a version that precedes v0.9.0, continue to use [API keys](/docs/learn/devices/provision/api-keys).
 
 Unlike the dashboard, which requires manual interaction with the web interface for each device, provisioning tokens allow you to:
 
@@ -27,12 +27,12 @@ Before provisioning a device via provisioning tokens, you must:
     The device you're provisioning must have the `miru-agent` package installed. If it doesn't, use the [agent installation](/docs/developers/agent/install) documentation to install via `apt`.
 
     <Warning>
-        Provisioning tokens are only supported when installing `miru-agent` version [v0.9.0](/docs/changelogs/cli#v0-9-0) or later. If installing a version that precedes v0.9.0, continue to use [API keys](/docs/learn/devices/provision/api-keys) to provision devices.
+        Provisioning tokens are only supported when installing `miru-agent` version [v0.9.0](/docs/changelogs/agent) or later. If installing a version that precedes v0.9.0, continue to use [API keys](/docs/learn/devices/provision/api-keys) to provision devices.
     </Warning>
 
 ## Provision the device
 
-First, obtain a provisioning token using the [issue provisioning token](/docs/admin/provisioning-tokens#issue-a-provisioning-token) Platform API endpoint.
+First, obtain a provisioning token via the Platform API.
 
 On the device you want to provision, set the `MIRU_PROVISIONING_TOKEN` environment variable to your provisioning token.
 
