@@ -32,7 +32,7 @@
                 "pages": [
                   "docs/getting-started/quick-start/overview",
                   "docs/getting-started/quick-start/create-release",
-                  "docs/getting-started/quick-start/install-agent",
+                  "docs/getting-started/quick-start/provision-device",
                   "docs/getting-started/quick-start/deploy-configs"
                 ]
               },
