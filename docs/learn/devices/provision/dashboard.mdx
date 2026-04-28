@@ -5,7 +5,8 @@ title: "Dashboard"
 import Verify from '/snippets/agent/install/verify.mdx';
 import { Framed } from '/snippets/components/framed.jsx';
 import CreateDevice from '/snippets/devices/create.mdx';
-import Provision from '/snippets/devices/provision/dashboard.mdx';
+import Install from '/snippets/devices/provision/install-dialog.mdx';
+import Activate from '/snippets/devices/provision/activate-dialog.mdx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v03/images/devices/background.jpeg" image="https://assets.mirurobotics.com/docs/v03/images/devices/header:create-panel.png" borderWidth={"36px 100px 0 0"} innerRadius={"0 8px 0 0"} />
 
@@ -17,11 +18,21 @@ If you don't yet have a device in Miru, you'll need to create one.
 
 <CreateDevice />
 
-## Provision the device
+## Install the `miru-agent` package
 
-Next, we'll install the `miru-agent` package and provision the device.
+Click the **Activate** button on the device you want to activate.
 
-<Provision />
+<Frame>
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/one-device-to-activate.png)
+</Frame>
+
+<Install />
+
+## Activate the device
+
+Once the `miru-agent` package is installed, continue to the activation step.
+
+<Activate />
 
 ## Verify the installation
 
