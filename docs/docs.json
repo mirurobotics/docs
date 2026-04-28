@@ -71,7 +71,7 @@
                       "docs/learn/devices/provision/dashboard",
                       "docs/learn/devices/provision/provisioning-tokens",
                       "docs/learn/devices/provision/api-keys",
-                      "docs/learn/devices/provision/reactivate"
+                      "docs/learn/devices/provision/reprovision"
                     ]
                   },
                   "docs/learn/devices/manage",
