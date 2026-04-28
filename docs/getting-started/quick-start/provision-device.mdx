@@ -1,0 +1,45 @@
+---
+title: "Provision a device"
+---
+
+import Verify from '/snippets/agent/install/verify.mdx';
+import SupportedPlatforms from '/snippets/agent/supported-platforms.mdx';
+import CreateDevice from '/snippets/devices/create.mdx';
+import Install from '/snippets/devices/provision/install-dialog.mdx';
+import Activate from '/snippets/devices/provision/activate-dialog.mdx';
+
+Before deploying config instances, we must provision a device with your workspace--the process of installing the Miru Agent onto a machine and registering it with your workspace. 
+
+The Miru Agent is a lightweight `systemd` service that runs on your machines, handling the deployment lifecycle of configurations. For more information on the agent, visit the [Miru Agent](/docs/developers/agent/overview) section.
+
+This getting started guide demonstrates the [dashboard](/docs/learn/devices/provision/dashboard). However, you can also use [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) to provision devices programmatically.
+
+## Supported platforms
+
+<SupportedPlatforms />
+
+## Create a device
+
+<CreateDevice />
+
+## Install the `miru-agent` package
+
+Next, we need to install the `miru-agent` package on your target machine.
+
+Click the **Activate** button on the device you just created.
+
+<Frame>
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/one-device-to-activate.png)
+</Frame>
+
+<Install />
+
+## Activate the device
+
+Once the `miru-agent` package is installed, continue to the activation step.
+
+<Activate />
+
+## Verify the installation
+
+<Verify />
