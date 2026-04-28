@@ -45,29 +45,24 @@ Then execute the `provision` command bundled with the Miru Agent to provision th
 
 ```bash
 /usr/sbin/miru-agent provision \
-  --device-name=$HOSTNAME \
-  --allow-reactivation=false
+  --device-name=$HOSTNAME
 ```
 
 The provision command performs the following actions:
 
 1. **Creates the device** - creates a new device in the Miru dashboard if a device with the provided name doesn't already exist.
-1. **Registers the device** - registers the agent with Miru servers. 
+1. **Activates the device** - activates the device by registering the agent with Miru servers.
+
+If the device has already been activated, the provisioning command is treated as a no-op and exits successfully. If you need to reprovision a device, follow the [reprovisioning](/docs/learn/devices/provision/reprovision) documentation.
+
+### Arguments
 
 The provision command supports the following parameters to tune your installation:
 
 <ParamField path="--device-name" type="string">
-  The name of the device in the Miru dashboard. Defaults to $HOSTNAME if the device is created and a name is not provided.
+  The name of the device in the Miru dashboard. Defaults to `$HOSTNAME` if the device is created and a name is not provided.
 
   Default: `$HOSTNAME`
-</ParamField>
-
-<ParamField path="--allow-reactivation" type="boolean">
-  Allows reactivation of existing devices.
-
-  Without this flag, only `inactive` devices can be activated. With this flag, devices that have been previously activated (status `online`, `offline`, etc.) may be reactivated.
-
-  Default: `false`
 </ParamField>
 
 ## Verify installation
