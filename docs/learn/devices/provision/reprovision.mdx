@@ -1,0 +1,45 @@
+---
+title: "Reprovision a device"
+---
+
+import Install from '/snippets/devices/provision/install-dialog.mdx';
+import Reprovision from '/snippets/devices/provision/reprovision.mdx';
+
+Reprovisioning a device is the process of reassociating a physical machine with a Miru device. This can be the same physical machine that the Miru device was initially provisioned on, or a different physical machine.
+
+Reprovisioning a Miru device does the following:
+
+1. Invalidates the device's current authentication session.
+2. Creates a new authentication session for the device.
+3. Redeploys the device's current deployment.
+
+If you reprovision a Miru device on a different physical machine, the old machine's authentication session is immediately invalidated and no longer connected to your workspace.
+
+Reprovisioning fully maintains the device's deployment history in Miru. After reprovisioning, the device's deployment history picks up where it left off before reprovisioning occurred.
+
+## Use cases
+
+Reprovisioning a device is useful for:
+
+- Removing the `miru-agent` and cleanly reinstalling it
+- Transferring a Miru device to a different physical machine
+
+Reprovisioning is NOT meant to be used to upgrade the `miru-agent` package. If you simply want to upgrade the `miru-agent` package, follow the Miru Agent [upgrade documentation](/docs/developers/agent/upgrade).
+
+## Dashboard
+
+Reprovisioning a device is only supported via the Miru dashboard. Support for programmatically reprovisioning devices is coming soon.
+
+To reprovision a device, click the ellipsis (...) next to the device you want to reprovision, then select **Reprovision**.
+
+[REPROVISIONING ELLIPSIS]
+
+### Install the `miru-agent` package
+
+<Install />
+
+### Reprovision the device
+
+Once the `miru-agent` package is installed, continue to the reprovisioning step.
+
+<Reprovision />
