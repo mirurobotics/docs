@@ -37,6 +37,9 @@
     "newgrp",
     "setfacl",
     "zeroizes",
-    "Npfzv"
+    "Npfzv",
+    "reprovision",
+    "reprovisioning",
+    "reassociating"
   ]
 }
