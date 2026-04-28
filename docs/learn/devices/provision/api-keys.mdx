@@ -5,11 +5,11 @@ title: "API keys"
 import Verify from '/snippets/agent/install/verify.mdx';
 import CreateDevice from '/snippets/devices/create.mdx';
 
-API keys are a legacy method for [programmatically provisioning](/docs/learn/devices/provision/provisioning-tokens) devices. API keys only support installing `miru-agent` versions that precede [v0.9.0](/docs/changelogs/cli#v0-9-0). 
+API keys are a legacy method for [provisioning](/docs/learn/devices/provision/provisioning-tokens) devices. API keys only support installing `miru-agent` versions that *precede* [v0.9.0](/docs/changelogs/cli#v0-9-0). 
 
 ## Create the API key
 
-To create an API key, follow the instructions for [creating an API key](/docs/admin/apikeys#create-an-api-key) and select the `devices:provision` scope.
+If you don't have an API key, follow the instructions for [creating an API key](/docs/admin/apikeys#create-an-api-key) and select the `devices:provision` scope.
 
 ## Provision the device
 
@@ -20,7 +20,7 @@ export MIRU_API_KEY=<your-api-key>
 ```
 
 <Warning>
-    API keys only support installing `miru-agent` versions that precede [v0.9.0](/docs/changelogs/cli#v0-9-0). If installing Miru Agent `v0.9.0` or later, please use [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) to provision devices.
+    API keys only support installing `miru-agent` versions that precede [v0.9.0](/docs/changelogs/cli#v0-9-0). If installing Miru Agent `v0.9.0` or later, you must use [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens).
 </Warning>
 
 Execute the [provisioning script](https://github.com/mirurobotics/agent/blob/main/scripts/install/provision.sh) to create and activate a device using your API key.
@@ -37,6 +37,8 @@ The provision script performs the following actions:
 1. **Downloads the agent** - fetches the latest Miru Agent Debian package
 1. **Installs the service** - installs the agent as a `systemd` service
 1. **Activates the device** - registers the agent with Miru servers using the activation token
+
+### Arguments
 
 The provision script supports the following parameters to tune your installation:
 
