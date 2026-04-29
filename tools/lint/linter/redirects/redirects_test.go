@@ -667,6 +667,16 @@ func TestLineLookup(t *testing.T) {
 		}
 	})
 
+	t.Run("array_open_then_eof_mid_scan", func(t *testing.T) {
+		// Array opens but is truncated before any entry; scanRedirectEntries
+		// hits dec.Token() error mid-scan and returns the default fallback.
+		got := lineLookup(`{"redirects": [`, 1)
+		want := []int{1}
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v, want %v", got, want)
+		}
+	})
+
 	t.Run("more_entries_than_count", func(t *testing.T) {
 		text := "{\n" +
 			"  \"redirects\": [\n" +
