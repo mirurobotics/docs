@@ -50,10 +50,6 @@ Use timestamps when you complete steps. Split partially completed work into "don
   Rationale: Detection requires a curated allowlist (e.g. "API", "Miru", "macOS") plus context-aware tokenisation. That is a larger design task; punting it to v2 keeps this rule small and reviewable. The diagnostic message says so explicitly so authors are not confused.
   Date/Author: 2026-04-29 / agents@miruml.com
 
-- Decision: Fixing pre-existing offenders in real docs is out of scope for this plan.
-  Rationale: Adding the rule will surface violations across the existing docs corpus. Mixing the rule's logic and bulk-rewriting existing copy in one change-set would balloon the diff and mix mechanical edits with prose edits. A follow-up cleanup PR will sweep them.
-  Date/Author: 2026-04-29 / agents@miruml.com
-
 ## Outcomes & Retrospective
 
 (Summarize at completion or major milestones.)
@@ -142,18 +138,21 @@ The work is six small edits across two new files and one existing file, plus tes
 
    - **Front-matter title.** Call `analysis.FrontmatterEnd(lines)`. If the result is `>= 1`, scan lines `1..end-1` (0-based, exclusive of the closing `---`) for the first line whose trimmed form matches `^title:\s*(.*)$`. Strip surrounding `"…"` or `'…'` from the captured value. Apply the casing check (see below). Emit a violation at `Line = lineIdx+1`, `Col = `the 1-based byte column of the first character of the title value (after `title:` and any whitespace, after stripping the opening quote if present).
    - **Body headings.** For every line `i`:
-     - If `spans[i]` is empty, skip (the scanner already filters frontmatter and code-fence-internal lines).
-     - If the raw `lines[i]` matches `^(#{1,6})\s+(.+?)\s*$`, treat it as a heading. Otherwise skip.
-     - Build the heading text by concatenating `spans[i][*].Text` in order. The scanner has already masked JSX and inline code; the concatenated result is the prose form of the heading line.
-     - Strip the leading `#…# ` prefix from the concatenated text (the scanner preserves it).
-     - Strip Markdown link syntax from what remains: replace `\[([^\]]*)\]\([^)]*\)` with `$1`.
-     - Apply the casing check.
+     - **Gate on the scanner.** If `spans[i]` is empty, skip. The scanner emits no spans for lines inside fenced code blocks, so this rules out `# comment` lines inside Bash/etc. code blocks (and also frontmatter lines).
+     - **Extract from the raw line.** Match the raw `lines[i]` against `^(#{1,6})[ \t]+(.+?)[ \t]*$`. If it doesn't match, skip. Otherwise capture the heading text from group 2.
+     - **Mask the captured text manually** before the casing check:
+       - Strip inline code spans: replace `` `[^`]*` `` with the empty string.
+       - Strip JSX/HTML tag pairs and self-closing tags: replace `<[^>]*>` with the empty string.
+       - Replace Markdown link syntax `\[([^\]]*)\]\([^)]*\)` with `$1` so URLs do NOT enter the casing check.
+     - Apply the casing check to the masked string.
      - Emit at `Line = i+1`, `Col = ` the 1-based byte column of the first non-`#`, non-space character on the raw line (i.e. the start of the heading text).
+
+     Why read raw lines instead of concatenating prose spans: the scanner preserves the `## ` prefix in span text and may split a heading into multiple non-contiguous spans when JSX or inline code is present. Deriving the heading text from the raw line and masking manually is simpler — it avoids a prefix-strip step and avoids reasoning about inter-span gaps.
    - **Casing check.** Given a string `s`:
      - Trim leading/trailing whitespace.
      - Trim trailing punctuation in the set `.?!:` (one or more).
      - If `s` is empty after trimming, return no violation (silent skip).
-     - Walk through the bytes. The first ASCII letter encountered must be uppercase `A-Z`. Every subsequent ASCII letter must be lowercase `a-z`. Non-letters (spaces, digits, hyphens, apostrophes, slashes, parens, the `~` characters used as inline-code masks by the scanner, etc.) are ignored.
+     - Walk through the bytes. The first ASCII letter encountered must be uppercase `A-Z`. Every subsequent ASCII letter must be lowercase `a-z`. Non-letters (spaces, digits, hyphens, apostrophes, punctuation) are ignored.
      - If the rule is violated, return a single violation per heading.
    - **Diagnostic.** Message text:
 
@@ -203,7 +202,7 @@ Use a table-driven shape. For each row, build the input either as a hand-crafted
 - quoted bad: `title: "User Management"` → 1; assert `Line=2`, `Col` points at the `U` of `User`, `Message` starts with `heading-case:`.
 - single-quoted clean: `title: 'Deployments'` → 0.
 - unquoted clean: `title: Deployments` → 0.
-- unquoted bad: `title: API Reference` → 1.
+- unquoted bad: `title: API Reference` → 1; assert `Line=2`, `Col=8` (the `A` of `API`: `title: ` is 7 bytes, so `A` is at byte 8; columns are 1-based), `Message` starts with `heading-case:`.
 - frontmatter present but no `title:` line → 0 (no panic).
 - no frontmatter at all (file starts with `## Foo`) → 0 (no panic from this code path; body heading logic still runs).
 
@@ -221,7 +220,7 @@ Add two sub-tests to `TestRun`. Each test creates `t.TempDir()`, makes `snippets
 
       ## Configure deployments
 
-  Expect exit `1`. Expect `stdout` to contain `heading-case:` and the file path. Expect `stderr` empty.
+  Expect exit `1`. Expect `stdout` to contain `heading-case:` and the file path, and stdout contains `:2:` (the title line). Expect `stderr` empty.
 
 - `t.Run("clean headings return 0", ...)`. File contents:
 
@@ -339,6 +338,12 @@ All commands assume the working tree is clean before starting and that you are w
        ./scripts/lint.sh
 
    This script rebuilds the linter and runs it against the docs corpus. **Expected behavior:** the script may now report `heading-case:` violations for pre-existing offending headings in the real docs. That is expected and explicitly out of scope for this plan (see Decision Log). If `./scripts/lint.sh` exits non-zero ONLY because of pre-existing `heading-case:` violations in real docs, that does not block the milestone — capture them in a brief note in Surprises & Discoveries and proceed. If it exits non-zero for any other reason, debug that separately before merging.
+
+   To confirm at a glance that no rule other than `heading-case` is firing, also run:
+
+       ./scripts/lint.sh 2>&1 | grep -E ':[0-9]+:[0-9]+:' | grep -v 'heading-case:' | head -20
+
+   Expected output: empty (or only non-`heading-case` violations that pre-existed). If non-empty and not `heading-case`, investigate.
 
 3. No commit needed for M5 unless preflight surfaces an issue you fix. If you do fix something, commit it as `fix(lint): <what you fixed>`.
 
