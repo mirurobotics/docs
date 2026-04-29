@@ -63,3 +63,6 @@ run_expect_fail "bad-redirects" $'redirects[4] source "docs/admin/exists-3": bad
 run_expect_fail "bad-redirects" $'redirects[5] destination "docs/admin/exists": bad path: must start with \'/\' (or http(s)://)'
 run_expect_fail "bad-redirects" 'redirects[6] destination "/docs/wild/missing/:slug*": wildcard prefix not a directory'
 run_expect_fail "bad-redirects" 'redirects[7] source "/docs/wild/:slug*": dead redirect (wildcard source prefix has real pages)'
+run_expect_fail "bad-redirects" 'redirects[10] source "": must be a non-empty string'
+run_expect_fail "bad-redirects" 'redirects[11] entry "": not an object'
+run_expect_fail "bad-redirects" 'redirects[12] source "/docs/example/:slug*": dead redirect (wildcard source prefix resolves to a real page)'

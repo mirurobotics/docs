@@ -9,6 +9,9 @@
     { "source": "/docs/admin/exists-5", "destination": "/docs/wild/missing/:slug*" },
     { "source": "/docs/wild/:slug*", "destination": "/docs/admin/exists" },
     { "source": "/docs/admin/safe-old", "destination": "/docs/example" },
-    { "source": "/docs/admin/external-old", "destination": "https://example.com/new" }
+    { "source": "/docs/admin/external-old", "destination": "https://example.com/new" },
+    { "source": "", "destination": "/docs/example" },
+    "not-an-object",
+    { "source": "/docs/example/:slug*", "destination": "/docs/example" }
   ]
 }
