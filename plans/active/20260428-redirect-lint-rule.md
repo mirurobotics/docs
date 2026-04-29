@@ -34,7 +34,20 @@ fails on violations with a `file:line: message` diagnostic.
 
 ## Surprises & Discoveries
 
-Add entries as work proceeds.
+- **Mintlify-generated OpenAPI routes are not on disk** (M1, 2026-04-28). The
+  redirect `/docs/references/platform-api/latest/:slug*` →
+  `/docs/references/platform-api/2026-03-09/:slug*` targets routes Mintlify
+  generates at build time from
+  `docs/references/platform-api/2026-03-09.yaml` (see the
+  `nav.tabs[].dropdowns[].openapi.source` block in `docs.json`). The prefix
+  `docs/references/platform-api/2026-03-09` does NOT exist as a directory in
+  the repo, so a strict directory-only wildcard destination check fails
+  this real, valid redirect. **Resolution (not a relaxation):** wildcard
+  destination validation accepts EITHER a real directory under `docs/`
+  whose tree contains pages OR a sibling `${prefix}.yaml` referenced by
+  any `nav.*.openapi.source` in `docs.json`. Sources keep the strict rule
+  (a wildcard source must not collide with a real page or generated
+  prefix). Recorded so the rule's softening for destinations is auditable.
 
 ## Decision Log
 
