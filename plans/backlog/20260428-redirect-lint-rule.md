@@ -214,9 +214,10 @@ Branch `feat/redirect-lint-rule` is already checked out.
      2. From that offset onward, walking the text with an offset cursor: for
         each `"source":` literal encountered, advance the cursor past the match
         so that the n-th `"source":` literal under the `"redirects"` array
-        locates the n-th redirect entry. Stop scanning at the matching closing
-        `]` for the array (track bracket depth so nested `[ ]` inside string
-        values do not confuse the count).
+        locates the n-th redirect entry. The redirect entries are flat objects
+        with no nested arrays, so a simple linear scan to the next top-level
+        `]` is sufficient — bound the scan by the count of redirect entries
+        already known from the parsed JSON (don't scan further than that).
      3. Reporting the 1-based line of the located occurrence.
      Anchoring the scan to the `"redirects"` array is required because
      `docs.json` contains `"source":` keys elsewhere (e.g. in the OpenAPI
@@ -283,7 +284,11 @@ Branch `feat/redirect-lint-rule` is already checked out.
      so the script's "skip" and "pass mixed in with fail" paths are exercised.
    - Add only the `docs/` files the violations rely on (e.g.
      `docs/admin/exists.mdx`, `docs/wild/page.mdx`). Keep each file tiny —
-     a single H1 line is enough.
+     a single H1 line is enough. Use only words that pass `cspell.json` (the
+     real config is consulted from the repo root, not the fixture root); use
+     plain words like `Page` rather than coined or jargon terms in both
+     filenames and content so CSpell, ESLint-MDX, and the Go linter all
+     pass and the only failing check is the new redirect validator.
    - Because the fixture starts as a copy of `good/`, it inherits the MDX/CSpell/
      OpenAPI baseline that already passes those lint checks. The `good/` tree
      has no `docs.json` of its own, so the new `docs.json` is freshly authored
