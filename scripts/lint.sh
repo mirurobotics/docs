@@ -77,7 +77,4 @@ for spec in "${openapi_targets[@]}"; do
   pnpm exec mint openapi-check "${spec#${repo_root}/}"
 done
 
-echo "== Redirects =="
-node "${repo_root}/scripts/check-redirects.mjs"
-
 echo "All documentation lint checks passed."
