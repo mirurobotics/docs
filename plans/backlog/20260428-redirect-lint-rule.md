@@ -46,38 +46,7 @@ Add entries as work proceeds.
 
 ## Decision Log
 
-Add entries as work proceeds. Initial decisions captured during authoring:
-
-- **Implementation language: Node.js** (`scripts/check-redirects.mjs`, ESM, no
-  external deps). Node is already required for Mintlify and `pnpm`; JSON
-  parsing is trivial; avoids adding a Go rule package or spreading JSON logic
-  into Bash. Bash was rejected because JSON parsing in Bash needs `jq` (extra
-  dep) and the wildcard / line-number logic is ugly. Go was rejected because
-  the existing `tools/lint/` rules operate on MDX content; adding a JSON-only
-  rule there would force everyone to rebuild Go for a 60-line check.
-- **Output format**: `docs.json:<line>: <message>` to match the
-  `file:line:col:` style emitted by `tools/lint/main.go`. Line numbers are
-  computed by scanning `docs.json` text for the JSON object literal of each
-  redirect entry. If the scan cannot locate a unique line, the script falls
-  back to `docs.json: redirects[<index>]: <message>` and prints a one-line
-  warning so the limitation is visible.
-- **Wildcard semantics**: a path segment matching `/^:[A-Za-z][A-Za-z0-9]*\*?$/`
-  is treated as a wildcard. The "prefix path" is everything before the first
-  wildcard segment. For `source`, the prefix MUST NOT be a real page and MUST
-  NOT be a real directory containing any `.mdx` page (otherwise live pages
-  exist that the redirect cannot mask). For `destination`, the prefix MUST be
-  a real directory under `docs/`.
-- **Wire-in point**: append `== Redirects ==` section to `scripts/lint.sh`. CI
-  already runs that script, so no workflow change is needed. The script
-  remains independently runnable: `node scripts/check-redirects.mjs`.
-- **Fixture strategy**: add a NEW `tests/lint-fixtures/bad-redirects/` rather
-  than mutating `tests/lint-fixtures/good/`. The real `docs.json` exercised by
-  the top-level lint run already covers the passing case; adding a duplicate
-  `good-redirects` fixture would be redundant.
-- **Override hook**: respect `DOCS_LINT_ROOT` env var to match
-  `scripts/lint.sh`'s existing convention. The script reads
-  `${DOCS_LINT_ROOT}/docs.json` and resolves files under
-  `${DOCS_LINT_ROOT}/docs/`. Defaults to the repo root when unset.
+Add entries as work proceeds.
 
 ## Outcomes & Retrospective
 
@@ -113,14 +82,49 @@ Repo layout (only the parts this plan touches):
   `"test:lint": "./tests/test-lint.sh"`. Pinned `pnpm@10.17.0` (corepack),
   Node 22.
 
+Design choices baked into this plan:
+
+- **Implementation language: Node.js** (`scripts/check-redirects.mjs`, ESM, no
+  external deps). Node is already required for Mintlify and `pnpm`; JSON
+  parsing is trivial; avoids adding a Go rule package or spreading JSON logic
+  into Bash. Bash was rejected because JSON parsing in Bash needs `jq` (extra
+  dep) and the wildcard / line-number logic is ugly. Go was rejected because
+  the existing `tools/lint/` rules operate on MDX content; adding a JSON-only
+  rule there would force everyone to rebuild Go for a 60-line check.
+- **Output format**: `docs.json:<line>: <message>` to match the
+  `file:line:col:` style emitted by `tools/lint/main.go`. Line numbers are
+  computed by scanning `docs.json` text for the JSON object literal of each
+  redirect entry. If the scan cannot locate a unique line, the script falls
+  back to `docs.json: redirects[<index>]: <message>` and prints a one-line
+  `warning:`-prefixed message so the limitation is visible.
+- **Wildcard semantics**: a path segment matching `/^:[A-Za-z][A-Za-z0-9]*\*?$/`
+  is treated as a wildcard. The "prefix path" is everything before the first
+  wildcard segment. For `source`, the prefix MUST NOT be a real page and MUST
+  NOT be a real directory containing any `.mdx` (or `.md`) page (otherwise
+  live pages exist that the redirect cannot mask). For `destination`, the
+  prefix MUST be a real directory under `docs/`.
+- **Fixture strategy**: add a NEW `tests/lint-fixtures/bad-redirects/` rather
+  than mutating `tests/lint-fixtures/good/` in place. The fixture starts as a
+  copy of `good/` so it inherits a passing baseline for unrelated checks;
+  only `docs.json` (and supporting `docs/` files) are then mutated. The real
+  `docs.json` exercised by the top-level lint run already covers the passing
+  case; adding a duplicate `good-redirects` fixture would be redundant.
+- **Override hook**: respect `DOCS_LINT_ROOT` env var to match
+  `scripts/lint.sh`'s existing convention. The script reads
+  `${DOCS_LINT_ROOT}/docs.json` and resolves files under
+  `${DOCS_LINT_ROOT}/docs/`. Defaults to the repo root when unset.
+
 URL ↔ filesystem mapping rules:
 
 1. Strip a leading `/` from the redirect path; the remainder is repo-relative.
 2. Strip any trailing `/`, `?...` query string, or `#...` fragment.
 3. The path MUST start with `docs/`. Anything else (`api/...`, `snippets/...`,
    bare names) is invalid.
-4. Append `.mdx` to get the candidate filename. Filesystem checks are
-   case-sensitive.
+4. Append `.mdx` to get the candidate filename; if that does not exist, fall
+   back to `.md`. Filesystem checks are case-sensitive. (Today the tree is
+   100% `.mdx` — `find docs -type f -name '*.md' \! -name '*.mdx'` returns
+   zero — but the resolver tries both extensions to stay forward-compatible
+   with future Markdown-only pages.)
 5. External destinations starting with `http://` or `https://` are skipped
    (none exist today; defensive only).
 6. Wildcard segments (containing `:`, optionally suffixed `*`) are not part of
@@ -140,22 +144,17 @@ Edge cases captured from research:
 
 ## Plan of Work
 
-Four milestones, each one commit:
+Four milestones, each one commit. See Concrete Steps for command-level detail.
 
-- **M1 — Script.** Author `scripts/check-redirects.mjs` (Node ESM, no deps).
-  Reads `${DOCS_LINT_ROOT:-<repo_root>}/docs.json`, validates each redirect,
-  emits diagnostics on stderr, exits 0 on success and 1 on any violation.
-- **M2 — Wire-in.** Add a `== Redirects ==` section to `scripts/lint.sh` that
-  invokes the script. Verify it runs locally and that CI picks it up via the
-  existing `lint` job.
-- **M3 — Tests.** Create `tests/lint-fixtures/bad-redirects/` with a
-  `docs.json` containing one violating entry per rule and a minimal `docs/`
-  tree. Add a `run_expect_fail` case to `tests/test-lint.sh` that asserts the
-  diagnostic for each violation appears.
-- **M4 — Validation.** Run the full lint suite, the test suite, and
-  `./scripts/preflight.sh`. Fix any issues, update Decision Log if behavior
-  changed, then move the plan to `plans/active/` (when implementation begins)
-  and eventually `plans/completed/`.
+- M1: Author `scripts/check-redirects.mjs` (Node ESM, no deps).
+- M2: Wire the script into `scripts/lint.sh` under a `== Redirects ==` section.
+- M3: Add the `bad-redirects` fixture and a `run_expect_fail` case in
+  `tests/test-lint.sh`.
+- M4: Run the full lint and test stack plus preflight; fix any fallout.
+- **Wire-in point detail**: appending `== Redirects ==` to `scripts/lint.sh`
+  (rather than a separate workflow step) means CI picks up the check via the
+  existing `lint` job — no `.github/workflows/ci.yml` change required. The
+  script remains independently runnable as `node scripts/check-redirects.mjs`.
 
 ## Concrete Steps
 
@@ -166,34 +165,48 @@ Branch `feat/redirect-lint-rule` is already checked out.
 
 1. Create `scripts/check-redirects.mjs`. Required behavior:
 
-   - Resolve `root = process.env.DOCS_LINT_ROOT || path.resolve(__dirname, '..')`
-     (use `fileURLToPath(import.meta.url)` to derive `__dirname`).
+   - Derive `__dirname` using the standard ESM idiom:
+
+         import path from 'node:path';
+         import { fileURLToPath } from 'node:url';
+         const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+   - Resolve `root = process.env.DOCS_LINT_ROOT || path.resolve(__dirname, '..')`.
    - Read `${root}/docs.json` as text. Parse JSON for the `redirects` array.
      Keep the original text for line-number lookup.
    - For each entry, validate:
      a. Both `source` and `destination` are non-empty strings.
-     b. `destination` starting with `http://` or `https://` is skipped.
-     c. Strip leading `/`, trailing `/`, `?...`, `#...` from each path.
-     d. The remainder MUST start with `docs/`. Otherwise emit
+     b. `source` MUST start with `/`. `destination` MUST start with `/` OR
+        `http://` OR `https://`. Otherwise emit
+        `bad path: must start with '/'` (the message for `destination`
+        additionally notes that `http(s)://` is also accepted).
+     c. `destination` starting with `http://` or `https://` is skipped for
+        the remaining (filesystem) checks.
+     d. Strip leading `/`, trailing `/`, `?...`, `#...` from each path.
+     e. The remainder MUST start with `docs/`. Otherwise emit
         `bad prefix (must start with /docs/)`.
-     e. Split into segments. The first segment matching `/^:[A-Za-z][A-Za-z0-9]*\*?$/`
+     f. Split into segments. The first segment matching `/^:[A-Za-z][A-Za-z0-9]*\*?$/`
         is the wildcard boundary; segments before it form the `prefix`.
-     f. Resolve `prefixFs = path.join(root, prefix.join('/'))`.
-     g. **Source rules**:
-        - If no wildcard: a file at `${prefixFs}.mdx` MUST NOT exist
-          (otherwise the redirect is dead).
+     g. Resolve `prefixFs = path.join(root, prefix.join('/'))`.
+     h. **Source rules**:
+        - If no wildcard: neither `${prefixFs}.mdx` nor `${prefixFs}.md` may
+          exist (otherwise the redirect is dead).
         - If wildcard: `${prefixFs}` MUST NOT be a directory containing any
-          `.mdx` files (recursive). It MUST also NOT be a file at
-          `${prefixFs}.mdx`.
-     h. **Destination rules**:
-        - If no wildcard: a file at `${prefixFs}.mdx` MUST exist.
+          `.mdx` or `.md` files (recursive). It MUST also NOT be a file at
+          `${prefixFs}.mdx` or `${prefixFs}.md`.
+     i. **Destination rules**:
+        - If no wildcard: a file at `${prefixFs}.mdx` OR `${prefixFs}.md`
+          MUST exist.
         - If wildcard: `${prefixFs}` MUST be an existing directory.
    - For each violation, emit `docs.json:<line>: redirects[<i>] <field>
-     "<value>": <message>` on stderr. Compute `<line>` by scanning the original
-     text for the JSON literal of the entry's `source` value (`"source": "..."`)
-     and reporting the 1-based line. If lookup fails, emit
-     `docs.json: redirects[<i>] ...` and a one-line stderr warning the first
-     time it happens.
+     "<value>": <message>` on stderr. Compute `<line>` by walking the original
+     text once with an offset cursor: for each `"source":` literal encountered,
+     advance the cursor past the match so that the n-th `"source":` literal
+     locates the n-th redirect entry (the JSON array preserves order, so the
+     n-th occurrence corresponds to `redirects[n]`). Report the 1-based line of
+     that occurrence. If lookup fails for any entry, emit
+     `docs.json: redirects[<i>] ...` and a one-line stderr warning prefixed
+     `warning:`, printed at most once per script run.
    - Exit 0 if no violations, 1 otherwise. Print a one-line summary on success
      (`Checked N redirects: OK`).
 
@@ -233,32 +246,41 @@ Branch `feat/redirect-lint-rule` is already checked out.
 
 ### M3 — Test fixture and runner case
 
-1. Create `tests/lint-fixtures/bad-redirects/` with the following layout:
+1. Create `tests/lint-fixtures/bad-redirects/` by copying
+   `tests/lint-fixtures/good/` wholesale (it already passes every other lint
+   check), then mutate it:
 
-   - `docs.json` containing a `redirects` array with at least these violations
-     (one per rule, kept minimal so failure messages are easy to assert):
+   - Replace its `docs.json` with one whose `redirects` array contains, as
+     **separate distinct entries** (one violation per entry — do not bundle
+     multiple violations into a single redirect), at least:
      1. Source equals an existing page (dead redirect).
      2. Destination points to a missing page.
-     3. Destination uses a bad prefix (e.g. `/api/foo`).
-     4. Wildcard destination prefix that does not exist as a directory.
-     5. Wildcard source whose prefix directory contains real pages.
+     3. Source uses a bad prefix (e.g. `/api/foo`) — must start with `/docs/`.
+     4. Destination uses a bad prefix (e.g. `/api/foo`) — must start with
+        `/docs/` or `http(s)://`.
+     5. Source missing the leading `/` (bad path).
+     6. Destination missing the leading `/` and not `http(s)://` (bad path).
+     7. Wildcard destination prefix that does not exist as a directory.
+     8. Wildcard source whose prefix directory contains real pages.
      Plus at least one valid redirect (and one external `https://` destination)
      so the script's "skip" and "pass mixed in with fail" paths are exercised.
-   - `docs/` containing only the files the violations rely on (e.g.
+   - Add only the `docs/` files the violations rely on (e.g.
      `docs/admin/exists.mdx`, `docs/wild/page.mdx`). Keep each file tiny —
      a single H1 line is enough.
-   - Any other top-level keys `docs.json` requires for the file to parse (the
-     check only reads `redirects`, so a stub `{ "redirects": [...] }` is
-     sufficient unless the lint script's other checks fail-fast on a missing
-     `name`/`navigation`. If they do, copy the minimum subset from the real
-     `docs.json` to keep the fixture self-contained).
+   - Because the fixture starts as a copy of `good/`, it already contains
+     whatever top-level `docs.json` keys (`name`, `navigation`, etc.) the other
+     lint checks require, so no manual stubbing is needed.
 
 2. Edit `tests/test-lint.sh` to add a `run_expect_fail` invocation for the new
-   fixture. Assert at least one substring per violation category appears in the
-   output (e.g. `dead redirect`, `missing destination`, `bad prefix`,
-   `wildcard prefix not a directory`). Use the helper's existing pattern for
-   multi-pattern assertions; if it only supports one pattern, run it once per
-   pattern.
+   fixture. For each violating entry, assert that the output contains both the
+   per-entry diagnostic prefix `redirects[<i>]` (with `<i>` matching the
+   entry's array index in the fixture's `docs.json`) AND the rule-specific
+   substring (`dead redirect`, `missing destination`, `bad prefix`,
+   `bad path: must start with '/'`, `wildcard prefix not a directory`, etc.).
+   Pairing the index with the substring proves each rule fires independently
+   on its own entry rather than one entry tripping multiple diagnostics. Use
+   the helper's existing pattern for multi-pattern assertions; if it only
+   supports one pattern, run it once per (index, substring) pair.
 
 3. Run `./tests/test-lint.sh` and confirm the new case fails as expected and
    all previously passing fixtures still pass.
@@ -272,7 +294,6 @@ Branch `feat/redirect-lint-rule` is already checked out.
 
 1. Run the entire lint and test stack:
 
-       pnpm install --frozen-lockfile
        pnpm run test:lint
        pnpm run lint
 
@@ -315,20 +336,11 @@ The change is accepted when **all** of the following hold:
 
 ## Idempotence and Recovery
 
-- The script is read-only: it never mutates `docs.json` or any file under
+- **Read-only.** The script never mutates `docs.json` or any file under
   `docs/`. Re-running it is safe and produces identical output.
-- If implementation is interrupted between milestones, resume by inspecting
-  `git log` against this plan's milestone list and continuing from the next
-  uncommitted milestone. Each milestone is one commit, so partial work is
-  recoverable by `git status` / `git diff`.
-- If `scripts/check-redirects.mjs` ends up half-written, deleting the file and
-  starting M1 over is cheap — no other file depends on it until M2 wires it
-  into `scripts/lint.sh`.
-- If the fixture wedges the test runner (e.g. a `docs.json` that other lint
-  checks reject), narrow the fixture by removing unrelated content; the
-  `bad-redirects` fixture only needs to exercise this one check.
-- To temporarily disable the check (e.g. during an unrelated emergency), comment
-  out the `== Redirects ==` block in `scripts/lint.sh`. Do not delete the
-  script.
-- Rolling back the entire feature: `git revert` the milestone commits in
-  reverse order. No data migration is involved.
+- **Revert-by-commit rollback.** Each milestone is one commit; revert the
+  failing commit (and any later ones) to roll back cleanly. No data migration
+  is involved.
+- **Fixture-narrowing tip.** To isolate a failure, point `DOCS_LINT_ROOT` at
+  a single fixture (e.g. `DOCS_LINT_ROOT=tests/lint-fixtures/bad-redirects
+  node scripts/check-redirects.mjs`) so the script only inspects that tree.
