@@ -424,6 +424,82 @@ func TestValidate(t *testing.T) {
 				{substr: `dead redirect (wildcard source prefix has real pages)`},
 			},
 		},
+		{
+			// Case 30: source containing a ".." segment — must be rejected
+			// before any filesystem probe escapes contentRoot.
+			name: "source_with_dot_dot_segment",
+			docsJSON: `{"redirects": [{"source": "/docs/../README",` +
+				` "destination": "/docs/y"}]}`,
+			files: map[string]string{"docs/y.mdx": "y"},
+			wants: []want{
+				{substr: `source "/docs/../README":` +
+					` bad path: contains '..' or '.' segment`},
+			},
+		},
+		{
+			// Case 31: destination containing a ".." segment — only the
+			// destination side is flagged; source is a clean missing page.
+			name: "destination_with_dot_dot_segment",
+			docsJSON: `{"redirects": [{"source": "/docs/x",` +
+				` "destination": "/docs/x/../../escape"}]}`,
+			wants: []want{
+				{substr: `destination "/docs/x/../../escape":` +
+					` bad path: contains '..' or '.' segment`},
+			},
+		},
+		{
+			// Case 32: source containing a "." segment — same diagnostic.
+			name: "source_with_dot_segment",
+			docsJSON: `{"redirects": [{"source": "/docs/./foo",` +
+				` "destination": "/docs/y"}]}`,
+			files: map[string]string{"docs/y.mdx": "y"},
+			wants: []want{
+				{substr: `source "/docs/./foo":` +
+					` bad path: contains '..' or '.' segment`},
+			},
+		},
+		{
+			// Case 33: wildcard source whose prefix.yaml is a registered
+			// nav.openapi.source and exists on disk → Mintlify generates
+			// pages, so the redirect is dead.
+			name: "wildcard_source_prefix_is_openapi_yaml",
+			docsJSON: `{
+  "nav": [{"openapi": {"source": "docs/api/spec.yaml"}}],
+  "redirects": [{"source": "/docs/api/spec/:slug*",` +
+				` "destination": "/docs/y"}]
+}`,
+			files: map[string]string{
+				"docs/api/spec.yaml": "openapi: 3.0",
+				"docs/y.mdx":         "y",
+			},
+			wants: []want{
+				{substr: `dead redirect ` +
+					`(wildcard source prefix has Mintlify-generated pages)`},
+			},
+		},
+		{
+			// Case 34: prefix.yaml is registered but file is missing on
+			// disk → no violation (symmetric with destination case 22 from
+			// the source side: the OpenAPI escape hatch only fires when
+			// the file actually exists).
+			name: "wildcard_source_prefix_yaml_registered_but_yaml_missing",
+			docsJSON: `{
+  "nav": [{"openapi": {"source": "docs/api/spec.yaml"}}],
+  "redirects": [{"source": "/docs/api/spec/:slug*",` +
+				` "destination": "/docs/y"}]
+}`,
+			files: map[string]string{"docs/y.mdx": "y"},
+			wants: nil,
+		},
+		{
+			// Case 35: nothing registered, no on-disk dir, no .mdx — the
+			// canonical happy-path that the new check must not flag.
+			name: "wildcard_source_prefix_yaml_not_registered",
+			docsJSON: `{"redirects": [{"source": "/docs/api/spec/:slug*",` +
+				` "destination": "/docs/y"}]}`,
+			files: map[string]string{"docs/y.mdx": "y"},
+			wants: nil,
+		},
 	}
 
 	for _, tc := range cases {

@@ -201,16 +201,53 @@ func validateFileSystem(
 ) []analysis.Violation {
 	var violations []analysis.Violation
 	if strings.HasPrefix(f.source, "/") {
-		v := validateSource(f.i, f.source, contentRoot, f.line)
-		violations = append(violations, v...)
+		srcPrefix, _ := splitWildcard(cleanPath(f.source))
+		if containsTraversalSegment(srcPrefix) {
+			violations = append(violations, analysis.Violation{
+				File: "docs.json",
+				Line: f.line,
+				Col:  1,
+				Message: formatMessage(
+					f.i, "source", f.source,
+					"bad path: contains '..' or '.' segment",
+				),
+			})
+		} else {
+			v := validateSource(f.i, f.source, contentRoot, openAPISources, f.line)
+			violations = append(violations, v...)
+		}
 	}
 	if !destIsHTTP(f.destination) && strings.HasPrefix(f.destination, "/") {
-		v := validateDestination(
-			f.i, f.destination, contentRoot, openAPISources, f.line,
-		)
-		violations = append(violations, v...)
+		dstPrefix, _ := splitWildcard(cleanPath(f.destination))
+		if containsTraversalSegment(dstPrefix) {
+			violations = append(violations, analysis.Violation{
+				File: "docs.json",
+				Line: f.line,
+				Col:  1,
+				Message: formatMessage(
+					f.i, "destination", f.destination,
+					"bad path: contains '..' or '.' segment",
+				),
+			})
+		} else {
+			v := validateDestination(
+				f.i, f.destination, contentRoot, openAPISources, f.line,
+			)
+			violations = append(violations, v...)
+		}
 	}
 	return violations
+}
+
+// containsTraversalSegment returns true if any segment equals ".." or
+// ".". Such segments would let filepath.Join resolve outside contentRoot.
+func containsTraversalSegment(segments []string) bool {
+	for _, seg := range segments {
+		if seg == ".." || seg == "." {
+			return true
+		}
+	}
+	return false
 }
 
 // destIsHTTP reports whether destination uses an http:// or https://
@@ -244,7 +281,12 @@ func stringField(entry map[string]any, key string) (string, bool) {
 // that already starts with '/'. The source must additionally start with
 // /docs/ (or be exactly /docs); after stripping the prefix it is
 // resolved against contentRoot to detect dead redirects.
-func validateSource(i int, source, contentRoot string, line int) []analysis.Violation {
+func validateSource(
+	i int,
+	source, contentRoot string,
+	openAPISources map[string]bool,
+	line int,
+) []analysis.Violation {
 	cleaned := cleanPath(source)
 	if !strings.HasPrefix(cleaned, "docs/") && cleaned != "docs" {
 		return []analysis.Violation{{
@@ -296,6 +338,24 @@ func validateSource(i int, source, contentRoot string, line int) []analysis.Viol
 			Message: formatMessage(
 				i, "source", source,
 				"dead redirect (wildcard source prefix has real pages)",
+			),
+		}}
+	}
+	// OpenAPI escape hatch (mirror of validateDestination): a wildcard
+	// source whose prefix.yaml is registered as a nav.*.openapi.source
+	// AND exists on disk produces Mintlify-generated pages, so the
+	// redirect is dead.
+	prefixRel := strings.Join(prefix, "/")
+	yamlRel := prefixRel + ".yaml"
+	yamlFs := prefixFs + ".yaml"
+	if openAPISources[yamlRel] && fileExists(yamlFs) {
+		return []analysis.Violation{{
+			File: "docs.json",
+			Line: line,
+			Col:  1,
+			Message: formatMessage(
+				i, "source", source,
+				"dead redirect (wildcard source prefix has Mintlify-generated pages)",
 			),
 		}}
 	}
