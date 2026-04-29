@@ -6,6 +6,7 @@ import (
 
 	"github.com/mirurobotics/docs/tools/lint/linter/analysis"
 	"github.com/mirurobotics/docs/tools/lint/linter/componentstyle"
+	"github.com/mirurobotics/docs/tools/lint/linter/headingcase"
 	"github.com/mirurobotics/docs/tools/lint/linter/importblock"
 	"github.com/mirurobotics/docs/tools/lint/linter/importresolves"
 	"github.com/mirurobotics/docs/tools/lint/linter/importsorted"
@@ -19,6 +20,7 @@ type Rule string
 
 const (
 	RuleNoDoubleDash   Rule = "no-double-dash"
+	RuleHeadingCase    Rule = "heading-case"
 	RuleImportResolves Rule = "import-resolves"
 	RuleImportUsed     Rule = "import-used"
 	RuleImportSorted   Rule = "import-sorted"
@@ -32,6 +34,7 @@ const (
 func AllRules() []Rule {
 	return []Rule{
 		RuleNoDoubleDash,
+		RuleHeadingCase,
 		RuleImportResolves, RuleImportUsed, RuleImportSorted,
 		RuleComponentStyle, RuleMDXStyle, RuleImportBlock,
 		RuleRedirects,
@@ -56,6 +59,9 @@ func ruleCheckers() []ruleEntry {
 	return []ruleEntry{
 		{RuleNoDoubleDash, func(in checkInput) []analysis.Violation {
 			return nodoubledash.Check(in.path, in.spans)
+		}},
+		{RuleHeadingCase, func(in checkInput) []analysis.Violation {
+			return headingcase.Check(in.path, in.lines, in.spans)
 		}},
 		{RuleImportResolves, func(in checkInput) []analysis.Violation {
 			return importresolves.Check(in.path, in.lines, in.contentRoot)
