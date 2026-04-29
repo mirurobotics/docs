@@ -55,3 +55,11 @@ run_expect_pass "good"
 run_expect_fail "bad-mdx" "Parsing error"
 run_expect_fail "bad-spelling" "Unknown word"
 run_expect_fail "bad-openapi" "Failed to validate OpenAPI schema"
+run_expect_fail "bad-redirects" 'redirects[0] source "/docs/admin/exists": dead redirect (source resolves to a real page)'
+run_expect_fail "bad-redirects" 'redirects[1] destination "/docs/admin/gone": missing destination (no .mdx or .md page exists)'
+run_expect_fail "bad-redirects" 'redirects[2] source "/api/foo": bad prefix (must start with /docs/)'
+run_expect_fail "bad-redirects" 'redirects[3] destination "/api/foo": bad prefix (must start with /docs/)'
+run_expect_fail "bad-redirects" $'redirects[4] source "docs/admin/exists-3": bad path: must start with \'/\''
+run_expect_fail "bad-redirects" $'redirects[5] destination "docs/admin/exists": bad path: must start with \'/\' (or http(s)://)'
+run_expect_fail "bad-redirects" 'redirects[6] destination "/docs/wild/missing/:slug*": wildcard prefix not a directory'
+run_expect_fail "bad-redirects" 'redirects[7] source "/docs/wild/:slug*": dead redirect (wildcard source prefix has real pages)'
