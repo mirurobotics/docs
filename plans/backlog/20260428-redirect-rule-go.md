@@ -57,22 +57,15 @@ Use timestamps when steps complete. Split partial work into "done" and
 
 ## Surprises & Discoveries
 
-(Add entries as you go.)
-
-- Observation: …
-  Evidence: …
+Add entries as work proceeds.
 
 ## Decision Log
 
-(Add entries as you go.)
-
-- Decision: …
-  Rationale: …
-  Date/Author: …
+Add entries as work proceeds.
 
 ## Outcomes & Retrospective
 
-(Summarize at completion or major milestones.)
+Add entries as work proceeds.
 
 ## Context and Orientation
 
@@ -161,30 +154,39 @@ unchanged. That is the contract.
 ### Rule branches to port (verbatim from current behavior)
 
 Seven distinct branches plus the OpenAPI escape hatch, plus the
-non-object case:
+non-object case. The message strings below are the contract with
+`tests/test-lint.sh` lines 58-68. Do not paraphrase.
 
-1. (a) Empty / non-string `source` or `destination` →
+1. Empty / non-string `source` or `destination` →
    `must be a non-empty string`.
-2. (b) Leading-slash requirement: `source` MUST start with `/`;
-   `destination` MUST start with `/` or `http(s)://`. Otherwise emit
-   `bad path: must start with '/'` (the destination message also notes
-   `(or http(s)://)`).
-3. (e) Bad prefix: after stripping leading `/`, path MUST start with
-   `docs/`. Otherwise emit `bad prefix (must start with /docs/)`.
-4. Source non-wildcard: file at `${prefixFs}.mdx` or `.md` MUST NOT
-   exist → `dead redirect (source resolves to a real page)`.
-5. Source wildcard: prefix MUST NOT be a directory containing any
-   `.mdx`/`.md` (recursive) AND MUST NOT be a file at
-   `${prefixFs}.mdx`/`.md` →
-   `dead redirect (wildcard source prefix has real pages)` or
-   `dead redirect (wildcard source prefix resolves to a real page)`.
-6. Destination non-wildcard: file at `${prefixFs}.mdx` or `.md` MUST
-   exist → `missing destination (no .mdx or .md page exists)`.
-7. Destination wildcard: `${prefixFs}` MUST be an existing directory OR
-   `${prefixFs}.yaml` MUST be referenced as `nav.*.openapi.source`
-   somewhere in `docs.json` → `wildcard prefix not a directory`.
-8. Non-object entry → `not an object`. Emit with `field="entry"` and
-   `value=""`.
+2. Non-object entry → emit with `field="entry"`, `value=""`, message:
+   `not an object`.
+3. Source missing leading `/` → message exactly
+   `bad path: must start with '/'` (single quotes are LITERAL in the
+   message, NOT from `%q`).
+4. Destination missing leading `/` and not `http(s)://` → message
+   exactly `bad path: must start with '/' (or http(s)://)` (single
+   quotes literal).
+5. Bad source/destination prefix (after stripping leading `/`, path
+   MUST start with `docs/`) → `bad prefix (must start with /docs/)`.
+6. Source non-wildcard collides with real page (file at
+   `${prefixFs}.mdx` or `.md` exists) →
+   `dead redirect (source resolves to a real page)`.
+7. Source WILDCARD: TWO sub-cases:
+   - Wildcard prefix is a directory containing `.mdx`/`.md` pages
+     (recursive) → `dead redirect (wildcard source prefix has real pages)`.
+   - Wildcard prefix is a file (`.mdx` or `.md` exists at exactly the
+     prefix path) →
+     `dead redirect (wildcard source prefix resolves to a real page)`.
+8. Destination non-wildcard, file missing (no `${prefixFs}.mdx` or
+   `.md`) → `missing destination (no .mdx or .md page exists)`.
+9. Destination wildcard, prefix not a directory and not registered as
+   `nav.openapi.source` yaml (`${prefixFs}.yaml` not referenced as
+   `nav.*.openapi.source` anywhere in `docs.json`) →
+   `wildcard prefix not a directory`.
+
+These message strings are the contract with `tests/test-lint.sh` lines
+58-68. Do not paraphrase.
 
 Wildcard segment regex: `^:[A-Za-z][A-Za-z0-9]*\*?$`. Segments BEFORE
 the first wildcard segment form the "prefix".
@@ -221,35 +223,26 @@ itself is sufficient.
 
 ### Where `docs.json` is found
 
-The current `findContentRoot` walks up from the first input file's
-directory. The redirect rule needs `contentRoot` even when the linter is
-invoked without `.mdx` files (e.g. against the `bad-redirects` fixture
-that contains no `.mdx` of its own — though in practice it inherits
-`docs/example.mdx` from `good/`, so contentRoot is bootstrappable from
-the per-file loop's first arg).
-
-For robustness when no file args are given: respect the
-`DOCS_LINT_ROOT` env var (matches the existing test runner convention)
-and treat that as `contentRoot`. Otherwise require at least one file
-arg so the existing walk works.
-
-For `scripts/lint.sh`: it already passes `.mdx` files to the linter, so
-`contentRoot` is found via the existing path; the redirect rule then
-runs alongside.
-
-For `tests/test-lint.sh`: it sets `DOCS_LINT_ROOT` and invokes
-`scripts/lint.sh`; the per-file loop discovers `contentRoot` from the
-fixture's inherited `.mdx` files. The redirect rule then runs against
-`${contentRoot}/docs.json`.
-
-### Why the Node.js implementation was wrong
-
-It introduced a second linter in a second language for one small check
-that fits naturally inside the existing Go linter. The Go linter
-already has filesystem-aware rules, per-package coverage gates, and a
-dedicated CI job — none of which the Node.js script benefited from.
+`contentRoot` is discovered by the existing `findContentRoot` walk-up
+from the first MDX file argument (see `tools/lint/main.go`). All current
+invocation paths (`scripts/lint.sh`, `tests/test-lint.sh`) pass MDX
+files alongside any check, so contentRoot is always available. The
+`bad-redirects` fixture inherits `docs/example.mdx` from `good/`, so
+MDX files exist there too. `DOCS_LINT_ROOT` is set by
+`tests/test-lint.sh`, consumed by `scripts/lint.sh`, and ends up
+changing which MDX files get passed to the linter — the Go binary itself
+does NOT need to read `DOCS_LINT_ROOT`.
 
 ## Plan of Work
+
+Five milestones, each one commit. See Concrete Steps for command-level
+detail.
+
+- M1: Create `tools/lint/linter/redirects/` package (rule logic + table-driven tests, 100% covgate).
+- M2: Wire `redirects.Check(contentRoot)` into `tools/lint/main.go`.
+- M3: Delete `scripts/check-redirects.mjs` and remove its `== Redirects ==` block from `scripts/lint.sh`.
+- M4: Verify the existing `tests/lint-fixtures/bad-redirects/` fixture still produces all 11 expected diagnostics from the Go linter.
+- M5: Update `plans/active/20260428-redirect-lint-rule.md` Decision Log + Surprises & Discoveries; run preflight; fix fallout.
 
 ### M1 — New Go package `tools/lint/linter/redirects/`
 
@@ -292,6 +285,10 @@ Internal structure (all unexported):
   returns `fmt.Sprintf("redirects[%d] %s %q: %s", i, field, value,
   message)`.
 
+`Col` is always `1` for redirect violations (the column of the
+offending entry within `docs.json` is not meaningful at the byte level;
+line is sufficient).
+
 The exported `Check(contentRoot string)`:
 
 1. Reads `${contentRoot}/docs.json`. If missing, returns `nil`.
@@ -313,6 +310,16 @@ Cover at minimum:
 - Non-object entry (`"some-string"` inside the array).
 - OpenAPI escape hatch (wildcard destination resolved by a
   `nav.*.openapi.source: docs/.../foo.yaml` reference).
+- Wildcard destination prefix that is neither an existing directory nor
+  a `${prefix}.yaml` registered in `nav.*.openapi.source` → assert
+  message contains `wildcard prefix not a directory`. (This is the
+  `redirects[12]` case from the existing fixture; pin the message
+  string independently.)
+- Wildcard source whose prefix path resolves to an `.mdx` file (NOT a
+  directory containing pages) → assert message contains
+  `dead redirect (wildcard source prefix resolves to a real page)`.
+  (This is the `redirects[6]` case from the existing fixture; pin the
+  message string independently.)
 - `redirects` key absent, `redirects` empty, `redirects` not an array
   (defensive).
 - Line-number anchoring: redirect entries return correct 1-based lines
@@ -322,79 +329,6 @@ Cover at minimum:
 
 Coverage gate: the `.covgate` file MUST contain `100.0`. Run
 `./tools/lint/scripts/covgate.sh` from `tools/lint/` to confirm.
-
-### M2 — Wire into `tools/lint/main.go`
-
-In `tools/lint/main.go`:
-
-1. Import `github.com/mirurobotics/docs/tools/lint/linter/redirects`.
-2. Determine `contentRoot`:
-   - If at least one file arg is present, keep current `findContentRoot`
-     bootstrap from it.
-   - If no file args but `DOCS_LINT_ROOT` is set in the environment,
-     use that as `contentRoot`.
-   - Otherwise behave exactly as today (usage exit 2).
-3. Once `contentRoot` is known, call `redirects.Check(contentRoot)` and
-   append its violations to the `allViolations` slice. Order: redirect
-   violations are appended after the per-file pass so per-file output
-   order is preserved.
-4. Print path is unchanged: each violation goes to stdout as
-   `File:Line:Col: Message`. The `redirects.Check` violations have
-   `File: "docs.json"` and an integer line.
-
-Update `tools/lint/main_test.go` if the `findContentRoot` /
-`DOCS_LINT_ROOT` handling reaches into a tested function. If the new
-logic is in `main()` itself (where it is hard to unit-test), exercise
-it via the integration test in M4 instead.
-
-### M3 — Remove the Node.js implementation
-
-1. Delete `scripts/check-redirects.mjs`.
-2. In `scripts/lint.sh`, remove the `== Redirects ==` block (lines 80-81
-   in current HEAD; verify with `git diff` before commit).
-3. Run `pnpm run lint` against the real repo and confirm:
-   - The `== Lint ==` (Go linter) section now shows no redirect
-     violations against the real `docs.json`.
-   - No `== Redirects ==` section remains.
-   - Overall exit code is 0.
-
-### M4 — Verify the existing fixture still produces all 11 diagnostics
-
-The fixture at `tests/lint-fixtures/bad-redirects/` and the 11
-`run_expect_fail` assertions in `tests/test-lint.sh` (lines 58-68) MUST
-keep passing without modification. They serve as the integration-level
-contract test for the Go rule.
-
-If any assertion fails, the Go rule's diagnostic format diverges from
-the Node.js script's. Fix the Go rule, not the assertions.
-
-Do not modify `tests/lint-fixtures/bad-redirects/` or any of the 11
-assertions. Their purpose for the duration of this plan is to detect
-behavioral drift.
-
-### M5 — Update the superseded plan and run preflight
-
-1. Edit `plans/active/20260428-redirect-lint-rule.md`:
-   - Append a Decision Log entry dated 2026-04-28 stating the
-     implementation was refactored from Node.js to Go (see this plan).
-     Rationale: the project already has a Go linter with rule
-     registration, filesystem-aware sibling rules (`importresolves`),
-     100% coverage gates per rule package, and CI integration. Two
-     linters in two languages was unjustified.
-   - Append a Surprises & Discoveries entry noting the architectural
-     mistake and the recovery (a follow-up plan rather than a rewrite
-     of this one, so the audit trail is preserved).
-   - Do NOT move the plan to `plans/completed/` here. That happens at
-     the very end of the combined work after preflight is clean.
-2. Run `./scripts/preflight.sh` and resolve any findings. Preflight
-   must report clean before the branch is published.
-
-### Commit strategy
-
-Make a series of new commits on top of the existing branch. Do NOT
-rewrite history. The Node.js commits remain in the audit trail; the
-refactor commits supersede them. Reviewers see the migration as a clear
-sequence of steps. One commit per milestone — five commits total.
 
 ## Concrete Steps
 
@@ -408,42 +342,55 @@ stated otherwise.
        mkdir -p tools/lint/linter/redirects
        printf '100.0\n' > tools/lint/linter/redirects/.covgate
 
-2. Author `tools/lint/linter/redirects/redirects.go` with the public
-   `Check(contentRoot string) []analysis.Violation` and helpers
-   described in Plan of Work / M1. Match the file/import style of the
-   sibling `importresolves.go` package.
+2. Author `tools/lint/linter/redirects/redirects.go` and
+   `redirects_test.go` per the M1 spec in Plan of Work above (public
+   `Check`, unexported helpers, table-driven tests). Match the
+   file/import style of sibling `importresolves.go`.
 
-3. Author `tools/lint/linter/redirects/redirects_test.go` as a
-   table-driven test against the unexported `validate`. Use
-   `t.TempDir()` + `os.MkdirAll` + `os.WriteFile` for filesystem
-   fixtures. Cover every rule branch listed in Plan of Work.
-
-4. Run package tests and coverage:
+3. Run tests, coverage, and lint:
 
        cd tools/lint
        go test ./linter/redirects/...
        ./scripts/covgate.sh
-
-   Expected: tests pass; covgate reports `redirects` at >= 100.0
-   (i.e., no failure for that package).
-
-5. Run formatters and the custom-linter lint:
-
-       cd tools/lint
        ./scripts/lint.sh
 
-   Resolve any findings until clean.
+   Resolve any findings until clean. Covgate must report `redirects` at
+   `>= 100.0`.
 
-6. Commit (one commit per milestone — see policy):
+4. Commit:
 
        git add tools/lint/linter/redirects
        git commit -m "feat(lint): add redirects rule package to Go linter"
 
 ### M2 — Wire the rule into main.go
 
-1. Edit `tools/lint/main.go` per Plan of Work / M2.
+1. Edit `tools/lint/main.go`:
+   - Import `github.com/mirurobotics/docs/tools/lint/linter/redirects`.
+   - After the per-file pass discovers `contentRoot` via the existing
+     `findContentRoot` walk-up from the first MDX file argument, call
+     `redirects.Check(contentRoot)` and append its violations to the
+     `allViolations` slice. Order: redirect violations are appended
+     after the per-file pass so per-file output order is preserved.
+   - Print path is unchanged: each violation goes to stdout as
+     `File:Line:Col: Message`. The `redirects.Check` violations have
+     `File: "docs.json"` and an integer line.
+   - Do NOT add a `DOCS_LINT_ROOT` fallback inside `main.go`. All
+     existing invocation paths pass MDX files, so `contentRoot` is
+     always available via `findContentRoot`. `DOCS_LINT_ROOT` is set by
+     `tests/test-lint.sh`, consumed by `scripts/lint.sh`, and changes
+     which MDX files get passed to the linter — it is not read by the
+     Go binary.
 
-2. Run main_test and the redirects test together:
+2. Add a `RuleRedirects = "redirects"` constant to
+   `tools/lint/linter/run.go`'s `Rule` block AND extend `AllRules()` to
+   include it. Add a one-line comment in `run.go` near `ruleCheckers()`
+   explaining:
+   `// Redirects is invoked once per run from main.go (see linter.ProcessDocsJSON), not per-file via ruleCheckers, because it operates on docs.json once.`
+   This preserves the discoverability of the rule list while
+   documenting that redirects bypasses the per-file `ruleCheckers()`
+   registry.
+
+3. Run main_test and the redirects test together:
 
        cd tools/lint
        go test ./...
@@ -453,7 +400,7 @@ stated otherwise.
    shift slightly but should remain above its `.covgate` (or the
    default 90.0 if no override).
 
-3. Smoke-test against the real repo:
+4. Smoke-test against the real repo:
 
        cd /home/ben/miru/workbench1/repos/docs
        ./scripts/lint.sh
@@ -461,9 +408,9 @@ stated otherwise.
    Expected: exits 0; no redirect violations against the real
    `docs.json`.
 
-4. Commit:
+5. Commit:
 
-       git add tools/lint/main.go tools/lint/main_test.go
+       git add tools/lint/main.go tools/lint/main_test.go tools/lint/linter/run.go
        git commit -m "feat(lint): invoke redirects rule from Go linter main"
 
 ### M3 — Remove the Node.js implementation
@@ -520,9 +467,17 @@ stated otherwise.
 ### M5 — Update the superseded plan and run preflight
 
 1. Edit `plans/active/20260428-redirect-lint-rule.md`:
-   - Append the Decision Log entry described in Plan of Work / M5.
-   - Append the Surprises & Discoveries entry described in Plan of
-     Work / M5.
+   - Append a Decision Log entry dated 2026-04-28 stating the
+     implementation was refactored from Node.js to Go (see this plan).
+     Rationale: the project already has a Go linter with rule
+     registration, filesystem-aware sibling rules (`importresolves`),
+     100% coverage gates per rule package, and CI integration. Two
+     linters in two languages was unjustified.
+   - Append a Surprises & Discoveries entry noting the architectural
+     mistake and the recovery (a follow-up plan rather than a rewrite
+     of this one, so the audit trail is preserved).
+   - Do NOT move the plan to `plans/completed/` here. That happens at
+     the very end of the combined work after preflight is clean.
 
 2. Run preflight:
 
@@ -603,10 +558,10 @@ run and observe:
   files under `docs/`. Re-runs are safe and identical.
 - **Per-milestone commits enable rollback.** Each milestone is one
   commit; revert to roll back. No data migration.
-- **Re-run safety.** All listed commands (`go test`, `./scripts/lint.sh`,
-  `./scripts/covgate.sh`, `pnpm run lint`, `pnpm run test:lint`,
-  `./scripts/preflight.sh`) are idempotent and can be invoked any number
-  of times.
+- **Re-run safety.** All listed commands (`go test`, `scripts/lint.sh`,
+  `tools/lint/scripts/lint.sh`, `tools/lint/scripts/covgate.sh`,
+  `pnpm run lint`, `pnpm run test:lint`, `scripts/preflight.sh`) are
+  idempotent and can be invoked any number of times.
 - **Recovery from a broken `tools/lint/main.go` edit.** If M2 leaves the
   binary unable to bootstrap `contentRoot`, run
   `git checkout tools/lint/main.go` and redo M2 from a clean state. The
