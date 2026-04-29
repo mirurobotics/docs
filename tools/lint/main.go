@@ -7,6 +7,7 @@ import (
 
 	"github.com/mirurobotics/docs/tools/lint/linter"
 	"github.com/mirurobotics/docs/tools/lint/linter/analysis"
+	"github.com/mirurobotics/docs/tools/lint/linter/redirects"
 )
 
 func main() {
@@ -33,6 +34,10 @@ func main() {
 		}
 		allViolations = append(allViolations, violations...)
 	}
+
+	// Redirect violations are appended after the per-file pass so the
+	// per-file output order is preserved.
+	allViolations = append(allViolations, redirects.Check(contentRoot)...)
 
 	for _, v := range allViolations {
 		fmt.Printf("%s:%d:%d: %s\n", v.File, v.Line, v.Col, v.Message)

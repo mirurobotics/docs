@@ -25,6 +25,7 @@ const (
 	RuleComponentStyle Rule = "component-style"
 	RuleMDXStyle       Rule = "mdx-style"
 	RuleImportBlock    Rule = "import-block"
+	RuleRedirects      Rule = "redirects"
 )
 
 // AllRules returns every valid rule name.
@@ -33,6 +34,7 @@ func AllRules() []Rule {
 		RuleNoDoubleDash,
 		RuleImportResolves, RuleImportUsed, RuleImportSorted,
 		RuleComponentStyle, RuleMDXStyle, RuleImportBlock,
+		RuleRedirects,
 	}
 }
 
@@ -48,6 +50,7 @@ type ruleEntry struct {
 	check func(checkInput) []analysis.Violation
 }
 
+// Redirects is invoked once per run from main.go (see linter.ProcessDocsJSON), not per-file via ruleCheckers, because it operates on docs.json once.
 func ruleCheckers() []ruleEntry {
 	return []ruleEntry{
 		{RuleNoDoubleDash, func(in checkInput) []analysis.Violation {
