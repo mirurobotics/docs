@@ -174,6 +174,15 @@ Branch `feat/redirect-lint-rule` is already checked out.
    - Resolve `root = process.env.DOCS_LINT_ROOT || path.resolve(__dirname, '..')`.
    - Read `${root}/docs.json` as text. Parse JSON for the `redirects` array.
      Keep the original text for line-number lookup.
+   - Input handling:
+     - If `${root}/docs.json` does not exist, exit 0 and print
+       `No docs.json at ${root}; nothing to check`. (This keeps the script
+       usable against fixtures that don't ship a `docs.json`, including the
+       existing `tests/lint-fixtures/good/` tree.)
+     - If `${root}/docs.json` exists but cannot be parsed as JSON, exit 1 and
+       print `docs.json: invalid JSON: <parser-message>` on stderr.
+     - If parsed JSON has no `redirects` key, or `redirects` is an empty
+       array, exit 0 and print `Checked 0 redirects: OK`.
    - For each entry, validate:
      a. Both `source` and `destination` are non-empty strings.
      b. `source` MUST start with `/`. `destination` MUST start with `/` OR
@@ -199,12 +208,20 @@ Branch `feat/redirect-lint-rule` is already checked out.
           MUST exist.
         - If wildcard: `${prefixFs}` MUST be an existing directory.
    - For each violation, emit `docs.json:<line>: redirects[<i>] <field>
-     "<value>": <message>` on stderr. Compute `<line>` by walking the original
-     text once with an offset cursor: for each `"source":` literal encountered,
-     advance the cursor past the match so that the n-th `"source":` literal
-     locates the n-th redirect entry (the JSON array preserves order, so the
-     n-th occurrence corresponds to `redirects[n]`). Report the 1-based line of
-     that occurrence. If lookup fails for any entry, emit
+     "<value>": <message>` on stderr. Compute `<line>` by:
+     1. Locating the `"redirects"` key in the original text (e.g. via a regex
+        like `/"redirects"\s*:\s*\[/`) and taking the offset of the opening `[`.
+     2. From that offset onward, walking the text with an offset cursor: for
+        each `"source":` literal encountered, advance the cursor past the match
+        so that the n-th `"source":` literal under the `"redirects"` array
+        locates the n-th redirect entry. Stop scanning at the matching closing
+        `]` for the array (track bracket depth so nested `[ ]` inside string
+        values do not confuse the count).
+     3. Reporting the 1-based line of the located occurrence.
+     Anchoring the scan to the `"redirects"` array is required because
+     `docs.json` contains `"source":` keys elsewhere (e.g. in the OpenAPI
+     navigation block at the time of writing, ~10 occurrences before the
+     redirects). If lookup fails for any entry, emit
      `docs.json: redirects[<i>] ...` and a one-line stderr warning prefixed
      `warning:`, printed at most once per script run.
    - Exit 0 if no violations, 1 otherwise. Print a one-line summary on success
@@ -250,7 +267,7 @@ Branch `feat/redirect-lint-rule` is already checked out.
    `tests/lint-fixtures/good/` wholesale (it already passes every other lint
    check), then mutate it:
 
-   - Replace its `docs.json` with one whose `redirects` array contains, as
+   - Add a `docs.json` whose `redirects` array contains, as
      **separate distinct entries** (one violation per entry — do not bundle
      multiple violations into a single redirect), at least:
      1. Source equals an existing page (dead redirect).
@@ -267,9 +284,13 @@ Branch `feat/redirect-lint-rule` is already checked out.
    - Add only the `docs/` files the violations rely on (e.g.
      `docs/admin/exists.mdx`, `docs/wild/page.mdx`). Keep each file tiny —
      a single H1 line is enough.
-   - Because the fixture starts as a copy of `good/`, it already contains
-     whatever top-level `docs.json` keys (`name`, `navigation`, etc.) the other
-     lint checks require, so no manual stubbing is needed.
+   - Because the fixture starts as a copy of `good/`, it inherits the MDX/CSpell/
+     OpenAPI baseline that already passes those lint checks. The `good/` tree
+     has no `docs.json` of its own, so the new `docs.json` is freshly authored
+     here — keep it minimal: only the `redirects` array is required for the
+     redirect check (per Fix-2 input handling, missing top-level keys do not
+     fail the redirect check). If a future lint check requires other `docs.json`
+     keys against fixtures, copy the minimum subset from the real `docs.json`.
 
 2. Edit `tests/test-lint.sh` to add a `run_expect_fail` invocation for the new
    fixture. For each violating entry, assert that the output contains both the
