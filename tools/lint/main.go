@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -11,24 +12,28 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, "usage: lint <file>...")
-		os.Exit(2)
+	os.Exit(run(os.Args, os.Stdout, os.Stderr))
+}
+
+func run(args []string, stdout, stderr io.Writer) int {
+	if len(args) < 2 {
+		fmt.Fprintln(stderr, "usage: lint <file>...")
+		return 2
 	}
 
-	contentRoot, err := findContentRoot(os.Args[1])
+	contentRoot, err := findContentRoot(args[1])
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "lint: cannot determine content root: %v\n", err)
-		os.Exit(2)
+		fmt.Fprintf(stderr, "lint: cannot determine content root: %v\n", err)
+		return 2
 	}
 
 	var allViolations []analysis.Violation
 	exitCode := 0
 
-	for _, path := range os.Args[1:] {
+	for _, path := range args[1:] {
 		violations, err := linter.ProcessFile(path, contentRoot)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "lint: %s: %v\n", path, err)
+			fmt.Fprintf(stderr, "lint: %s: %v\n", path, err)
 			exitCode = 2
 			continue
 		}
@@ -40,13 +45,13 @@ func main() {
 	allViolations = append(allViolations, redirects.Check(contentRoot)...)
 
 	for _, v := range allViolations {
-		fmt.Printf("%s:%d:%d: %s\n", v.File, v.Line, v.Col, v.Message)
+		fmt.Fprintf(stdout, "%s:%d:%d: %s\n", v.File, v.Line, v.Col, v.Message)
 	}
 
 	if len(allViolations) > 0 && exitCode == 0 {
 		exitCode = 1
 	}
-	os.Exit(exitCode)
+	return exitCode
 }
 
 // findContentRoot walks up the directory tree from startPath until it finds
