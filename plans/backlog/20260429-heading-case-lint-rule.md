@@ -308,16 +308,18 @@ All commands assume the working tree is clean before starting and that you are w
 
 ### M4 — End-to-end tests
 
-1. Edit `tools/lint/main_test.go` to add the two sub-tests described in "Test plan" → "E2E tests in `tools/lint/main_test.go`".
+1. Audit the existing sub-tests in `tools/lint/main_test.go` for heading-shaped fixtures whose stdout is asserted clean (exit 0). The current `t.Run("clean run returns 0", ...)` block writes `# x\n` — after `heading-case` is registered, `# x` becomes a violation (lowercase first letter). Update that fixture to a string that either (a) contains no heading, or (b) uses a sentence-case heading (e.g., `"# Hello\n"`). Sub-tests that only assert non-zero exit (`nonexistent file returns 2`, `missing snippets returns 2`) are unaffected because they don't assert clean stdout — leave them alone.
 
-2. Run E2E tests.
+2. Edit `tools/lint/main_test.go` to add the two sub-tests described in "Test plan" → "E2E tests in `tools/lint/main_test.go`".
+
+3. Run E2E tests.
 
        cd /home/ben/miru/workbench1/repos/docs/tools/lint
        go test -run TestRun ./...
 
    Expected: both new sub-tests pass; existing `TestRun` sub-tests still pass.
 
-3. Commit.
+4. Commit.
 
        cd /home/ben/miru/workbench1/repos/docs
        git add tools/lint/main_test.go
@@ -368,4 +370,5 @@ The change is acceptable when all of these hold:
 - All steps are safe to repeat. `go test ./...` and `./scripts/lint.sh` are idempotent.
 - The Go file edits in M1-M4 are additive; if a milestone is half-applied, re-running the M's instructions overwrites the rule file and re-applies the registry edits cleanly. If you need to roll back a milestone, use `git restore` on the listed paths or `git reset --hard` to the previous milestone's commit.
 - Adding the rule may surface pre-existing `heading-case` violations in real docs. **Fixing those is out of scope for this plan** (see Decision Log). A follow-up cleanup PR will sweep them. If `./scripts/lint.sh` exits 1 only because of pre-existing offenders, that does not block the milestone; record the count in Surprises & Discoveries and move on.
+- If `go test ./...` regresses outside the `headingcase` package after wiring the rule, audit other tests for fixtures whose headings are not sentence-case (the existing `# x` fixture is one known instance, addressed in M4).
 - If a pre-commit hook fails, do NOT amend; fix the underlying issue and create a new commit on top, per repo policy.
