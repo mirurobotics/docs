@@ -1,0 +1,37 @@
+---
+title: "Overview"
+---
+
+import { Framed } from '/snippets/components/framed.jsx';
+
+<Framed background="https://assets.mirurobotics.com/docs/v03/images/devices/background.jpeg" image="https://assets.mirurobotics.com/docs/v03/images/devices/header:create-panel.png" borderWidth={"36px 100px 0 0"} innerRadius={"0 8px 0 0"} />
+
+Provisioning a device is the process of creating a device in Miru and registering it with Miru's servers. Once provisioned, a device is ready to receive deployments.
+
+## Methods
+
+There are three methods for provisioning a device:
+
+1. [Dashboard](/docs/learn/devices/provision/dashboard) - a manual method for provisioning devices one at a time via the Miru web interface; great for getting started or managing individual devices.
+
+2. [Provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) - a programmatic method for securely provisioning devices at scale; great for automated provisioning or integrating with existing infrastructure management tools and workflows.
+
+3. [API keys](/docs/learn/devices/provision/api-keys) - the legacy method for programmatically provisioning devices; unsupported with Miru Agent [v0.9.0](/docs/changelogs/agent) or later.
+
+## Miru Agent installation
+
+No matter which method you choose, the device requires the `miru-agent` package to be installed. For more information about installing the `miru-agent` package, visit the [agent installation](/docs/developers/agent/install) documentation.
+
+If you're having trouble downloading the `miru-agent` package to your device, refer to the [poor connectivity](/docs/developers/agent/install#poor-connectivity) documentation for a workaround.
+
+Once you've installed the `miru-agent` package, proceed with the provisioning process via the [dashboard](/docs/learn/devices/provision/dashboard) or [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens).
+
+## Reprovisioning
+
+Reprovisioning a device is the process of reassociating a physical device with a device in Miru. Reprovisioning a device fully maintains the device's deployment history in Miru, even if reprovisioning occurs on a different physical device.
+
+Visit the [reprovisioning documentation](/docs/learn/devices/provision/reprovision) for more information.
+
+## Authentication model
+
+If you're curious about Miru's authentication model, please consult the [agent security](/docs/developers/agent/security) documentation.

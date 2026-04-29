@@ -1,0 +1,61 @@
+---
+title: "Provisioning tokens"
+---
+
+import Verify from '/snippets/agent/install/verify.mdx';
+
+To programmatically provision devices, Miru offers provisioning tokens. 
+
+Provisioning tokens are only supported when installing `miru-agent` version [v0.9.0](/docs/changelogs/agent) or later. If installing a version that precedes v0.9.0, continue to use [API keys](/docs/learn/devices/provision/api-keys).
+
+Unlike the dashboard, which requires manual interaction with the web interface for each device, provisioning tokens allow you to:
+
+- **Provision multiple devices** without manual intervention
+- **Integrate with existing infrastructure** management tools and workflows
+- **Use in headless environments** where a web browser isn't available
+
+## Prerequisites
+
+Before provisioning a device via provisioning tokens, you must:
+
+1. Install the `miru-agent` package
+
+    The device you're provisioning must have the `miru-agent` package installed. If it doesn't, use the [agent installation](/docs/developers/agent/install) documentation to install via `apt`.
+
+## Provision the device
+
+First, mint a provisioning token via the Miru dashboard. Programmatic minting via the Platform API is coming soon.
+
+On the device you want to provision, set the `MIRU_PROVISIONING_TOKEN` environment variable to your provisioning token.
+
+```bash
+export MIRU_PROVISIONING_TOKEN=<your-provisioning-token>
+```
+
+Then execute the `provision` command bundled with the Miru Agent to provision the device.
+
+```bash
+/usr/sbin/miru-agent provision \
+  --device-name=$HOSTNAME
+```
+
+The provision command performs the following actions:
+
+1. **Creates the device** - creates a new device in the Miru dashboard if a device with the provided name doesn't already exist.
+1. **Activates the device** - activates the device by registering the agent with Miru servers.
+
+If the device has already been activated, the provisioning command is treated as a no-op and exits successfully. If you need to reprovision a device, follow the [reprovisioning](/docs/learn/devices/provision/reprovision) documentation.
+
+### Arguments
+
+The provision command supports the following parameters to tune your installation:
+
+<ParamField path="--device-name" type="string">
+  The name of the device in the Miru dashboard. Defaults to `$HOSTNAME` if the device is created and a name is not provided.
+
+  Default: `$HOSTNAME`
+</ParamField>
+
+## Verify installation
+
+<Verify />

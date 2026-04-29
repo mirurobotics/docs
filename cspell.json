@@ -20,10 +20,12 @@
     "Lohuizen",
     "cooldown",
     "costmap",
+    "dearmor",
     "diffable",
     "idempotently",
     "inlines",
     "journalctl",
+    "keyrings",
     "radps",
     "rclone",
     "sandboxing",
@@ -35,6 +37,10 @@
     "newgrp",
     "setfacl",
     "zeroizes",
-    "Npfzv"
+    "Npfzv",
+    "reprovision",
+    "reprovisioned",
+    "reprovisioning",
+    "reassociating"
   ]
 }

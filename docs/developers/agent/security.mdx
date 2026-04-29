@@ -10,7 +10,7 @@ The Miru Agent is designed to run with minimal privileges and a restricted syste
 
 When the agent is first installed on a device, it goes through an activation process that establishes the device's identity:
 
-1. The agent receives a short-lived activation token as part of the [provisioning](/docs/learn/devices/provision) process (either from the dashboard or an API key)
+1. The agent receives a short-lived activation token (either from the dashboard or an API key)
 2. The agent generates a 4096-bit RSA key pair on the device
 3. The agent sends the public key to the Miru control plane with its activation token
 4. The control plane verifies the activation token, stores the public key, and registers the device
@@ -43,7 +43,7 @@ If a token refresh fails due to a transient network issue, the agent retries aut
 
 ### Credential storage
 
-The agent's identity is bound to the RSA key pair generated on-device during [provisioning](/docs/learn/devices/provision). Currently, these credentials are protected at rest through file system permissions:
+The agent's identity is bound to the RSA key pair generated on-device during [provisioning](/docs/learn/devices/provision/overview). Currently, these credentials are protected at rest through file system permissions:
 
 | File | Permissions | Access |
 |------|------------|--------|

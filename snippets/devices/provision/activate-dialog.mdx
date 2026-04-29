@@ -1,0 +1,15 @@
+The dialog will present a pre-authenticated command that invokes the `miru-agent` binary with a short-lived (5 minutes) token to activate the device for your workspace. The command looks like:
+
+```bash
+MIRU_PROVISIONING_TOKEN=<token> \
+  /usr/sbin/miru-agent provision
+```
+
+- The first line sets the `MIRU_PROVISIONING_TOKEN` environment variable for the duration of the command.
+- The second line invokes the `miru-agent` binary (that was just installed) with the `provision` command.
+
+To activate the device, copy the command from the dialog and paste it into the terminal of the machine you want to activate.
+
+<Tip>
+  For more information about Miru's authentication model, visit the [agent security](/docs/developers/agent/security) documentation.
+</Tip>

@@ -46,37 +46,6 @@ On the other hand, <Tooltip tip={OFFLINE_TOOLTIP.tip} cta={OFFLINE_TOOLTIP.cta} 
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/ping-timeout.png)
 </Frame>
 
-## Reactivate a device
-
-Reactivating a device is the process of reinstalling the Miru Agent on a device that was previously activated. Reactivating a device:
-
-1. Invalidates the device's current authentication session
-2. Creates a new authentication session for the device
-3. Resets the Miru Agent to a clean state
-4. Recreates the device's current deployments
-
-Reactivating a device resets the Miru Agent to a clean state while preserving the device's full deployment history.
-
-**Dashboard**
-
-To reactivate a device, click the ellipsis (...) next to the device you want to reactivate, then select **Reactivate**.
-
-<Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/ellipses-dropdown.png)
-</Frame>
-
-A dialog will appear with a pre-authenticated reactivation command. Copy this command and paste it into a terminal of the device you want to reactivate.
-
-<Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/reactivate-dialog.png)
-</Frame>
-
-Outside the reactivation capability, this installation command is identical to the activation command used to provision a device. For more information on the installation command, visit the [dashboard device provisioning](/docs/learn/devices/provision#install-the-agent) documentation.
-
-**Platform API**
-
-To reactivate a device programmatically, use the [API key provisioning](/docs/learn/devices/provision#api-keys) workflow with the [`--allow-reactivation`](/docs/learn/devices/provision#param-allow-reactivation) flag enabled.
-
 ## Delete a device
 
 Deleting a device immediately invalidates its authentication session and removes all deployment and configuration history. This action is irreversible. Please proceed with caution.

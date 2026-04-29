@@ -1,0 +1,27 @@
+import Apt from '/snippets/agent/install/apt.mdx';
+import GithubDownload from '/snippets/agent/install/github-download.mdx';
+
+The Miru Agent is distributed as a Debian package. Other package formats are not yet supported.
+
+We recommend using `apt` to install the agent. However, you can manually install the Debian package by downloading it from GitHub and installing it with `dpkg`.
+
+<Tabs>
+  <Tab title="APT">
+    <Apt />
+  </Tab>
+  <Tab title="Manual">
+    <Steps>
+      <Step title="Download">
+        <GithubDownload />
+      </Step>
+      <Step title="Install">
+
+        After downloading the package, install it using `dpkg`.
+
+        ```bash
+        sudo dpkg -i <...>.deb
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>

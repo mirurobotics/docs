@@ -2,25 +2,75 @@
 title: 'Install'
 ---
 
-import Uninstall from '/snippets/agent/uninstall.mdx';
+import Install from '/snippets/agent/install/install.mdx';
+import Uninstall from '/snippets/agent/install/uninstall.mdx';
+import SupportedPlatforms from '/snippets/agent/supported-platforms.mdx';
 
-To install the Miru Agent, please visit the [device provisioning](/docs/learn/devices/provision) section, which provides detailed instructions for installing and activating the agent via the following methods:
+This page details the process of installing the Miru Agent Debian package. 
 
-- [Dashboard](/docs/learn/devices/provision#dashboard) - a simple web interface for installing the agent on individual devices
-- [API Keys](/docs/learn/devices/provision#api-keys) - a programmatic way to install the agent on many devices
-- [Poor Connectivity](/docs/learn/devices/provision#poor-connectivity) - a method for installing the agent on devices with poor connectivity
+It does not cover provisioning devices for your workspace. Visit the [device provisioning](/docs/learn/devices/provision/overview) documentation to learn how to create and register devices with your workspace.
+
+## Supported platforms
+
+<SupportedPlatforms />
+
+## Install
+
+<Install />
 
 ## Upgrade
 
-To upgrade a device's Miru Agent to a new version, simply install the agent.
+As with the installation process, you can upgrade the `miru-agent` package via `apt` or manually by downloading and installing the new package. 
 
-**Dashboard**
+<Warning>
+    If you're upgrading from a `miru-agent` version that precedes `v0.9.0` to `v0.9.0` or later, you MUST [reprovision](/docs/learn/devices/provision/reprovision) the device after upgrading the `miru-agent` package.
+</Warning>
 
-To upgrade a device from the dashboard, follow the [dashboard provisioning](/docs/learn/devices/provision#dashboard) instructions as normal. The device will be automatically be reactivated and the agent upgraded to the latest version.
+Since both methods use Debian packages, manual installations can be upgraded via `apt` and vice versa.
 
-**API Keys**
+<Tabs>
+    <Tab title="APT">
+        Upgrade the existing `miru-agent` via `apt`.
 
-To upgrade a device [via API Keys](/docs/learn/devices/provision#api-keys), rerun the provisioning process with the [`--allow-reactivation`](/docs/learn/devices/provision#param-allow-reactivation) flag. This permits an already installed device to be reactivated and the agent upgraded to the chosen version.
+        ```bash
+        sudo apt-get update
+        sudo apt-get install miru-agent
+        ```
+
+        <Tip>
+            Upgrade to a specific version with `sudo apt-get install miru-agent=<version>` (e.g. `0.7.0`, `0.8.0`, etc.).
+        </Tip>
+    </Tab>
+
+    <Tab title="Manual">
+        Manual installations do not have a native upgrade mechanism. Simply repeat the [installation steps](#install) to upgrade to the latest version.
+    </Tab>
+</Tabs>
 
 ## Uninstall
+
 <Uninstall />
+
+## Poor connectivity
+
+Some environments may have a poor internet connection. Whether located in a remote area or using a cellular connection, downloading the Miru Agent over a network may be impractical in some environments.
+
+In such scenarios, we recommend downloading the Miru Agent to a computer with a stable connection. Then, transfer the package to your target machine and install it.
+
+While this method circumvents the need to _download_ the Miru Agent over a network, _activating_ the agent still requires some level of connectivity to register the device with the Miru servers.
+
+<Steps>
+    <Step title="Download the agent">
+        Follow the [installation steps](#install) and select the **Manual** tab to download the Miru Agent to a computer with a stable connection.
+    </Step>
+    <Step title="Transfer the agent">
+        Once you've downloaded the appropriate Debian package, transfer it to your target machine. This can be done via a variety of methods, such as a USB drive.
+    </Step>
+    <Step title="Install the agent">
+        Once you've transferred the package to your target machine, install the `miru-agent` package by running:
+
+        ```bash
+        sudo dpkg -i <...>.deb
+        ```
+    </Step>
+</Steps>

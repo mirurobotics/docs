@@ -4,6 +4,24 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.9.0
+
+*Coming soon*
+
+Miru Agent `v0.9.0` introduces provisioning tokens as the standard programmatic device-provisioning mechanism, replacing the legacy API-key flow.
+
+To learn more, visit the [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) documentation.
+
+## Breaking changes
+
+- API-key based provisioning is no longer supported; use [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) instead. Devices previously activated via API keys must be [reprovisioned](/docs/learn/devices/provision/reprovision) after upgrading.
+
+## Features
+
+- Added support for provisioning tokens via the `provision` and `reprovision` subcommands
+
+---
+
 # v0.8.0
 
 *April 12, 2026*
@@ -104,7 +122,7 @@ To learn more, visit the [file permissions](/docs/developers/agent/file-permissi
 
 `v0.6.0` adds support for installing the agent over poor internet connections, ensuring reliable provisioning on bandwidth-constrained devices.
 
-[Read the full documentation »](/docs/learn/devices/provision#poor-connectivity)
+[Read the full documentation »](/docs/developers/agent/install#poor-connectivity)
 
 ## Features
 
