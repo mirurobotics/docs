@@ -18,21 +18,13 @@ Unlike the dashboard, which requires manual interaction with the web interface f
 
 Before provisioning a device via provisioning tokens, you must:
 
-1. Obtain an API key
-
-    To create an API key, follow the [creating an API key](/docs/admin/apikeys#create-an-api-key) documentation; the API key must have the `devices:provision` scope.
-
-2. Install the `miru-agent` package
+1. Install the `miru-agent` package
 
     The device you're provisioning must have the `miru-agent` package installed. If it doesn't, use the [agent installation](/docs/developers/agent/install) documentation to install via `apt`.
 
-    <Warning>
-        Provisioning tokens are only supported when installing `miru-agent` version [v0.9.0](/docs/changelogs/agent) or later. If installing a version that precedes v0.9.0, continue to use [API keys](/docs/learn/devices/provision/api-keys) to provision devices.
-    </Warning>
-
 ## Provision the device
 
-First, obtain a provisioning token via the Platform API.
+First, mint a provisioning token via the Miru dashboard. Programmatic minting via the Platform API is coming soon.
 
 On the device you want to provision, set the `MIRU_PROVISIONING_TOKEN` environment variable to your provisioning token.
 
