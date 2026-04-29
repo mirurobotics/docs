@@ -8,7 +8,7 @@ import SupportedPlatforms from '/snippets/agent/supported-platforms.mdx';
 
 This page details the process of installing the Miru Agent Debian package. 
 
-It does not cover provisioning devices for your workspace. Visit the [device provisioning](/docs/learn/devices/provision/dashboard) documentation to learn how to create and register devices with your workspace.
+It does not cover provisioning devices for your workspace. Visit the [device provisioning](/docs/learn/devices/provision/overview) documentation to learn how to create and register devices with your workspace.
 
 ## Supported platforms
 
@@ -23,7 +23,7 @@ It does not cover provisioning devices for your workspace. Visit the [device pro
 As with the installation process, you can upgrade the `miru-agent` package via `apt` or manually by downloading and installing the new package. 
 
 <Warning>
-    If you're upgrading to a `miru-agent` version that precedes `v0.9.0`, you MUST [reprovision](/docs/learn/devices/provision/reprovision) the device after upgrading the `miru-agent` package.
+    If you're upgrading from a `miru-agent` version that precedes `v0.9.0` to `v0.9.0` or later, you MUST [reprovision](/docs/learn/devices/provision/reprovision) the device after upgrading the `miru-agent` package.
 </Warning>
 
 Since both methods use Debian packages, manual installations can be upgraded via `apt` and vice versa.
