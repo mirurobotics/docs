@@ -34,6 +34,22 @@ fails on violations with a `file:line: message` diagnostic.
 
 ## Surprises & Discoveries
 
+- **Wrong implementation language chosen** (post-PR-review, 2026-04-28). Initial
+  implementation landed as a standalone Node.js script
+  (`scripts/check-redirects.mjs`) plus a `== Redirects ==` block in
+  `scripts/lint.sh`. On review the user pointed out the project already has a
+  Go custom linter at `tools/lint/` with a registered rule pattern,
+  filesystem-aware sibling rules (`importresolves`), per-package 100% covgate,
+  and CI integration via `lint-custom-linter` / `test-custom-linter` jobs.
+  Maintaining a second linter in a second language for one small JSON-only
+  check was not justified. The "Node is already required" / "60-line check"
+  rationale held up poorly once the script grew to 335 lines, and forced
+  contributors to learn two linter architectures. **Resolution:** rather than
+  rewriting this plan in place, a follow-up plan
+  (`plans/active/20260428-redirect-rule-go.md`) ports the rule into a new Go
+  package at `tools/lint/linter/redirects/`. The Node.js script and its
+  `lint.sh` block are deleted; the existing fixtures and 11 assertions in
+  `tests/test-lint.sh` continue to exercise the new Go rule unchanged.
 - **Mintlify-generated OpenAPI routes are not on disk** (M1, 2026-04-28). The
   redirect `/docs/references/platform-api/latest/:slug*` →
   `/docs/references/platform-api/2026-03-09/:slug*` targets routes Mintlify
@@ -51,7 +67,14 @@ fails on violations with a `file:line: message` diagnostic.
 
 ## Decision Log
 
-Add entries as work proceeds.
+- 2026-04-28: implementation refactored from Node.js to Go. The Node.js script
+  was replaced by a Go rule package at `tools/lint/linter/redirects/`,
+  invoked once from `tools/lint/main.go`. Rationale: the project already has
+  a Go custom linter with rule registration, filesystem-aware sibling rules
+  (`importresolves`), per-package 100% covgate, and CI integration. Two
+  linters in two languages was unjustified. The migration is captured in a
+  separate plan (`plans/active/20260428-redirect-rule-go.md`) so the audit
+  trail is preserved without rewriting this plan in place. Author: agents.
 
 ## Outcomes & Retrospective
 
