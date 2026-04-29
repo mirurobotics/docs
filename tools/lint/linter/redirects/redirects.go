@@ -1,0 +1,688 @@
+// Package redirects validates the `redirects` array in docs.json against
+// the on-disk docs/ tree.
+//
+// Mintlify serves docs/foo/bar.mdx at URL /docs/foo/bar. The `redirects`
+// array in docs.json rewrites URLs at the edge. This rule catches:
+//   - Dead redirects (source already serves a real page).
+//   - Missing destinations (destination has no real page).
+//   - Bad prefixes / unsupported schemes / malformed paths.
+//
+// Diagnostic messages are stable strings asserted by tests/test-lint.sh.
+package redirects
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
+
+	"github.com/mirurobotics/docs/tools/lint/linter/analysis"
+)
+
+// wildcardSegment returns the compiled regex matching a single
+// Mintlify-style wildcard URL segment, e.g. ":slug" or ":slug*". It is
+// a function rather than a package-level variable to avoid mutable
+// global state.
+func wildcardSegment() *regexp.Regexp {
+	return regexp.MustCompile(`^:[A-Za-z][A-Za-z0-9]*\*?$`)
+}
+
+// Check reads ${contentRoot}/docs.json and returns violations for
+// dead/missing/malformed redirects. If docs.json is absent, returns nil.
+// If docs.json is present but unparseable, returns a single violation
+// with a parse-error message.
+func Check(contentRoot string) []analysis.Violation {
+	docsJSONPath := filepath.Join(contentRoot, "docs.json")
+	data, err := os.ReadFile(docsJSONPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return []analysis.Violation{{
+			File:    "docs.json",
+			Line:    1,
+			Col:     1,
+			Message: fmt.Sprintf("read error: %s", err),
+		}}
+	}
+	return validate(data, contentRoot)
+}
+
+// validate parses docs.json bytes and returns redirect violations. Pure
+// (no I/O of its own beyond filesystem checks under contentRoot) so that
+// tests can drive it directly with byte literals.
+func validate(docsJSONBytes []byte, contentRoot string) []analysis.Violation {
+	var parsed map[string]any
+	if err := json.Unmarshal(docsJSONBytes, &parsed); err != nil {
+		return []analysis.Violation{{
+			File:    "docs.json",
+			Line:    1,
+			Col:     1,
+			Message: fmt.Sprintf("invalid JSON: %s", err),
+		}}
+	}
+
+	rawRedirects, ok := parsed["redirects"]
+	if !ok {
+		return nil
+	}
+	redirects, ok := rawRedirects.([]any)
+	if !ok {
+		return nil
+	}
+	if len(redirects) == 0 {
+		return nil
+	}
+
+	docsJSONText := string(docsJSONBytes)
+	lines := lineLookup(docsJSONText, len(redirects))
+	openAPISources := collectOpenAPISources(parsed)
+
+	var violations []analysis.Violation
+	for i, raw := range redirects {
+		violations = append(
+			violations,
+			validateEntry(i, raw, lines[i], contentRoot, openAPISources)...,
+		)
+	}
+
+	return violations
+}
+
+// validateEntry returns all violations for a single redirects[i] entry.
+// entryFields packages the parsed fields of a single redirects[i]
+// entry along with diagnostic metadata so helper functions can be
+// called with a single argument.
+type entryFields struct {
+	i           int
+	line        int
+	source      string
+	sourceOk    bool
+	destination string
+	destOk      bool
+}
+
+func validateEntry(
+	i int,
+	raw any,
+	line int,
+	contentRoot string,
+	openAPISources map[string]bool,
+) []analysis.Violation {
+	entry, ok := raw.(map[string]any)
+	if !ok {
+		return []analysis.Violation{{
+			File:    "docs.json",
+			Line:    line,
+			Col:     1,
+			Message: formatMessage(i, "entry", "", "not an object"),
+		}}
+	}
+
+	src, srcOk := stringField(entry, "source")
+	dst, dstOk := stringField(entry, "destination")
+	f := entryFields{
+		i:           i,
+		line:        line,
+		source:      src,
+		sourceOk:    srcOk,
+		destination: dst,
+		destOk:      dstOk,
+	}
+
+	violations := validateRequiredFields(f)
+	if !srcOk || !dstOk {
+		return violations
+	}
+
+	violations = append(violations, validatePathFormat(f)...)
+	fsViolations := validateFileSystem(f, contentRoot, openAPISources)
+	return append(violations, fsViolations...)
+}
+
+// validateRequiredFields emits a "must be a non-empty string" diagnostic
+// for each of source/destination that is missing or empty.
+func validateRequiredFields(f entryFields) []analysis.Violation {
+	const msg = "must be a non-empty string"
+	var violations []analysis.Violation
+	if !f.sourceOk {
+		violations = append(violations, analysis.Violation{
+			File:    "docs.json",
+			Line:    f.line,
+			Col:     1,
+			Message: formatMessage(f.i, "source", f.source, msg),
+		})
+	}
+	if !f.destOk {
+		violations = append(violations, analysis.Violation{
+			File:    "docs.json",
+			Line:    f.line,
+			Col:     1,
+			Message: formatMessage(f.i, "destination", f.destination, msg),
+		})
+	}
+	return violations
+}
+
+// validatePathFormat enforces that source starts with '/' and that
+// destination starts with '/' or http(s)://.
+func validatePathFormat(f entryFields) []analysis.Violation {
+	var violations []analysis.Violation
+	if !strings.HasPrefix(f.source, "/") {
+		const msg = "bad path: must start with '/'"
+		violations = append(violations, analysis.Violation{
+			File:    "docs.json",
+			Line:    f.line,
+			Col:     1,
+			Message: formatMessage(f.i, "source", f.source, msg),
+		})
+	}
+	if !strings.HasPrefix(f.destination, "/") && !destIsHTTP(f.destination) {
+		const msg = "bad path: must start with '/' (or http(s)://)"
+		violations = append(violations, analysis.Violation{
+			File:    "docs.json",
+			Line:    f.line,
+			Col:     1,
+			Message: formatMessage(f.i, "destination", f.destination, msg),
+		})
+	}
+	return violations
+}
+
+// validateFileSystem dispatches to validateSource and validateDestination
+// for paths that have valid leading-slash format.
+func validateFileSystem(
+	f entryFields,
+	contentRoot string,
+	openAPISources map[string]bool,
+) []analysis.Violation {
+	var violations []analysis.Violation
+	if strings.HasPrefix(f.source, "/") {
+		srcPrefix, _ := splitWildcard(cleanPath(f.source))
+		if containsTraversalSegment(srcPrefix) {
+			violations = append(violations, analysis.Violation{
+				File: "docs.json",
+				Line: f.line,
+				Col:  1,
+				Message: formatMessage(
+					f.i, "source", f.source,
+					"bad path: contains '..' or '.' segment",
+				),
+			})
+		} else {
+			v := validateSource(f.i, f.source, contentRoot, openAPISources, f.line)
+			violations = append(violations, v...)
+		}
+	}
+	if !destIsHTTP(f.destination) && strings.HasPrefix(f.destination, "/") {
+		dstPrefix, _ := splitWildcard(cleanPath(f.destination))
+		if containsTraversalSegment(dstPrefix) {
+			violations = append(violations, analysis.Violation{
+				File: "docs.json",
+				Line: f.line,
+				Col:  1,
+				Message: formatMessage(
+					f.i, "destination", f.destination,
+					"bad path: contains '..' or '.' segment",
+				),
+			})
+		} else {
+			v := validateDestination(
+				f.i, f.destination, contentRoot, openAPISources, f.line,
+			)
+			violations = append(violations, v...)
+		}
+	}
+	return violations
+}
+
+// containsTraversalSegment returns true if any segment equals ".." or
+// ".". Such segments would let filepath.Join resolve outside contentRoot.
+func containsTraversalSegment(segments []string) bool {
+	for _, seg := range segments {
+		if seg == ".." || seg == "." {
+			return true
+		}
+	}
+	return false
+}
+
+// destIsHTTP reports whether destination uses an http:// or https://
+// scheme (lowercase only, mirroring the Node.js reference).
+func destIsHTTP(destination string) bool {
+	return strings.HasPrefix(destination, "http://") ||
+		strings.HasPrefix(destination, "https://")
+}
+
+// stringField returns the string value at key (and true) when it is a
+// non-empty string. When the key is missing, the value is not a string,
+// or the string is empty, it returns ("", false). When the value is a
+// non-string scalar like a number, it falls back to ("", false) — the
+// Node.js reference reports an empty value in that case too.
+func stringField(entry map[string]any, key string) (string, bool) {
+	raw, present := entry[key]
+	if !present || raw == nil {
+		return "", false
+	}
+	s, ok := raw.(string)
+	if !ok {
+		return "", false
+	}
+	if s == "" {
+		return "", false
+	}
+	return s, true
+}
+
+// validateSource emits filesystem-related violations for a source URL
+// that already starts with '/'. The source must additionally start with
+// /docs/ (or be exactly /docs); after stripping the prefix it is
+// resolved against contentRoot to detect dead redirects.
+func validateSource(
+	i int,
+	source, contentRoot string,
+	openAPISources map[string]bool,
+	line int,
+) []analysis.Violation {
+	cleaned := cleanPath(source)
+	if !strings.HasPrefix(cleaned, "docs/") && cleaned != "docs" {
+		return []analysis.Violation{{
+			File: "docs.json",
+			Line: line,
+			Col:  1,
+			Message: formatMessage(
+				i, "source", source, "bad prefix (must start with /docs/)",
+			),
+		}}
+	}
+
+	prefix, hasWildcard := splitWildcard(cleaned)
+	prefixFs := filepath.Join(contentRoot, filepath.Join(prefix...))
+
+	if !hasWildcard {
+		if pageExists(prefixFs) {
+			return []analysis.Violation{{
+				File: "docs.json",
+				Line: line,
+				Col:  1,
+				Message: formatMessage(
+					i, "source", source,
+					"dead redirect (source resolves to a real page)",
+				),
+			}}
+		}
+		return nil
+	}
+
+	return validateWildcardSource(wildcardSourceCtx{
+		i:              i,
+		source:         source,
+		prefix:         prefix,
+		prefixFs:       prefixFs,
+		openAPISources: openAPISources,
+		line:           line,
+	})
+}
+
+// wildcardSourceCtx bundles the inputs to validateWildcardSource so the
+// helper stays under the 5-parameter limit.
+type wildcardSourceCtx struct {
+	i              int
+	source         string
+	prefix         []string
+	prefixFs       string
+	openAPISources map[string]bool
+	line           int
+}
+
+// validateWildcardSource handles the wildcard branch of validateSource:
+// the prefix must not be a real page, a directory containing pages, or a
+// Mintlify-generated OpenAPI route (yaml registered as nav.*.openapi.source
+// AND present on disk).
+func validateWildcardSource(c wildcardSourceCtx) []analysis.Violation {
+	i, source, prefix, prefixFs := c.i, c.source, c.prefix, c.prefixFs
+	openAPISources, line := c.openAPISources, c.line
+	if pageExists(prefixFs) {
+		return []analysis.Violation{{
+			File: "docs.json",
+			Line: line,
+			Col:  1,
+			Message: formatMessage(
+				i, "source", source,
+				"dead redirect (wildcard source prefix resolves to a real page)",
+			),
+		}}
+	}
+	if dirExists(prefixFs) && dirHasPages(prefixFs) {
+		return []analysis.Violation{{
+			File: "docs.json",
+			Line: line,
+			Col:  1,
+			Message: formatMessage(
+				i, "source", source,
+				"dead redirect (wildcard source prefix has real pages)",
+			),
+		}}
+	}
+	yamlRel := strings.Join(prefix, "/") + ".yaml"
+	yamlFs := prefixFs + ".yaml"
+	if openAPISources[yamlRel] && fileExists(yamlFs) {
+		return []analysis.Violation{{
+			File: "docs.json",
+			Line: line,
+			Col:  1,
+			Message: formatMessage(
+				i, "source", source,
+				"dead redirect (wildcard source prefix has Mintlify-generated pages)",
+			),
+		}}
+	}
+	return nil
+}
+
+// validateDestination emits filesystem-related violations for a
+// destination URL that already starts with '/'. Honors the OpenAPI
+// escape hatch: a wildcard destination whose on-disk prefix is not a
+// directory is still accepted when ${prefix}.yaml is registered as a
+// nav.*.openapi.source value somewhere in docs.json.
+func validateDestination(
+	i int,
+	destination, contentRoot string,
+	openAPISources map[string]bool,
+	line int,
+) []analysis.Violation {
+	cleaned := cleanPath(destination)
+	if !strings.HasPrefix(cleaned, "docs/") && cleaned != "docs" {
+		return []analysis.Violation{{
+			File: "docs.json",
+			Line: line,
+			Col:  1,
+			Message: formatMessage(
+				i, "destination", destination,
+				"bad prefix (must start with /docs/)",
+			),
+		}}
+	}
+
+	prefix, hasWildcard := splitWildcard(cleaned)
+	prefixRel := strings.Join(prefix, "/")
+	prefixFs := filepath.Join(contentRoot, filepath.Join(prefix...))
+
+	if !hasWildcard {
+		if pageExists(prefixFs) {
+			return nil
+		}
+		return []analysis.Violation{{
+			File: "docs.json",
+			Line: line,
+			Col:  1,
+			Message: formatMessage(
+				i, "destination", destination,
+				"missing destination (no .mdx or .md page exists)",
+			),
+		}}
+	}
+
+	if dirExists(prefixFs) {
+		return nil
+	}
+	yamlRel := prefixRel + ".yaml"
+	yamlFs := prefixFs + ".yaml"
+	if openAPISources[yamlRel] && fileExists(yamlFs) {
+		return nil
+	}
+	return []analysis.Violation{{
+		File: "docs.json",
+		Line: line,
+		Col:  1,
+		Message: formatMessage(
+			i, "destination", destination,
+			"wildcard prefix not a directory",
+		),
+	}}
+}
+
+// cleanPath strips, in order, any "?..." query string, any "#..."
+// fragment, the leading '/', and a trailing '/'. The result is suitable
+// for splitting on '/' and joining with contentRoot.
+func cleanPath(p string) string {
+	s := p
+	if idx := strings.Index(s, "?"); idx != -1 {
+		s = s[:idx]
+	}
+	if idx := strings.Index(s, "#"); idx != -1 {
+		s = s[:idx]
+	}
+	s = strings.TrimPrefix(s, "/")
+	s = strings.TrimSuffix(s, "/")
+	return s
+}
+
+// splitWildcard returns the prefix segments preceding the first
+// wildcard segment (per wildcardSegment) and a flag indicating whether
+// any wildcard segment was present.
+func splitWildcard(cleaned string) ([]string, bool) {
+	rawSegments := strings.Split(cleaned, "/")
+	var segments []string
+	for _, seg := range rawSegments {
+		if seg != "" {
+			segments = append(segments, seg)
+		}
+	}
+	var prefix []string
+	hasWildcard := false
+	for _, seg := range segments {
+		if wildcardSegment().MatchString(seg) {
+			hasWildcard = true
+			break
+		}
+		prefix = append(prefix, seg)
+	}
+	return prefix, hasWildcard
+}
+
+// pageExists returns true when `${prefixFs}.mdx` or `${prefixFs}.md`
+// exists as a regular file.
+func pageExists(prefixFs string) bool {
+	return fileExists(prefixFs+".mdx") || fileExists(prefixFs+".md")
+}
+
+func fileExists(p string) bool {
+	st, err := os.Stat(p)
+	if err != nil {
+		return false
+	}
+	return st.Mode().IsRegular()
+}
+
+func dirExists(p string) bool {
+	st, err := os.Stat(p)
+	if err != nil {
+		return false
+	}
+	return st.IsDir()
+}
+
+// dirHasPages returns true when dir contains any .mdx or .md file at
+// any depth.
+func dirHasPages(dir string) bool {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return false
+	}
+	for _, ent := range entries {
+		full := filepath.Join(dir, ent.Name())
+		if ent.IsDir() {
+			if dirHasPages(full) {
+				return true
+			}
+			continue
+		}
+		name := ent.Name()
+		if strings.HasSuffix(name, ".mdx") || strings.HasSuffix(name, ".md") {
+			return true
+		}
+	}
+	return false
+}
+
+// collectOpenAPISources walks any object node looking for
+// `openapi.source` string values and returns them as a set. Mintlify
+// generates pages from these yaml files at build time, so a wildcard
+// destination may target a virtual directory that only exists at build
+// time; the values here form the OpenAPI escape hatch.
+func collectOpenAPISources(parsed map[string]any) map[string]bool {
+	result := map[string]bool{}
+	walkOpenAPISources(parsed, result)
+	return result
+}
+
+func walkOpenAPISources(node any, result map[string]bool) {
+	switch n := node.(type) {
+	case map[string]any:
+		if openapi, ok := n["openapi"].(map[string]any); ok {
+			if src, ok := openapi["source"].(string); ok {
+				result[src] = true
+			}
+		}
+		for _, v := range n {
+			walkOpenAPISources(v, result)
+		}
+	case []any:
+		for _, item := range n {
+			walkOpenAPISources(item, result)
+		}
+	}
+}
+
+// lineLookup returns a slice of length count whose i-th element is the
+// 1-based line number of the i-th redirect entry's starting position
+// in docsJSONText (the opening `{` for object entries, or the start of
+// the token for non-object entries). Entries that cannot be located
+// fall back to 1.
+func lineLookup(docsJSONText string, count int) []int {
+	result := make([]int, count)
+	for i := range result {
+		result[i] = 1
+	}
+	if count == 0 {
+		return result
+	}
+
+	dec := json.NewDecoder(bytes.NewReader([]byte(docsJSONText)))
+	if !advanceToRedirectsArray(dec) {
+		return result
+	}
+	scanRedirectEntries(dec, docsJSONText, result, count)
+	return result
+}
+
+// advanceToRedirectsArray consumes tokens from dec until the opening
+// '[' of the top-level "redirects" array is read, returning true. If
+// EOF or any error occurs first, returns false.
+func advanceToRedirectsArray(dec *json.Decoder) bool {
+	for {
+		tok, err := dec.Token()
+		if err != nil {
+			return false
+		}
+		key, ok := tok.(string)
+		if !ok || key != "redirects" {
+			continue
+		}
+		next, err := dec.Token()
+		if err != nil {
+			return false
+		}
+		if d, ok := next.(json.Delim); ok && d == '[' {
+			return true
+		}
+	}
+}
+
+// scanRedirectEntries reads tokens from dec (which must be positioned
+// just inside the redirects array) and fills result with the 1-based
+// line number of each top-level entry's starting byte.
+func scanRedirectEntries(
+	dec *json.Decoder,
+	docsJSONText string,
+	result []int,
+	count int,
+) {
+	arrayDepth := 1
+	entryIdx := 0
+	for {
+		offsetBefore := dec.InputOffset()
+		tok, err := dec.Token()
+		if err != nil {
+			return
+		}
+
+		if d, ok := tok.(json.Delim); ok {
+			switch d {
+			case '{', '[':
+				if arrayDepth == 1 && entryIdx < count {
+					result[entryIdx] = lineForOffset(
+						docsJSONText,
+						tokenStart(docsJSONText, int(offsetBefore)),
+					)
+					entryIdx++
+				}
+				arrayDepth++
+			case '}', ']':
+				arrayDepth--
+				if arrayDepth == 0 {
+					return
+				}
+			}
+			continue
+		}
+
+		// Primitive token at the top level of the array (e.g. string entry).
+		if arrayDepth == 1 && entryIdx < count {
+			result[entryIdx] = lineForOffset(
+				docsJSONText,
+				tokenStart(docsJSONText, int(offsetBefore)),
+			)
+			entryIdx++
+		}
+	}
+}
+
+// tokenStart advances past JSON whitespace and structural separators
+// (',' between array elements) to find the first non-whitespace,
+// non-separator byte at or after offset. Decoder.InputOffset() returns
+// the position immediately after the previously consumed token, which
+// may sit on whitespace or a comma; we want the actual token start.
+func tokenStart(text string, offset int) int {
+	for offset < len(text) {
+		c := text[offset]
+		if c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == ',' {
+			offset++
+			continue
+		}
+		break
+	}
+	return offset
+}
+
+// lineForOffset returns the 1-based line number of byteOffset in text.
+func lineForOffset(text string, byteOffset int) int {
+	line := 1
+	for j := 0; j < byteOffset; j++ {
+		if text[j] == '\n' {
+			line++
+		}
+	}
+	return line
+}
+
+// formatMessage returns the canonical diagnostic message body for a
+// single redirect violation. The format is asserted (substring match)
+// by tests/test-lint.sh.
+func formatMessage(i int, field, value, message string) string {
+	return fmt.Sprintf("redirects[%d] %s %q: %s", i, field, value, message)
+}
