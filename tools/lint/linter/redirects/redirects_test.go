@@ -89,7 +89,8 @@ func TestCheck(t *testing.T) {
 
 	t.Run("invalid_json", func(t *testing.T) {
 		root := t.TempDir()
-		if err := os.WriteFile(filepath.Join(root, "docs.json"), []byte("{not json"), 0o644); err != nil {
+		path := filepath.Join(root, "docs.json")
+		if err := os.WriteFile(path, []byte("{not json"), 0o644); err != nil {
 			t.Fatal(err)
 		}
 		vs := Check(root)
@@ -119,9 +120,7 @@ func TestCheck(t *testing.T) {
 	})
 
 	t.Run("success_no_violations", func(t *testing.T) {
-		root := setupContentRoot(t, map[string]string{
-			"docs.json": `{"redirects": []}`,
-		})
+		root := setupContentRoot(t, map[string]string{"docs.json": `{"redirects": []}`})
 		vs := Check(root)
 		if vs != nil {
 			t.Errorf("expected nil, got %v", vs)
@@ -145,9 +144,7 @@ func TestValidate(t *testing.T) {
 			// Case 1: top-level not an object
 			name:     "top_level_not_object",
 			docsJSON: `[1,2,3]`,
-			wants: []want{
-				{line: 1, substr: "invalid JSON:"},
-			},
+			wants:    []want{{line: 1, substr: "invalid JSON:"}},
 		},
 		{
 			// Case 2: no redirects key
@@ -171,9 +168,7 @@ func TestValidate(t *testing.T) {
 			// Case 4b: redirects entry not an object (string)
 			name:     "entry_not_object",
 			docsJSON: `{"redirects": ["bad"]}`,
-			wants: []want{
-				{substr: `redirects[0] entry "": not an object`},
-			},
+			wants:    []want{{substr: `redirects[0] entry "": not an object`}},
 		},
 		{
 			// Case 5: missing source
@@ -215,26 +210,20 @@ func TestValidate(t *testing.T) {
 			name:     "source_no_leading_slash",
 			docsJSON: `{"redirects": [{"source": "docs/x", "destination": "/docs/y"}]}`,
 			files:    map[string]string{"docs/y.mdx": "y"},
-			wants: []want{
-				{substr: `must start with '/'`},
-			},
+			wants:    []want{{substr: `must start with '/'`}},
 		},
 		{
 			// Case 7: destination missing leading slash and not http
 			name:     "destination_no_leading_slash",
 			docsJSON: `{"redirects": [{"source": "/docs/x", "destination": "docs/y"}]}`,
-			wants: []want{
-				{substr: `must start with '/' (or http(s)://)`},
-			},
+			wants:    []want{{substr: `must start with '/' (or http(s)://)`}},
 		},
 		{
 			// Case 8: source bad prefix (not /docs/)
 			name:     "source_bad_prefix",
 			docsJSON: `{"redirects": [{"source": "/api/x", "destination": "/docs/y"}]}`,
 			files:    map[string]string{"docs/y.mdx": "y"},
-			wants: []want{
-				{substr: `bad prefix (must start with /docs/)`},
-			},
+			wants:    []want{{substr: `bad prefix (must start with /docs/)`}},
 		},
 		{
 			// Case 8b: source exactly /docs (no slash)
@@ -245,73 +234,73 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			// Case 9: source dead redirect (resolves to a real .mdx page)
-			name:     "source_dead_redirect_mdx",
-			docsJSON: `{"redirects": [{"source": "/docs/dead", "destination": "/docs/y"}]}`,
-			files: map[string]string{
-				"docs/dead.mdx": "dead",
-				"docs/y.mdx":    "y",
-			},
+			name: "source_dead_redirect_mdx",
+			docsJSON: `{"redirects": [{"source": "/docs/dead",` +
+				` "destination": "/docs/y"}]}`,
+			files: map[string]string{"docs/dead.mdx": "dead", "docs/y.mdx": "y"},
 			wants: []want{
 				{substr: `dead redirect (source resolves to a real page)`},
 			},
 		},
 		{
 			// Case 10: source dead redirect via .md
-			name:     "source_dead_redirect_md",
-			docsJSON: `{"redirects": [{"source": "/docs/dead", "destination": "/docs/y"}]}`,
-			files: map[string]string{
-				"docs/dead.md": "dead",
-				"docs/y.mdx":   "y",
-			},
+			name: "source_dead_redirect_md",
+			docsJSON: `{"redirects": [{"source": "/docs/dead",` +
+				` "destination": "/docs/y"}]}`,
+			files: map[string]string{"docs/dead.md": "dead", "docs/y.mdx": "y"},
 			wants: []want{
 				{substr: `dead redirect (source resolves to a real page)`},
 			},
 		},
 		{
 			// Case 11: source non-wildcard, no real page (OK)
-			name:     "source_non_wildcard_ok",
-			docsJSON: `{"redirects": [{"source": "/docs/old", "destination": "/docs/new"}]}`,
-			files:    map[string]string{"docs/new.mdx": "new"},
-			wants:    nil,
+			name: "source_non_wildcard_ok",
+			docsJSON: `{"redirects": [{"source": "/docs/old",` +
+				` "destination": "/docs/new"}]}`,
+			files: map[string]string{"docs/new.mdx": "new"},
+			wants: nil,
 		},
 		{
 			// Case 12: wildcard source prefix resolves to a real page
-			name:     "wildcard_source_prefix_real_page",
-			docsJSON: `{"redirects": [{"source": "/docs/old/:slug*", "destination": "/docs/new"}]}`,
-			files: map[string]string{
-				"docs/old.mdx": "old",
-				"docs/new.mdx": "new",
-			},
+			name: "wildcard_source_prefix_real_page",
+			docsJSON: `{"redirects": [{"source": "/docs/old/:slug*",` +
+				` "destination": "/docs/new"}]}`,
+			files: map[string]string{"docs/old.mdx": "old", "docs/new.mdx": "new"},
 			wants: []want{
-				{substr: `dead redirect (wildcard source prefix resolves to a real page)`},
+				{substr: `dead redirect ` +
+					`(wildcard source prefix resolves to a real page)`},
 			},
 		},
 		{
 			// Case 13: canonical positive case — wildcard source dir doesn't exist
-			name:     "wildcard_source_no_dir_ok",
-			docsJSON: `{"redirects": [{"source": "/docs/old/:slug*", "destination": "/docs/new"}]}`,
-			files:    map[string]string{"docs/new.mdx": "new"},
-			wants:    nil,
+			name: "wildcard_source_no_dir_ok",
+			docsJSON: `{"redirects": [{"source": "/docs/old/:slug*",` +
+				` "destination": "/docs/new"}]}`,
+			files: map[string]string{"docs/new.mdx": "new"},
+			wants: nil,
 		},
 		{
 			// Case 14: destination missing
-			name:     "destination_missing_page",
-			docsJSON: `{"redirects": [{"source": "/docs/old", "destination": "/docs/missing"}]}`,
+			name: "destination_missing_page",
+			docsJSON: `{"redirects": [{"source": "/docs/old",` +
+				` "destination": "/docs/missing"}]}`,
 			wants: []want{
 				{substr: `missing destination (no .mdx or .md page exists)`},
 			},
 		},
 		{
 			// Case 15: canonical positive — destination exists as .md
-			name:     "destination_md_ok",
-			docsJSON: `{"redirects": [{"source": "/docs/old", "destination": "/docs/new"}]}`,
-			files:    map[string]string{"docs/new.md": "new"},
-			wants:    nil,
+			name: "destination_md_ok",
+			docsJSON: `{"redirects": [{"source": "/docs/old",` +
+				` "destination": "/docs/new"}]}`,
+			files: map[string]string{"docs/new.md": "new"},
+			wants: nil,
 		},
 		{
 			// Case 16: wildcard source dir with pages → recursion in dirHasPages
-			name:     "wildcard_source_dir_has_pages",
-			docsJSON: `{"redirects": [{"source": "/docs/old/:slug*", "destination": "/docs/new"}]}`,
+			name: "wildcard_source_dir_has_pages",
+			docsJSON: `{"redirects": [{"source": "/docs/old/:slug*",` +
+				` "destination": "/docs/new"}]}`,
 			files: map[string]string{
 				"docs/old/sub/page.mdx": "page",
 				"docs/new.mdx":          "new",
@@ -322,21 +311,17 @@ func TestValidate(t *testing.T) {
 		},
 		{
 			// Case 17: wildcard source dir exists but is empty (no pages)
-			name:     "wildcard_source_dir_empty",
-			docsJSON: `{"redirects": [{"source": "/docs/old/:slug*", "destination": "/docs/new"}]}`,
-			files: map[string]string{
-				"docs/old/":    "",
-				"docs/new.mdx": "new",
-			},
+			name: "wildcard_source_dir_empty",
+			docsJSON: `{"redirects": [{"source": "/docs/old/:slug*",` +
+				` "destination": "/docs/new"}]}`,
+			files: map[string]string{"docs/old/": "", "docs/new.mdx": "new"},
 			wants: nil,
 		},
 		{
 			// Case 18: destination bad prefix
 			name:     "destination_bad_prefix",
 			docsJSON: `{"redirects": [{"source": "/docs/x", "destination": "/api/y"}]}`,
-			wants: []want{
-				{substr: `bad prefix (must start with /docs/)`},
-			},
+			wants:    []want{{substr: `bad prefix (must start with /docs/)`}},
 		},
 		{
 			// Case 18b: destination http(s):// — no fs check
@@ -348,29 +333,25 @@ func TestValidate(t *testing.T) {
 			// Case 19: destination exactly /docs (canonical form), no fs file
 			name:     "destination_exactly_docs",
 			docsJSON: `{"redirects": [{"source": "/docs/x", "destination": "/docs"}]}`,
-			wants: []want{
-				{substr: `missing destination`},
-			},
+			wants:    []want{{substr: `missing destination`}},
 		},
 		{
 			// Case 20: canonical positive — destination wildcard prefix is a directory
-			name:     "destination_wildcard_dir_ok",
-			docsJSON: `{"redirects": [{"source": "/docs/x", "destination": "/docs/new/:slug*"}]}`,
-			files: map[string]string{
-				"docs/new/sub.mdx": "sub",
-			},
+			name: "destination_wildcard_dir_ok",
+			docsJSON: `{"redirects": [{"source": "/docs/x",` +
+				` "destination": "/docs/new/:slug*"}]}`,
+			files: map[string]string{"docs/new/sub.mdx": "sub"},
 			wants: nil,
 		},
 		{
-			// Case 21: OpenAPI escape hatch — wildcard prefix is yaml file registered in nav
+			// Case 21: OpenAPI escape hatch — wildcard prefix is yaml file
+			// registered in nav
 			name: "destination_wildcard_openapi_yaml_ok",
 			docsJSON: `{
   "nav": [{"openapi": {"source": "docs/api/spec.yaml"}}],
   "redirects": [{"source": "/docs/x", "destination": "/docs/api/spec/:slug*"}]
 }`,
-			files: map[string]string{
-				"docs/api/spec.yaml": "openapi: 3.0",
-			},
+			files: map[string]string{"docs/api/spec.yaml": "openapi: 3.0"},
 			wants: nil,
 		},
 		{
@@ -380,66 +361,64 @@ func TestValidate(t *testing.T) {
   "nav": [{"openapi": {"source": "docs/api/spec.yaml"}}],
   "redirects": [{"source": "/docs/x", "destination": "/docs/api/spec/:slug*"}]
 }`,
-			wants: []want{
-				{substr: `wildcard prefix not a directory`},
-			},
+			wants: []want{{substr: `wildcard prefix not a directory`}},
 		},
 		{
 			// Case 23: destination wildcard, prefix not dir, not registered yaml
-			name:     "destination_wildcard_not_dir_no_yaml",
-			docsJSON: `{"redirects": [{"source": "/docs/x", "destination": "/docs/missing/:slug*"}]}`,
-			wants: []want{
-				{substr: `wildcard prefix not a directory`},
-			},
+			name: "destination_wildcard_not_dir_no_yaml",
+			docsJSON: `{"redirects": [{"source": "/docs/x",` +
+				` "destination": "/docs/missing/:slug*"}]}`,
+			wants: []want{{substr: `wildcard prefix not a directory`}},
 		},
 		{
 			// Case 24: query string and fragment stripped from path
-			name:     "path_with_query_and_fragment",
-			docsJSON: `{"redirects": [{"source": "/docs/old?x=1#frag", "destination": "/docs/new?y=2#bar"}]}`,
-			files:    map[string]string{"docs/new.mdx": "new"},
-			wants:    nil,
+			name: "path_with_query_and_fragment",
+			docsJSON: `{"redirects": [{"source": "/docs/old?x=1#frag",` +
+				` "destination": "/docs/new?y=2#bar"}]}`,
+			files: map[string]string{"docs/new.mdx": "new"},
+			wants: nil,
 		},
 		{
 			// Case 25: trailing slash stripped
-			name:     "trailing_slash_stripped",
-			docsJSON: `{"redirects": [{"source": "/docs/old/", "destination": "/docs/new/"}]}`,
-			files:    map[string]string{"docs/new.mdx": "new"},
-			wants:    nil,
+			name: "trailing_slash_stripped",
+			docsJSON: `{"redirects": [{"source": "/docs/old/",` +
+				` "destination": "/docs/new/"}]}`,
+			files: map[string]string{"docs/new.mdx": "new"},
+			wants: nil,
 		},
 		{
 			// Case 26: source with both bad-prefix path issues — both reported
-			name:     "source_no_slash_and_destination_no_slash",
-			docsJSON: `{"redirects": [{"source": "docs/x", "destination": "docs/y"}]}`,
+			name: "source_no_slash_and_destination_no_slash",
+			docsJSON: `{"redirects": [{"source": "docs/x",` +
+				` "destination": "docs/y"}]}`,
 			wants: []want{
 				{substr: `source "docs/x": bad path: must start with '/'`},
-				{substr: `destination "docs/y": bad path: must start with '/' (or http(s)://)`},
+				{substr: `destination "docs/y":` +
+					` bad path: must start with '/' (or http(s)://)`},
 			},
 		},
 		{
-			// Case 27: destination http (uppercase) — only / and lowercase http(s):// honored.
-			name:     "destination_http_uppercase_rejected",
-			docsJSON: `{"redirects": [{"source": "/docs/x", "destination": "HTTPS://example.com"}]}`,
-			wants: []want{
-				{substr: `must start with '/' (or http(s)://)`},
-			},
+			// Case 27: destination http (uppercase) — only / and lowercase
+			// http(s):// honored.
+			name: "destination_http_uppercase_rejected",
+			docsJSON: `{"redirects": [{"source": "/docs/x",` +
+				` "destination": "HTTPS://example.com"}]}`,
+			wants: []want{{substr: `must start with '/' (or http(s)://)`}},
 		},
 		{
 			// Case 28: source resolves to dir (not regular file) — pageExists false
-			name:     "source_resolves_to_dir",
-			docsJSON: `{"redirects": [{"source": "/docs/old", "destination": "/docs/new"}]}`,
-			files: map[string]string{
-				"docs/old.mdx/": "",
-				"docs/new.mdx":  "new",
-			},
+			name: "source_resolves_to_dir",
+			docsJSON: `{"redirects": [{"source": "/docs/old",` +
+				` "destination": "/docs/new"}]}`,
+			files: map[string]string{"docs/old.mdx/": "", "docs/new.mdx": "new"},
 			wants: nil,
 		},
 		{
 			// Case 29: wildcard source — first segment is wildcard (empty prefix)
-			name:     "wildcard_source_empty_prefix",
-			docsJSON: `{"redirects": [{"source": "/docs/:slug*", "destination": "/docs/new"}]}`,
-			files: map[string]string{
-				"docs/new.mdx": "new",
-			},
+			name: "wildcard_source_empty_prefix",
+			docsJSON: `{"redirects": [{"source": "/docs/:slug*",` +
+				` "destination": "/docs/new"}]}`,
+			files: map[string]string{"docs/new.mdx": "new"},
 			wants: []want{
 				// docs/ exists as a dir and contains pages
 				{substr: `dead redirect (wildcard source prefix has real pages)`},
@@ -464,7 +443,10 @@ func TestValidate(t *testing.T) {
 				return
 			}
 			if len(vs) != len(tc.wants) {
-				t.Fatalf("expected %d violations, got %d: %v", len(tc.wants), len(vs), vs)
+				t.Fatalf(
+					"expected %d violations, got %d: %v",
+					len(tc.wants), len(vs), vs,
+				)
 			}
 			for i, w := range tc.wants {
 				assertViolation(t, vs[i], w.line, w.substr)
@@ -521,10 +503,7 @@ func TestCollectOpenAPISources(t *testing.T) {
 			},
 		}
 		got := collectOpenAPISources(input)
-		want := map[string]bool{
-			"docs/api/b.yaml": true,
-			"docs/api/c.yaml": true,
-		}
+		want := map[string]bool{"docs/api/b.yaml": true, "docs/api/c.yaml": true}
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("got %v, want %v", got, want)
 		}
@@ -544,19 +523,14 @@ func TestCollectOpenAPISources(t *testing.T) {
 			"openapi": map[string]any{"source": "docs/api/e.yaml"},
 		}
 		got := collectOpenAPISources(input)
-		want := map[string]bool{
-			"docs/api/d.yaml": true,
-			"docs/api/e.yaml": true,
-		}
+		want := map[string]bool{"docs/api/d.yaml": true, "docs/api/e.yaml": true}
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("got %v, want %v", got, want)
 		}
 	})
 
 	t.Run("openapi_non_map_defensive", func(t *testing.T) {
-		input := map[string]any{
-			"openapi": "scalar-not-a-map",
-		}
+		input := map[string]any{"openapi": "scalar-not-a-map"}
 		got := collectOpenAPISources(input)
 		if len(got) != 0 {
 			t.Errorf("expected empty, got %v", got)
@@ -564,9 +538,7 @@ func TestCollectOpenAPISources(t *testing.T) {
 	})
 
 	t.Run("openapi_source_non_string_defensive", func(t *testing.T) {
-		input := map[string]any{
-			"openapi": map[string]any{"source": 42},
-		}
+		input := map[string]any{"openapi": map[string]any{"source": 42}}
 		got := collectOpenAPISources(input)
 		if len(got) != 0 {
 			t.Errorf("expected empty, got %v", got)
@@ -574,9 +546,7 @@ func TestCollectOpenAPISources(t *testing.T) {
 	})
 
 	t.Run("no_nav_at_all", func(t *testing.T) {
-		input := map[string]any{
-			"name": "x",
-		}
+		input := map[string]any{"name": "x"}
 		got := collectOpenAPISources(input)
 		if len(got) != 0 {
 			t.Errorf("expected empty, got %v", got)
@@ -584,9 +554,7 @@ func TestCollectOpenAPISources(t *testing.T) {
 	})
 
 	t.Run("nav_is_scalar", func(t *testing.T) {
-		input := map[string]any{
-			"nav": "scalar",
-		}
+		input := map[string]any{"nav": "scalar"}
 		got := collectOpenAPISources(input)
 		if len(got) != 0 {
 			t.Errorf("expected empty, got %v", got)
@@ -738,18 +706,14 @@ func TestDirHasPages(t *testing.T) {
 	})
 
 	t.Run("md_extension", func(t *testing.T) {
-		root := setupContentRoot(t, map[string]string{
-			"a.md": "x",
-		})
+		root := setupContentRoot(t, map[string]string{"a.md": "x"})
 		if !dirHasPages(root) {
 			t.Error("expected true for dir with .md")
 		}
 	})
 
 	t.Run("non_page_files_only", func(t *testing.T) {
-		root := setupContentRoot(t, map[string]string{
-			"a.txt": "x",
-		})
+		root := setupContentRoot(t, map[string]string{"a.txt": "x"})
 		if dirHasPages(root) {
 			t.Error("expected false for dir with .txt only")
 		}
@@ -759,10 +723,7 @@ func TestDirHasPages(t *testing.T) {
 		// "0empty/" sorts before "z.mdx" so the empty-subdir branch is
 		// iterated first and the `continue` after a false dirHasPages is
 		// exercised before the .mdx sibling causes return true.
-		root := setupContentRoot(t, map[string]string{
-			"0empty/": "",
-			"z.mdx":   "x",
-		})
+		root := setupContentRoot(t, map[string]string{"0empty/": "", "z.mdx": "x"})
 		if !dirHasPages(root) {
 			t.Error("expected true for dir with .mdx sibling and empty subdir")
 		}

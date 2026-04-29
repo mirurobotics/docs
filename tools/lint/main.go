@@ -11,19 +11,17 @@ import (
 	"github.com/mirurobotics/docs/tools/lint/linter/redirects"
 )
 
-func main() {
-	os.Exit(run(os.Args, os.Stdout, os.Stderr))
-}
+func main() { os.Exit(run(os.Args, os.Stdout, os.Stderr)) }
 
 func run(args []string, stdout, stderr io.Writer) int {
 	if len(args) < 2 {
-		fmt.Fprintln(stderr, "usage: lint <file>...")
+		_, _ = fmt.Fprintln(stderr, "usage: lint <file>...")
 		return 2
 	}
 
 	contentRoot, err := findContentRoot(args[1])
 	if err != nil {
-		fmt.Fprintf(stderr, "lint: cannot determine content root: %v\n", err)
+		_, _ = fmt.Fprintf(stderr, "lint: cannot determine content root: %v\n", err)
 		return 2
 	}
 
@@ -33,7 +31,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 	for _, path := range args[1:] {
 		violations, err := linter.ProcessFile(path, contentRoot)
 		if err != nil {
-			fmt.Fprintf(stderr, "lint: %s: %v\n", path, err)
+			_, _ = fmt.Fprintf(stderr, "lint: %s: %v\n", path, err)
 			exitCode = 2
 			continue
 		}
@@ -45,7 +43,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 	allViolations = append(allViolations, redirects.Check(contentRoot)...)
 
 	for _, v := range allViolations {
-		fmt.Fprintf(stdout, "%s:%d:%d: %s\n", v.File, v.Line, v.Col, v.Message)
+		_, _ = fmt.Fprintf(stdout, "%s:%d:%d: %s\n", v.File, v.Line, v.Col, v.Message)
 	}
 
 	if len(allViolations) > 0 && exitCode == 0 {

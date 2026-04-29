@@ -22,9 +22,13 @@ import (
 	"github.com/mirurobotics/docs/tools/lint/linter/analysis"
 )
 
-// wildcardSegment matches a single Mintlify-style wildcard URL segment,
-// e.g. ":slug" or ":slug*".
-var wildcardSegment = regexp.MustCompile(`^:[A-Za-z][A-Za-z0-9]*\*?$`)
+// wildcardSegment returns the compiled regex matching a single
+// Mintlify-style wildcard URL segment, e.g. ":slug" or ":slug*". It is
+// a function rather than a package-level variable to avoid mutable
+// global state.
+func wildcardSegment() *regexp.Regexp {
+	return regexp.MustCompile(`^:[A-Za-z][A-Za-z0-9]*\*?$`)
+}
 
 // Check reads ${contentRoot}/docs.json and returns violations for
 // dead/missing/malformed redirects. If docs.json is absent, returns nil.
@@ -79,72 +83,141 @@ func validate(docsJSONBytes []byte, contentRoot string) []analysis.Violation {
 
 	var violations []analysis.Violation
 	for i, raw := range redirects {
-		line := lines[i]
-		entry, ok := raw.(map[string]any)
-		if !ok {
-			violations = append(violations, analysis.Violation{
-				File:    "docs.json",
-				Line:    line,
-				Col:     1,
-				Message: formatMessage(i, "entry", "", "not an object"),
-			})
-			continue
-		}
-
-		source, sourceOk := stringField(entry, "source")
-		destination, destOk := stringField(entry, "destination")
-
-		if !sourceOk {
-			violations = append(violations, analysis.Violation{
-				File:    "docs.json",
-				Line:    line,
-				Col:     1,
-				Message: formatMessage(i, "source", source, "must be a non-empty string"),
-			})
-		}
-		if !destOk {
-			violations = append(violations, analysis.Violation{
-				File:    "docs.json",
-				Line:    line,
-				Col:     1,
-				Message: formatMessage(i, "destination", destination, "must be a non-empty string"),
-			})
-		}
-		if !sourceOk || !destOk {
-			continue
-		}
-
-		// Rule (b): source must start with '/'; destination must start
-		// with '/' or http(s)://.
-		if !strings.HasPrefix(source, "/") {
-			violations = append(violations, analysis.Violation{
-				File:    "docs.json",
-				Line:    line,
-				Col:     1,
-				Message: formatMessage(i, "source", source, "bad path: must start with '/'"),
-			})
-		}
-
-		destIsHTTP := strings.HasPrefix(destination, "http://") ||
-			strings.HasPrefix(destination, "https://")
-		if !strings.HasPrefix(destination, "/") && !destIsHTTP {
-			violations = append(violations, analysis.Violation{
-				File:    "docs.json",
-				Line:    line,
-				Col:     1,
-				Message: formatMessage(i, "destination", destination, "bad path: must start with '/' (or http(s)://)"),
-			})
-		}
-
-		if strings.HasPrefix(source, "/") {
-			violations = append(violations, validateSource(i, source, contentRoot, line)...)
-		}
-		if !destIsHTTP && strings.HasPrefix(destination, "/") {
-			violations = append(violations, validateDestination(i, destination, contentRoot, openAPISources, line)...)
-		}
+		violations = append(
+			violations,
+			validateEntry(i, raw, lines[i], contentRoot, openAPISources)...,
+		)
 	}
 
 	return violations
+}
+
+// validateEntry returns all violations for a single redirects[i] entry.
+// entryFields packages the parsed fields of a single redirects[i]
+// entry along with diagnostic metadata so helper functions can be
+// called with a single argument.
+type entryFields struct {
+	i           int
+	line        int
+	source      string
+	sourceOk    bool
+	destination string
+	destOk      bool
+}
+
+func validateEntry(
+	i int,
+	raw any,
+	line int,
+	contentRoot string,
+	openAPISources map[string]bool,
+) []analysis.Violation {
+	entry, ok := raw.(map[string]any)
+	if !ok {
+		return []analysis.Violation{{
+			File:    "docs.json",
+			Line:    line,
+			Col:     1,
+			Message: formatMessage(i, "entry", "", "not an object"),
+		}}
+	}
+
+	src, srcOk := stringField(entry, "source")
+	dst, dstOk := stringField(entry, "destination")
+	f := entryFields{
+		i:           i,
+		line:        line,
+		source:      src,
+		sourceOk:    srcOk,
+		destination: dst,
+		destOk:      dstOk,
+	}
+
+	violations := validateRequiredFields(f)
+	if !srcOk || !dstOk {
+		return violations
+	}
+
+	violations = append(violations, validatePathFormat(f)...)
+	fsViolations := validateFileSystem(f, contentRoot, openAPISources)
+	return append(violations, fsViolations...)
+}
+
+// validateRequiredFields emits a "must be a non-empty string" diagnostic
+// for each of source/destination that is missing or empty.
+func validateRequiredFields(f entryFields) []analysis.Violation {
+	const msg = "must be a non-empty string"
+	var violations []analysis.Violation
+	if !f.sourceOk {
+		violations = append(violations, analysis.Violation{
+			File:    "docs.json",
+			Line:    f.line,
+			Col:     1,
+			Message: formatMessage(f.i, "source", f.source, msg),
+		})
+	}
+	if !f.destOk {
+		violations = append(violations, analysis.Violation{
+			File:    "docs.json",
+			Line:    f.line,
+			Col:     1,
+			Message: formatMessage(f.i, "destination", f.destination, msg),
+		})
+	}
+	return violations
+}
+
+// validatePathFormat enforces that source starts with '/' and that
+// destination starts with '/' or http(s)://.
+func validatePathFormat(f entryFields) []analysis.Violation {
+	var violations []analysis.Violation
+	if !strings.HasPrefix(f.source, "/") {
+		const msg = "bad path: must start with '/'"
+		violations = append(violations, analysis.Violation{
+			File:    "docs.json",
+			Line:    f.line,
+			Col:     1,
+			Message: formatMessage(f.i, "source", f.source, msg),
+		})
+	}
+	if !strings.HasPrefix(f.destination, "/") && !destIsHTTP(f.destination) {
+		const msg = "bad path: must start with '/' (or http(s)://)"
+		violations = append(violations, analysis.Violation{
+			File:    "docs.json",
+			Line:    f.line,
+			Col:     1,
+			Message: formatMessage(f.i, "destination", f.destination, msg),
+		})
+	}
+	return violations
+}
+
+// validateFileSystem dispatches to validateSource and validateDestination
+// for paths that have valid leading-slash format.
+func validateFileSystem(
+	f entryFields,
+	contentRoot string,
+	openAPISources map[string]bool,
+) []analysis.Violation {
+	var violations []analysis.Violation
+	if strings.HasPrefix(f.source, "/") {
+		v := validateSource(f.i, f.source, contentRoot, f.line)
+		violations = append(violations, v...)
+	}
+	if !destIsHTTP(f.destination) && strings.HasPrefix(f.destination, "/") {
+		v := validateDestination(
+			f.i, f.destination, contentRoot, openAPISources, f.line,
+		)
+		violations = append(violations, v...)
+	}
+	return violations
+}
+
+// destIsHTTP reports whether destination uses an http:// or https://
+// scheme (lowercase only, mirroring the Node.js reference).
+func destIsHTTP(destination string) bool {
+	return strings.HasPrefix(destination, "http://") ||
+		strings.HasPrefix(destination, "https://")
 }
 
 // stringField returns the string value at key (and true) when it is a
@@ -175,10 +248,12 @@ func validateSource(i int, source, contentRoot string, line int) []analysis.Viol
 	cleaned := cleanPath(source)
 	if !strings.HasPrefix(cleaned, "docs/") && cleaned != "docs" {
 		return []analysis.Violation{{
-			File:    "docs.json",
-			Line:    line,
-			Col:     1,
-			Message: formatMessage(i, "source", source, "bad prefix (must start with /docs/)"),
+			File: "docs.json",
+			Line: line,
+			Col:  1,
+			Message: formatMessage(
+				i, "source", source, "bad prefix (must start with /docs/)",
+			),
 		}}
 	}
 
@@ -188,10 +263,13 @@ func validateSource(i int, source, contentRoot string, line int) []analysis.Viol
 	if !hasWildcard {
 		if pageExists(prefixFs) {
 			return []analysis.Violation{{
-				File:    "docs.json",
-				Line:    line,
-				Col:     1,
-				Message: formatMessage(i, "source", source, "dead redirect (source resolves to a real page)"),
+				File: "docs.json",
+				Line: line,
+				Col:  1,
+				Message: formatMessage(
+					i, "source", source,
+					"dead redirect (source resolves to a real page)",
+				),
 			}}
 		}
 		return nil
@@ -201,18 +279,24 @@ func validateSource(i int, source, contentRoot string, line int) []analysis.Viol
 	// containing pages.
 	if pageExists(prefixFs) {
 		return []analysis.Violation{{
-			File:    "docs.json",
-			Line:    line,
-			Col:     1,
-			Message: formatMessage(i, "source", source, "dead redirect (wildcard source prefix resolves to a real page)"),
+			File: "docs.json",
+			Line: line,
+			Col:  1,
+			Message: formatMessage(
+				i, "source", source,
+				"dead redirect (wildcard source prefix resolves to a real page)",
+			),
 		}}
 	}
 	if dirExists(prefixFs) && dirHasPages(prefixFs) {
 		return []analysis.Violation{{
-			File:    "docs.json",
-			Line:    line,
-			Col:     1,
-			Message: formatMessage(i, "source", source, "dead redirect (wildcard source prefix has real pages)"),
+			File: "docs.json",
+			Line: line,
+			Col:  1,
+			Message: formatMessage(
+				i, "source", source,
+				"dead redirect (wildcard source prefix has real pages)",
+			),
 		}}
 	}
 	return nil
@@ -223,14 +307,22 @@ func validateSource(i int, source, contentRoot string, line int) []analysis.Viol
 // escape hatch: a wildcard destination whose on-disk prefix is not a
 // directory is still accepted when ${prefix}.yaml is registered as a
 // nav.*.openapi.source value somewhere in docs.json.
-func validateDestination(i int, destination, contentRoot string, openAPISources map[string]bool, line int) []analysis.Violation {
+func validateDestination(
+	i int,
+	destination, contentRoot string,
+	openAPISources map[string]bool,
+	line int,
+) []analysis.Violation {
 	cleaned := cleanPath(destination)
 	if !strings.HasPrefix(cleaned, "docs/") && cleaned != "docs" {
 		return []analysis.Violation{{
-			File:    "docs.json",
-			Line:    line,
-			Col:     1,
-			Message: formatMessage(i, "destination", destination, "bad prefix (must start with /docs/)"),
+			File: "docs.json",
+			Line: line,
+			Col:  1,
+			Message: formatMessage(
+				i, "destination", destination,
+				"bad prefix (must start with /docs/)",
+			),
 		}}
 	}
 
@@ -243,10 +335,13 @@ func validateDestination(i int, destination, contentRoot string, openAPISources 
 			return nil
 		}
 		return []analysis.Violation{{
-			File:    "docs.json",
-			Line:    line,
-			Col:     1,
-			Message: formatMessage(i, "destination", destination, "missing destination (no .mdx or .md page exists)"),
+			File: "docs.json",
+			Line: line,
+			Col:  1,
+			Message: formatMessage(
+				i, "destination", destination,
+				"missing destination (no .mdx or .md page exists)",
+			),
 		}}
 	}
 
@@ -259,10 +354,13 @@ func validateDestination(i int, destination, contentRoot string, openAPISources 
 		return nil
 	}
 	return []analysis.Violation{{
-		File:    "docs.json",
-		Line:    line,
-		Col:     1,
-		Message: formatMessage(i, "destination", destination, "wildcard prefix not a directory"),
+		File: "docs.json",
+		Line: line,
+		Col:  1,
+		Message: formatMessage(
+			i, "destination", destination,
+			"wildcard prefix not a directory",
+		),
 	}}
 }
 
@@ -296,7 +394,7 @@ func splitWildcard(cleaned string) ([]string, bool) {
 	var prefix []string
 	hasWildcard := false
 	for _, seg := range segments {
-		if wildcardSegment.MatchString(seg) {
+		if wildcardSegment().MatchString(seg) {
 			hasWildcard = true
 			break
 		}
@@ -394,44 +492,69 @@ func lineLookup(docsJSONText string, count int) []int {
 	}
 
 	dec := json.NewDecoder(bytes.NewReader([]byte(docsJSONText)))
-	var inRedirectsArray bool
-	var arrayDepth int
-	var entryIdx int
+	if !advanceToRedirectsArray(dec) {
+		return result
+	}
+	scanRedirectEntries(dec, docsJSONText, result, count)
+	return result
+}
 
+// advanceToRedirectsArray consumes tokens from dec until the opening
+// '[' of the top-level "redirects" array is read, returning true. If
+// EOF or any error occurs first, returns false.
+func advanceToRedirectsArray(dec *json.Decoder) bool {
+	for {
+		tok, err := dec.Token()
+		if err != nil {
+			return false
+		}
+		key, ok := tok.(string)
+		if !ok || key != "redirects" {
+			continue
+		}
+		next, err := dec.Token()
+		if err != nil {
+			return false
+		}
+		if d, ok := next.(json.Delim); ok && d == '[' {
+			return true
+		}
+	}
+}
+
+// scanRedirectEntries reads tokens from dec (which must be positioned
+// just inside the redirects array) and fills result with the 1-based
+// line number of each top-level entry's starting byte.
+func scanRedirectEntries(
+	dec *json.Decoder,
+	docsJSONText string,
+	result []int,
+	count int,
+) {
+	arrayDepth := 1
+	entryIdx := 0
 	for {
 		offsetBefore := dec.InputOffset()
 		tok, err := dec.Token()
 		if err != nil {
-			break
+			return
 		}
 
-		if !inRedirectsArray {
-			if key, ok := tok.(string); ok && key == "redirects" {
-				next, err := dec.Token()
-				if err != nil {
-					break
-				}
-				if d, ok := next.(json.Delim); ok && d == '[' {
-					inRedirectsArray = true
-					arrayDepth = 1
-				}
-			}
-			continue
-		}
-
-		// Inside the redirects array.
 		if d, ok := tok.(json.Delim); ok {
 			switch d {
 			case '{', '[':
 				if arrayDepth == 1 && entryIdx < count {
-					result[entryIdx] = lineForOffset(docsJSONText, tokenStart(docsJSONText, int(offsetBefore)))
+					result[entryIdx] = lineForOffset(
+						docsJSONText,
+						tokenStart(docsJSONText, int(offsetBefore)),
+					)
 					entryIdx++
 				}
 				arrayDepth++
 			case '}', ']':
 				arrayDepth--
 				if arrayDepth == 0 {
-					return result
+					return
 				}
 			}
 			continue
@@ -439,11 +562,13 @@ func lineLookup(docsJSONText string, count int) []int {
 
 		// Primitive token at the top level of the array (e.g. string entry).
 		if arrayDepth == 1 && entryIdx < count {
-			result[entryIdx] = lineForOffset(docsJSONText, tokenStart(docsJSONText, int(offsetBefore)))
+			result[entryIdx] = lineForOffset(
+				docsJSONText,
+				tokenStart(docsJSONText, int(offsetBefore)),
+			)
 			entryIdx++
 		}
 	}
-	return result
 }
 
 // tokenStart advances past JSON whitespace and structural separators

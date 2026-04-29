@@ -86,7 +86,10 @@ func TestRun(t *testing.T) {
 			t.Errorf("exit code = %d, want 2", got)
 		}
 		if !strings.Contains(stderr.String(), "cannot determine content root") {
-			t.Errorf("stderr = %q, want contains 'cannot determine content root'", stderr.String())
+			t.Errorf(
+				"stderr = %q, want contains 'cannot determine content root'",
+				stderr.String(),
+			)
 		}
 	})
 
@@ -139,17 +142,25 @@ func TestRun(t *testing.T) {
 			t.Fatal(err)
 		}
 		// docs.json with a redirect destined for a missing page
-		docsJSON := `{"redirects":[{"source":"/docs/old","destination":"/docs/missing"}]}`
-		if err := os.WriteFile(filepath.Join(root, "docs.json"), []byte(docsJSON), 0o644); err != nil {
+		docsJSON := `{"redirects":[{"source":"/docs/old",` +
+			`"destination":"/docs/missing"}]}`
+		docsJSONPath := filepath.Join(root, "docs.json")
+		if err := os.WriteFile(docsJSONPath, []byte(docsJSON), 0o644); err != nil {
 			t.Fatal(err)
 		}
 		var stdout, stderr bytes.Buffer
 		got := run([]string{"lint", file}, &stdout, &stderr)
 		if got != 1 {
-			t.Errorf("exit code = %d, want 1; stdout=%q stderr=%q", got, stdout.String(), stderr.String())
+			t.Errorf(
+				"exit code = %d, want 1; stdout=%q stderr=%q",
+				got, stdout.String(), stderr.String(),
+			)
 		}
 		if !strings.Contains(stdout.String(), "missing destination") {
-			t.Errorf("stdout = %q, want contains 'missing destination'", stdout.String())
+			t.Errorf(
+				"stdout = %q, want contains 'missing destination'",
+				stdout.String(),
+			)
 		}
 	})
 }
