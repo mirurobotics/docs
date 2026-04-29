@@ -97,11 +97,10 @@ func TestCheck_Headings(t *testing.T) {
 			lines, spans := build(tc.content)
 			violations := Check("test.mdx", lines, spans)
 			if len(violations) != tc.wantCount {
-				t.Logf(
+				t.Fatalf(
 					"violations count = %d, want %d; violations=%+v",
 					len(violations), tc.wantCount, violations,
 				)
-				return
 			}
 			if tc.wantCount == 1 {
 				v := violations[0]
@@ -176,11 +175,10 @@ func TestCheck_FrontmatterTitle(t *testing.T) {
 			lines, spans := build(tc.content)
 			violations := Check("test.mdx", lines, spans)
 			if len(violations) != tc.wantCount {
-				t.Logf(
+				t.Fatalf(
 					"violations count = %d, want %d; violations=%+v",
 					len(violations), tc.wantCount, violations,
 				)
-				return
 			}
 			if tc.wantCount == 1 {
 				v := violations[0]
