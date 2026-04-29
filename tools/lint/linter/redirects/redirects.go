@@ -317,8 +317,34 @@ func validateSource(
 		return nil
 	}
 
-	// Wildcard source: prefix must not be a real page or a directory
-	// containing pages.
+	return validateWildcardSource(wildcardSourceCtx{
+		i:              i,
+		source:         source,
+		prefix:         prefix,
+		prefixFs:       prefixFs,
+		openAPISources: openAPISources,
+		line:           line,
+	})
+}
+
+// wildcardSourceCtx bundles the inputs to validateWildcardSource so the
+// helper stays under the 5-parameter limit.
+type wildcardSourceCtx struct {
+	i              int
+	source         string
+	prefix         []string
+	prefixFs       string
+	openAPISources map[string]bool
+	line           int
+}
+
+// validateWildcardSource handles the wildcard branch of validateSource:
+// the prefix must not be a real page, a directory containing pages, or a
+// Mintlify-generated OpenAPI route (yaml registered as nav.*.openapi.source
+// AND present on disk).
+func validateWildcardSource(c wildcardSourceCtx) []analysis.Violation {
+	i, source, prefix, prefixFs := c.i, c.source, c.prefix, c.prefixFs
+	openAPISources, line := c.openAPISources, c.line
 	if pageExists(prefixFs) {
 		return []analysis.Violation{{
 			File: "docs.json",
@@ -341,12 +367,7 @@ func validateSource(
 			),
 		}}
 	}
-	// OpenAPI escape hatch (mirror of validateDestination): a wildcard
-	// source whose prefix.yaml is registered as a nav.*.openapi.source
-	// AND exists on disk produces Mintlify-generated pages, so the
-	// redirect is dead.
-	prefixRel := strings.Join(prefix, "/")
-	yamlRel := prefixRel + ".yaml"
+	yamlRel := strings.Join(prefix, "/") + ".yaml"
 	yamlFs := prefixFs + ".yaml"
 	if openAPISources[yamlRel] && fileExists(yamlFs) {
 		return []analysis.Violation{{
