@@ -11,6 +11,7 @@
 package redirects
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -24,14 +25,6 @@ import (
 // wildcardSegment matches a single Mintlify-style wildcard URL segment,
 // e.g. ":slug" or ":slug*".
 var wildcardSegment = regexp.MustCompile(`^:[A-Za-z][A-Za-z0-9]*\*?$`)
-
-// redirectsArrayKey locates the opening of the "redirects" array in
-// docs.json source text.
-var redirectsArrayKey = regexp.MustCompile(`"redirects"\s*:\s*\[`)
-
-// sourceKeyPattern locates `"source":` literals to anchor each redirect
-// entry to a 1-based line number.
-var sourceKeyPattern = regexp.MustCompile(`"source"\s*:`)
 
 // Check reads ${contentRoot}/docs.json and returns violations for
 // dead/missing/malformed redirects. If docs.json is absent, returns nil.
@@ -387,35 +380,93 @@ func walkOpenAPISources(node any, result map[string]bool) {
 }
 
 // lineLookup returns a slice of length count whose i-th element is the
-// 1-based line number of the i-th redirect entry's `"source":` literal
-// in docsJSONText. Entries that cannot be anchored (e.g. non-object
-// entries lacking "source":) fall back to 1.
+// 1-based line number of the i-th redirect entry's starting position
+// in docsJSONText (the opening `{` for object entries, or the start of
+// the token for non-object entries). Entries that cannot be located
+// fall back to 1.
 func lineLookup(docsJSONText string, count int) []int {
 	result := make([]int, count)
 	for i := range result {
 		result[i] = 1
 	}
-	arrayMatch := redirectsArrayKey.FindStringIndex(docsJSONText)
-	if arrayMatch == nil {
+	if count == 0 {
 		return result
 	}
-	// Start scanning from the offset of the opening '['.
-	start := arrayMatch[1] - 1
-	matches := sourceKeyPattern.FindAllStringIndex(docsJSONText[start:], count)
-	for i, m := range matches {
-		if i >= count {
+
+	dec := json.NewDecoder(bytes.NewReader([]byte(docsJSONText)))
+	var inRedirectsArray bool
+	var arrayDepth int
+	var entryIdx int
+
+	for {
+		offsetBefore := dec.InputOffset()
+		tok, err := dec.Token()
+		if err != nil {
 			break
 		}
-		offset := start + m[0]
-		result[i] = lineForOffset(docsJSONText, offset)
+
+		if !inRedirectsArray {
+			if key, ok := tok.(string); ok && key == "redirects" {
+				next, err := dec.Token()
+				if err != nil {
+					break
+				}
+				if d, ok := next.(json.Delim); ok && d == '[' {
+					inRedirectsArray = true
+					arrayDepth = 1
+				}
+			}
+			continue
+		}
+
+		// Inside the redirects array.
+		if d, ok := tok.(json.Delim); ok {
+			switch d {
+			case '{', '[':
+				if arrayDepth == 1 && entryIdx < count {
+					result[entryIdx] = lineForOffset(docsJSONText, tokenStart(docsJSONText, int(offsetBefore)))
+					entryIdx++
+				}
+				arrayDepth++
+			case '}', ']':
+				arrayDepth--
+				if arrayDepth == 0 {
+					return result
+				}
+			}
+			continue
+		}
+
+		// Primitive token at the top level of the array (e.g. string entry).
+		if arrayDepth == 1 && entryIdx < count {
+			result[entryIdx] = lineForOffset(docsJSONText, tokenStart(docsJSONText, int(offsetBefore)))
+			entryIdx++
+		}
 	}
 	return result
+}
+
+// tokenStart advances past JSON whitespace and structural separators
+// (',' between array elements) to find the first non-whitespace,
+// non-separator byte at or after offset. Decoder.InputOffset() returns
+// the position immediately after the previously consumed token, which
+// may sit on whitespace or a comma; we want the actual token start.
+func tokenStart(text string, offset int) int {
+	for offset < len(text) {
+		c := text[offset]
+		if c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == ',' {
+			offset++
+			continue
+		}
+		break
+	}
+	return offset
 }
 
 // lineForOffset returns the 1-based line number of byteOffset in text.
 func lineForOffset(text string, byteOffset int) int {
 	line := 1
-	for j := 0; j < byteOffset && j < len(text); j++ {
+	for j := 0; j < byteOffset; j++ {
 		if text[j] == '\n' {
 			line++
 		}
