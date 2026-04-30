@@ -8,7 +8,7 @@ import (
 )
 
 // Message is the diagnostic emitted for any heading-case violation.
-const Message = "heading-case: heading must be sentence-case (first letter uppercase, all other letters lowercase); proper nouns/acronyms are not yet supported"
+const Message = "heading-case: heading must be sentence-case (first letter uppercase, all other letters lowercase)"
 
 var (
 	titleRe       = regexp.MustCompile(`^title:\s*(.*)$`)
@@ -16,8 +16,49 @@ var (
 	inlineCodeRe  = regexp.MustCompile("`[^`]*`")
 	htmlTagRe     = regexp.MustCompile(`<[^>]*>`)
 	mdLinkRe      = regexp.MustCompile(`\[([^\]]*)\]\([^)]*\)`)
+	versionTagRe  = regexp.MustCompile(`^v?\d+([.-]\w+)*$`)
 	trailingPunct = ".?!:"
+	outerPunct    = ",;()[]{}\"'"
 )
+
+// allowlist holds tokens that are exempt from the casing check (case-sensitive
+// exact match). Matching tokens are skipped when walking heading words.
+var allowlist = map[string]struct{}{
+	// Acronyms.
+	"API":     {},
+	"APIs":    {},
+	"CLI":     {},
+	"CI":      {},
+	"SDK":     {},
+	"SDKs":    {},
+	"CUE":     {},
+	"JSON":    {},
+	"MQTT":    {},
+	"TLS":     {},
+	"HTTPS":   {},
+	"REST":    {},
+	"GUI":     {},
+	"URL":     {},
+	"ACLs":    {},
+	"SSE":     {},
+	"OpenAPI": {},
+	// Proper nouns.
+	"Miru":   {},
+	"GitHub": {},
+	"Agent":  {},
+	"Unix":   {},
+	"Git":    {},
+	"Python": {},
+	"Schema": {},
+	"Base":   {},
+	"Head":   {},
+	// Codenames.
+	"tetons": {},
+	"zion":   {},
+	// Event identifiers.
+	"deployment.deployed": {},
+	"deployment.removed":  {},
+}
 
 // Check enforces strict sentence-case on the front-matter title and on every
 // Markdown body heading. lines is the raw file content split by line; spans is
@@ -117,10 +158,20 @@ func maskHeading(s string) string {
 	return s
 }
 
+// stripOuterPunct trims surrounding non-letter punctuation from both ends of
+// the token. Note that '.' is intentionally NOT in the trim set so that event
+// identifiers like "deployment.deployed" retain their internal dot when
+// checked against the allowlist.
+func stripOuterPunct(s string) string {
+	return strings.Trim(s, outerPunct)
+}
+
 // casingViolation reports whether s violates strict sentence-case after
-// trimming whitespace and trailing terminal punctuation. The first ASCII
-// letter must be uppercase; every subsequent ASCII letter must be lowercase.
-// Non-letters are ignored. An empty result after trimming is not a violation.
+// trimming whitespace and trailing terminal punctuation. The check is
+// word-aware: tokens that match the version-tag regex or appear in the
+// allowlist are skipped. The leftmost token must be sentence-cased (first
+// letter upper, rest lower); every later rule-bound token must be all
+// lowercase. An empty result after trimming is not a violation.
 func casingViolation(s string) bool {
 	s = strings.TrimSpace(s)
 	for len(s) > 0 && strings.ContainsRune(trailingPunct, rune(s[len(s)-1])) {
@@ -129,6 +180,38 @@ func casingViolation(s string) bool {
 	if s == "" {
 		return false
 	}
+	if versionTagRe.MatchString(s) {
+		return false
+	}
+	tokens := strings.Fields(s)
+	for i, tok := range tokens {
+		core := stripOuterPunct(tok)
+		if core == "" {
+			continue
+		}
+		if versionTagRe.MatchString(core) {
+			continue
+		}
+		if _, ok := allowlist[core]; ok {
+			continue
+		}
+		if i == 0 {
+			if tokenViolatesLeading(core) {
+				return true
+			}
+		} else {
+			if tokenViolatesLater(core) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// tokenViolatesLeading reports whether the leftmost token violates the
+// sentence-case rule: the first ASCII letter must be uppercase and every
+// subsequent ASCII letter must be lowercase. Non-letters are ignored.
+func tokenViolatesLeading(s string) bool {
 	seenFirst := false
 	for i := 0; i < len(s); i++ {
 		c := s[i]
@@ -145,6 +228,18 @@ func casingViolation(s string) bool {
 			continue
 		}
 		if isUpper {
+			return true
+		}
+	}
+	return false
+}
+
+// tokenViolatesLater reports whether a non-leading rule-bound token violates
+// the rule: every ASCII letter must be lowercase. Non-letters are ignored.
+func tokenViolatesLater(s string) bool {
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if c >= 'A' && c <= 'Z' {
 			return true
 		}
 	}
