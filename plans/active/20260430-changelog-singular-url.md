@@ -16,23 +16,30 @@ After this change, public documentation changelog pages use the singular URL pat
 
 ## Progress
 
-- [ ] Prepare a branch from `main`.
-- [ ] Rename the changelog content route and update docs navigation, navbar, links, and redirects.
-- [ ] Run tests, Mintlify checks, and preflight; publish only after preflight reports `clean`.
+- [x] Prepare a branch from `main`.
+- [x] Rename the changelog content route and update docs navigation, navbar, links, and redirects.
+- [x] Run tests, Mintlify checks, and preflight; publish only after preflight reports `clean`.
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds.)
+- The working tree was already on `fix/changelog-singular-url`, based on `main`, with the active plan committed.
+- The existing `.gitignore` pattern `changelog/` ignored the new `docs/changelog/` content route, so the pattern was anchored to `/changelog/`.
+- `mint dev` printed `TypeError: controller[kState].transformAlgorithm is not a function` while starting, but the preview server stayed up and served the tested routes.
 
 ## Decision Log
 
 - Decision: Rename the on-disk Mintlify content folder from `docs/changelogs/` to `docs/changelog/` instead of only adding redirects.
   Rationale: Mintlify derives page routes from file paths relative to the `docs/` content root, so the singular public route should be represented by the content path.
   Date/Author: 2026-04-30 / Codex
+- Decision: Anchor the generated-asset ignore pattern as `/changelog/` instead of `changelog/`.
+  Rationale: The unanchored pattern ignores any directory named `changelog`, which would block normal future additions under the new tracked `docs/changelog/` content route.
+  Date/Author: 2026-04-30 / Codex
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+Changelog content now lives under `docs/changelog/`, docs navigation and the navbar point at singular `/changelog/...` URLs, and internal documentation links have been rewritten to singular routes. Explicit redirects preserve compatibility for `/changelogs/:slug*` and `/docs/changelogs/:slug*`.
+
+Focused validation passed: `pnpm run test:lint`, `pnpm run lint`, `../node_modules/.bin/mint broken-links`, local Mintlify route checks, and `./scripts/preflight.sh`.
 
 ## Context and Orientation
 
