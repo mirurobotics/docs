@@ -18,21 +18,21 @@ innerRadius="8px"
 outerRadius="10px"
 />
 
-The primary method of creating releases is via the command line. The dashboard does not support creating new releases (although you can [duplicate existing releases](/docs/learn/releases/manage#duplicate-a-release)).
+The primary method of creating releases is via the command line. The dashboard does not support creating new releases (although you can [duplicate existing releases](/learn/releases/manage#duplicate-a-release)).
 
 Creating releases from the CLI is a deliberate design choice. We believe that config schemas should live in the same Git repository as the code which uses them. The CLI promotes such practices, simplifying the release process and encouraging better software development habits.
 
-Furthermore, the CLI can be used to programmatically create releases in a [CI pipeline](/docs/developers/ci/overview), ensuring releases contain the correct schemas and are always associated with the correct Git commit.
+Furthermore, the CLI can be used to programmatically create releases in a [CI pipeline](/developers/ci/overview), ensuring releases contain the correct schemas and are always associated with the correct Git commit.
 
-If you've created a release via the CLI before and want a concise overview of the command and its flags, visit the [CLI Reference](/docs/references/cli/release-create). For a comprehensive guide, continue reading below.
+If you've created a release via the CLI before and want a concise overview of the command and its flags, visit the [CLI Reference](/references/cli/release-create). For a comprehensive guide, continue reading below.
 
 ## Prerequisites
 
 To create a release, the following prerequisites must be met:
 
-1. CLI installed - [install](/docs/developers/cli/install) the Miru CLI on your development machine and authenticate using the [login](/docs/developers/cli/login) command
+1. CLI installed - [install](/developers/cli/install) the Miru CLI on your development machine and authenticate using the [login](/developers/cli/login) command
 1. Local Git repository - the release's schemas must be committed to a local Git repository
-1. Config types annotations - each schema must be annotated with its [config type](/docs/learn/config-types)
+1. Config types annotations - each schema must be annotated with its [config type](/learn/config-types)
 
 ## Config schemas
 
@@ -46,7 +46,7 @@ The CLI identifies schemas by hashing their content. Schemas with equivalent con
 
 ### Define the schemas
 
-Schemas must be defined in a supported schema [language](/docs/learn/schemas/languages/overview). You can find example schemas in our [getting-started repository](https://github.com/mirurobotics/getting-started).
+Schemas must be defined in a supported schema [language](/learn/schemas/languages/overview). You can find example schemas in our [getting-started repository](https://github.com/mirurobotics/getting-started).
 
 If you're not sure which language to use, we recommend starting with JSON Schema — it's the most widely used and easiest to get started with.
 

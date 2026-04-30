@@ -32,7 +32,7 @@ func TestFindContentRoot(t *testing.T) {
 		if err := os.MkdirAll(filepath.Join(root, "snippets"), 0o755); err != nil {
 			t.Fatal(err)
 		}
-		subdir := filepath.Join(root, "docs", "sub")
+		subdir := filepath.Join(root, "section", "sub")
 		if err := os.MkdirAll(subdir, 0o755); err != nil {
 			t.Fatal(err)
 		}
@@ -98,10 +98,7 @@ func TestRun(t *testing.T) {
 		if err := os.MkdirAll(filepath.Join(root, "snippets"), 0o755); err != nil {
 			t.Fatal(err)
 		}
-		if err := os.MkdirAll(filepath.Join(root, "docs"), 0o755); err != nil {
-			t.Fatal(err)
-		}
-		file := filepath.Join(root, "docs", "x.mdx")
+		file := filepath.Join(root, "x.mdx")
 		if err := os.WriteFile(file, []byte("# Hello\n"), 0o644); err != nil {
 			t.Fatal(err)
 		}
@@ -134,16 +131,13 @@ func TestRun(t *testing.T) {
 		if err := os.MkdirAll(filepath.Join(root, "snippets"), 0o755); err != nil {
 			t.Fatal(err)
 		}
-		if err := os.MkdirAll(filepath.Join(root, "docs"), 0o755); err != nil {
-			t.Fatal(err)
-		}
-		file := filepath.Join(root, "docs", "x.mdx")
+		file := filepath.Join(root, "x.mdx")
 		if err := os.WriteFile(file, []byte("# x\n"), 0o644); err != nil {
 			t.Fatal(err)
 		}
 		// docs.json with a redirect destined for a missing page
-		docsJSON := `{"redirects":[{"source":"/docs/old",` +
-			`"destination":"/docs/missing"}]}`
+		docsJSON := `{"redirects":[{"source":"/old",` +
+			`"destination":"/missing"}]}`
 		docsJSONPath := filepath.Join(root, "docs.json")
 		if err := os.WriteFile(docsJSONPath, []byte(docsJSON), 0o644); err != nil {
 			t.Fatal(err)
@@ -169,10 +163,7 @@ func TestRun(t *testing.T) {
 		if err := os.MkdirAll(filepath.Join(root, "snippets"), 0o755); err != nil {
 			t.Fatal(err)
 		}
-		if err := os.MkdirAll(filepath.Join(root, "docs"), 0o755); err != nil {
-			t.Fatal(err)
-		}
-		file := filepath.Join(root, "docs", "x.mdx")
+		file := filepath.Join(root, "x.mdx")
 		content := "---\ntitle: \"User Management\"\n---\n\n## Configure deployments\n"
 		if err := os.WriteFile(file, []byte(content), 0o644); err != nil {
 			t.Fatal(err)
@@ -204,10 +195,7 @@ func TestRun(t *testing.T) {
 		if err := os.MkdirAll(filepath.Join(root, "snippets"), 0o755); err != nil {
 			t.Fatal(err)
 		}
-		if err := os.MkdirAll(filepath.Join(root, "docs"), 0o755); err != nil {
-			t.Fatal(err)
-		}
-		file := filepath.Join(root, "docs", "x.mdx")
+		file := filepath.Join(root, "x.mdx")
 		content := "---\ntitle: \"Workspace\"\n---\n\n## Configure deployments\n\n### What is a config?\n"
 		if err := os.WriteFile(file, []byte(content), 0o644); err != nil {
 			t.Fatal(err)
@@ -230,10 +218,7 @@ func TestRun(t *testing.T) {
 		if err := os.MkdirAll(filepath.Join(root, "snippets"), 0o755); err != nil {
 			t.Fatal(err)
 		}
-		if err := os.MkdirAll(filepath.Join(root, "docs"), 0o755); err != nil {
-			t.Fatal(err)
-		}
-		file := filepath.Join(root, "docs", "x.mdx")
+		file := filepath.Join(root, "x.mdx")
 		content := "---\ntitle: \"API keys\"\n---\n\n## OpenAPI specifications\n"
 		if err := os.WriteFile(file, []byte(content), 0o644); err != nil {
 			t.Fatal(err)

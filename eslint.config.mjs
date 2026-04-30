@@ -15,7 +15,7 @@ export default [
   },
   {
     ...mdx.flat,
-    files: ["**/docs/**/*.mdx", "**/snippets/**/*.mdx"],
+    files: ["docs/**/*.mdx", "tests/lint-fixtures/**/*.mdx"],
     rules: {
       ...mdx.flat.rules,
       "mdx/remark": "off"

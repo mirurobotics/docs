@@ -285,7 +285,7 @@ curl --request GET \
 
 ### Total count
 
-The `total_count` field in a list response represents the total number of items matching the query. Because Miru [paginates](/docs/developers/platform-api/query-params/pagination) list responses, this number is often greater than the number of items returned per page.
+The `total_count` field in a list response represents the total number of items matching the query. Because Miru [paginates](/developers/platform-api/query-params/pagination) list responses, this number is often greater than the number of items returned per page.
 
 If a list query matches 100 items but the **`limit`** parameter is set to 10, the list response would contain only 10 items despite the total count being 100.
 

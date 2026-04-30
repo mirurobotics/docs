@@ -1,0 +1,383 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "maple",
+  "name": "Miru",
+  "colors": {
+    "primary": "#059669",
+    "light": "#34d399",
+    "dark": "#065f46"
+  },
+  "favicon": {
+    "light": "/favicon-black.svg",
+    "dark": "/favicon-white.svg"
+  },
+  "styling": {
+    "eyebrows": "section"
+  },
+  "fonts": {
+    "family": "Inter",
+    "weight": 450
+  },
+  "navigation": {
+    "products": [
+      {
+        "product": "Documentation",
+        "groups": [
+          {
+            "group": "Getting started",
+            "pages": [
+              "getting-started/intro",
+              {
+                "group": "Quick start",
+                "pages": [
+                  "getting-started/quick-start/overview",
+                  "getting-started/quick-start/create-release",
+                  "getting-started/quick-start/install-agent",
+                  "getting-started/quick-start/deploy-configs"
+                ]
+              },
+              "getting-started/concepts"
+            ]
+          },
+          {
+            "group": "Learn",
+            "pages": [
+              "learn/config-instances",
+              {
+                "group": "Config schemas",
+                "pages": [
+                  "learn/schemas/overview",
+                  {
+                    "group": "Languages",
+                    "pages": [
+                      "learn/schemas/languages/overview",
+                      "learn/schemas/languages/jsonschema",
+                      "learn/schemas/languages/cue"
+                    ]
+                  },
+                  "learn/schemas/manage"
+                ]
+              },
+              "learn/config-types",
+              "learn/deployments",
+              {
+                "group": "Devices",
+                "pages": [
+                  "learn/devices/overview",
+                  "learn/devices/provision",
+                  "learn/devices/manage",
+                  "learn/devices/initial-deployment",
+                  "learn/devices/config-editor",
+                  "learn/devices/deployment-history"
+                ]
+              },
+              {
+                "group": "Releases",
+                "pages": [
+                  "learn/releases/overview",
+                  "learn/releases/create",
+                  "learn/releases/manage",
+                  "learn/releases/staging-area",
+                  "learn/releases/deployment-history"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Developers",
+            "pages": [
+              {
+                "group": "Agent",
+                "pages": [
+                  "developers/agent/overview",
+                  "developers/agent/install",
+                  "developers/agent/file-permissions",
+                  "developers/agent/versions",
+                  "developers/agent/commands",
+                  "developers/agent/security",
+                  "developers/agent/architecture"
+                ]
+              },
+              {
+                "group": "CLI",
+                "pages": [
+                  "developers/cli/overview",
+                  "developers/cli/install",
+                  "developers/cli/login"
+                ]
+              },
+              {
+                "group": "CI/CD",
+                "pages": [
+                  "developers/ci/overview",
+                  "developers/ci/gh-actions"
+                ]
+              },
+              {
+                "group": "Device API",
+                "pages": [
+                  "developers/device-api/overview",
+                  "developers/device-api/sdks",
+                  "developers/device-api/versions",
+                  "developers/device-api/authn",
+                  "developers/device-api/events"
+                ]
+              },
+              {
+                "group": "Platform API",
+                "pages": [
+                  "developers/platform-api/overview",
+                  "developers/platform-api/sdks",
+                  "developers/platform-api/authn",
+                  "developers/platform-api/authz",
+                  "developers/platform-api/versioning",
+                  {
+                    "group": "Query Parameters",
+                    "pages": [
+                      "developers/platform-api/query-params/filtering",
+                      "developers/platform-api/query-params/sorting",
+                      "developers/platform-api/query-params/pagination",
+                      "developers/platform-api/query-params/expansions"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Administration",
+            "pages": [
+              "admin/workspace",
+              "admin/apikeys",
+              {
+                "group": "Users",
+                "pages": [
+                  "admin/users/overview",
+                  "admin/users/roles",
+                  "admin/users/invites",
+                  "admin/users/profile",
+                  "admin/users/manage"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "product": "CLI Reference",
+        "groups": [
+          {
+            "group": "Releases",
+            "pages": [
+              "references/cli/release-create"
+            ]
+          }
+        ]
+      },
+      {
+        "product": "Device API Reference",
+        "dropdowns": [
+          {
+            "dropdown": "v0.2.1",
+            "groups": [
+              {
+                "group": "Agent",
+                "openapi": {
+                  "source": "references/device-api/v0.2.1/api.yaml",
+                  "directory": "references/device-api/v0.2.1/endpoints"
+                },
+                "pages": [
+                  "GET /health",
+                  "GET /version"
+                ]
+              },
+              {
+                "group": "Deployments",
+                "openapi": {
+                  "source": "references/device-api/v0.2.1/api.yaml",
+                  "directory": "references/device-api/v0.2.1/endpoints"
+                },
+                "pages": [
+                  "GET /deployments/{deployment_id}",
+                  "GET /deployments/current"
+                ]
+              },
+              {
+                "group": "Device",
+                "openapi": {
+                  "source": "references/device-api/v0.2.1/api.yaml",
+                  "directory": "references/device-api/v0.2.1/endpoints"
+                },
+                "pages": [
+                  "GET /device",
+                  "POST /device/sync"
+                ]
+              },
+              {
+                "group": "Events",
+                "openapi": {
+                  "source": "references/device-api/v0.2.1/api.yaml",
+                  "directory": "references/device-api/v0.2.1/endpoints"
+                },
+                "pages": [
+                  {
+                    "group": "Event Types",
+                    "pages": [
+                      "references/device-api/v0.2.1/events/deployment-deployed",
+                      "references/device-api/v0.2.1/events/deployment-removed"
+                    ]
+                  },
+                  "GET /events"
+                ]
+              },
+              {
+                "group": "Git Commits",
+                "openapi": {
+                  "source": "references/device-api/v0.2.1/api.yaml",
+                  "directory": "references/device-api/v0.2.1/endpoints"
+                },
+                "pages": [
+                  "GET /git_commits/{git_commit_id}"
+                ]
+              },
+              {
+                "group": "Releases",
+                "openapi": {
+                  "source": "references/device-api/v0.2.1/api.yaml",
+                  "directory": "references/device-api/v0.2.1/endpoints"
+                },
+                "pages": [
+                  "GET /releases/{release_id}",
+                  "GET /releases/current"
+                ]
+              }
+            ]
+          },
+          {
+            "dropdown": "v0.2.0",
+            "openapi": {
+              "source": "references/device-api/v0.2.0.yaml",
+              "directory": "references/device-api/v0.2.0/endpoints"
+            }
+          },
+          {
+            "dropdown": "v0.1.0",
+            "openapi": {
+              "source": "references/device-api/v0.1.0.yaml",
+              "directory": "references/device-api/v0.1.0/endpoints"
+            }
+          }
+        ]
+      },
+      {
+        "product": "Platform API Reference",
+        "dropdowns": [
+          {
+            "dropdown": "2026-03-09.tetons",
+            "openapi": {
+              "source": "references/platform-api/2026-03-09.yaml",
+              "directory": "references/platform-api/2026-03-09/endpoints"
+            }
+          },
+          {
+            "dropdown": "2025-10-21.zion",
+            "openapi": {
+              "source": "references/platform-api/2025-10-21.yaml",
+              "directory": "references/platform-api/2025-10-21/endpoints"
+            }
+          }
+        ]
+      },
+      {
+        "product": "Changelog",
+        "groups": [
+          {
+            "group": "Changelogs",
+            "pages": [
+              "changelogs/product",
+              "changelogs/cli",
+              "changelogs/agent",
+              "changelogs/device-api",
+              "changelogs/platform-api"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "icons": {
+    "library": "lucide"
+  },
+  "logo": {
+    "light": "/logo/dark.png",
+    "dark": "/logo/light.png"
+  },
+  "appearance": {
+    "default": "dark"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Changelog",
+        "href": "https://docs.mirurobotics.com/changelogs/product"
+      },
+      {
+        "label": "Dashboard",
+        "href": "https://app.mirurobotics.com/login"
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "linkedin": "https://www.linkedin.com/company/mirurobotics/",
+      "x": "https://x.com/mirurobotics",
+      "github": "https://github.com/mirurobotics"
+    }
+  },
+  "api": {
+    "params": {
+      "expanded": "closed"
+    },
+    "playground": {
+      "display": "simple"
+    }
+  },
+  "integrations": {
+    "mixpanel": {
+      "projectToken": "af913ac7e816c287f882e93095c10ec9"
+    }
+  },
+  "seo": {
+    "metatags": {
+      "canonical": "https://docs.mirurobotics.com"
+    }
+  },
+  "metadata": {
+    "timestamp": true,
+    "og:image": "/favicon-black.svg",
+    "og:site_name": "Miru Robotics",
+    "twitter:image": "/favicon-black.svg"
+  },
+  "redirects": [
+    {
+      "source": "/references/device-api/latest/:slug*",
+      "destination": "/references/device-api/v0.2.1/:slug*"
+    },
+    {
+      "source": "/references/platform-api/latest/:slug*",
+      "destination": "/references/platform-api/2026-03-09/:slug*"
+    },
+    {
+      "source": "/references/cli/install",
+      "destination": "/developers/cli/install"
+    },
+    {
+      "source": "/docs/references/cli/install",
+      "destination": "/developers/cli/install"
+    },
+    {
+      "source": "/docs/:slug*",
+      "destination": "/:slug*"
+    }
+  ]
+}

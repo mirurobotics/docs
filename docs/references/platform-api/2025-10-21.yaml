@@ -30,7 +30,7 @@ paths:
                 $ref: '#/components/schemas/ConfigInstance'
       x-mint:
         content: |
-          <Danger>This API version has reached end of life. See [supported versions](/docs/developers/platform-api/versioning#supported-versions).</Danger>
+          <Danger>This API version has reached end of life. See [supported versions](/developers/platform-api/versioning#supported-versions).</Danger>
 
           | Scope | Required |
           |-------|----------|
@@ -68,7 +68,7 @@ paths:
                 $ref: '#/components/schemas/ConfigInstanceList'
       x-mint:
         content: |
-          <Danger>This API version has reached end of life. See [supported versions](/docs/developers/platform-api/versioning#supported-versions).</Danger>
+          <Danger>This API version has reached end of life. See [supported versions](/developers/platform-api/versioning#supported-versions).</Danger>
 
           | Scope | Required |
           |-------|----------|
@@ -95,7 +95,7 @@ paths:
                 $ref: '#/components/schemas/Deployment'
       x-mint:
         content: |
-          <Danger>This API version has reached end of life. See [supported versions](/docs/developers/platform-api/versioning#supported-versions).</Danger>
+          <Danger>This API version has reached end of life. See [supported versions](/developers/platform-api/versioning#supported-versions).</Danger>
 
           | Scope | Required |
           |-------|----------|
@@ -131,7 +131,7 @@ paths:
                 $ref: '#/components/schemas/DeploymentList'
       x-mint:
         content: |
-          <Danger>This API version has reached end of life. See [supported versions](/docs/developers/platform-api/versioning#supported-versions).</Danger>
+          <Danger>This API version has reached end of life. See [supported versions](/developers/platform-api/versioning#supported-versions).</Danger>
 
           | Scope | Required |
           |-------|----------|
@@ -163,7 +163,7 @@ paths:
                 $ref: '#/components/schemas/Deployment'
       x-mint:
         content: |
-          <Danger>This API version has reached end of life. See [supported versions](/docs/developers/platform-api/versioning#supported-versions).</Danger>
+          <Danger>This API version has reached end of life. See [supported versions](/developers/platform-api/versioning#supported-versions).</Danger>
 
           | Scope | Required |
           |-------|----------|
@@ -198,7 +198,7 @@ paths:
                 $ref: '#/components/schemas/Device'
       x-mint:
         content: |
-          <Danger>This API version has reached end of life. See [supported versions](/docs/developers/platform-api/versioning#supported-versions).</Danger>
+          <Danger>This API version has reached end of life. See [supported versions](/developers/platform-api/versioning#supported-versions).</Danger>
 
           | Scope | Required |
           |-------|----------|
@@ -231,7 +231,7 @@ paths:
                 $ref: '#/components/schemas/Device'
       x-mint:
         content: |
-          <Danger>This API version has reached end of life. See [supported versions](/docs/developers/platform-api/versioning#supported-versions).</Danger>
+          <Danger>This API version has reached end of life. See [supported versions](/developers/platform-api/versioning#supported-versions).</Danger>
 
           | Scope | Required |
           |-------|----------|
@@ -258,7 +258,7 @@ paths:
                 $ref: '#/components/schemas/DeleteDevice'
       x-mint:
         content: |
-          <Danger>This API version has reached end of life. See [supported versions](/docs/developers/platform-api/versioning#supported-versions).</Danger>
+          <Danger>This API version has reached end of life. See [supported versions](/developers/platform-api/versioning#supported-versions).</Danger>
 
           | Scope | Required |
           |-------|----------|
@@ -290,7 +290,7 @@ paths:
                 $ref: '#/components/schemas/Device'
       x-mint:
         content: |
-          <Danger>This API version has reached end of life. See [supported versions](/docs/developers/platform-api/versioning#supported-versions).</Danger>
+          <Danger>This API version has reached end of life. See [supported versions](/developers/platform-api/versioning#supported-versions).</Danger>
 
           | Scope | Required |
           |-------|----------|
@@ -324,7 +324,7 @@ paths:
                 $ref: '#/components/schemas/DeviceList'
       x-mint:
         content: |
-          <Danger>This API version has reached end of life. See [supported versions](/docs/developers/platform-api/versioning#supported-versions).</Danger>
+          <Danger>This API version has reached end of life. See [supported versions](/developers/platform-api/versioning#supported-versions).</Danger>
 
           | Scope | Required |
           |-------|----------|
@@ -357,7 +357,7 @@ paths:
                 $ref: '#/components/schemas/TokenResponse'
       x-mint:
         content: |
-          <Danger>This API version has reached end of life. See [supported versions](/docs/developers/platform-api/versioning#supported-versions).</Danger>
+          <Danger>This API version has reached end of life. See [supported versions](/developers/platform-api/versioning#supported-versions).</Danger>
 
           | Scope | Required |
           |-------|----------|
@@ -386,7 +386,7 @@ paths:
                 $ref: '#/components/schemas/Release'
       x-mint:
         content: |
-          <Danger>This API version has reached end of life. See [supported versions](/docs/developers/platform-api/versioning#supported-versions).</Danger>
+          <Danger>This API version has reached end of life. See [supported versions](/developers/platform-api/versioning#supported-versions).</Danger>
 
           | Scope | Required |
           |-------|----------|
@@ -419,7 +419,7 @@ paths:
                 $ref: '#/components/schemas/ReleaseList'
       x-mint:
         content: |
-          <Danger>This API version has reached end of life. See [supported versions](/docs/developers/platform-api/versioning#supported-versions).</Danger>
+          <Danger>This API version has reached end of life. See [supported versions](/developers/platform-api/versioning#supported-versions).</Danger>
 
           | Scope | Required |
           |-------|----------|

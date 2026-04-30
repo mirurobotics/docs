@@ -4,7 +4,7 @@ title: 'Commands'
 
 The Miru Agent does not (currently) provide a command line interface. However, the agent can be managed using standard `systemd` commands and other standard Linux tools.
 
-The [Miru CLI](/docs/developers/cli/overview) is only for managing Miru resources from your development machine's terminal. Please do not attempt to use the `miru` command to manage the agent.
+The [Miru CLI](/developers/cli/overview) is only for managing Miru resources from your development machine's terminal. Please do not attempt to use the `miru` command to manage the agent.
 
 ## Version
 
@@ -124,7 +124,7 @@ systemctl restart miru
 
 ### Stop
 
-`stop` stops the agent while leaving its state intact. Stopping the agent does not [disable](/docs/developers/agent/commands#disable) the agent—it will still automatically start on next system boot.
+`stop` stops the agent while leaving its state intact. Stopping the agent does not [disable](/developers/agent/commands#disable) the agent—it will still automatically start on next system boot.
 
 Note that stopping the agent will prevent any new deployments from reaching the device until the agent is started again.
 
@@ -153,7 +153,7 @@ systemctl start miru
 
 Disabling the agent prevents it from starting automatically on boot. 
 
-This does not immediately [stop](/docs/developers/agent/commands#stop) the agent—it will still run if it is currently running. However, it will not be able to start on next system boot.
+This does not immediately [stop](/developers/agent/commands#stop) the agent—it will still run if it is currently running. However, it will not be able to start on next system boot.
 
 ```bash
 systemctl disable miru
@@ -161,9 +161,9 @@ systemctl disable miru
 
 ### Enable
 
-Enabling the agent allows it to start automatically on boot. This is the default behavior after installation and only needs to be done if the agent has been [disabled](/docs/developers/agent/commands#disable).
+Enabling the agent allows it to start automatically on boot. This is the default behavior after installation and only needs to be done if the agent has been [disabled](/developers/agent/commands#disable).
 
-Enabling the agent will not immediately start it—it will still need to be [started](/docs/developers/agent/commands#start) manually.
+Enabling the agent will not immediately start it—it will still need to be [started](/developers/agent/commands#start) manually.
 
 ```bash
 systemctl enable miru

@@ -1,11 +1,12 @@
 // Package redirects validates the `redirects` array in docs.json against
-// the on-disk docs/ tree.
+// the on-disk Mintlify content tree.
 //
-// Mintlify serves docs/foo/bar.mdx at URL /docs/foo/bar. The `redirects`
-// array in docs.json rewrites URLs at the edge. This rule catches:
+// Mintlify serves foo/bar.mdx at URL /foo/bar relative to the configured
+// content root. The `redirects` array in docs.json rewrites URLs at the
+// edge. This rule catches:
 //   - Dead redirects (source already serves a real page).
 //   - Missing destinations (destination has no real page).
-//   - Bad prefixes / unsupported schemes / malformed paths.
+//   - Unsupported schemes / malformed paths.
 //
 // Diagnostic messages are stable strings asserted by tests/test-lint.sh.
 package redirects
@@ -278,9 +279,8 @@ func stringField(entry map[string]any, key string) (string, bool) {
 }
 
 // validateSource emits filesystem-related violations for a source URL
-// that already starts with '/'. The source must additionally start with
-// /docs/ (or be exactly /docs); after stripping the prefix it is
-// resolved against contentRoot to detect dead redirects.
+// that already starts with '/'. The path is resolved against contentRoot
+// to detect dead redirects.
 func validateSource(
 	i int,
 	source, contentRoot string,
@@ -288,17 +288,6 @@ func validateSource(
 	line int,
 ) []analysis.Violation {
 	cleaned := cleanPath(source)
-	if !strings.HasPrefix(cleaned, "docs/") && cleaned != "docs" {
-		return []analysis.Violation{{
-			File: "docs.json",
-			Line: line,
-			Col:  1,
-			Message: formatMessage(
-				i, "source", source, "bad prefix (must start with /docs/)",
-			),
-		}}
-	}
-
 	prefix, hasWildcard := splitWildcard(cleaned)
 	prefixFs := filepath.Join(contentRoot, filepath.Join(prefix...))
 
@@ -395,18 +384,6 @@ func validateDestination(
 	line int,
 ) []analysis.Violation {
 	cleaned := cleanPath(destination)
-	if !strings.HasPrefix(cleaned, "docs/") && cleaned != "docs" {
-		return []analysis.Violation{{
-			File: "docs.json",
-			Line: line,
-			Col:  1,
-			Message: formatMessage(
-				i, "destination", destination,
-				"bad prefix (must start with /docs/)",
-			),
-		}}
-	}
-
 	prefix, hasWildcard := splitWildcard(cleaned)
 	prefixRel := strings.Join(prefix, "/")
 	prefixFs := filepath.Join(contentRoot, filepath.Join(prefix...))

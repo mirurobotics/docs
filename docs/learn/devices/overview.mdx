@@ -54,7 +54,7 @@ import DeviceDef from '/snippets/definitions/device.mdx';
 
   <NullableBadge />
 
-  The [release](/docs/learn/releases/overview#properties) to which the device's current deployment belongs.
+  The [release](/learn/releases/overview#properties) to which the device's current deployment belongs.
 
   If the device is `inactive` or `activating`, the current release id is `null`. If the device is `online` or `offline`, the current release may still be `null` if the device has no deployed config instances.
 
@@ -63,19 +63,19 @@ import DeviceDef from '/snippets/definitions/device.mdx';
 
 ## Miru Agent
 
-Configurations are deployed to devices via the [Miru Agent](/docs/developers/agent/overview), a lightweight `systemd` service that runs on your devices, handling the deployment lifecycle of configurations.
+Configurations are deployed to devices via the [Miru Agent](/developers/agent/overview), a lightweight `systemd` service that runs on your devices, handling the deployment lifecycle of configurations.
 
 The Miru Agent offers the following functionality:
 
 - **Syncs configurations** from the cloud to the local file system in real-time
 - **Manages device state**, providing real-time updates of the device's status and the currently deployed configurations
-- [**Exposes a REST API**](/docs/developers/device-api/overview) over a Unix socket for programmatic access by applications running on the same machine
+- [**Exposes a REST API**](/developers/device-api/overview) over a Unix socket for programmatic access by applications running on the same machine
 
 <Note>
-  The Miru Agent only supports Linux. Visit the [supported platforms](/docs/developers/agent/overview#supported-platforms) for a complete list of supported platforms.
+  The Miru Agent only supports Linux. Visit the [supported platforms](/developers/agent/overview#supported-platforms) for a complete list of supported platforms.
 </Note>
 
-Read more about the agent in the [Miru Agent](/docs/developers/agent/overview) section.
+Read more about the agent in the [Miru Agent](/developers/agent/overview) section.
 
 ## Status
 
@@ -95,7 +95,7 @@ Devices begin in the `inactive` state. During the Miru Agent install process, de
 
 Once the Miru Agent has been activated on a device, the device remains `online` or `offline` for the remainder of its existence—devices don't transition back to `inactive` or `activating`.
 
-The only exception to this is when a device is [reactivated](/docs/learn/devices/manage#reactivate-a-device). During reactivation, devices briefly enter the `activating` state before transitioning back to `online`.
+The only exception to this is when a device is [reactivated](/learn/devices/manage#reactivate-a-device). During reactivation, devices briefly enter the `activating` state before transitioning back to `online`.
 
 To view a device's status, hover over its name on the Devices page.
 

@@ -1,0 +1,18 @@
+import { LEFT_TOOLTIP } from '/snippets/components/users/statuses.jsx';
+
+Leaving a workspace removes all access to your workspace and sets your status to <Tooltip tip={LEFT_TOOLTIP.tip} cta={LEFT_TOOLTIP.cta} href={LEFT_TOOLTIP.href}>left</Tooltip>:
+
+- You are immediately logged out
+- You cannot login to this workspace or access any resources (signing in with the same email address creates a new workspace with a new account)
+
+Leaving a workspace is reversible if you are _not the only active member_. An admin can invite you back to the workspace at any time.
+
+However, if you are _the only_ active member of a workspace, leaving the workspace will delete the workspace and all associated resources.
+
+To leave your workspace, navigate to the [Profile page](https://app.mirurobotics.com/settings/profile) and click **Leave workspace**.
+
+<Frame>
+  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/users/profile/workspace-access.png)
+</Frame>
+
+If the **leave workspace** button is disabled, you are not the only member of the workspace and must first [transfer ownership](/admin/workspace#transfer-ownership) to another member.

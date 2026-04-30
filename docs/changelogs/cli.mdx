@@ -12,7 +12,7 @@ import { Dropdown } from '/snippets/components/api-dropdown.jsx';
 
 CLI `v0.10.0` adds support for specifying config instance file paths anywhere on your devices' file system, not just in the `/srv/miru/config_instances/` directory.
 
-Note that file paths which do not live in `/srv/miru/config_instances/` require Miru Agent [v0.8.0](/docs/changelogs/agent#v0-8-0).
+Note that file paths which do not live in `/srv/miru/config_instances/` require Miru Agent [v0.8.0](/changelogs/agent#v0-8-0).
 
 ## Breaking changes
 
@@ -89,7 +89,7 @@ We recommend adding the instance file path annotation to maintain the same defau
 
 ## `miru release create`
 
-The `miru schema push` command has been replaced by [miru release create](/docs/references/cli/release-create), which bundles the entire release process into a single command. [CUE packages](/docs/references/cli/release-create#cue-packages) are now supported, allowing schemas to span multiple files.
+The `miru schema push` command has been replaced by [miru release create](/references/cli/release-create), which bundles the entire release process into a single command. [CUE packages](/references/cli/release-create#cue-packages) are now supported, allowing schemas to span multiple files.
 
 ```bash
 miru release create --version v1.0.0 schema.json
@@ -99,7 +99,7 @@ miru release create --version v1.0.0 schema.json
 
 The CLI now supports authentication via API keys using the `MIRU_API_KEY` environment variable, enabling non-interactive use in CI/CD pipelines.
 
-Visit the [CI/CD guide](/docs/developers/ci/overview) for more information on using the CLI in CI/CD pipelines.
+Visit the [CI/CD guide](/developers/ci/overview) for more information on using the CLI in CI/CD pipelines.
 
 ## Improvements
 
@@ -140,7 +140,7 @@ miru schema push schema.json \
 
 ## CUE support
 
-`v0.7.0` is the first CLI release with [CUE](/docs/learn/schemas/languages/overview) support. You can now push CUE-based schemas directly and use CUE alongside existing JSON Schema workflows.
+`v0.7.0` is the first CLI release with [CUE](/learn/schemas/languages/overview) support. You can now push CUE-based schemas directly and use CUE alongside existing JSON Schema workflows.
 
 ## Schema push improvements
 

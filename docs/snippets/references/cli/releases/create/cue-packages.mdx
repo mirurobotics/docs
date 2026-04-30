@@ -1,0 +1,22 @@
+[CUE](/learn/schemas/languages/cue) supports the concept of a [package](https://cuelang.org/docs/tour/packages/packages/)—a way to spread a schema's definition across multiple files.
+
+For example, say we have a `communication` schema which contains the following files:
+
+<Tree.Folder name="communication" defaultOpen>
+  <Tree.File name="peripherals.cue" />
+  <Tree.File name="network.cue" />
+  <Tree.File name="sensors.cue" />
+  <Tree.File name="main.cue" />
+</Tree.Folder>
+
+Each file defines a portion of the schema, which is then aggregated by the `main.cue` file to define the schema. Miru fully supports CUE packages, treating the `communication` directory as a single schema.
+
+**Identifying packages**
+
+The Miru CLI automatically identifies CUE packages for you when creating a release using the `package` clause at the top of each schema file (as described in the [CUE documentation](https://cuelang.org/docs/tour/packages/packages/)).
+
+You don't need to explicitly specify the package in the CLI command—just provide the path to the package directory or to the individual schema files within the package.
+
+**Annotations**
+
+To annotate a CUE package, annotate **exactly one file** in the package. Annotating multiple files or no files will result in an error.
