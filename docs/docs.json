@@ -294,11 +294,11 @@
           {
             "group": "Changelogs",
             "pages": [
-              "changelogs/product",
-              "changelogs/cli",
-              "changelogs/agent",
-              "changelogs/device-api",
-              "changelogs/platform-api"
+              "changelog/product",
+              "changelog/cli",
+              "changelog/agent",
+              "changelog/device-api",
+              "changelog/platform-api"
             ]
           }
         ]
@@ -319,7 +319,7 @@
     "links": [
       {
         "label": "Changelog",
-        "href": "https://docs.mirurobotics.com/changelogs/product"
+        "href": "https://docs.mirurobotics.com/changelog/product"
       },
       {
         "label": "Dashboard",
@@ -359,6 +359,14 @@
     "twitter:image": "/favicon-black.svg"
   },
   "redirects": [
+    {
+      "source": "/changelogs/:slug*",
+      "destination": "/changelog/:slug*"
+    },
+    {
+      "source": "/docs/changelogs/:slug*",
+      "destination": "/changelog/:slug*"
+    },
     {
       "source": "/references/device-api/latest/:slug*",
       "destination": "/references/device-api/v0.2.1/:slug*"

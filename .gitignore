@@ -12,7 +12,7 @@ __pycache__/
 # images
 images/
 videos/
-changelog/
+/changelog/
 
 node_modules/
 
