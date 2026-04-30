@@ -17,15 +17,17 @@ After this change, the published docs no longer expose the repository folder nam
 
 ## Progress
 
-- [ ] Create or update an implementation branch from `main`.
-- [ ] Make `docs/` the Mintlify content root and move Mintlify-owned config, snippets, styling, and public assets under it.
-- [ ] Remove the public `/docs` prefix from `docs/docs.json` navigation, OpenAPI paths, navbar links, redirects, and internal content links.
-- [ ] Update lint tooling and fixtures to use `docs/` as the content root.
-- [ ] Run tests, local Mintlify checks, and preflight; publish only after preflight reports `clean`.
+- [x] Create or update an implementation branch from `main`.
+- [x] Make `docs/` the Mintlify content root and move Mintlify-owned config, snippets, styling, and public assets under it.
+- [x] Remove the public `/docs` prefix from `docs/docs.json` navigation, OpenAPI paths, navbar links, redirects, and internal content links.
+- [x] Update lint tooling and fixtures to use `docs/` as the content root.
+- [x] Run tests, local Mintlify checks, and preflight; publish only after preflight reports `clean`.
 
 ## Surprises & Discoveries
 
-Add entries as implementation proceeds.
+- `pnpm exec mint broken-links` from `docs/` still resolved the CLI from the package root and scanned repo-local planning and fixture files. Running `../node_modules/.bin/mint broken-links` from `docs/` honored the intended Mintlify content root and passed.
+- `mint dev` served and redirected the checked routes from `docs/`, but printed a transient `TypeError: controller[kState].transformAlgorithm is not a function` while preparing the preview. The preview recovered and responded successfully.
+- The external Mintlify project setting still must be confirmed outside this repo before publishing: the documentation root must be `docs/`.
 
 ## Decision Log
 
@@ -35,7 +37,7 @@ Add entries as implementation proceeds.
 
 ## Outcomes & Retrospective
 
-Add entries at completion or major milestones.
+Implemented the repo-side migration. Local validation confirmed new root URLs render, old `/docs/...` URLs redirect, and lint/test checks pass against the new content-root layout.
 
 ## Context and Orientation
 

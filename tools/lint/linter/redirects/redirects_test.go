@@ -108,9 +108,7 @@ func TestCheck(t *testing.T) {
     {"source": "/api/foo", "destination": "/missing"}
   ]
 }`
-		root := setupContentRoot(t, map[string]string{
-			"docs.json": docsJSON,
-		})
+		root := setupContentRoot(t, map[string]string{"docs.json": docsJSON})
 		vs := Check(root)
 		if len(vs) != 1 {
 			t.Fatalf("expected 1 violation, got %d: %v", len(vs), vs)
@@ -576,9 +574,7 @@ func TestValidate(t *testing.T) {
 func TestCollectOpenAPISources(t *testing.T) {
 	t.Run("nav_nested_maps", func(t *testing.T) {
 		input := map[string]any{
-			"nav": map[string]any{
-				"openapi": map[string]any{"source": "api/a.yaml"},
-			},
+			"nav": map[string]any{"openapi": map[string]any{"source": "api/a.yaml"}},
 		}
 		got := collectOpenAPISources(input)
 		want := map[string]bool{"api/a.yaml": true}
