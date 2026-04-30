@@ -233,4 +233,30 @@ func TestRun(t *testing.T) {
 			t.Errorf("stdout = %q, want empty", stdout.String())
 		}
 	})
+
+	t.Run("clean allowlisted acronym title returns 0", func(t *testing.T) {
+		root := t.TempDir()
+		if err := os.MkdirAll(filepath.Join(root, "snippets"), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.MkdirAll(filepath.Join(root, "docs"), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		file := filepath.Join(root, "docs", "x.mdx")
+		content := "---\ntitle: \"API keys\"\n---\n\n## OpenAPI specifications\n"
+		if err := os.WriteFile(file, []byte(content), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		var stdout, stderr bytes.Buffer
+		got := run([]string{"lint", file}, &stdout, &stderr)
+		if got != 0 {
+			t.Errorf(
+				"exit code = %d, want 0; stdout=%q stderr=%q",
+				got, stdout.String(), stderr.String(),
+			)
+		}
+		if stdout.String() != "" {
+			t.Errorf("stdout = %q, want empty", stdout.String())
+		}
+	})
 }

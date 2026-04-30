@@ -40,11 +40,9 @@ func TestCheck_Headings(t *testing.T) {
 			wantCol:   4,
 		},
 		{
-			name:      "bad acronym (v1 limitation)",
+			name:      "clean acronym (allowlisted)",
 			content:   "## API reference\n",
-			wantCount: 1,
-			wantLine:  1,
-			wantCol:   4,
+			wantCount: 0,
 		},
 		{
 			name:      "clean apostrophe",
@@ -89,6 +87,113 @@ func TestCheck_Headings(t *testing.T) {
 			name:      "empty heading text after masking",
 			content:   "## <Tooltip />\n",
 			wantCount: 0,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			lines, spans := build(tc.content)
+			violations := Check("test.mdx", lines, spans)
+			if len(violations) != tc.wantCount {
+				t.Fatalf(
+					"violations count = %d, want %d; violations=%+v",
+					len(violations), tc.wantCount, violations,
+				)
+			}
+			if tc.wantCount == 1 {
+				v := violations[0]
+				if v.Line != tc.wantLine {
+					t.Errorf("Line = %d, want %d", v.Line, tc.wantLine)
+				}
+				if v.Col != tc.wantCol {
+					t.Errorf("Col = %d, want %d", v.Col, tc.wantCol)
+				}
+				if v.Message != Message {
+					t.Errorf("Message = %q, want %q", v.Message, Message)
+				}
+				if v.File != "test.mdx" {
+					t.Errorf("File = %q, want %q", v.File, "test.mdx")
+				}
+			}
+		})
+	}
+}
+
+func TestCheck_Allowlist(t *testing.T) {
+	tests := []struct {
+		name      string
+		content   string
+		wantCount int
+		wantLine  int
+		wantCol   int
+	}{
+		{
+			name:      "clean acronym leading",
+			content:   "## API reference\n",
+			wantCount: 0,
+		},
+		{
+			name:      "clean acronym mid-sentence",
+			content:   "## Set up the CLI\n",
+			wantCount: 0,
+		},
+		{
+			name:      "bad uppercase non-allowlisted after allowed",
+			content:   "## API Key authentication\n",
+			wantCount: 1,
+			wantLine:  1,
+			wantCol:   4,
+		},
+		{
+			name:      "bad lowercase leading non-allowlisted",
+			content:   "## reference API\n",
+			wantCount: 1,
+			wantLine:  1,
+			wantCol:   4,
+		},
+		{
+			name:      "clean version tag",
+			content:   "# v0.6.0\n",
+			wantCount: 0,
+		},
+		{
+			name:      "clean date-prefixed codename",
+			content:   "# 2026-03-09.tetons\n",
+			wantCount: 0,
+		},
+		{
+			name:      "clean OpenAPI specifications",
+			content:   "## OpenAPI specifications\n",
+			wantCount: 0,
+		},
+		{
+			name:      "clean GitHub actions",
+			content:   "## GitHub actions\n",
+			wantCount: 0,
+		},
+		{
+			name:      "bad GitHub Actions",
+			content:   "## GitHub Actions\n",
+			wantCount: 1,
+			wantLine:  1,
+			wantCol:   4,
+		},
+		{
+			name:      "clean Miru help",
+			content:   "## How does Miru help?\n",
+			wantCount: 0,
+		},
+		{
+			name:      "clean Base/Head Git refs",
+			content:   "### Base vs. Head\n",
+			wantCount: 0,
+		},
+		{
+			name:      "bad lowercase Gui (only uppercase GUI is allowed)",
+			content:   "### Approachable Gui\n",
+			wantCount: 1,
+			wantLine:  1,
+			wantCol:   5,
 		},
 	}
 
@@ -167,6 +272,28 @@ func TestCheck_FrontmatterTitle(t *testing.T) {
 			name:      "no frontmatter",
 			content:   "## Foo\n",
 			wantCount: 0,
+		},
+		{
+			name:      "clean SDKs title (allowlisted)",
+			content:   "---\ntitle: \"SDKs\"\n---\n",
+			wantCount: 0,
+		},
+		{
+			name:      "clean event identifier title (allowlisted)",
+			content:   "---\ntitle: \"deployment.deployed\"\n---\n",
+			wantCount: 0,
+		},
+		{
+			name:      "clean GitHub allowlist title",
+			content:   "---\ntitle: \"GitHub actions\"\n---\n",
+			wantCount: 0,
+		},
+		{
+			name:      "bad GitHub Actions title",
+			content:   "---\ntitle: \"GitHub Actions\"\n---\n",
+			wantCount: 1,
+			wantLine:  2,
+			wantCol:   9,
 		},
 	}
 
