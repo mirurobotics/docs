@@ -151,11 +151,7 @@ func TestCheck_Allowlist(t *testing.T) {
 			wantLine:  1,
 			wantCol:   4,
 		},
-		{
-			name:      "clean version tag",
-			content:   "# v0.6.0\n",
-			wantCount: 0,
-		},
+		{name: "clean version tag", content: "# v0.6.0\n", wantCount: 0},
 		{
 			name:      "clean date-prefixed codename",
 			content:   "# 2026-03-09.tetons\n",
@@ -268,11 +264,7 @@ func TestCheck_FrontmatterTitle(t *testing.T) {
 			content:   "---\nslug: foo\n---\n",
 			wantCount: 0,
 		},
-		{
-			name:      "no frontmatter",
-			content:   "## Foo\n",
-			wantCount: 0,
-		},
+		{name: "no frontmatter", content: "## Foo\n", wantCount: 0},
 		{
 			name:      "clean SDKs title (allowlisted)",
 			content:   "---\ntitle: \"SDKs\"\n---\n",

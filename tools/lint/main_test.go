@@ -186,22 +186,13 @@ func TestRun(t *testing.T) {
 			)
 		}
 		if !strings.Contains(stdout.String(), "heading-case:") {
-			t.Errorf(
-				"stdout = %q, want contains 'heading-case:'",
-				stdout.String(),
-			)
+			t.Errorf("stdout = %q, want contains 'heading-case:'", stdout.String())
 		}
 		if !strings.Contains(stdout.String(), ":2:") {
-			t.Errorf(
-				"stdout = %q, want contains ':2:'",
-				stdout.String(),
-			)
+			t.Errorf("stdout = %q, want contains ':2:'", stdout.String())
 		}
 		if !strings.Contains(stdout.String(), file) {
-			t.Errorf(
-				"stdout = %q, want contains %q",
-				stdout.String(), file,
-			)
+			t.Errorf("stdout = %q, want contains %q", stdout.String(), file)
 		}
 		if stderr.String() != "" {
 			t.Errorf("stderr = %q, want empty", stderr.String())
