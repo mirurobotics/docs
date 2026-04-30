@@ -126,7 +126,7 @@ For more information, check out the [staging area](/docs/learn/releases/staging-
 
 <DeploymentStatus />
 
-## Target Status
+## Target status
 
 The target status is the desired state of a deployment. There are three possible target statuses.
 
@@ -158,7 +158,7 @@ Once a deployment's target status has been set to `deployed`, it can never be se
 
 This is intentional—deployments are one-time use. Once a deployment has been deployed, it cannot be redeployed. You must create a new deployment with identical content to roll back.
 
-## Activity Status
+## Activity status
 
 The activity status is the _last known_ state of a deployment.
 
@@ -200,7 +200,7 @@ Deployments which are immediately deployed and skip the `staged` state have a si
 
 As with the target status, activity states can only progress forward since deployments are one-time.
 
-## Error Status
+## Error status
 
 The error status is the _last known_ error state of a deployment. Again, we use _the last known state_ intentionally—poor network connectivity can prevent devices from immediately syncing their error state to the cloud.
 

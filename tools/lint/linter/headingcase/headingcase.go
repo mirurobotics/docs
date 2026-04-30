@@ -1,0 +1,287 @@
+package headingcase
+
+import (
+	"regexp"
+	"strings"
+
+	"github.com/mirurobotics/docs/tools/lint/linter/analysis"
+)
+
+// Message is the diagnostic emitted for any heading-case violation.
+const Message = "heading-case: heading must be sentence-case " +
+	"(first letter uppercase, all other letters lowercase)"
+
+// trailingPunct is the set of terminal punctuation runes trimmed from the
+// end of a heading before the casing check.
+const trailingPunct = ".?!:"
+
+// outerPunct is the set of non-letter runes trimmed from the ends of an
+// individual token. '.' is intentionally excluded so event identifiers like
+// "deployment.deployed" survive lookup against the allowlist.
+const outerPunct = ",;()[]{}\"'"
+
+// The Re-suffixed helpers below return freshly-compiled regexes; this
+// avoids package-level mutable state per the project's lint conventions.
+// Callers should compile once per Check via newChecker rather than per
+// heading.
+
+func titleRe() *regexp.Regexp { return regexp.MustCompile(`^title:\s*(.*)$`) }
+
+func headingRe() *regexp.Regexp {
+	return regexp.MustCompile(`^(#{1,6})[ \t]+(.+?)[ \t]*$`)
+}
+
+func versionTagRe() *regexp.Regexp { return regexp.MustCompile(`^v?\d+([.-]\w+)*$`) }
+
+func inlineCodeRe() *regexp.Regexp { return regexp.MustCompile("`[^`]*`") }
+
+func htmlTagRe() *regexp.Regexp { return regexp.MustCompile(`<[^>]*>`) }
+
+func mdLinkRe() *regexp.Regexp { return regexp.MustCompile(`\[([^\]]*)\]\([^)]*\)`) }
+
+// allowlist returns the set of tokens that are exempt from the casing
+// check (case-sensitive exact match). It is a function rather than a
+// package-level variable to avoid mutable global state.
+func allowlist() map[string]struct{} {
+	return map[string]struct{}{
+		// Acronyms.
+		"API":     {},
+		"APIs":    {},
+		"CLI":     {},
+		"CI":      {},
+		"SDK":     {},
+		"SDKs":    {},
+		"CUE":     {},
+		"JSON":    {},
+		"MQTT":    {},
+		"TLS":     {},
+		"HTTPS":   {},
+		"REST":    {},
+		"GUI":     {},
+		"URL":     {},
+		"ACLs":    {},
+		"SSE":     {},
+		"OpenAPI": {},
+		// Proper nouns.
+		"Miru":   {},
+		"GitHub": {},
+		"Agent":  {},
+		"Unix":   {},
+		"Git":    {},
+		"Python": {},
+		"Schema": {},
+		"Base":   {},
+		"Head":   {},
+		// Codenames.
+		"tetons": {},
+		"zion":   {},
+		// Event identifiers.
+		"deployment.deployed": {},
+		"deployment.removed":  {},
+	}
+}
+
+// checker bundles compiled regexes and the allowlist for a single Check run
+// so they're built once instead of once per heading.
+type checker struct {
+	title, heading, version *regexp.Regexp
+	inlineCode, htmlTag     *regexp.Regexp
+	mdLink                  *regexp.Regexp
+	allow                   map[string]struct{}
+}
+
+func newChecker() *checker {
+	return &checker{
+		title:      titleRe(),
+		heading:    headingRe(),
+		version:    versionTagRe(),
+		inlineCode: inlineCodeRe(),
+		htmlTag:    htmlTagRe(),
+		mdLink:     mdLinkRe(),
+		allow:      allowlist(),
+	}
+}
+
+// Check enforces strict sentence-case on the front-matter title and on
+// every Markdown body heading. lines is the raw file content split by
+// line; spans is indexed by line and gates body-heading detection (lines
+// without prose spans — e.g. fenced code blocks, frontmatter — are
+// skipped).
+func Check(
+	file string,
+	lines []string,
+	spans [][]analysis.ProseSpan,
+) []analysis.Violation {
+	c := newChecker()
+	var violations []analysis.Violation
+
+	// Front-matter title path.
+	if end := analysis.FrontmatterEnd(lines); end >= 1 {
+		for i := 1; i < end; i++ {
+			line := lines[i]
+			if c.title.FindStringSubmatch(line) == nil {
+				continue
+			}
+			value, valueByteOffset := titleValueAndOffset(line)
+			if c.casingViolation(value) {
+				violations = append(violations, analysis.Violation{
+					File:    file,
+					Line:    i + 1,
+					Col:     valueByteOffset + 1,
+					Message: Message,
+				})
+			}
+			break
+		}
+	}
+
+	// Body heading path.
+	for i, line := range lines {
+		if i >= len(spans) || len(spans[i]) == 0 {
+			continue
+		}
+		m := c.heading.FindStringSubmatch(line)
+		if m == nil {
+			continue
+		}
+		masked := c.maskHeading(m[2])
+		if !c.casingViolation(masked) {
+			continue
+		}
+		violations = append(violations, analysis.Violation{
+			File:    file,
+			Line:    i + 1,
+			Col:     headingTextCol(line),
+			Message: Message,
+		})
+	}
+
+	return violations
+}
+
+// titleValueAndOffset returns the captured title value (with one matching
+// pair of surrounding quotes stripped if present) and the 0-based byte
+// offset of the first character of the actual title text on the raw line.
+func titleValueAndOffset(line string) (string, int) {
+	// titleRe has already matched, so "title:" is at the very start.
+	idx := len("title:")
+	for idx < len(line) && (line[idx] == ' ' || line[idx] == '\t') {
+		idx++
+	}
+	value := line[idx:]
+	if len(value) >= 2 {
+		first := value[0]
+		last := value[len(value)-1]
+		if (first == '"' && last == '"') || (first == '\'' && last == '\'') {
+			value = value[1 : len(value)-1]
+			idx++
+		}
+	}
+	return value, idx
+}
+
+// headingTextCol returns the 1-based byte column of the first non-'#',
+// non-space/tab character on the raw heading line.
+func headingTextCol(line string) int {
+	i := 0
+	for i < len(line) && line[i] == '#' {
+		i++
+	}
+	for i < len(line) && (line[i] == ' ' || line[i] == '\t') {
+		i++
+	}
+	return i + 1
+}
+
+// maskHeading removes content from heading text that should not contribute
+// to the casing check: inline code, HTML/JSX tags, and the URL portion of
+// Markdown links (the link text is preserved).
+func (c *checker) maskHeading(s string) string {
+	s = c.inlineCode.ReplaceAllString(s, "")
+	s = c.htmlTag.ReplaceAllString(s, "")
+	s = c.mdLink.ReplaceAllString(s, "$1")
+	return s
+}
+
+// stripOuterPunct trims surrounding non-letter punctuation from both ends
+// of the token.
+func stripOuterPunct(s string) string { return strings.Trim(s, outerPunct) }
+
+// casingViolation reports whether s violates strict sentence-case after
+// trimming whitespace and trailing terminal punctuation. The check is
+// word-aware: tokens that match the version-tag regex or appear in the
+// allowlist are skipped. The leftmost token must be sentence-cased (first
+// letter upper, rest lower); every later rule-bound token must be all
+// lowercase. An empty result after trimming is not a violation.
+func (c *checker) casingViolation(s string) bool {
+	s = strings.TrimSpace(s)
+	for len(s) > 0 && strings.ContainsRune(trailingPunct, rune(s[len(s)-1])) {
+		s = s[:len(s)-1]
+	}
+	if s == "" {
+		return false
+	}
+	if c.version.MatchString(s) {
+		return false
+	}
+	tokens := strings.Fields(s)
+	for i, tok := range tokens {
+		core := stripOuterPunct(tok)
+		if core == "" {
+			continue
+		}
+		if c.version.MatchString(core) {
+			continue
+		}
+		if _, ok := c.allow[core]; ok {
+			continue
+		}
+		if i == 0 {
+			if tokenViolatesLeading(core) {
+				return true
+			}
+		} else if tokenViolatesLater(core) {
+			return true
+		}
+	}
+	return false
+}
+
+// tokenViolatesLeading reports whether the leftmost token violates the
+// sentence-case rule: the first ASCII letter must be uppercase and every
+// subsequent ASCII letter must be lowercase. Non-letters are ignored.
+func tokenViolatesLeading(s string) bool {
+	seenFirst := false
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		isUpper := c >= 'A' && c <= 'Z'
+		isLower := c >= 'a' && c <= 'z'
+		if !isUpper && !isLower {
+			continue
+		}
+		if !seenFirst {
+			if !isUpper {
+				return true
+			}
+			seenFirst = true
+			continue
+		}
+		if isUpper {
+			return true
+		}
+	}
+	return false
+}
+
+// tokenViolatesLater reports whether a non-leading rule-bound token
+// violates the rule: every ASCII letter must be lowercase. Non-letters
+// are ignored.
+func tokenViolatesLater(s string) bool {
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if c >= 'A' && c <= 'Z' {
+			return true
+		}
+	}
+	return false
+}

@@ -1,10 +1,10 @@
 ---
-title: 'File Permissions'
+title: 'File permissions'
 ---
 
 This page covers the Miru Agent's default file system permissions, how to grant the agent access to custom file system paths, and how to check if the agent has access to a given path.
 
-## Default Permissions
+## Default permissions
 
 During installation, the `miru` system user and group are created (no login shell). The agent process runs as `miru:miru` under systemd.
 
@@ -20,7 +20,7 @@ The first two directories are only for internal use by the agent.
 
 The third directory is the default location for deploying config instances—deploying to any path inside `/srv/miru` is supported out-of-the-box, no additional configuration required.
 
-## Custom File Paths
+## Custom file paths
 
 <Warning>
   You must use Miru Agent [v0.8.0](/docs/changelogs/agent#v0-8-0) or later to deploy configurations to a path that does not begin with `/srv/miru/config_instances/`.
@@ -34,7 +34,7 @@ The Miru Agent supports writing config instances to arbitrary file system paths.
 
 However, to do so, you must grant the `miru` user access to the specified target path. Otherwise, the Miru Agent will receive a permission denied error from the operating system when attempting to write to these file paths.
 
-### Required Permissions
+### Required permissions
 
 To write to a given file, the `miru` user requires specific permissions to 
 

@@ -102,7 +102,7 @@ func TestRun(t *testing.T) {
 			t.Fatal(err)
 		}
 		file := filepath.Join(root, "docs", "x.mdx")
-		if err := os.WriteFile(file, []byte("# x\n"), 0o644); err != nil {
+		if err := os.WriteFile(file, []byte("# Hello\n"), 0o644); err != nil {
 			t.Fatal(err)
 		}
 		var stdout, stderr bytes.Buffer
@@ -161,6 +161,93 @@ func TestRun(t *testing.T) {
 				"stdout = %q, want contains 'missing destination'",
 				stdout.String(),
 			)
+		}
+	})
+
+	t.Run("heading-case violation returns 1", func(t *testing.T) {
+		root := t.TempDir()
+		if err := os.MkdirAll(filepath.Join(root, "snippets"), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.MkdirAll(filepath.Join(root, "docs"), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		file := filepath.Join(root, "docs", "x.mdx")
+		content := "---\ntitle: \"User Management\"\n---\n\n## Configure deployments\n"
+		if err := os.WriteFile(file, []byte(content), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		var stdout, stderr bytes.Buffer
+		got := run([]string{"lint", file}, &stdout, &stderr)
+		if got != 1 {
+			t.Errorf(
+				"exit code = %d, want 1; stdout=%q stderr=%q",
+				got, stdout.String(), stderr.String(),
+			)
+		}
+		if !strings.Contains(stdout.String(), "heading-case:") {
+			t.Errorf("stdout = %q, want contains 'heading-case:'", stdout.String())
+		}
+		if !strings.Contains(stdout.String(), ":2:") {
+			t.Errorf("stdout = %q, want contains ':2:'", stdout.String())
+		}
+		if !strings.Contains(stdout.String(), file) {
+			t.Errorf("stdout = %q, want contains %q", stdout.String(), file)
+		}
+		if stderr.String() != "" {
+			t.Errorf("stderr = %q, want empty", stderr.String())
+		}
+	})
+
+	t.Run("clean headings return 0", func(t *testing.T) {
+		root := t.TempDir()
+		if err := os.MkdirAll(filepath.Join(root, "snippets"), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.MkdirAll(filepath.Join(root, "docs"), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		file := filepath.Join(root, "docs", "x.mdx")
+		content := "---\ntitle: \"Workspace\"\n---\n\n## Configure deployments\n\n### What is a config?\n"
+		if err := os.WriteFile(file, []byte(content), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		var stdout, stderr bytes.Buffer
+		got := run([]string{"lint", file}, &stdout, &stderr)
+		if got != 0 {
+			t.Errorf(
+				"exit code = %d, want 0; stdout=%q stderr=%q",
+				got, stdout.String(), stderr.String(),
+			)
+		}
+		if stdout.String() != "" {
+			t.Errorf("stdout = %q, want empty", stdout.String())
+		}
+	})
+
+	t.Run("clean allowlisted acronym title returns 0", func(t *testing.T) {
+		root := t.TempDir()
+		if err := os.MkdirAll(filepath.Join(root, "snippets"), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.MkdirAll(filepath.Join(root, "docs"), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		file := filepath.Join(root, "docs", "x.mdx")
+		content := "---\ntitle: \"API keys\"\n---\n\n## OpenAPI specifications\n"
+		if err := os.WriteFile(file, []byte(content), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		var stdout, stderr bytes.Buffer
+		got := run([]string{"lint", file}, &stdout, &stderr)
+		if got != 0 {
+			t.Errorf(
+				"exit code = %d, want 0; stdout=%q stderr=%q",
+				got, stdout.String(), stderr.String(),
+			)
+		}
+		if stdout.String() != "" {
+			t.Errorf("stdout = %q, want empty", stdout.String())
 		}
 	})
 }
