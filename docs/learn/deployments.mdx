@@ -86,7 +86,7 @@ import DeploymentStatus from '/snippets/deployments/status.mdx';
 <ParamField path="release" type="Release">
   <ImmutableBadge />
 
-  The [release](/docs/learn/releases/overview#properties) which the deployment adheres to.
+  The [release](/learn/releases/overview#properties) which the deployment adheres to.
 
   Examples: `1.0.1`, `1.7.0-beta.1`
 </ParamField>
@@ -94,7 +94,7 @@ import DeploymentStatus from '/snippets/deployments/status.mdx';
 <ParamField path="config instances" type="[] Config Instance">
   <ImmutableBadge />
 
-  The [config instances](/docs/learn/config-instances#properties) in the deployment, each of which satisfies a different config schema in the deployment's release.
+  The [config instances](/learn/config-instances#properties) in the deployment, each of which satisfies a different config schema in the deployment's release.
 
   Examples: `CFG-68hdX`, `CFG-Cpa13`
 </ParamField>
@@ -103,8 +103,8 @@ import DeploymentStatus from '/snippets/deployments/status.mdx';
 
 Broadly speaking, there are two methods for creating and deploying configurations. Configurations can be:
 
-1. Edited per device via the [config editor](/docs/learn/devices/config-editor)
-2. Staged in a release's [staging area](/docs/learn/releases/staging-area) to be deployed at a later time
+1. Edited per device via the [config editor](/learn/devices/config-editor)
+2. Staged in a release's [staging area](/learn/releases/staging-area) to be deployed at a later time
 
 **Per-Device Editing**
 
@@ -112,15 +112,15 @@ Each device has a dedicated config editor for viewing and editing its configurat
 
 The config editor deals only with a single device's configurations. It does not support multiple devices at once nor does it support staging new deployments.
 
-For more information, check out the [config editor](/docs/learn/devices/config-editor) documentation.
+For more information, check out the [config editor](/learn/devices/config-editor) documentation.
 
 **Release Staging**
 
-Staging a deployment is the process of creating a new deployment in a release's [staging area](/docs/learn/releases/staging-area) to be deployed in the future. Staging is primarily used to rollout a new release, providing an unobtrusive place to create and review deployments before being deployed to devices.
+Staging a deployment is the process of creating a new deployment in a release's [staging area](/learn/releases/staging-area) to be deployed in the future. Staging is primarily used to rollout a new release, providing an unobtrusive place to create and review deployments before being deployed to devices.
 
 A release's staging area is also useful for batch operations. Deployments can be created, deployed, and archived in bulk, which helps manage large numbers of deployments at once.
 
-For more information, check out the [staging area](/docs/learn/releases/staging-area) documentation.
+For more information, check out the [staging area](/learn/releases/staging-area) documentation.
 
 ## Status
 
@@ -145,7 +145,7 @@ If a deployment is staged before being deployed, the diagram below shows the val
 
 **Without Staging**
 
-Of course, many deployments skip staging and deploy immediately (such as those deployed from a device's [config editor](/docs/learn/devices/config-editor)). The diagram below shows the valid transitions between target statuses for a deployment that is immediately deployed.
+Of course, many deployments skip staging and deploy immediately (such as those deployed from a device's [config editor](/learn/devices/config-editor)). The diagram below shows the valid transitions between target statuses for a deployment that is immediately deployed.
 
 <img src="https://assets.mirurobotics.com/docs/v03/images/deployments/target-status-no-staging.light.svg" alt="Deployment target status without staging" className="block dark:hidden" />
 <img src="https://assets.mirurobotics.com/docs/v03/images/deployments/target-status-no-staging.dark.svg" alt="Deployment target status without staging" className="hidden dark:block" />
@@ -169,7 +169,7 @@ There are six possible activity states for a deployment.
 | Activity Status | Description                                                                                                                     |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `staged`        | Deployment has been created and is ready to be deployed                                                                         |
-| `drifted`       | Deployment has [drifted](/docs/learn/releases/staging-area#deployment-drift) and needs to be reviewed                           |
+| `drifted`       | Deployment has [drifted](/learn/releases/staging-area#deployment-drift) and needs to be reviewed                           |
 | `queued`        | Deployment is waiting for the device to be <Tooltip tip={ONLINE_TOOLTIP.tip} cta={ONLINE_TOOLTIP.cta} href={ONLINE_TOOLTIP.href}>online</Tooltip> so it can be delivered to the device |
 | `deployed`      | Deployment has been delivered to the device, and its configurations are available for consumption                               |
 | `removing`      | Deployment's configurations are being removed from the device                                                                   |
@@ -177,9 +177,9 @@ There are six possible activity states for a deployment.
 
 **With Staging**
 
-When a deployment is [staged](/docs/learn/releases/staging-area) before being deployed, its lifecycle has two phases: a **review phase** and a **deployment phase**.
+When a deployment is [staged](/learn/releases/staging-area) before being deployed, its lifecycle has two phases: a **review phase** and a **deployment phase**.
 
-During the review phase, a staged deployment may [drift](/docs/learn/releases/staging-area#deployment-drift) if the underlying release changes. A drifted deployment transitions to `drifted` and must either be restaged or archived.
+During the review phase, a staged deployment may [drift](/learn/releases/staging-area#deployment-drift) if the underlying release changes. A drifted deployment transitions to `drifted` and must either be restaged or archived.
 
 <img src="https://assets.mirurobotics.com/docs/v03/images/deployments/activity-status-review.light.svg" alt="Deployment activity status during review phase" className="block dark:hidden" />
 <img src="https://assets.mirurobotics.com/docs/v03/images/deployments/activity-status-review.dark.svg" alt="Deployment activity status during review phase" className="hidden dark:block" />

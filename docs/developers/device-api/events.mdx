@@ -28,7 +28,7 @@ curl --no-buffer \
 ```
 
 <Warning>
-Ensure you have proper permissions to access the Unix socket. See [Authentication](/docs/developers/device-api/authn) for more details.
+Ensure you have proper permissions to access the Unix socket. See [Authentication](/developers/device-api/authn) for more details.
 </Warning>
 
 ## SDK support
@@ -36,14 +36,14 @@ Ensure you have proper permissions to access the Unix socket. See [Authenticatio
 <EventSdkSupport />
 
 ## Versioning
-Server-sent events are versioned alongside the Device API. The first Device API version that supports SSE events is [v0.2.1](/docs/changelogs/device-api#v0-2-1).
+Server-sent events are versioned alongside the Device API. The first Device API version that supports SSE events is [v0.2.1](/changelogs/device-api#v0-2-1).
 
 So, the event envelope and event types streamed from endpoint `/v0.2/events` in `v0.2.1` may be different from the event envelope and event types streamed from endpoint `/v0.3/events` in `v0.3.0`. As an example, `deployment.deployed` in `v0.2.1` may contain different fields than `deployment.deployed` in `v0.3.0`.
 
 
 To be clear, Miru does not version individual event types using `{resource}.{action}.{version}` (e.g. `deployment.deployed.v1`, `deployment.removed.v1`) strings like some other APIs do. Instead, each Device API version exposes a particular set of event types in the form `{resource}.{action}` (e.g. `deployment.deployed`, `deployment.removed`).
 
-Miru's stability guarantees for event versioning adhere to the policy specified in the [Device API versioning](/docs/developers/device-api/versions#stability-guarantees) section.
+Miru's stability guarantees for event versioning adhere to the policy specified in the [Device API versioning](/developers/device-api/versions#stability-guarantees) section.
 
 <StabilityGuarantees />
 
@@ -124,7 +124,7 @@ event: deployment.deployed
 data: {"object":"event","id":42,"type":"deployment.deployed","occurred_at":"2026-03-10T12:00:00Z","data":{...}}
 ```
 
-For the full list of event types supported by a Device API version, visit the [Event Types](/docs/references/device-api/latest/events) section in the Device API reference.
+For the full list of event types supported by a Device API version, visit the [Event Types](/references/device-api/latest/events) section in the Device API reference.
 
 ## Subscription options
 

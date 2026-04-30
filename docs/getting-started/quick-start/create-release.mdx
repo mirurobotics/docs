@@ -19,14 +19,14 @@ git clone https://github.com/mirurobotics/getting-started.git
 
 ## Define the schemas
 
-Releases are primarily defined by the config schemas they contain. The getting-started repository contains two sets of schemas for each of the supported [schema languages](/docs/learn/schemas/languages/overview):
+Releases are primarily defined by the config schemas they contain. The getting-started repository contains two sets of schemas for each of the supported [schema languages](/learn/schemas/languages/overview):
 
 - Empty schemas - regard all config instances as valid
 - Strict schemas - constrain the valid fields, types, and values for instances of the config type they belong to
 
 For this tutorial, choose one of these schema sets to create your release with.
 
-If you're unfamiliar with schema languages, we recommend starting with [JSON Schema](/docs/learn/schemas/languages/jsonschema). If you don't currently use a schema, we recommend starting with an empty schema and gradually adding constraints as needed.
+If you're unfamiliar with schema languages, we recommend starting with [JSON Schema](/learn/schemas/languages/jsonschema). If you don't currently use a schema, we recommend starting with an empty schema and gradually adding constraints as needed.
 
 <Tabs>
 
@@ -96,7 +96,7 @@ Next, we'll install the CLI—the primary method of creating releases in Miru.
 
 Creating releases via the CLI is a deliberate design choice. We believe a release's schemas should live in a Git repository. This allows them to be versioned alongside the code that uses them and encourages better software development practices.
 
-While this tutorial covers creating releases on your local machine, the CLI can also be used to create releases in a [CI pipeline](/docs/developers/ci/overview).
+While this tutorial covers creating releases on your local machine, the CLI can also be used to create releases in a [CI pipeline](/developers/ci/overview).
 
 **Install**
 
@@ -187,4 +187,4 @@ Then select the overview tab at the top of the page to view the release's detail
   ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/releases/overview.png)
 </Frame>
 
-For a more comprehensive guide on creating releases, visit the [create releases](/docs/learn/releases/create) documentation. For a concise reference of the CLI command, visit the [CLI Reference](/docs/references/cli/release-create).
+For a more comprehensive guide on creating releases, visit the [create releases](/learn/releases/create) documentation. For a concise reference of the CLI command, visit the [CLI Reference](/references/cli/release-create).

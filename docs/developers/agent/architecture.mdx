@@ -52,7 +52,7 @@ When a deployment is deployed from the dashboard or Platform API, the control pl
 
 **2. Manual request (REST API)**
 
-Oftentimes it's beneficial to manually trigger a sync cycle from an on-device application to ensure that the local state is in sync with the control plane's state. A local application can request the agent perform a sync cycle via the [Device API](/docs/developers/device-api/overview).
+Oftentimes it's beneficial to manually trigger a sync cycle from an on-device application to ensure that the local state is in sync with the control plane's state. A local application can request the agent perform a sync cycle via the [Device API](/developers/device-api/overview).
 
 <img src="https://assets.mirurobotics.com/docs/v03/images/agent/architecture/rest-trigger.light.svg" alt="REST trigger sequence" className="block dark:hidden" />
 <img src="https://assets.mirurobotics.com/docs/v03/images/agent/architecture/rest-trigger.dark.svg" alt="REST trigger sequence" className="hidden dark:block" />
@@ -63,11 +63,11 @@ As a fallback to the above triggers, the agent regularly checks that the local s
 
 **4. Restart (systemd)**
 
-As a final fallback, the agent performs an initial sync cycle on startup. If encountering real-time sync issues with the agent, we recommend [restarting](/docs/developers/agent/commands#restart) the agent to manually trigger a sync cycle.
+As a final fallback, the agent performs an initial sync cycle on startup. If encountering real-time sync issues with the agent, we recommend [restarting](/developers/agent/commands#restart) the agent to manually trigger a sync cycle.
 
 ## Deployments
 
-Miru takes a declarative approach to deployments. Each deployment has a [target state](/docs/learn/deployments#target-status) set by the control plane (what should happen) and an [activity state](/docs/learn/deployments#activity-status) tracked by the agent (what has happened). 
+Miru takes a declarative approach to deployments. Each deployment has a [target state](/learn/deployments#target-status) set by the control plane (what should happen) and an [activity state](/learn/deployments#activity-status) tracked by the agent (what has happened). 
 
 During each sync, the agent compares these two states and determines the appropriate action to transition a deployment from its current state to its target state.
 
@@ -89,5 +89,5 @@ Once the cooldown expires, the agent retries the deployment on the next sync. If
 
 The agent persists all state locally on the device, including deployment metadata and configuration file content. If the device loses network connectivity:
 
-- Configurations that are already deployed remain on the file system and continue to be served by the local [REST API](/docs/developers/device-api/overview)
+- Configurations that are already deployed remain on the file system and continue to be served by the local [REST API](/developers/device-api/overview)
 - Status updates are persisted on disk and sent to the control plane as soon as the agent reconnects

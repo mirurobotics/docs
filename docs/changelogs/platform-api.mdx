@@ -122,7 +122,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
   "archived"
 ```
 
-These changes are also reflected in the deployment's [status](/docs/learn/deployments#status) field.
+These changes are also reflected in the deployment's [status](/learn/deployments#status) field.
 
 </Dropdown>
 <Separator />
@@ -334,19 +334,19 @@ Beginning with the `2026-03-09.tetons` release, the Python SDK is published from
 
 The previous Python SDK was published to [python-server-sdk](https://github.com/mirurobotics/python-server-sdk) and used the `miru_server_sdk` import path.
 
-Furthermore, SDK `v0.7.0` marks the major version rollout of the `2026-03-09.tetons` API. For the latest SDK version compatibility information, see the [Platform SDKs](/docs/developers/platform-api/sdks) page.
+Furthermore, SDK `v0.7.0` marks the major version rollout of the `2026-03-09.tetons` API. For the latest SDK version compatibility information, see the [Platform SDKs](/developers/platform-api/sdks) page.
 
 ## Migration steps
 
 <Steps>
   <Step title="Set the Miru-Version header">
-    Set the `Miru-Version: 2026-03-09.tetons` header on all API requests. If you are using the [Python SDK](/docs/developers/platform-api/sdks#python), this is done automatically.
+    Set the `Miru-Version: 2026-03-09.tetons` header on all API requests. If you are using the [Python SDK](/developers/platform-api/sdks#python), this is done automatically.
   </Step>
 
   <Step title="Migrate breaking changes">
     Migrate your client application according to the breaking changes listed above.
 
-    If you are using the [Python SDK](/docs/developers/platform-api/sdks#python), migrate from the legacy repository [python-server-sdk](https://github.com/mirurobotics/python-server-sdk) to [python-platform-sdk](https://github.com/mirurobotics/python-platform-sdk) and update imports from `miru_server_sdk` to `miru_platform_sdk`.
+    If you are using the [Python SDK](/developers/platform-api/sdks#python), migrate from the legacy repository [python-server-sdk](https://github.com/mirurobotics/python-server-sdk) to [python-platform-sdk](https://github.com/mirurobotics/python-platform-sdk) and update imports from `miru_server_sdk` to `miru_platform_sdk`.
 
   </Step>
 
@@ -362,7 +362,7 @@ Furthermore, SDK `v0.7.0` marks the major version rollout of the `2026-03-09.tet
 *October 21, 2025*
 
 <Danger>
-  The `2025-10-21.zion` API version is no longer supported. See [supported versions](/docs/developers/platform-api/versioning#supported-versions).
+  The `2025-10-21.zion` API version is no longer supported. See [supported versions](/developers/platform-api/versioning#supported-versions).
 </Danger>
 
 Initial release of the Platform API. This version establishes core API endpoints for managing the deployment pipeline—from defining configurations through releasing and deploying to devices.
@@ -399,20 +399,20 @@ Initial release of the Platform API. This version establishes core API endpoints
 ## Query parameters
 
 <Dropdown title="Filters">
-  Filtering allows you to narrow list results by resource fields like `id`, `device_id`, `status`, and more. Check out the [Filtering](/docs/developers/platform-api/query-params/filtering) documentation for more details.
+  Filtering allows you to narrow list results by resource fields like `id`, `device_id`, `status`, and more. Check out the [Filtering](/developers/platform-api/query-params/filtering) documentation for more details.
 
 </Dropdown>
 <Separator />
 <Dropdown title="Sorting">
-  Sort list results with `order_by=<field_name>:<direction>`. Most endpoints default to `order_by=created_at:desc`. Check out the [Sorting](/docs/developers/platform-api/query-params/sorting) documentation for more details.
+  Sort list results with `order_by=<field_name>:<direction>`. Most endpoints default to `order_by=created_at:desc`. Check out the [Sorting](/developers/platform-api/query-params/sorting) documentation for more details.
 </Dropdown>
 <Separator />
 <Dropdown title="Expansions">
-  Include related resources in responses with `expand[]` (e.g. `expand[]=config_schema`). See [Expansions](/docs/developers/platform-api/query-params/expansions) documentation for more details.
+  Include related resources in responses with `expand[]` (e.g. `expand[]=config_schema`). See [Expansions](/developers/platform-api/query-params/expansions) documentation for more details.
 </Dropdown>
 <Separator />
 <Dropdown title="Pagination">
-  All list endpoints support offset-based pagination with `offset` and `limit`. Check out the [Pagination](/docs/developers/platform-api/query-params/pagination) documentation for more details.
+  All list endpoints support offset-based pagination with `offset` and `limit`. Check out the [Pagination](/developers/platform-api/query-params/pagination) documentation for more details.
 </Dropdown>
 
 ## Python SDK
