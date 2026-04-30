@@ -67,7 +67,7 @@ As a final fallback, the agent performs an initial sync cycle on startup. If enc
 
 ## Deployments
 
-Miru takes a declarative approach to deployments. Each deployment has a [target state](/learn/deployments#target-status) set by the control plane (what should happen) and an [activity state](/learn/deployments#activity-status) tracked by the agent (what has happened). 
+Miru takes a declarative approach to deployments. Each deployment has a [target state](/learn/deployments#target-status) set by the control plane (what should happen) and an [activity state](/learn/deployments#activity-status) tracked by the agent (what has happened).
 
 During each sync, the agent compares these two states and determines the appropriate action to transition a deployment from its current state to its target state.
 
@@ -75,7 +75,7 @@ For example, when the control plane sets a deployment's target to `deployed`, th
 
 ### Atomicity
 
-Miru deployments are **atomic**. That is, when a new deployment replaces an existing one, either all of the new deployment's config instances are written to the file system or none of them are. 
+Miru deployments are **atomic**. That is, when a new deployment replaces an existing one, either all of the new deployment's config instances are written to the file system or none of them are.
 
 It is not possible for some of the new deployment's config instances to be written to the file system and others to be skipped.
 
