@@ -1,7 +1,7 @@
 Remove the Debian package.
 
 ```bash
-sudo apt purge miru-agent
+sudo apt-get purge miru-agent
 ```
 
 If installed via `apt`, you can also remove the apt source.
@@ -12,5 +12,5 @@ sudo apt-get update
 ```
 
 <Info>
-    The signing key at `/etc/apt/keyrings/miru.gpg` is shared with the Miru CLI. Only remove it if you have also uninstalled the Miru CLI.
+    The signing key at `/etc/apt/keyrings/miru-archive-keyring.gpg` is shared with the Miru CLI. Only remove it if you have also uninstalled the Miru CLI.
 </Info>
