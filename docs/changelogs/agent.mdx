@@ -6,7 +6,7 @@ description: "Changelog and migration steps for the Miru Agent"
 
 # v0.9.0
 
-*Coming soon*
+*May 5, 2026*
 
 Miru Agent `v0.9.0` introduces provisioning tokens as the standard programmatic device-provisioning mechanism, replacing the legacy API-key flow.
 
@@ -14,11 +14,25 @@ To learn more, visit the [provisioning tokens](/docs/learn/devices/provision/pro
 
 ## Breaking changes
 
-- API-key based provisioning is no longer supported; use [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) instead. Devices previously activated via API keys must be [reprovisioned](/docs/learn/devices/provision/reprovision) after upgrading.
+- API-key based provisioning is no longer supported; use [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) instead. Devices previously activated via API keys must be [reprovisioned](/docs/learn/devices/provision/reprovision) after upgrading
+- The agent installer is now invoked as `provision` for first-time enrollment and `reprovision` for re-enrollment; device name is now a required field on enrollment
+- Backend URL and MQTT host are now restricted to `mirurobotics.com` and its subdomains (loopback is also permitted); MQTT requires TLS except on loopback. If on-device settings are tampered with, the agent falls back to production defaults instead of going dark
+- Pre-`v0.9.0` agent install scripts will refuse to install `v0.9.0` or later; follow the updated [install instructions](/docs/developers/agent/install)
 
 ## Features
 
-- Added support for provisioning tokens via the `provision` and `reprovision` subcommands
+- Added `provision` and `reprovision` subcommands for enrolling and re-enrolling devices using provisioning tokens
+- On agent version change, per-version on-device state is reset and rebootstrapped from the backend so the device stays consistent with the backend across upgrades; the device's auth keypair is preserved so the device retains its identity
+
+## Fixes
+
+- Fixed a Debian `postinst` failure (`useradd: group miru exists`) on systems with `USERGROUPS_ENAB=yes`, and added a `tmpfiles.d` entry so `/srv/miru` is recreated on boot
+- Resolved a `rustls-webpki` security advisory by routing MQTT TLS through `native-tls` instead of `rustls`
+- Fixed a `usize` underflow in cache pruning that, in release builds, could wipe all valid cache entries after invalid entries were removed
+
+## Improvements
+
+- `settings.log_level` now takes effect after the agent reloads its configuration, without requiring a restart
 
 ---
 
