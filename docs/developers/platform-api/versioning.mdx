@@ -27,7 +27,7 @@ The Platform API uses the `Miru-Version` header to select the API version you wa
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/devices' \
   --header 'X-API-Key: <api-key>' \
-  --header 'Miru-Version: 2026-03-09.tetons'
+  --header 'Miru-Version: 2026-05-06.rainier'
 ```
 
 The `Miru-Version` header is required. Requests without the header will be rejected.
@@ -36,10 +36,11 @@ The `Miru-Version` header is required. Requests without the header will be rejec
 
 Below is a list of the currently supported versions:
 
-| API Version              |        Status       |
-|--------------------------|---------------------|
-| <LinkNewTab href="/docs/references/platform-api/2026-03-09">2026-03-09.tetons</LinkNewTab> | <SupportedBadge />  |
-| <LinkNewTab href="/docs/references/platform-api/2025-10-21">2025-10-21.zion</LinkNewTab>        | <EndOfLifeBadge />  |
+| API Version   | EOL | Status       |
+|---------------|-----|--------------|
+| <LinkNewTab href="/docs/references/platform-api/2026-05-06">2026-05-06.rainier</LinkNewTab> | — | <SupportedBadge />  |
+| <LinkNewTab href="/docs/references/platform-api/2026-03-09">2026-03-09.tetons</LinkNewTab> | — | <SupportedBadge />  |
+| <LinkNewTab href="/docs/references/platform-api/2025-10-21">2025-10-21.zion</LinkNewTab>        | 2026-06-16 | <EndOfLifeBadge />  |
 
 ## Changelog and migrations
 
