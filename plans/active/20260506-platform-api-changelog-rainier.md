@@ -191,12 +191,12 @@ If preflight fails after a commit, fix the underlying issue and add a NEW commit
 
 ## Progress
 
-- [ ] Milestone 1: Insert rainier section into `docs/changelogs/platform-api.mdx`.
+- [x] Milestone 1: Insert rainier section into `docs/changelogs/platform-api.mdx`.
 - [ ] Milestone 2: Run preflight; address any findings; confirm `clean`.
 
 ## Surprises & Discoveries
 
-(populate during implementation)
+(none)
 
 ## Decision Log
 
