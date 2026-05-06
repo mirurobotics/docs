@@ -6,9 +6,9 @@ sudo apt-get install -y ca-certificates curl gnupg
 # add Miru's signing key
 sudo install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://packages.mirurobotics.com/apt/miru.gpg -o /tmp/miru.gpg.armor
-sudo gpg --dearmor -o /etc/apt/keyrings/miru.gpg /tmp/miru.gpg.armor
+sudo gpg --dearmor -o /etc/apt/keyrings/miru-archive-keyring.gpg /tmp/miru.gpg.armor
 rm /tmp/miru.gpg.armor
-sudo chmod a+r /etc/apt/keyrings/miru.gpg
+sudo chmod a+r /etc/apt/keyrings/miru-archive-keyring.gpg
 
 # add the repository to your sources list
 sudo tee /etc/apt/sources.list.d/miru.sources > /dev/null <<EOF
@@ -17,6 +17,6 @@ URIs: https://packages.mirurobotics.com/apt
 Suites: stable
 Components: main
 Architectures: $(dpkg --print-architecture)
-Signed-By: /etc/apt/keyrings/miru.gpg
+Signed-By: /etc/apt/keyrings/miru-archive-keyring.gpg
 EOF
 ```
