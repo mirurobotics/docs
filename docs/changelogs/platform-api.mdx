@@ -11,7 +11,7 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 # 2026-05-06.rainier
 
-*May 6, 2026*
+*May 7, 2026*
 
 The `rainier` release introduces a provisioning-token flow that replaces the activation-token endpoint, expands supported config-instance content formats, restores the `removing` deployment status, and adds expandable `current_release` / `current_deployment` fields on devices.
 
@@ -20,47 +20,41 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
 ## New endpoints
 
 <Dropdown title="Provisioning">
-  - <POST /> `/provisioning_tokens` — create a provisioning token for a new device
+  - <POST /> `/provisioning_tokens` — create a provisioning token to add a device to your workspace
 </Dropdown>
 
 ## Breaking changes
 
 <Dropdown title="Activation tokens replaced by provisioning tokens">
 
-  The `POST /devices/{device_id}/activation_token` endpoint is removed without deprecation. The `IssueActivationTokenRequest` and `TokenResponse` schemas are removed. Callers should use `POST /provisioning_tokens` instead.
+  The `POST /devices/{device_id}/activation_token` endpoint has been removed. Instead, callers should migrate to using `POST /provisioning_tokens` instead.
 
   ```diff
   - POST /devices/{device_id}/activation_token
   + POST /provisioning_tokens
   ```
 
-  Provisioning tokens are not scoped to a pre-existing device — create a token first, then the device uses it to provision itself. The new request and response shape is documented in the Platform API reference.
+  Provisioning tokens are not scoped to a pre-existing device — create a token first, then use it to provision a new device or activate an existing device. Visit the [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) documentation for more details.
 
 </Dropdown>
 
 ## Additive changes
 
-<Dropdown title="Content formats: yaml and jsonc">
+<Dropdown title="Instance content enum">
 
-  Instance Content `format` accepts two new enum values, `yaml` and `jsonc`, in addition to the existing `json`.
-
-  - Affected response endpoints: `GET /config_instances`, `GET /config_instances/{id}`, `POST /config_instances`, and all `/deployments` endpoints (including `GET /deployments/{id}/drifts`).
-  - Affected request body: `POST /config_instances` `content.format`.
+  Config instances now support YAML content in addition to JSON.
 
   ```diff
   # Instance Content format enum
     "json"
   + "yaml"
-  + "jsonc"
   ```
-
-  Clients that exhaustively switch on `format` should add handling for `yaml` and `jsonc`.
 
 </Dropdown>
 <Separator />
-<Dropdown title="Deployment `removing` status restored">
+<Dropdown title="Deployment activity status">
 
-  `removing` is added back to `status`, `activity_status` (response), and the `activity_status` query parameter on `GET /deployments`. This is a partial reversal of the tetons change, where deployments transitioned directly from `deployed` to `archived`. Deployments can sit in `removing` while config instances are torn down on the device before reaching `archived`.
+  `removing` is added back to the `activity_status` and `status` enums. This is a partial reversal of the tetons change, where deployments transitioned directly from `deployed` to `archived`. Deployments can sit in `removing` while config instances are torn down on the device before reaching `archived`.
 
   ```diff
   # status / activity_status enum
@@ -74,15 +68,29 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
 
 </Dropdown>
 <Separator />
-<Dropdown title="Device expansions: current_release and current_deployment">
+<Dropdown title="Device query parameters">
 
-  - New optional `expand` query parameter on `GET /devices`, `POST /devices`, `GET /devices/{id}`, and `PATCH /devices/{id}`.
-  - New `current_release` and `current_deployment` enum values for `expand`.
-  - New optional `current_release_id` filter on `GET /devices` (re-introduced after being removed in tetons).
-  - Device responses gain a new nested schema for the expandable fields. The same schema is also embedded in `device` objects nested inside deployment responses.
+  Device endpoints now support a few new query parameters:
 
+  1. Expand the `current_deployment` field on a device.
+
+  ```diff
+    GET /device
+  + GET /device?expand=current_deployment
   ```
-  GET /devices?expand=current_release,current_deployment&current_release_id=rls_123
+
+  2. Expand the `current_release` field on a device.
+
+  ```diff
+    GET /devices
+  + GET /devices?expand=current_release
+  ```
+
+  3. Filter devices by `current_release_id` when listing devices.
+
+  ```diff
+    GET /devices
+  + GET /devices?current_release_id=rls_123
   ```
 
 </Dropdown>
@@ -91,17 +99,17 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
 
 <Steps>
   <Step title="Update the Miru-Version header">
-    Set `Miru-Version: 2026-05-06.rainier` on all API requests. If you are using the [Python SDK](/docs/developers/platform-api/sdks#python), this is automatic once you upgrade to the SDK version that targets `2026-05-06.rainier`.
+    Set `Miru-Version: 2026-05-06.rainier` on all API requests. [Python SDK](/docs/developers/platform-api/sdks#python) `v0.10.0` marks the major version rollout of the `2026-05-06.rainier` API. For the latest SDK version compatibility information, visit the [Platform SDKs](/docs/developers/platform-api/sdks) page.
   </Step>
 
-  <Step title="Replace activation_token with provisioning_tokens">
-    Remove all calls to `POST /devices/{device_id}/activation_token` and replace them with `POST /provisioning_tokens`. Update any code that reads the `IssueActivationTokenRequest` or `TokenResponse` types.
+  <Step title="Migrate from activation tokens to provisioning tokens">
+    Migrate install workflows to use [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) instead of activation tokens.
   </Step>
 
   <Step title="Optionally adopt new additive surface">
-    - Handle `yaml` and `jsonc` in any exhaustive switches on Instance Content `format`.
-    - Handle `removing` in any exhaustive switches on deployment `status` or `activity_status`.
-    - Optionally `expand=current_release` and/or `expand=current_deployment` on device endpoints, and use the `current_release_id` filter on `GET /devices`.
+    - Handle `yaml` content format where needed
+    - Handle `removing` deployment status or activity status where needed.
+    - Implement or migrate to `expand=current_release` and/or `expand=current_deployment` for retrieving the current release or deployment on a device.
   </Step>
 </Steps>
 
