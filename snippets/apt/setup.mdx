@@ -20,3 +20,7 @@ Architectures: $(dpkg --print-architecture)
 Signed-By: /etc/apt/keyrings/miru-archive-keyring.gpg
 EOF
 ```
+
+<Info>
+    If you have already installed the Miru Agent or CLI via `apt`, the existing signing key at `/etc/apt/keyrings/miru-archive-keyring.gpg` is reused — both tools share the same keyring.
+</Info>
