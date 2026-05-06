@@ -24,16 +24,31 @@ A reader following the rendered docs can copy/paste the commands and produce a w
 
 ## Progress
 
-- [ ] Milestone 1: Fix curl|gpg pipeline in `snippets/apt/setup.mdx`.
-- [ ] Milestone 2: Standardize `apt` -> `apt-get` across affected snippets/pages.
-- [ ] Milestone 3: Fix supported-platforms list rendering bug.
-- [ ] Milestone 4: Rename keyring file to `miru-archive-keyring.gpg` everywhere.
-- [ ] Milestone 5: Add symmetric install-side keyring sharing note.
-- [ ] Milestone 6: Run preflight; address any findings; confirm `clean`.
+- [x] Milestone 1: Fix curl|gpg pipeline in `snippets/apt/setup.mdx`.
+- [x] Milestone 2: Standardize `apt` -> `apt-get` across affected snippets/pages.
+- [x] Milestone 3: Fix supported-platforms list rendering bug.
+- [x] Milestone 4: Rename keyring file to `miru-archive-keyring.gpg` everywhere.
+- [x] Milestone 5: Add symmetric install-side keyring sharing note.
+- [x] Milestone 6: Run preflight; address any findings; confirm `clean`.
 
 ## Surprises & Discoveries
 
-(Add entries as you go.)
+- 2026-05-06: Milestone 3 (supported-platforms list rendering) was a no-op.
+  Inspection of `snippets/agent/supported-platforms.mdx` (and confirmation via
+  `cat -A`) showed a blank line already separates the last bullet
+  `- Raspberry Pi OS (64-bit)` from the trailing sentence
+  `Other Linux distributions and versions may also work, but have not been
+  explicitly tested.` The file is unchanged from `feat/apt`, so the rendering
+  bug described in the plan does not currently exist in source. No commit was
+  made for this milestone; checklist marked complete.
+- 2026-05-06: After Milestone 4, `grep -rn "miru.gpg" snippets docs` returns
+  three matches in `snippets/apt/setup.mdx` rather than the single URL
+  match the plan predicted. Two of those are the temporary file path
+  `/tmp/miru.gpg.armor` introduced by Milestone 1's two-step download. The
+  tempfile name is intentional (it's the armored payload before dearmor)
+  and only happens to share a `miru.gpg` substring; it is not a forgotten
+  rename. The remaining matches are: line 8 source URL (preserved by plan),
+  line 9 tempfile input arg, line 10 tempfile cleanup.
 
 ## Decision Log
 
@@ -51,7 +66,38 @@ A reader following the rendered docs can copy/paste the commands and produce a w
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+All five content milestones landed as separate commits on `docs/install-page-fixes`:
+
+- M1 `27cde71` — split keyring download into discrete curl + dearmor steps.
+- M2 `f18c797` — standardize on `apt-get` for Miru install/uninstall commands.
+- M3 — no source change required; `snippets/agent/supported-platforms.mdx`
+  already had a blank line separating the bullets from the trailing prose.
+  See Surprises & Discoveries.
+- M4 `e716965` — rename the local keyring file to
+  `miru-archive-keyring.gpg`. The upstream URL `packages.mirurobotics.com/apt/miru.gpg`
+  is preserved.
+- M5 `e1e9b1c` — add symmetric install-side `<Info>` note about the shared keyring.
+
+Preflight (`./scripts/preflight.sh`) passed clean on first run after Milestone 5
+(exit 0, no lint/cspell/openapi/eslint findings, all 26 shell tests pass; 6
+ignored security-audit advisories are pre-existing repo policy and unrelated to
+this change).
+
+Files changed:
+- `snippets/apt/setup.mdx`
+- `snippets/agent/install/uninstall.mdx`
+- `docs/developers/cli/install.mdx`
+- `plans/active/20260506-install-page-fixes.md` (this file)
+
+Notable lessons:
+- Milestone 3 showed the value of verifying each step rather than blindly
+  applying every edit the plan describes — `cat -A` revealed the bug was
+  already absent in source.
+- The `/tmp/miru.gpg.armor` tempfile chosen in Milestone 1 makes the
+  Milestone 4 grep noisier than the plan predicted (three matches instead
+  of one) but is intentional. The plan's verification grep should have
+  excluded the tempfile path; this was caught and explained inline rather
+  than mis-treated as an outstanding rename.
 
 ## Context and Orientation
 
