@@ -79,7 +79,7 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
   - New optional `expand` query parameter on `GET /devices`, `POST /devices`, `GET /devices/{id}`, and `PATCH /devices/{id}`.
   - New `current_release` and `current_deployment` enum values for `expand`.
   - New optional `current_release_id` filter on `GET /devices` (re-introduced after being removed in tetons).
-  - Device responses gain a new subschema for the expandable fields. The same subschema is also embedded in `device` objects nested inside deployment responses.
+  - Device responses gain a new nested schema for the expandable fields. The same schema is also embedded in `device` objects nested inside deployment responses.
 
   ```
   GET /devices?expand=current_release,current_deployment&current_release_id=rls_123
