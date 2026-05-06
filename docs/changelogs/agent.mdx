@@ -6,19 +6,33 @@ description: "Changelog and migration steps for the Miru Agent"
 
 # v0.9.0
 
-*Coming soon*
+*May 6, 2026*
 
-Miru Agent `v0.9.0` introduces provisioning tokens as the standard programmatic device-provisioning mechanism, replacing the legacy API-key flow.
+Miru Agent `v0.9.0` introduces provisioning tokens as the standard programmatic device-provisioning mechanism, replacing the legacy API key flow.
+
 
 To learn more, visit the [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) documentation.
 
 ## Breaking changes
 
-- API-key based provisioning is no longer supported; use [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) instead. Devices previously activated via API keys must be [reprovisioned](/docs/learn/devices/provision/reprovision) after upgrading.
+- API key based provisioning is not supported for provisioning `miru-agent` versions `v0.9.0` or later; use [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) instead
+<Warning>
+    Legacy API key-based [install scripts](https://github.com/mirurobotics/agent/blob/main/scripts/install/provision.sh) will refuse to install `v0.9.0` or later; follow the updated [install instructions](/docs/developers/agent/install)
+</Warning>
 
 ## Features
 
-- Added support for provisioning tokens via the `provision` and `reprovision` subcommands
+- Added `provision` and `reprovision` subcommands for enrolling and re-enrolling devices using provisioning tokens
+- Upgrading the `miru-agent` package now automatically resets the on-device state so that reprovisioning is no longer required to upgrade the `miru-agent` package
+
+## Fixes
+
+- Resources fetched via the [Device API](/docs/developers/device-api) are fetched from Miru servers if not found locally
+- All network communications are now restricted to `mirurobotics.com` and its subdomains (loopback domains such as `127.0.0.1` are permitted for testing)
+- Fixed a Debian `postinst` failure (`useradd: group miru exists`) on systems with `USERGROUPS_ENAB=yes`, and added a `tmpfiles.d` entry so `/srv/miru` is recreated on boot
+- Resolved a `rustls-webpki` security advisory by routing MQTT TLS through `native-tls` instead of `rustls`
+- Fixed a `usize` underflow in cache pruning that, in release builds, could wipe all valid cache entries after invalid entries were removed
+
 
 ---
 

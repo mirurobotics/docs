@@ -41,6 +41,14 @@
     "reprovision",
     "reprovisioned",
     "reprovisioning",
-    "reassociating"
+    "reassociating",
+    "rebootstrapped",
+    "keypair",
+    "postinst",
+    "USERGROUPS",
+    "ENAB",
+    "tmpfiles",
+    "rustls",
+    "webpki"
   ]
 }
