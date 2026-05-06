@@ -15,7 +15,7 @@ To learn more, visit the [provisioning tokens](/docs/learn/devices/provision/pro
 ## Breaking changes
 
 - API-key based provisioning is no longer supported; use [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) instead. Devices previously activated via API keys must be [reprovisioned](/docs/learn/devices/provision/reprovision) after upgrading
-- The agent installer is now invoked as `provision` for first-time enrollment and `reprovision` for re-enrollment; device name is now a required field on enrollment
+- The agent installer is now invoked as `provision` for first-time enrollment and `reprovision` for re-enrollment
 - Backend URL and MQTT host are now restricted to `mirurobotics.com` and its subdomains (loopback is also permitted); MQTT requires TLS except on loopback. If on-device settings are tampered with, the agent falls back to production defaults instead of going dark
 - Pre-`v0.9.0` agent install scripts will refuse to install `v0.9.0` or later; follow the updated [install instructions](/docs/developers/agent/install)
 
