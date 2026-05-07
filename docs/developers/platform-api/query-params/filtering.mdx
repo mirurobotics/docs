@@ -20,7 +20,7 @@ The following uses the `id=dvc_123` filter to include only the device with the `
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/devices?id=dvc_123' \
   --header 'X-API-Key: <api-key>' \
-  --header 'Miru-Version: 2026-03-09.tetons'
+  --header 'Miru-Version: 2026-05-06.rainier'
 ```
 
 Filtering by ID will return at most one resource, since IDs are unique. Other fields, like <PlatformApiLink endpoint="deployments/list#parameter-activity-status">deployment activity status</PlatformApiLink>, can return multiple results.
@@ -35,7 +35,7 @@ Thus, to filter devices by multiple ids, you can use the `id` filter with a `|` 
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/devices?id=dvc_123|dvc_456|dvc_789' \
   --header 'X-API-Key: <api-key>' \
-  --header 'Miru-Version: 2026-03-09.tetons'
+  --header 'Miru-Version: 2026-05-06.rainier'
 ```
 
 ## Combining filters
@@ -48,7 +48,7 @@ The following request filters the device list to include only the devices with t
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/devices?id=dvc_123|dvc_456&name=Robot%20A' \
   --header 'X-API-Key: <api-key>' \
-  --header 'Miru-Version: 2026-03-09.tetons'
+  --header 'Miru-Version: 2026-05-06.rainier'
 ```
 
 ## URL encoding
@@ -63,5 +63,5 @@ The following request filters the device list to only include devices named `My 
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/devices?name=My%20Device%20Name' \
   --header 'X-API-Key: <api-key>' \
-  --header 'Miru-Version: 2026-03-09.tetons'
+  --header 'Miru-Version: 2026-05-06.rainier'
 ```

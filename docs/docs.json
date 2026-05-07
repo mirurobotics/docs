@@ -282,6 +282,13 @@
         "product": "Platform API Reference",
         "dropdowns": [
           {
+            "dropdown": "2026-05-06.rainier",
+            "openapi": {
+              "source": "docs/references/platform-api/2026-05-06.yaml",
+              "directory": "docs/references/platform-api/2026-05-06/endpoints"
+            }
+          },
+          {
             "dropdown": "2026-03-09.tetons",
             "openapi": {
               "source": "references/platform-api/2026-03-09.yaml",
@@ -381,12 +388,8 @@
       "destination": "/references/device-api/v0.2.1/:slug*"
     },
     {
-      "source": "/references/platform-api/latest/:slug*",
-      "destination": "/references/platform-api/2026-03-09/:slug*"
-    },
-    {
-      "source": "/references/cli/install",
-      "destination": "/developers/cli/install"
+      "source": "/docs/references/platform-api/latest/:slug*",
+      "destination": "/docs/references/platform-api/2026-05-06/:slug*"
     },
     {
       "source": "/docs/references/cli/install",
