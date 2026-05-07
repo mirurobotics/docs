@@ -4,11 +4,11 @@ title: "API keys"
 
 import Verify from '/snippets/agent/install/verify.mdx';
 
-API keys are a legacy method for [provisioning](/docs/learn/devices/provision/overview) devices. API keys only support installing `miru-agent` versions that *precede* [v0.9.0](/docs/changelogs/agent).
+API keys are a legacy method for [provisioning](/learn/devices/provision/overview) devices. API keys only support installing `miru-agent` versions that *precede* [v0.9.0](/changelogs/agent).
 
 ## Create the API key
 
-If you don't have an API key, follow the instructions for [creating an API key](/docs/admin/apikeys#create-an-api-key) and select the `devices:provision` scope.
+If you don't have an API key, follow the instructions for [creating an API key](/admin/apikeys#create-an-api-key) and select the `devices:provision` scope.
 
 ## Provision the device
 
@@ -19,7 +19,7 @@ export MIRU_API_KEY=<your-api-key>
 ```
 
 <Warning>
-    API keys only support installing `miru-agent` versions that precede [v0.9.0](/docs/changelogs/agent). If installing Miru Agent `v0.9.0` or later, you must use [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens).
+    API keys only support installing `miru-agent` versions that precede [v0.9.0](/changelogs/agent). If installing Miru Agent `v0.9.0` or later, you must use [provisioning tokens](/learn/devices/provision/provisioning-tokens).
 </Warning>
 
 Execute the [provisioning script](https://github.com/mirurobotics/agent/blob/main/scripts/install/provision.sh) to create and activate a device using your API key.
