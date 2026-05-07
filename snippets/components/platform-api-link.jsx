@@ -6,7 +6,7 @@
  * @param {React.ReactNode} children - Link text
  */
 export const PlatformApiLink = ({ endpoint, newTab, children }) => {
-  const href = `/docs/references/platform-api/2026-03-09/endpoints/${endpoint}`;
+  const href = `/docs/references/platform-api/2026-05-06/endpoints/${endpoint}`;
   if (newTab) {
     return <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>;
   }
