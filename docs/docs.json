@@ -388,8 +388,8 @@
       "destination": "/references/device-api/v0.2.1/:slug*"
     },
     {
-      "source": "/docs/references/platform-api/latest/:slug*",
-      "destination": "/docs/references/platform-api/2026-05-06/:slug*"
+      "source": "/references/platform-api/latest/:slug*",
+      "destination": "/references/platform-api/2026-05-06/:slug*"
     },
     {
       "source": "/docs/references/cli/install",
