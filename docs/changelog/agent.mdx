@@ -11,13 +11,13 @@ description: "Changelog and migration steps for the Miru Agent"
 Miru Agent `v0.9.0` introduces provisioning tokens as the standard programmatic device-provisioning mechanism, replacing the legacy API key flow.
 
 
-To learn more, visit the [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) documentation.
+To learn more, visit the [provisioning tokens](/learn/devices/provision/provisioning-tokens) documentation.
 
 ## Breaking changes
 
-- API key based provisioning is not supported for provisioning `miru-agent` versions `v0.9.0` or later; use [provisioning tokens](/docs/learn/devices/provision/provisioning-tokens) instead
+- API key based provisioning is not supported for provisioning `miru-agent` versions `v0.9.0` or later; use [provisioning tokens](/learn/devices/provision/provisioning-tokens) instead
 <Warning>
-    Legacy API key-based [install scripts](https://github.com/mirurobotics/agent/blob/main/scripts/install/provision.sh) will refuse to install `v0.9.0` or later; follow the updated [install instructions](/docs/developers/agent/install)
+    Legacy API key-based [install scripts](https://github.com/mirurobotics/agent/blob/main/scripts/install/provision.sh) will refuse to install `v0.9.0` or later; follow the updated [install instructions](/developers/agent/install)
 </Warning>
 
 ## Features
@@ -27,7 +27,7 @@ To learn more, visit the [provisioning tokens](/docs/learn/devices/provision/pro
 
 ## Fixes
 
-- Resources fetched via the [Device API](/docs/developers/device-api) are fetched from Miru servers if not found locally
+- Resources fetched via the [Device API](/developers/device-api) are fetched from Miru servers if not found locally
 - All network communications are now restricted to `mirurobotics.com` and its subdomains (loopback domains such as `127.0.0.1` are permitted for testing)
 - Fixed a Debian `postinst` failure (`useradd: group miru exists`) on systems with `USERGROUPS_ENAB=yes`, and added a `tmpfiles.d` entry so `/srv/miru` is recreated on boot
 - Resolved a `rustls-webpki` security advisory by routing MQTT TLS through `native-tls` instead of `rustls`
@@ -148,7 +148,7 @@ To learn more, visit the [file permissions](/developers/agent/file-permissions) 
 
 `v0.6.0` adds support for installing the agent over poor internet connections, ensuring reliable provisioning on bandwidth-constrained devices.
 
-[Read the full documentation »](/docs/developers/agent/install#poor-connectivity)
+[Read the full documentation »](/developers/agent/install#poor-connectivity)
 
 ## Features
 

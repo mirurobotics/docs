@@ -30,10 +30,10 @@
               {
                 "group": "Quick start",
                 "pages": [
-                  "docs/getting-started/quick-start/overview",
-                  "docs/getting-started/quick-start/create-release",
-                  "docs/getting-started/quick-start/provision-device",
-                  "docs/getting-started/quick-start/deploy-configs"
+                  "getting-started/quick-start/overview",
+                  "getting-started/quick-start/create-release",
+                  "getting-started/quick-start/provision-device",
+                  "getting-started/quick-start/deploy-configs"
                 ]
               },
               "getting-started/concepts"
@@ -63,21 +63,21 @@
               {
                 "group": "Devices",
                 "pages": [
-                  "docs/learn/devices/overview",
+                  "learn/devices/overview",
                   {
                     "group": "Provision devices",
                     "pages": [
-                      "docs/learn/devices/provision/overview",
-                      "docs/learn/devices/provision/dashboard",
-                      "docs/learn/devices/provision/provisioning-tokens",
-                      "docs/learn/devices/provision/api-keys",
-                      "docs/learn/devices/provision/reprovision"
+                      "learn/devices/provision/overview",
+                      "learn/devices/provision/dashboard",
+                      "learn/devices/provision/provisioning-tokens",
+                      "learn/devices/provision/api-keys",
+                      "learn/devices/provision/reprovision"
                     ]
                   },
-                  "docs/learn/devices/manage",
-                  "docs/learn/devices/initial-deployment",
-                  "docs/learn/devices/config-editor",
-                  "docs/learn/devices/deployment-history"
+                  "learn/devices/manage",
+                  "learn/devices/initial-deployment",
+                  "learn/devices/config-editor",
+                  "learn/devices/deployment-history"
                 ]
               },
               {
@@ -284,8 +284,8 @@
           {
             "dropdown": "2026-05-06.rainier",
             "openapi": {
-              "source": "docs/references/platform-api/2026-05-06.yaml",
-              "directory": "docs/references/platform-api/2026-05-06/endpoints"
+              "source": "references/platform-api/2026-05-06.yaml",
+              "directory": "references/platform-api/2026-05-06/endpoints"
             }
           },
           {
