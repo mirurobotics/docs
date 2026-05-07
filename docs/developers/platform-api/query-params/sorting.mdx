@@ -44,7 +44,7 @@ The following request sorts config instances by descending creation date using t
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/config_instances?order_by=created_at:desc' \
   --header 'X-API-Key: <api-key>' \
-  --header 'Miru-Version: 2026-03-09.tetons'
+  --header 'Miru-Version: 2026-05-06.rainier'
 ```
 
 The following request sorts config instances by ascending creation date using the query parameter `order_by=created_at:asc`.
@@ -53,7 +53,7 @@ The following request sorts config instances by ascending creation date using th
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/config_instances?order_by=created_at:asc' \
   --header 'X-API-Key: <api-key>' \
-  --header 'Miru-Version: 2026-03-09.tetons'
+  --header 'Miru-Version: 2026-05-06.rainier'
 ```
 
 ## Multiple field sorting
@@ -109,7 +109,7 @@ The following request sorts devices by descending creation date and then by asce
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/devices?order_by=created_at:desc,id:asc' \
   --header 'X-API-Key: <api-key>' \
-  --header 'Miru-Version: 2026-03-09.tetons'
+  --header 'Miru-Version: 2026-05-06.rainier'
 ```
 
 ## Deterministic sorting
