@@ -27,7 +27,7 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
 
 <Dropdown title="Activation tokens replaced by provisioning tokens">
 
-  The `POST /devices/{device_id}/activation_token` endpoint has been removed. Instead, callers should migrate to using `POST /provisioning_tokens` instead.
+  The `POST /devices/{device_id}/activation_token` endpoint has been removed. Callers should migrate to `POST /provisioning_tokens` instead.
 
   ```diff
   - POST /devices/{device_id}/activation_token
