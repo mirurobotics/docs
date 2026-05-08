@@ -1,9 +1,8 @@
-The dialog will present a pre-authenticated command that invokes the `miru-agent` binary with a short-lived (5 minutes) token to reprovision the device for your workspace. The command looks like:
+The dialog will present a pre-authenticated command that invokes the `miru-agent` binary with a short-lived (5 minutes) token to reprovision the device for your workspace.
 
-```bash
-MIRU_PROVISIONING_TOKEN=<token> \
-  /usr/sbin/miru-agent reprovision
-```
+<Frame>
+  ![Reprovision Miru Agent Dialog](/images/reprovision-dialog.png)
+</Frame>
 
 - The first line sets the `MIRU_PROVISIONING_TOKEN` environment variable for the duration of the command.
 - The second line invokes the `miru-agent` binary with the `reprovision` command.
