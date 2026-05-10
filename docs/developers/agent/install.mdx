@@ -20,13 +20,7 @@ It does not cover provisioning devices for your workspace. Visit the [device pro
 
 ## Upgrade
 
-As with the installation process, you can upgrade the `miru-agent` package via `apt` or manually by downloading and installing the new package.
-
-<Warning>
-    If you're upgrading from a `miru-agent` version that precedes `v0.9.0` to `v0.9.0` or later, you MUST [reprovision](/learn/devices/provision/reprovision) the device after upgrading the `miru-agent` package.
-</Warning>
-
-Since both methods use Debian packages, manual installations can be upgraded via `apt` and vice versa.
+The `miru-agent` package can be upgraded via `apt` or manually by downloading and installing the new package. Since both methods use Debian packages, manual installations can be upgraded via `apt` and vice versa.
 
 <Tabs>
     <Tab title="APT">
@@ -46,6 +40,11 @@ Since both methods use Debian packages, manual installations can be upgraded via
         Manual installations do not have a native upgrade mechanism. Simply repeat the [installation steps](#install) to upgrade to the latest version.
     </Tab>
 </Tabs>
+
+
+If the `miru-agent` package you're upgrading to is `v0.9.0` or later, upgrading will automatically reset your machine's on-device state to be compatible with the new version. However, if you're upgrading to a `miru-agent` version that precedes `v0.9.0`, you MUST [reprovision](/learn/devices/provision/reprovision) the device after upgrading the `miru-agent` package.
+
+For example, going from `v0.6.0` to `v0.8.0` requires [reprovisioning](/learn/devices/provision/reprovision) the device but going from `v0.6.0` to `v0.9.0` does not.
 
 ## Uninstall
 
