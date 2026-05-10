@@ -8,7 +8,7 @@ The provisioning script is a legacy method for [provisioning](/learn/devices/pro
 
 ## Create the API key
 
-If you don't have an API key, follow the instructions for [creating an API key](/admin/apikeys#create-an-api-key) and select the `devices:provision` and `provisioning-tokens:write` scopes.
+If you don't have an API key, follow the instructions for [creating an API key](/admin/apikeys#create-an-api-key) and select the `devices:provision` scope.
 
 ## Provision the device
 
@@ -35,7 +35,7 @@ The provision script performs the following actions:
 1. **Creates the device** - creates a new device in the Miru dashboard if a device with the provided name doesn't already exist
 1. **Downloads the agent** - fetches the latest Miru Agent Debian package
 1. **Installs the service** - installs the agent as a `systemd` service
-1. **Provisions the device** - registers the agent with Miru servers using the provisioning token
+1. **Provisions the device** - registers the agent with Miru servers
 
 ### Arguments
 

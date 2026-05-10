@@ -27,13 +27,13 @@ The recommended method is via `apt`, which is shown below. However, you can manu
 
 ## Create a provisioning token
 
-**Create the API key**
+### Create the API key
 
 Provisioning tokens are created via the [Platform API](/references/platform-api/2026-05-06/endpoints/provisioning-tokens/create) endpoint using [API keys](/admin/apikeys).
 
-If you don't have an API key, follow the instructions for [creating an API key](/admin/apikeys#create-an-api-key) and select the `devices:provision` and `provisioning-tokens:write` scopes.
+If you don't have an API key, follow the instructions for [creating an API key](/admin/apikeys#create-an-api-key) and select the `devices:provision` and `provisioning_tokens:write` scopes.
 
-**Create the token**
+### Create the token
 
 Once you have an API key, you can create a token using the following code samples. Keep in mind that tokens are short-lived (expire in 5 minutes) and one-time use only.
 
@@ -63,7 +63,7 @@ print(provisioning_token.token)
 
 ## Provision the device
 
-After retrieving the provisioning token, run the following command with the token.
+After retrieving the provisioning token, substitute `<token>` with the value returned from the previous step. The token expires after 5 minutes, so run the command on the target device promptly.
 
 ```bash
 sudo -u miru MIRU_PROVISIONING_TOKEN=<token> \
@@ -78,9 +78,9 @@ The command can be broken into the following components:
 Provisioning performs the following actions:
 
 1. **Creates the device** - creates a new device in the Miru dashboard if a device with the provided name doesn't already exist.
-1. **Activates the device** - activates the device by registering the agent with Miru servers.
+1. **Provisions the device** - registers the agent with Miru servers.
 
-If the device has already been activated, the provisioning command is treated as a no-op and exits successfully. If you need to reprovision a device, follow the [reprovisioning](/learn/devices/provision/reprovision) documentation.
+If the device has already been provisioned, the provisioning command is treated as a no-op and exits successfully. If you need to reprovision a device, follow the [reprovisioning](/learn/devices/provision/reprovision) documentation.
 
 ### Arguments
 
