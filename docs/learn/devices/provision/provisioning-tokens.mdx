@@ -2,13 +2,13 @@
 title: "Provisioning tokens"
 ---
 
-import AptInstall from '/snippets/agent/install/apt.mdx';
 import Verify from '/snippets/agent/install/verify.mdx';
+import AptInstall from '/snippets/agent/install/apt.mdx';
 import CmdBreakdown from '/snippets/devices/provision/provision-cmd-breakdown.mdx';
 
 To programmatically provision devices, Miru offers provisioning tokens.
 
-Provisioning tokens are only supported when installing `miru-agent` version [v0.9.0](/changelog/agent) or later. If installing a version that precedes v0.9.0, continue to use the [provisioning script](/learn/devices/provision/provisioning-script) method.
+Provisioning tokens are only supported when installing `miru-agent` version `v0.9.0` or later. If installing a version that precedes `v0.9.0`, continue to use the [provisioning script](/learn/devices/provision/provisioning-script).
 
 Unlike the dashboard, which requires manual interaction with the web interface for each device, provisioning tokens allow you to:
 
@@ -20,20 +20,19 @@ Unlike the dashboard, which requires manual interaction with the web interface f
 
 Before provisioning a device via provisioning tokens, you must first install the `miru-agent` package onto the target machine.
 
-The recommended method is via `apt`, which is shown below. However, you can manually download and install the `miru-agent` package from GitHub. Visit the [agent installation](/developers/agent/install) documentation for more information.
+The recommended method is via `apt` (shown below). However, you can also manually download the package from GitHub. Visit the [agent installation](/developers/agent/install) documentation for more information.
 
 <AptInstall />
 
-
 ## Create a provisioning token
-
-### Create the API key
 
 Provisioning tokens are created via the [Platform API](/references/platform-api/2026-05-06/endpoints/provisioning-tokens/create) endpoint using [API keys](/admin/apikeys).
 
-If you don't have an API key, follow the instructions for [creating an API key](/admin/apikeys#create-an-api-key) and select the `devices:provision` and `provisioning_tokens:write` scopes.
+**Create the API key**
 
-### Create the token
+If you don't have an API key, follow the instructions for [creating an API key](/admin/apikeys#create-an-api-key). The API key requires the `devices:provision` and `provisioning_tokens:write` scopes.
+
+**Create the token**
 
 Once you have an API key, you can create a token using the following code samples. Keep in mind that tokens are short-lived (expire in 5 minutes) and one-time use only.
 
@@ -63,12 +62,11 @@ print(provisioning_token.token)
 
 ## Provision the device
 
-After retrieving the provisioning token, substitute `<token>` with the value returned from the previous step. The token expires after 5 minutes, so run the command on the target device promptly.
+After retrieving the provisioning token, run the following command. Make sure to replace `<token>` with the actual token.
 
 ```bash
 sudo -u miru MIRU_PROVISIONING_TOKEN=<token> \
-  /usr/sbin/miru-agent provision \
-  --device-name=$HOSTNAME
+  /usr/sbin/miru-agent provision
 ```
 
 The command can be broken into the following components:
@@ -77,17 +75,23 @@ The command can be broken into the following components:
 
 Provisioning performs the following actions:
 
-1. **Creates the device** - creates a new device in the Miru dashboard if a device with the provided name doesn't already exist.
-1. **Provisions the device** - registers the agent with Miru servers.
+1. **Creates the device** - creates a new device in the Miru dashboard (if a device with the provided name doesn't already exist).
+1. **Activates the device** - activates the device by registering the agent with the Miru control plane.
 
-If the device has already been provisioned, the provisioning command is treated as a no-op and exits successfully. If you need to reprovision a device, follow the [reprovisioning](/learn/devices/provision/reprovision) documentation.
+### Troubleshooting
+
+If the machine you're provisioning on has already been provisioned, the provisioning command is treated as a no-op and exits successfully.
+
+To reassociate the machine with an existing Miru device, follow the [reprovisioning](/learn/devices/provision/reprovision) documentation.
+
+To provision the machine as a brand new Miru device (never been provisioned in Miru before), first [uninstall](/developers/agent/install#uninstall) the `miru-agent` package before continuing with the provisioning process.
 
 ### Arguments
 
 The provision command supports the following parameters to tune your installation:
 
 <ParamField path="--device-name" type="string">
-  The name of the device in the Miru dashboard. Defaults to `$HOSTNAME` if the device is created and a name is not provided.
+  The name of the device in the Miru dashboard; defaults to `$HOSTNAME`.
 
   Default: `$HOSTNAME`
 </ParamField>
