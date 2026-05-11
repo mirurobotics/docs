@@ -93,7 +93,7 @@ Edit `docs/developers/agent/install.mdx`, lines 25-27. Replace:
 with:
 
     <Danger>
-        [Provisioning tokens](/learn/devices/provision/provisioning-tokens) require Miru Agent `v0.9.0` or later. To upgrade to (or remain on) a version that precedes `v0.9.0`, use the legacy [provisioning script](/learn/devices/provision/provisioning-script) for provisioning instead.
+        [Provisioning tokens](/learn/devices/provision/provisioning-tokens) require Miru Agent `v0.9.0` or later. If you are running a version that precedes `v0.9.0`, use the legacy [provisioning script](/learn/devices/provision/provisioning-script) to provision instead.
     </Danger>
 
 Both blocks keep the same link target (`/learn/devices/provision/provisioning-script`) and the same `<Danger>` admonition type. The version cutover is now attributed to the provisioning method, not the package-manager workflow. Two blocks remain (see Decision Log) but they are no longer falsely claiming the install/upgrade tooling is version-gated.
