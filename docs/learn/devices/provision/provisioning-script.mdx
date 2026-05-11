@@ -4,11 +4,11 @@ title: "Provisioning script"
 
 import Verify from '/snippets/agent/install/verify.mdx';
 
-The provisioning script is a legacy method for [provisioning](/learn/devices/provision/overview) devices. The provisioning script only supports installing `miru-agent` versions that *precede* [v0.9.0](/changelog/agent).
+The provisioning script is a legacy method for provisioning devices. The provisioning script only supports installing `miru-agent` versions that *precede* `v0.9.0`. To install Miru Agent `v0.9.0` or later, please use a different [provisioning method](/learn/devices/provision/overview).
 
 ## Create the API key
 
-If you don't have an API key, follow the instructions for [creating an API key](/admin/apikeys#create-an-api-key) and select the `devices:provision` scope.
+If you don't have an API key, follow the instructions for [creating an API key](/admin/apikeys#create-an-api-key). The API key requires the `devices:provision` and `provisioning_tokens:write` scopes.
 
 ## Provision the device
 
@@ -18,9 +18,9 @@ On the device you want to install the Miru Agent, set the `MIRU_API_KEY` environ
 export MIRU_API_KEY=<your-api-key>
 ```
 
-<Warning>
-    The provisioning script only supports installing `miru-agent` versions that precede [v0.9.0](/changelog/agent). If installing Miru Agent `v0.9.0` or later, you must use [provisioning tokens](/learn/devices/provision/provisioning-tokens).
-</Warning>
+<Danger>
+    The provisioning script is a legacy method that only supports installing versions that precede `v0.9.0`. If installing Miru Agent `v0.9.0` or later, please use a different [method](/learn/devices/provision/overview).
+</Danger>
 
 Execute the [provisioning script](https://github.com/mirurobotics/agent/blob/main/scripts/install/provision.sh) to create and provision a device using your API key.
 
@@ -35,7 +35,7 @@ The provision script performs the following actions:
 1. **Creates the device** - creates a new device in the Miru dashboard if a device with the provided name doesn't already exist
 1. **Downloads the agent** - fetches the latest Miru Agent Debian package
 1. **Installs the service** - installs the agent as a `systemd` service
-1. **Provisions the device** - registers the agent with Miru servers
+1. **Provisions the device** - registers the agent with the Miru control plane
 
 ### Arguments
 

@@ -20,7 +20,11 @@ It does not cover provisioning devices for your workspace. Visit the [device pro
 
 ## Upgrade
 
-The `miru-agent` package can be upgraded via `apt` or manually by downloading and installing the new package. Since both methods use Debian packages, manual installations can be upgraded via `apt` and vice versa.
+The `miru-agent` package can be upgraded via `apt` or by manually downloading the Debian package from GitHub. Since both methods use Debian packages, manual installations can be upgraded via `apt` and vice versa.
+
+<Danger>
+    This upgrade workflow is only supported for versions `v0.9.0` or later. To upgrade to a version that precedes `v0.9.0`, you must use the legacy [provisioning script](/learn/devices/provision/provisioning-script) method.
+</Danger>
 
 <Tabs>
     <Tab title="APT">
@@ -41,11 +45,6 @@ The `miru-agent` package can be upgraded via `apt` or manually by downloading an
     </Tab>
 </Tabs>
 
-
-If the `miru-agent` package you're upgrading to is `v0.9.0` or later, upgrading will automatically reset your machine's on-device state to be compatible with the new version. However, if you're upgrading to a `miru-agent` version that precedes `v0.9.0`, you MUST [reprovision](/learn/devices/provision/reprovision) the device after upgrading the `miru-agent` package.
-
-For example, going from `v0.6.0` to `v0.8.0` requires [reprovisioning](/learn/devices/provision/reprovision) the device but going from `v0.6.0` to `v0.9.0` does not.
-
 ## Uninstall
 
 <Uninstall />
@@ -56,7 +55,7 @@ Some environments may have a poor internet connection. Whether located in a remo
 
 In such scenarios, we recommend downloading the Miru Agent to a computer with a stable connection. Then, transfer the package to your target machine and install it.
 
-While this method circumvents the need to _download_ the Miru Agent over a network, _provisioning_ the agent still requires some level of connectivity to register the device with the Miru servers.
+While this method circumvents the need to _download_ the Miru Agent over a network, _provisioning_ the agent still requires some level of connectivity to register the device with the Miru control plane.
 
 <Steps>
     <Step title="Download the agent">
