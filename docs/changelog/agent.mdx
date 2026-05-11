@@ -14,10 +14,7 @@ To learn more, visit the [provisioning tokens](/learn/devices/provision/provisio
 
 ## Breaking changes
 
-- Provisioning via the provisioning script is not supported for provisioning `miru-agent` versions `v0.9.0` or later; use [provisioning tokens](/learn/devices/provision/provisioning-tokens) instead
-<Warning>
-    The legacy [provisioning script](https://github.com/mirurobotics/agent/blob/main/scripts/install/provision.sh) will refuse to install `v0.9.0` or later; follow the updated [install instructions](/developers/agent/install)
-</Warning>
+- The legacy provisioning script only supports provisioning `miru-agent` versions that precede `v0.9.0`; use [provisioning tokens](/learn/devices/provision/provisioning-tokens) for `miru-agent` versions `v0.9.0` or later
 
 ## Features
 
@@ -26,7 +23,7 @@ To learn more, visit the [provisioning tokens](/learn/devices/provision/provisio
 
 ## Fixes
 
-- Resources fetched via the [Device API](/developers/device-api) are fetched from Miru servers if not found locally
+- Resources fetched from on-device applications via the [Device API](/developers/device-api) are now fetched from the Miru control plane if not found locally
 - All network communications are now restricted to `mirurobotics.com` and its subdomains (loopback domains such as `127.0.0.1` are permitted for testing)
 - Fixed a Debian `postinst` failure (`useradd: group miru exists`) on systems with `USERGROUPS_ENAB=yes`, and added a `tmpfiles.d` entry so `/srv/miru` is recreated on boot
 - Resolved a `rustls-webpki` security advisory by routing MQTT TLS through `native-tls` instead of `rustls`
