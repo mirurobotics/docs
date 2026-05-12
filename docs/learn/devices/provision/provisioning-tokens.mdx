@@ -2,9 +2,18 @@
 title: "Provisioning tokens"
 ---
 
+import { Framed } from '/snippets/components/framed.jsx';
 import AptInstall from '/snippets/agent/install/apt.mdx';
 import Verify from '/snippets/agent/install/verify.mdx';
 import CmdBreakdown from '/snippets/devices/provision/provision-cmd-breakdown.mdx';
+
+<Framed 
+  background="/images/devices/background.jpeg" 
+  image="/images/devices/provisioning/header:create-token.png" 
+  innerRadius="8px"
+  outerRadius="12px"
+  borderWidth="42px 38px 42px 38px"
+/>
 
 To programmatically provision devices, Miru offers provisioning tokens.
 
@@ -55,7 +64,7 @@ client = Miru(
     api_key=os.environ.get("MIRU_API_KEY"), 
 )
 provisioning_token = client.provisioning_tokens.create()
-print(provisioning_token.token)
+# access token via provisioning_token.token
 ```
 
 </CodeGroup>
