@@ -86,8 +86,7 @@
                   "learn/releases/overview",
                   "learn/releases/create",
                   "learn/releases/manage",
-                  "learn/releases/staging-area",
-                  "learn/releases/deployment-history"
+                  "learn/releases/staging-area"
                 ]
               }
             ]

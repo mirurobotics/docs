@@ -6,24 +6,51 @@ import { ONLINE_TOOLTIP, OFFLINE_TOOLTIP } from '/snippets/components/devices/st
 import { Framed } from '/snippets/components/framed.jsx';
 import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
 
-<Framed background="/images/devices/background.jpeg" image="/images/devices/header:list2.png" borderWidth={"24px 30px 0 30px"} innerRadius="12px 12px 0 0" outerRadius="14px" />
+<Framed 
+  background="/images/devices/background.jpeg" 
+  image="/images/devices/header:overview.png" 
+  borderWidth="30px"
+  innerRadius="8px" 
+  outerRadius="14px" 
+/>
 
 Devices are located in the [Devices page](https://app.mirurobotics.com/devices) of the dashboard.
+
+## View a device
+
+To view a device in Miru, navigate to the [Devices page](https://app.mirurobotics.com/devices), click into the device you want to view, and switch to the **Overview** tab at the top.
+
+## Metadata
+
+At the top of the page, you'll find the device's metadata, including its name, status, agent version, and more.
+
+<Frame>
+  ![Device Overview Metadata](/images/devices/overview-metadata.png)
+</Frame>
+
+## Audit Trail
+
+At the bottom of the page, you'll find a complete audit trail of deployments made to the device.
+
+<Frame>
+  ![Device Overview Audit Trail](/images/devices/overview-audit-trail.png)
+</Frame>
+
 
 ## Edit a device
 
 **Dashboard**
 
-To edit a device in the dashboard, click the ellipses (...) on the device you want to edit and hit **Edit**.
+Navigate to the [Devices page](https://app.mirurobotics.com/devices), click the ellipses (...) on the device you want to edit, and hit **Edit**.
 
 <Frame>
-  ![Miru UI screenshot](/images/devices/ellipses-dropdown.png)
+  ![Device Ellipses Dropdown](/images/devices/ellipses-dropdown.png)
 </Frame>
 
 Update the desired fields, then click **Save**.
 
 <Frame>
-  ![Miru UI screenshot](/images/devices/edit-panel.png)
+  ![Edit Device Panel](/images/devices/edit-dialog.png)
 </Frame>
 
 **Platform API**
@@ -37,13 +64,13 @@ Pinging a device sends a real-time request to verify whether it is online. Ping 
 <Tooltip tip={ONLINE_TOOLTIP.tip} cta={ONLINE_TOOLTIP.cta} href={ONLINE_TOOLTIP.href}>Online</Tooltip> devices should return a success message similar to the one below.
 
 <Frame>
-  ![Miru UI screenshot](/images/devices/ping-success.png)
+  ![Ping Success](/images/devices/ping-success.png)
 </Frame>
 
 On the other hand, <Tooltip tip={OFFLINE_TOOLTIP.tip} cta={OFFLINE_TOOLTIP.cta} href={OFFLINE_TOOLTIP.href}>offline</Tooltip> devices should return a timeout message similar to the one below.
 
 <Frame>
-  ![Miru UI screenshot](/images/devices/ping-timeout.png)
+  ![Ping Timeout](/images/devices/ping-timeout.png)
 </Frame>
 
 ## Delete a device
@@ -55,11 +82,11 @@ Deleting a device immediately invalidates its authentication session and removes
 To delete a device, click the ellipses (...) on the device you want to delete and hit **Delete**.
 
 <Frame>
-  ![Miru UI screenshot](/images/devices/ellipses-dropdown.png)
+  ![Device Ellipses Dropdown](/images/devices/ellipses-dropdown.png)
 </Frame>
 
 A confirmation dialog will appear—click **Delete** to confirm.
 
 <Frame>
-  ![Miru UI screenshot](/images/devices/delete-dialog.png)
+  ![Delete Device Dialog](/images/devices/delete-dialog.png)
 </Frame>

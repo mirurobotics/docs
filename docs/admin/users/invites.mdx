@@ -9,7 +9,13 @@ import { OWNER_TOOLTIP, ADMIN_TOOLTIP } from '/snippets/components/users/roles.j
 import { LEFT_TOOLTIP } from '/snippets/components/users/statuses.jsx';
 import InviteDef from '/snippets/definitions/invite.mdx';
 
-<Framed background="/images/users/background.jpeg" image="/images/invites/header:join-workspace.png" borderWidth="40px" />
+<Framed 
+  background="/images/users/background.jpeg" 
+  image="/images/invites/header:join-workspace.png" 
+  borderWidth="40px" 
+  innerRadius="10px"
+  outerRadius="12px"
+/>
 
 <InviteDef />
 
@@ -54,7 +60,7 @@ To invite a member to your workspace, navigate to the [members](https://app.miru
 Next, supply the email addresses of the members you want to invite as a comma-separated list, select their <Tooltip tip={ROLE_TOOLTIP.tip} cta={ROLE_TOOLTIP.cta} href={ROLE_TOOLTIP.href}>role</Tooltip>, and hit **Send**.
 
 <Frame>
-  ![Miru UI screenshot](/images/invites/send-dialog.png)
+  ![Send Invite Dialog](/images/invites/send-invite-dialog.png)
 </Frame>
 
 An email will be sent to each member with a link to accept the invite.
@@ -63,12 +69,22 @@ Invites expire after seven days. Once the invite expires, a new invite must be i
 
 ### Revoke an invite
 
-To revoke an invite, navigate to the [pending invites](https://app.mirurobotics.com/settings/members?filters=invites) tab in the members page.
-
-Click the ellipses (...) of the invite to revoke and hit **Revoke Invite**.
+To revoke an invite, navigate click the **n pending** invites button in the top right.
 
 <Frame>
-  ![Miru UI screenshot](/images/invites/dropdown.png)
+  ![Pending Invites Button](/images/invites/pending-invites-button.png)
+</Frame>
+
+A panel will appear on the right side of the screen with a list of pending invites. Click the ellipses (...) of the invite to revoke and hit **Revoke Invite**.
+
+<Frame>
+  ![Pending Invite Dropdown](/images/invites/pending-invite-dropdown.png)
+</Frame>
+
+Finally, confirm the deletion by clicking **Revoke** in the confirmation dialog.
+
+<Frame>
+  ![Revoke Invite Dialog](/images/invites/revoke-invite-dialog.png)
 </Frame>
 
 ### Resend an invite
@@ -77,12 +93,16 @@ Resending an invite sends a new email to the invitee but does not affect the inv
 
 Since resending an invite does not extend its expiration date, invitees must still accept it within seven days of its original creation. To give the invitee more time to accept, create a new invite.
 
-To resend an invite, navigate to the [pending invites](https://app.mirurobotics.com/settings/members?filters=invites) tab in the members page.
-
-Click the ellipses (...) of the invite to resend and hit **Resend Invite**.
+To resend an invite, navigate click the **n pending** invites button in the top right.
 
 <Frame>
-  ![Miru UI screenshot](/images/invites/dropdown.png)
+  ![Pending Invites Button](/images/invites/pending-invites-button.png)
+</Frame>
+
+A panel will appear on the right side of the screen with a list of pending invites. Click the ellipses (...) of the invite to resend and hit **Resend Invite**.
+
+<Frame>
+  ![Pending Invite Dropdown](/images/invites/pending-invite-dropdown.png)
 </Frame>
 
 ## Receiving invites
@@ -104,13 +124,13 @@ However, if you are _the only_ active member of your current workspace, acceptin
 To accept an invite from another workspace, navigate to the [Profile page](https://app.mirurobotics.com/settings/profile) and hit **Join**.
 
 <Frame>
-  ![Miru UI screenshot](/images/users/profile/invitations.png)
+  ![Invitations Panel](/images/users/profile/invitations.png)
 </Frame>
 
 Finally, click **Join workspace** to accept the invite and transfer workspaces.
 
 <Frame>
-  ![Miru UI screenshot](/images/users/profile/accept-invite-dialog.png)
+  ![Accept Invite Dialog](/images/users/profile/accept-invite-dialog.png)
 </Frame>
 
 ### Decline an invite
@@ -118,5 +138,5 @@ Finally, click **Join workspace** to accept the invite and transfer workspaces.
 To decline an invite, navigate to your [Profile page](https://app.mirurobotics.com/settings/profile) and hit **Decline** on the invite you want to decline.
 
 <Frame>
-  ![Miru UI screenshot](/images/users/profile/invitations.png)
+  ![Invitations Panel](/images/users/profile/invitations.png)
 </Frame>
