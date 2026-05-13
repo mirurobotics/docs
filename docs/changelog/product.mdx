@@ -20,7 +20,7 @@ import { Separator } from '/snippets/components/separator.jsx';
     - **In-place upgrades:** Miru Agent `v0.9.0` preserves user-customized settings and automatically resets on-device state on package upgrade, so `apt-get install miru-agent` upgrades in place instead of requiring a reprovision
 
     <Framed
-        image="https://assets.mirurobotics.com/docs/changelog/26-05-12/apt-install.png"
+        image="https://assets.mirurobotics.com/docs/changelog/26-05-12/apt-repo-install.png"
         background="https://assets.mirurobotics.com/docs/changelog/26-05-12/background.jpg"
         innerRadius="8px"
     />
@@ -29,13 +29,14 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     ## Provisioning tokens
 
-    Device provisioning has been rebuilt around provisioning tokens, replacing the legacy [provisioning script](/learn/devices/provision/provisioning-script) workflow. Provisioning tokens are short-lived (5 minute), single-use credentials which can both create and activate devices for your workspace.
+    Device provisioning has been rebuilt around provisioning tokens, replacing the legacy [provisioning script](/learn/devices/provision/provisioning-script) workflow. Provisioning tokens are short-lived (5-minute), single-use credentials that can both create and activate devices for your workspace. 
+
 
     To support provisioning tokens, we've introduced:
 
     - [Platform API 2026-05-06.rainier](/changelog/platform-api#2026-05-06-rainier): programmatically mint provisioning tokens for automated workflows
 
-    - [Miru Agent v0.9.0](/changelog/agent#v0-9-0): bundles provisioning logic inside the `miru-agent` Debian package, removing the need to rely on the provisioning script to install `v0.9.0` or later.
+    - [Miru Agent v0.9.0](/changelog/agent#v0-9-0): bundles provisioning logic inside the `miru-agent` Debian package, removing the need to rely on the provisioning script to install `v0.9.0` or later
 
     <Framed
         image="https://assets.mirurobotics.com/docs/changelog/26-05-12/provision-dialog.png"
