@@ -10,10 +10,10 @@ The Miru Agent is designed to run with minimal privileges and a restricted syste
 
 When the agent is first installed on a device, it goes through an activation process that establishes the device's identity:
 
-1. The agent receives a short-lived activation token (either from the dashboard or an API key)
+1. The agent receives a short-lived provisioning token (either from the dashboard or an API key)
 2. The agent generates a 4096-bit RSA key pair on the device
-3. The agent sends the public key to the Miru control plane with its activation token
-4. The control plane verifies the activation token, stores the public key, and registers the device
+3. The agent sends the public key to the Miru control plane with its provisioning token
+4. The control plane verifies the provisioning token, stores the public key, and registers the device
 
 <img src="/images/agent/security/activation.light.svg" alt="Agent authentication and activation sequence" className="block dark:hidden" />
 <img src="/images/agent/security/activation.dark.svg" alt="Agent authentication and activation sequence" className="hidden dark:block" />
