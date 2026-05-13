@@ -16,8 +16,8 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     The Miru Agent and CLI are now distributed through an official `apt` repository at `packages.mirurobotics.com`.
 
-    - **One-time setup:** Add Miru's signing key and a deb822 source entry, then install with a standard `apt-get install miru-agent` / `miru-cli`
-    - **In-place upgrades:** The Miru Agent now supports in-place [upgrades](/developers/agent/install#upgrade) via `apt-get upgrade` instead of needing to reprovision devices to upgrade the package
+    - **One-time setup:** Add Miru's signing key and a deb822 source entry, then install with a standard `apt-get install miru-agent`
+    - **In-place upgrades:** Miru Agent `v0.9.0` preserves user-customized settings and automatically resets on-device state on package upgrade, so `apt-get install miru-agent` upgrades in place instead of requiring a reprovision
 
     <Framed
         image="/images/changelog/2026-05-12/apt-install.png"
@@ -25,104 +25,66 @@ import { Separator } from '/snippets/components/separator.jsx';
         innerRadius="8px"
     />
 
-    [Read the agent install documentation »](/developers/agent/install)
+    [Agent Install Documentation »](/developers/agent/install)
 
-    ## Upgraded Device Provisioning
+    ## Provisioning tokens
 
-    Device provisioning has been rebuilt around **provisioning tokens**, replacing the legacy [provisioning script](/learn/devices/provision/provisioning-script) workflow. 
+    Device provisioning has been rebuilt around provisioning tokens, replacing the legacy [provisioning script](/learn/devices/provision/provisioning-script) workflow. Provisioning tokens are short-lived (5 minute), single-use credentials which can both create and activate devices for your workspace.
 
-    ### Provisioning tokens
+    To support provisioning tokens, we've introduced:
 
-    Provisioning tokens are short-lived (5 minute), single-use credentials used to register devices with your workspace. While [activation tokens](/references/platform-api/2026-03-09/endpoints/devices/activation-token) can only activate an existing device, provisioning tokens can create brand-new devices.
+    - Platform API `2026-05-06.rainier` - programmatically mint provisioning tokens for automated workflows
+
+    - Miru Agent v0.9.0 - bundles provisioning logic inside the `miru-agent` Debian package, removing the need to rely on the [provisioning script](/learn/devices/provision/provisioning-script) or custom provisioning logic when installing v0.9.0 or later.
 
     <Framed
-        image="/images/changelog/2026-05-12/create-provisioning-token.png"
+        image="/images/changelog/2026-05-12/provision-dialog.png"
         background="/images/changelog/2026-05-12/background.jpg"
         innerRadius="8px"
+        borderWidth="18px"
     />
 
-    [Provisioning Documentation »](/learn/devices/provision/overview)
+    [Miru Agent Changelog »](/changelog/agent#v0-9-0)
 
-    ### Platform API `2026-05-06.rainier`
+    [Platform API Changelog »](/changelog/platform-api#2026-05-06-rainier)
 
-    To programmatically provision devices via a provisioning token, you must upgrade to Platform API [2026-05-06.rainier](/changelog/platform-api#2026-05-06-rainier).
-
-
-    ### Miru Agent `v0.9.0`
-
-    Furthermore, provisioning logic is now packaged inside the `miru-agent` Debian package, removing the need to rely on the published [`curl` script](https://github.com/mirurobotics/agent/blob/main/scripts/install/provision.sh) or custom provisioning logic.
-
-    Use the `miru-agent provision` command to provision a new device. The agent handles device creation, key registration, and session establishment in a single step — no shell script wrapper required.
-
-    ```bash
-    sudo -u miru MIRU_PROVISIONING_TOKEN=<token> \
-      /usr/sbin/miru-agent provision
-    ```
-
-    Reprovisioning is a separate command that reassociates an already-provisioned machine with a different Miru device, so the recovery path is explicit instead of overloaded onto the same provisioning command.
-
-    <LazyVideo
-        alt=""
-        className="aspect-video rounded-xl"
-        src=""
-    />
-
-    [Read the reprovisioning documentation »](/learn/devices/provision/reprovision)
-
-    ### Reprovision from the dashboard
-
-    The device provision dialog has been redesigned around the new flow. From any device page, copy a ready-to-paste install + provision snippet (with the API host pre-filled for your environment), or open the reprovision tab to generate a one-shot command that re-registers the device under its existing Miru identity. Devices running an agent below `v0.9.0` show an upgrade dialog instead, with copy-able `apt` upgrade commands.
-
-    <LazyVideo
-        alt=""
-        className="aspect-video rounded-xl"
-        src=""
-    />
+    [Device Provisioning Documentation »](/learn/devices/provision/overview)
 
     <Separator />
 
     <Dropdown title="Improvements">
         <DropdownItem>
-            **Absolute config file paths:** Config instances can now be deployed anywhere on the device's file system, not just under `/srv/miru/config_instances/`. The `x-miru-instance-filepath` annotation is now an absolute path. Requires Miru Agent [v0.8.0](/changelog/agent#v0-8-0) and CLI [v0.10.0](/changelog/cli#v0-10-0).
+            **Release overview:** The release overview now shows how many devices are actively running the release, alongside how many are staged.
         </DropdownItem>
         <DropdownItem>
-            **Atomic file writes by default:** The agent now defaults to atomic file system writes for all config instance writes, eliminating partial-write states on crash or power loss.
+            **Config type slug:** The config types list (/configs page) now has a slug column.
         </DropdownItem>
         <DropdownItem>
-            **Settings preserved across upgrades:** Upgrading `miru-agent` via `apt` now preserves user-customized configuration (log filter, environment overrides) and automatically resets on-device state so reprovisioning is no longer required to upgrade.
+            **Compare page visibility:** The Compare page is now a persistent sub-tab under Devices in the sidebar, replacing the previous selection-driven entry point.
         </DropdownItem>
         <DropdownItem>
-            **`removing` deployment status:** Deployments now transition through an explicit `removing` status while config instances are torn down on the device, making the lifecycle visible in the dashboard, Platform API, and Device API.
+            **Secrets:** The API keys and CLI token pages have been merged into a single Secrets page.
         </DropdownItem>
         <DropdownItem>
-            **Network lockdown:** All agent network traffic is now restricted to `mirurobotics.com` and its subdomains, with loopback addresses permitted for local testing.
+            **API keys:** API keys can now be renamed after creation.
         </DropdownItem>
         <DropdownItem>
-            **Privilege drop:** The agent now self-drops from `root` to the `miru` user on startup when launched as root, hardening the systemd unit against misconfiguration.
+            **Members table:** Filters are simplified to Active, Suspended, and Left workspace.
         </DropdownItem>
         <DropdownItem>
-            **Per-deployment cooldown:** Deployment retry cooldowns are now scoped per-deployment, so a single failing deployment no longer delays unrelated deployments on the same device.
+            **Workspace logo:** You can now remove your workspace logo.
         </DropdownItem>
         <DropdownItem>
-            **Device list expansions:** Platform API devices now support `expand=current_release` and `expand=current_deployment`, plus a `current_release_id` filter when listing devices.
+            **UI refresh:** Refreshed the app's dark theme with a layered palette that gives the sidebar, background, cards, dialogs, sheets, and tooltips distinct shades for clearer visual hierarchy.
         </DropdownItem>
         <DropdownItem>
-            **Sidebar redesign:** The sidebar has been rebuilt with three-tier interaction states, collapsed-state open affordances, and a built-in help menu. The app shell now locks to the viewport so background overscroll no longer drags the layout.
+            **Default config file type:** The default config file type now mirrors the file extension of the uploaded config schema instead of always defaulting to JSON.
         </DropdownItem>
         <DropdownItem>
-            **Linear-style dark theme:** The dark theme adopts a three-tier elevation palette with semantic tokens for diffs, statuses, deployments, and warnings, giving every surface a consistent depth cue.
+            **`removing` deployment status:** Deployments now transition through an explicit `removing` status while config instances are torn down on the device, visible across the dashboard, [Platform API](/changelog/platform-api#2026-05-06-rainier), and [Device API](/changelog/device-api).
         </DropdownItem>
         <DropdownItem>
-            **API key management:** API key creation now includes a dedicated secret copy dialog, a scope combobox with searchable open behavior, and an edit dialog for renaming and re-scoping existing keys.
-        </DropdownItem>
-        <DropdownItem>
-            **Members & invites:** The Members settings page now paginates with a URL-synced page param, filters by status and role, and surfaces pending invites in a dedicated sheet.
-        </DropdownItem>
-        <DropdownItem>
-            **Release metrics:** Release overview pages now show active and staged device counts alongside the release's config schemas.
-        </DropdownItem>
-        <DropdownItem>
-            **Config type slugs:** Config types now display their slug as a dedicated column in the list view.
+            **Device list expansions:** Platform API device endpoints now support `expand=current_release` and `expand=current_deployment`, plus a `current_release_id` filter when listing devices. See the [Platform API changelog](/changelog/platform-api#2026-05-06-rainier) for details.
         </DropdownItem>
     </Dropdown>
 
@@ -130,40 +92,19 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     <Dropdown title="Fixes">
         <DropdownItem>
-            **MQTT reconnect:** Agent `v0.8.1` re-subscribes to MQTT command topics on every successful `ConnAck`, preventing long-lived "connected but not receiving commands" states after transient reconnects.
+            **Agent network lockdown:** All agent network traffic is now restricted to `mirurobotics.com` and its subdomains (loopback addresses are still permitted for local testing). Devices behind a corporate proxy or on-prem mirror need to allow the `mirurobotics.com` domain before upgrading to Miru Agent `v0.9.0`.
         </DropdownItem>
         <DropdownItem>
-            **Debian `postinst` on `USERGROUPS_ENAB=yes`:** Fixed a `useradd: group miru exists` failure during install on systems where `useradd` auto-creates a same-name group, and added a `tmpfiles.d` entry so `/srv/miru` is recreated on boot.
+            **Broken editor loading:** Fixed a critical issue where the config editor would fail to load due to pulling excessively large numbers of config instances.
         </DropdownItem>
         <DropdownItem>
-            **rustls-webpki advisory:** MQTT TLS now routes through `native-tls` instead of `rustls`, clearing the `rustls-webpki` security advisory on the agent.
+            **YAML anchors:** The timeline no longer shows duplicate rows for a single edit when the config uses YAML merge-key anchors (`<<: *anchor`).
         </DropdownItem>
         <DropdownItem>
-            **Cache pruning underflow:** Fixed a `usize` underflow in cache pruning that, in release builds, could wipe all valid cache entries after invalid entries were removed.
-        </DropdownItem>
-        <DropdownItem>
-            **Control-plane fallback:** Device API resources fetched from on-device applications now fall back to the Miru control plane if not found locally, eliminating spurious 404s during sync.
-        </DropdownItem>
-        <DropdownItem>
-            **Graceful shutdown with SSE:** Fixed graceful shutdown handling when SSE event streams are active.
-        </DropdownItem>
-        <DropdownItem>
-            **Webhook duplicate user errors:** Resolved an issue where duplicate Clerk users could throw webhook errors during sign-up.
-        </DropdownItem>
-        <DropdownItem>
-            **Analytics batch leak:** Fixed an analytics batch leak in `dbx.Transaction` retries that could double-emit events on transient DB failures.
-        </DropdownItem>
-        <DropdownItem>
-            **YAML diff anchors:** Diffs now correctly unwrap YAML anchored and tagged nodes when locating diff ranges, and reject multi-document YAML rather than silently mis-anchoring.
+            **Workspace logo:** The workspace logo no longer flashes its fallback while loading the sidebar.
         </DropdownItem>
         <DropdownItem>
             **Editor file tab overflow:** File tabs in the config editor now scroll horizontally on overflow instead of getting clipped.
-        </DropdownItem>
-        <DropdownItem>
-            **Workspace logo flash:** Eliminated a brief fallback flash when the workspace logo loaded in the sidebar.
-        </DropdownItem>
-        <DropdownItem>
-            **Editor diff stability:** Stabilized editor diff ranges so the active-line highlight extends to the full content width and gutter highlights refresh between deletions.
         </DropdownItem>
     </Dropdown>
 </Update>
