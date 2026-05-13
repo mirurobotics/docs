@@ -1,0 +1,15 @@
+import RemoveApt from '/snippets/apt/remove.mdx';
+
+Remove the Debian package.
+
+```bash
+sudo apt-get purge miru-agent
+```
+
+If installed via `apt`, you can also remove the apt source and keyring.
+
+<RemoveApt />
+
+<Info>
+    The signing key at `/etc/apt/keyrings/miru-archive-keyring.gpg` is shared with the Miru CLI. Only remove it if you have also uninstalled the Miru CLI.
+</Info>

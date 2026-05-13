@@ -32,7 +32,7 @@
                 "pages": [
                   "getting-started/quick-start/overview",
                   "getting-started/quick-start/create-release",
-                  "getting-started/quick-start/install-agent",
+                  "getting-started/quick-start/provision-device",
                   "getting-started/quick-start/deploy-configs"
                 ]
               },
@@ -64,7 +64,16 @@
                 "group": "Devices",
                 "pages": [
                   "learn/devices/overview",
-                  "learn/devices/provision",
+                  {
+                    "group": "Provision devices",
+                    "pages": [
+                      "learn/devices/provision/overview",
+                      "learn/devices/provision/dashboard",
+                      "learn/devices/provision/provisioning-tokens",
+                      "learn/devices/provision/provisioning-script",
+                      "learn/devices/provision/reprovision"
+                    ]
+                  },
                   "learn/devices/manage",
                   "learn/devices/initial-deployment",
                   "learn/devices/config-editor",
@@ -77,8 +86,7 @@
                   "learn/releases/overview",
                   "learn/releases/create",
                   "learn/releases/manage",
-                  "learn/releases/staging-area",
-                  "learn/releases/deployment-history"
+                  "learn/releases/staging-area"
                 ]
               }
             ]
@@ -273,6 +281,13 @@
         "product": "Platform API Reference",
         "dropdowns": [
           {
+            "dropdown": "2026-05-06.rainier",
+            "openapi": {
+              "source": "references/platform-api/2026-05-06.yaml",
+              "directory": "references/platform-api/2026-05-06/endpoints"
+            }
+          },
+          {
             "dropdown": "2026-03-09.tetons",
             "openapi": {
               "source": "references/platform-api/2026-03-09.yaml",
@@ -373,11 +388,7 @@
     },
     {
       "source": "/references/platform-api/latest/:slug*",
-      "destination": "/references/platform-api/2026-03-09/:slug*"
-    },
-    {
-      "source": "/references/cli/install",
-      "destination": "/developers/cli/install"
+      "destination": "/references/platform-api/2026-05-06/:slug*"
     },
     {
       "source": "/docs/references/cli/install",

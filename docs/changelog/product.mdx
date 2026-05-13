@@ -11,6 +11,95 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 <div className="changelog-page">
 
+<Update label="May 12, 2026">
+    ## APT Repository
+
+    The Miru Agent and CLI are now distributed through an official `apt` repository at `packages.mirurobotics.com`.
+
+    - **One-time setup:** Add Miru's signing key and a deb822 source entry, then install with a standard `apt-get install miru-agent`
+    - **In-place upgrades:** Miru Agent `v0.9.0` preserves user-customized settings and automatically resets on-device state on package upgrade, so `apt-get install miru-agent` upgrades in place instead of requiring a reprovision
+
+    <Framed
+        image="/images/changelog/2026-05-12/apt-install.png"
+        background="/images/changelog/2026-05-12/background.jpg"
+        innerRadius="8px"
+    />
+
+    [Agent Install Documentation »](/developers/agent/install)
+
+    ## Provisioning tokens
+
+    Device provisioning has been rebuilt around provisioning tokens, replacing the legacy [provisioning script](/learn/devices/provision/provisioning-script) workflow. Provisioning tokens are short-lived (5 minute), single-use credentials which can both create and activate devices for your workspace.
+
+    To support provisioning tokens, we've introduced:
+
+    - Platform API `2026-05-06.rainier` - programmatically mint provisioning tokens for automated workflows
+
+    - Miru Agent v0.9.0 - bundles provisioning logic inside the `miru-agent` Debian package, removing the need to rely on the [provisioning script](/learn/devices/provision/provisioning-script) or custom provisioning logic when installing v0.9.0 or later.
+
+    <Framed
+        image="/images/changelog/2026-05-12/provision-dialog.png"
+        background="/images/changelog/2026-05-12/background.jpg"
+        innerRadius="8px"
+        borderWidth="18px"
+    />
+
+    [Miru Agent Changelog »](/changelog/agent#v0-9-0)
+
+    [Platform API Changelog »](/changelog/platform-api#2026-05-06-rainier)
+
+    [Device Provisioning Documentation »](/learn/devices/provision/overview)
+
+    <Separator />
+
+    <Dropdown title="Improvements">
+        <DropdownItem>
+            **Release overview:** The release overview now shows how many devices are actively running the release, alongside how many are staged.
+        </DropdownItem>
+        <DropdownItem>
+            **Config type slug:** The config types list (/configs page) now has a slug column.
+        </DropdownItem>
+        <DropdownItem>
+            **Compare page visibility:** The Compare page is now a persistent sub-tab under Devices in the sidebar, replacing the previous selection-driven entry point.
+        </DropdownItem>
+        <DropdownItem>
+            **Secrets:** The API keys and CLI token pages have been merged into a single Secrets page.
+        </DropdownItem>
+        <DropdownItem>
+            **API keys:** API keys can now be renamed after creation.
+        </DropdownItem>
+        <DropdownItem>
+            **Members table:** Filters are simplified to Active, Suspended, and Left workspace.
+        </DropdownItem>
+        <DropdownItem>
+            **Workspace logo:** You can now remove your workspace logo.
+        </DropdownItem>
+        <DropdownItem>
+            **UI refresh:** Refreshed the app's dark theme with a layered palette that gives the sidebar, background, cards, dialogs, sheets, and tooltips distinct shades for clearer visual hierarchy.
+        </DropdownItem>
+        <DropdownItem>
+            **Default config file type:** The default config file type now mirrors the file extension of the uploaded config schema instead of always defaulting to JSON.
+        </DropdownItem>
+    </Dropdown>
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+        <DropdownItem>
+            **Broken editor loading:** Fixed a critical issue where the config editor would fail to load due to pulling excessively large numbers of config instances.
+        </DropdownItem>
+        <DropdownItem>
+            **YAML anchors:** The timeline no longer shows duplicate rows for a single edit when the config uses YAML merge-key anchors (`<<: *anchor`).
+        </DropdownItem>
+        <DropdownItem>
+            **Workspace logo:** The workspace logo no longer flashes its fallback while loading the sidebar.
+        </DropdownItem>
+        <DropdownItem>
+            **Editor file tab overflow:** File tabs in the config editor now scroll horizontally on overflow instead of getting clipped.
+        </DropdownItem>
+    </Dropdown>
+</Update>
+
 <Update label="April 10, 2026">
     ## Compare Devices
 
@@ -56,8 +145,6 @@ import { Separator } from '/snippets/components/separator.jsx';
     Events. Instead of polling the Device API for changes, your application can
     open a single persistent connection to the `/events` endpoint and get
     notified the moment a deployment lands on the device or is removed.
-
-    {/* TODO: Add Agent SSE image */}
 
     - **No more polling:** React instantly when a deployment's configs are
       written to the device (`deployment.deployed`) or archived and cleaned up

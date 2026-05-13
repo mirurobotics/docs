@@ -6,24 +6,51 @@ import { ONLINE_TOOLTIP, OFFLINE_TOOLTIP } from '/snippets/components/devices/st
 import { Framed } from '/snippets/components/framed.jsx';
 import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
 
-<Framed background="https://assets.mirurobotics.com/docs/v03/images/devices/background.jpeg" image="https://assets.mirurobotics.com/docs/v03/images/devices/header:list2.png" borderWidth={"24px 30px 0 30px"} innerRadius="12px 12px 0 0" outerRadius="14px" />
+<Framed 
+  background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg" 
+  image="https://assets.mirurobotics.com/docs/v04/images/devices/header:overview.png" 
+  borderWidth="30px"
+  innerRadius="8px" 
+  outerRadius="14px" 
+/>
 
 Devices are located in the [Devices page](https://app.mirurobotics.com/devices) of the dashboard.
+
+## View a device
+
+To view a device in Miru, navigate to the [Devices page](https://app.mirurobotics.com/devices), click into the device you want to view, and switch to the **Overview** tab at the top.
+
+### Metadata
+
+At the top of the page, you'll find the device's metadata, including its name, status, agent version, and more.
+
+<Frame>
+  ![Device Overview Metadata](https://assets.mirurobotics.com/docs/v04/images/devices/overview-metadata.png)
+</Frame>
+
+### Audit trail
+
+At the bottom of the page, you'll find a complete audit trail of deployments made to the device.
+
+<Frame>
+  ![Device Overview Audit Trail](https://assets.mirurobotics.com/docs/v04/images/devices/overview-audit-trail.png)
+</Frame>
+
 
 ## Edit a device
 
 **Dashboard**
 
-To edit a device in the dashboard, click the ellipses (...) on the device you want to edit and hit **Edit**.
+Navigate to the [Devices page](https://app.mirurobotics.com/devices), click the ellipses (...) on the device you want to edit, and hit **Edit**.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/ellipses-dropdown.png)
+  ![Device Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/devices/ellipses-dropdown.png)
 </Frame>
 
 Update the desired fields, then click **Save**.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/edit-panel.png)
+  ![Edit Device Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/edit-dialog.png)
 </Frame>
 
 **Platform API**
@@ -37,45 +64,14 @@ Pinging a device sends a real-time request to verify whether it is online. Ping 
 <Tooltip tip={ONLINE_TOOLTIP.tip} cta={ONLINE_TOOLTIP.cta} href={ONLINE_TOOLTIP.href}>Online</Tooltip> devices should return a success message similar to the one below.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/ping-success.png)
+  ![Ping Success](https://assets.mirurobotics.com/docs/v04/images/devices/ping-success.png)
 </Frame>
 
 On the other hand, <Tooltip tip={OFFLINE_TOOLTIP.tip} cta={OFFLINE_TOOLTIP.cta} href={OFFLINE_TOOLTIP.href}>offline</Tooltip> devices should return a timeout message similar to the one below.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/ping-timeout.png)
+  ![Ping Timeout](https://assets.mirurobotics.com/docs/v04/images/devices/ping-timeout.png)
 </Frame>
-
-## Reactivate a device
-
-Reactivating a device is the process of reinstalling the Miru Agent on a device that was previously activated. Reactivating a device:
-
-1. Invalidates the device's current authentication session
-2. Creates a new authentication session for the device
-3. Resets the Miru Agent to a clean state
-4. Recreates the device's current deployments
-
-Reactivating a device resets the Miru Agent to a clean state while preserving the device's full deployment history.
-
-**Dashboard**
-
-To reactivate a device, click the ellipsis (...) next to the device you want to reactivate, then select **Reactivate**.
-
-<Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/ellipses-dropdown.png)
-</Frame>
-
-A dialog will appear with a pre-authenticated reactivation command. Copy this command and paste it into a terminal of the device you want to reactivate.
-
-<Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/reactivate-dialog.png)
-</Frame>
-
-Outside the reactivation capability, this installation command is identical to the activation command used to provision a device. For more information on the installation command, visit the [dashboard device provisioning](/learn/devices/provision#install-the-agent) documentation.
-
-**Platform API**
-
-To reactivate a device programmatically, use the [API key provisioning](/learn/devices/provision#api-keys) workflow with the [`--allow-reactivation`](/learn/devices/provision#param-allow-reactivation) flag enabled.
 
 ## Delete a device
 
@@ -86,11 +82,11 @@ Deleting a device immediately invalidates its authentication session and removes
 To delete a device, click the ellipses (...) on the device you want to delete and hit **Delete**.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/ellipses-dropdown.png)
+  ![Device Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/devices/ellipses-dropdown.png)
 </Frame>
 
 A confirmation dialog will appear—click **Delete** to confirm.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/delete-dialog.png)
+  ![Delete Device Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/delete-dialog.png)
 </Frame>

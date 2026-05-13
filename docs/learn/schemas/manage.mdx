@@ -4,7 +4,7 @@ title: "Manage schemas"
 
 import { Framed } from '/snippets/components/framed.jsx';
 
-<Framed background="https://assets.mirurobotics.com/docs/v03/images/config-schemas/background.png" image="https://assets.mirurobotics.com/docs/v03/images/config-schemas/header:metadata.png" borderWidth={"24px 48px 0 0"} innerRadius={"0 8px 0 0"} />
+<Framed background="https://assets.mirurobotics.com/docs/v04/images/config-schemas/background.png" image="https://assets.mirurobotics.com/docs/v04/images/config-schemas/header:metadata.png" borderWidth={"24px 48px 0 0"} innerRadius={"0 8px 0 0"} />
 
 ## Create a schema
 
@@ -12,48 +12,32 @@ Schemas must be created as part of a release. Visit the [create releases](/learn
 
 ## View a schema
 
-To view a schema in Miru, navigate to the [Config Types page](https://app.mirurobotics.com/configs) and click into the config type that contains the schema you want to view.
+To view a schema in Miru, navigate to the [Releases page](https://app.mirurobotics.com/releases), and click into the release that contains the schema you want to view.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/config-schemas/list.png)
+  ![Releases Page](https://assets.mirurobotics.com/docs/v04/images/releases/page.png)
 </Frame>
 
-Clicking a schema opens the schema details panel, which displays information about the schema.
+At the bottom of the page under the **Overview** tab, you will find a list of the release's schemas.
 
-The **Content** tab contains the schema's content, while the **Metadata** tab contains the schema's metadata and its Git history.
+<Frame>
+  ![Release Config Schemas List](https://assets.mirurobotics.com/docs/v04/images/releases/schema-list.png)
+</Frame>
+
+Click into a schema to open its details, which contains the following tabs:
+
+- **Content**: the schema's uploaded file contents
+- **Metadata**: the schema's metadata and commit history
 
 <Tabs>
   <Tab title="Content">
     <Frame>
-      ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/config-schemas/panel.png)
+      ![Config Schema Content Panel](https://assets.mirurobotics.com/docs/v04/images/config-schemas/panel-content.png)
     </Frame>
   </Tab>
   <Tab title="Metadata">
     <Frame>
-      ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/config-schemas/panel-metadata.png)
-    </Frame>
-  </Tab>
-  <Tab title="Git Commits">
-    <Frame>
-      ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/config-schemas/panel-git-commit.png)
+      ![Config Schema Metadata Panel](https://assets.mirurobotics.com/docs/v04/images/config-schemas/panel-metadata.png)
     </Frame>
   </Tab>
 </Tabs>
-
-## Delete a schema
-
-Deleting a schema is irreversible. Once a schema is deleted, it cannot be recovered.
-
-Deleting a config schema is only possible if there are no config instances for that schema. As such, most schemas cannot be deleted.
-
-To delete a config schema, click the ellipses of the config schema you want to delete and select **Delete**.
-
-<Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/config-schemas/ellipses-dropdown.png)
-</Frame>
-
-A confirmation dialog will appear. Hit **Delete** to confirm the deletion.
-
-<Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/config-schemas/delete-dialog.png)
-</Frame>

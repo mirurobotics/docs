@@ -5,8 +5,8 @@ title: "API keys"
 import { Framed } from '/snippets/components/framed.jsx';
 
 <Framed 
-background="https://assets.mirurobotics.com/docs/v03/images/apikeys/background.jpeg" 
-image="https://assets.mirurobotics.com/docs/v03/images/apikeys/header:page.png" 
+background="https://assets.mirurobotics.com/docs/v04/images/apikeys/background.jpeg" 
+image="https://assets.mirurobotics.com/docs/v04/images/apikeys/header:page.png" 
 borderWidth="28px"
 innerRadius="10px"
 outerRadius="12px"
@@ -24,10 +24,10 @@ import { ADMIN_TOOLTIP } from '/snippets/components/users/roles.jsx';
     You must be an <Tooltip tip={ADMIN_TOOLTIP.tip} cta={ADMIN_TOOLTIP.cta} href={ADMIN_TOOLTIP.href}>admin</Tooltip> user to create an API key.
 </Warning>
 
-To create an API key, navigate to the [API Keys page](https://app.mirurobotics.com/settings/api-keys) in the dashboard and click **New API Key** in the top right corner.
+To create an API key, navigate to the [Secrets page](https://app.mirurobotics.com/settings/secrets) in the dashboard and click **New API Key** in the top right.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/apikeys/create-panel.png)
+  ![Create API Key Dialog](https://assets.mirurobotics.com/docs/v04/images/apikeys/create-dialog.png)
 </Frame>
 
 Provide a name for the API key, select the desired scopes, then click **Create**. For a full reference of available scopes, see the Platform API [Authorization](/developers/platform-api/authz) page.
@@ -36,32 +36,30 @@ Once an API key has been created, it can never be retrieved again. If you lose y
 
 ## View API keys
 
-To view your existing API keys, navigate to the [API Keys page](https://app.mirurobotics.com/settings/api-keys).
+To view your existing API keys, navigate to the [Secrets page](https://app.mirurobotics.com/settings/secrets).
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/apikeys/page.png)
+  ![API Keys Page](https://assets.mirurobotics.com/docs/v04/images/apikeys/page.png)
 </Frame>
 
-To see the scopes of an API key, click the scopes icon in the **Scopes** column of the API key you want to view.
+To see the scopes of an API key, hover over the information icon in the **Scopes** column of the API key you want to view.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/apikeys/scopes-popup.png)
+  ![API Key Scopes Popup](https://assets.mirurobotics.com/docs/v04/images/apikeys/scopes-popup.png)
 </Frame>
 
 ## Delete an API key
 
-Deleting an API key immediately revokes it. Attempting to authenticate with a deleted API key will fail.
-
-Furthermore, deleting an API key is irreversible. Once an API key is deleted, it cannot be recovered.
+Deleting an API key immediately revokes it. Attempting to authenticate with a deleted API key will fail. Furthermore, deleting an API key is irreversible. Once an API key is deleted, it cannot be recovered.
 
 To delete an API key, click the ellipsis (...) on the API key you want to delete and select **Delete**.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/apikeys/ellipses-dropdown.png)
+  ![API Key Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/apikeys/ellipses-dropdown.png)
 </Frame>
 
 A confirmation dialog will appear. Hit **Delete** to confirm the deletion.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/apikeys/delete-dialog.png)
+  ![API Key Delete Dialog](https://assets.mirurobotics.com/docs/v04/images/apikeys/delete-dialog.png)
 </Frame>

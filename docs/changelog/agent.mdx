@@ -4,6 +4,34 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.9.0
+
+*May 12, 2026*
+
+Miru Agent `v0.9.0` introduces provisioning tokens as the standard programmatic device-provisioning mechanism, replacing the legacy API key flow.
+
+To learn more, visit the [provisioning tokens](/learn/devices/provision/provisioning-tokens) documentation.
+
+## Breaking changes
+
+- The legacy provisioning script only supports provisioning `miru-agent` versions that precede `v0.9.0`; use [provisioning tokens](/learn/devices/provision/provisioning-tokens) for `miru-agent` versions `v0.9.0` or later
+
+## Features
+
+- Added `provision` and `reprovision` subcommands for enrolling and re-enrolling devices using provisioning tokens
+- Upgrading the `miru-agent` package now automatically resets the on-device state so that reprovisioning is no longer required to upgrade the `miru-agent` package
+
+## Fixes
+
+- Resources fetched from on-device applications via the [Device API](/developers/device-api) are now fetched from the Miru control plane if not found locally
+- All network communications are now restricted to `mirurobotics.com` and its subdomains (loopback domains such as `127.0.0.1` are permitted for testing)
+- Fixed a Debian `postinst` failure (`useradd: group miru exists`) on systems with `USERGROUPS_ENAB=yes`, and added a `tmpfiles.d` entry so `/srv/miru` is recreated on boot
+- Resolved a `rustls-webpki` security advisory by routing MQTT TLS through `native-tls` instead of `rustls`
+- Fixed a `usize` underflow in cache pruning that, in release builds, could wipe all valid cache entries after invalid entries were removed
+
+
+---
+
 # v0.8.1
 
 *May 7, 2026*
@@ -14,6 +42,7 @@ description: "Changelog and migration steps for the Miru Agent"
 
 - Re-subscribe to MQTT sync and ping command topics on every successful `ConnAck` so inbound commands continue working after auto-reconnects
 
+---
 
 # v0.8.0
 
@@ -115,7 +144,7 @@ To learn more, visit the [file permissions](/developers/agent/file-permissions) 
 
 `v0.6.0` adds support for installing the agent over poor internet connections, ensuring reliable provisioning on bandwidth-constrained devices.
 
-[Read the full documentation »](/learn/devices/provision#poor-connectivity)
+[Read the full documentation »](/developers/agent/install#poor-connectivity)
 
 ## Features
 

@@ -9,6 +9,112 @@ import { PlatformApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
+# 2026-05-06.rainier
+
+*May 12, 2026*
+
+The `rainier` release introduces a provisioning-token flow that replaces the activation-token endpoint, expands supported config-instance content formats, restores the `removing` deployment status, and adds expandable `current_release` / `current_deployment` fields on devices.
+
+<PlatformApiReleaseLinks version="2026-05-06.rainier" />
+
+## New endpoints
+
+<Dropdown title="Provisioning">
+  - <POST /> `/provisioning_tokens` — create a provisioning token to add a device to your workspace
+</Dropdown>
+
+## Breaking changes
+
+<Dropdown title="Activation tokens replaced by provisioning tokens">
+
+  The `POST /devices/{device_id}/activation_token` endpoint has been removed. Callers should migrate to `POST /provisioning_tokens` instead.
+
+  ```diff
+  - POST /devices/{device_id}/activation_token
+  + POST /provisioning_tokens
+  ```
+
+  Provisioning tokens are not scoped to a pre-existing device — create a token first, then use it to provision a new device or activate an existing device. Visit the [provisioning tokens](/learn/devices/provision/provisioning-tokens) documentation for more details.
+
+</Dropdown>
+
+## Additive changes
+
+<Dropdown title="Instance content enum">
+
+  Config instances now support YAML content in addition to JSON.
+
+  ```diff
+  # Instance Content format enum
+    "json"
+  + "yaml"
+  ```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Deployment activity status">
+
+  `removing` is added back to the `activity_status` and `status` enums. This is a partial reversal of the tetons change, where deployments transitioned directly from `deployed` to `archived`. Deployments can sit in `removing` while config instances are torn down on the device before reaching `archived`.
+
+  ```diff
+  # status / activity_status enum
+    "staged"
+    "drifted"
+    "queued"
+    "deployed"
+  + "removing"
+    "archived"
+  ```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Device query parameters">
+
+  Device endpoints now support a few new query parameters:
+
+  1. Expand the `current_deployment` field on a device.
+
+  ```diff
+    GET /device
+  + GET /device?expand=current_deployment
+  ```
+
+  2. Expand the `current_release` field on a device.
+
+  ```diff
+    GET /devices
+  + GET /devices?expand=current_release
+  ```
+
+  3. Filter devices by `current_release_id` when listing devices.
+
+  ```diff
+    GET /devices
+  + GET /devices?current_release_id=rls_123
+  ```
+
+</Dropdown>
+
+## Migration steps
+
+<Steps>
+  <Step title="Update the Miru-Version header">
+    Set `Miru-Version: 2026-05-06.rainier` on all API requests. [Python SDK](/developers/platform-api/sdks#python) `v0.10.0` marks the major version rollout of the `2026-05-06.rainier` API. For the latest SDK version compatibility information, visit the [Platform SDKs](/developers/platform-api/sdks) page.
+  </Step>
+
+  <Step title="Migrate from activation tokens to provisioning tokens">
+    Migrate install workflows to use [provisioning tokens](/learn/devices/provision/provisioning-tokens) instead of activation tokens.
+  </Step>
+
+  <Step title="Optionally adopt new additive surface">
+    - Handle `yaml` content format where needed
+    - Handle `removing` deployment status or activity status where needed.
+    - Implement or migrate to `expand=current_release` and/or `expand=current_deployment` for retrieving the current release or deployment on a device.
+  </Step>
+</Steps>
+
+---
+
 # 2026-03-09.tetons
 
 *March 13, 2026*
