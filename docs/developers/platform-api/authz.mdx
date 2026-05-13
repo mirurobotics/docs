@@ -17,9 +17,9 @@ Most resources follow a common tier pattern:
 
 | Tier | Access |
 |------|--------|
+| `manage` | All operations—superset of all other scopes for the resource |
 | `read` | Get or list operations |
 | `write` | Create or update operations |
-| `manage` | All operations—superset of all other scopes for the resource |
 
 
 The `write` scope does **not** include `read` access—if you need both, select both scopes.
@@ -32,62 +32,69 @@ Some resources have additional granular scopes beyond the standard tiers (e.g. `
 
 | Scope | Permissions |
 |-------|-------------|
+| `config_instances:manage` | all operations |
 | `config_instances:read` | get, list |
 | `config_instances:write` | create |
-| `config_instances:manage` | all operations |
 
 ### Config schemas
 
 | Scope | Permissions |
 |-------|-------------|
+| `config_schemas:manage` | all operations |
 | `config_schemas:read` | get, list |
 | `config_schemas:write` | create, update |
-| `config_schemas:manage` | all operations |
 
 ### Config types
 
 | Scope | Permissions |
 |-------|-------------|
+| `config_types:manage` | all operations |
 | `config_types:read` | get, list |
 | `config_types:write` | create, update |
-| `config_types:manage` | all operations |
 
 ### Deployments
 
 | Scope | Permissions |
 |-------|-------------|
+| `deployments:manage` | all operations |
 | `deployments:read` | get, list |
 | `deployments:write` | create |
 | `deployments:stage` | stage |
 | `deployments:deploy` | deploy |
 | `deployments:archive` | archive |
-| `deployments:manage` | all operations |
 
 ### Devices
 
 | Scope | Permissions |
 |-------|-------------|
+| `devices:manage` | all operations |
 | `devices:read` | get, list, ping |
 | `devices:provision` | create, activate, reactivate, list |
 | `devices:write` | create, update |
 | `devices:delete` | delete |
-| `devices:manage` | all operations |
 
 ### Git commits
 
 | Scope | Permissions |
 |-------|-------------|
+| `git_commits:manage` | all operations |
 | `git_commits:read` | get, list |
 | `git_commits:write` | create |
-| `git_commits:manage` | all operations |
+
+### Provisioning tokens
+
+| Scope | Permissions |
+|-------|-------------|
+| `provisioning_tokens:manage` | all operations |
+| `provisioning_tokens:write` | create |
 
 ### Releases
 
 | Scope | Permissions |
 |-------|-------------|
+| `releases:manage` | all operations |
 | `releases:read` | get, list |
 | `releases:write` | create, update |
-| `releases:manage` | all operations |
 
 ## Principle of least privilege
 

@@ -6,9 +6,11 @@ import { MutableBadge, EditableBadge, NullableBadge } from '/snippets/components
 import { Framed } from '/snippets/components/framed.jsx';
 import DeviceDef from '/snippets/definitions/device.mdx';
 
-<Framed background="https://assets.mirurobotics.com/docs/v03/images/devices/background.jpeg" image="https://assets.mirurobotics.com/docs/v03/images/devices/header:list.png" borderWidth={"24px 0 0 36px"} innerRadius={"8px 0 0 0"} />
+<Framed background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/devices/header:list.png" borderWidth={"24px 0 0 36px"} innerRadius={"8px 0 0 0"} />
 
 <DeviceDef />
+
+Configurations are deployed to devices via the Miru Agent, a lightweight `systemd` service that runs on your devices, handling the deployment lifecycle of configurations. Visit the [Miru Agent](/developers/agent/overview) documentation for more information.
 
 ## Properties
 
@@ -61,22 +63,6 @@ import DeviceDef from '/snippets/definitions/device.mdx';
   Examples: `rls_123`
 </ParamField>
 
-## Miru Agent
-
-Configurations are deployed to devices via the [Miru Agent](/developers/agent/overview), a lightweight `systemd` service that runs on your devices, handling the deployment lifecycle of configurations.
-
-The Miru Agent offers the following functionality:
-
-- **Syncs configurations** from the cloud to the local file system in real-time
-- **Manages device state**, providing real-time updates of the device's status and the currently deployed configurations
-- [**Exposes a REST API**](/developers/device-api/overview) over a Unix socket for programmatic access by applications running on the same machine
-
-<Note>
-  The Miru Agent only supports Linux. Visit the [supported platforms](/developers/agent/overview#supported-platforms) for a complete list of supported platforms.
-</Note>
-
-Read more about the agent in the [Miru Agent](/developers/agent/overview) section.
-
 ## Status
 
 Devices leverage several states to track their registration and connectivity with the Miru control plane.
@@ -88,8 +74,8 @@ Devices leverage several states to track their registration and connectivity wit
 | `online`     | Device is currently connected to Miru's servers             |
 | `offline`    | Device has lost connection to Miru's servers                |
 
-<img src="https://assets.mirurobotics.com/docs/v03/images/devices/status-lifecycle.light.svg" alt="Device status lifecycle" className="block dark:hidden" />
-<img src="https://assets.mirurobotics.com/docs/v03/images/devices/status-lifecycle.dark.svg" alt="Device status lifecycle" className="hidden dark:block" />
+<img src="https://assets.mirurobotics.com/docs/v04/images/devices/status-lifecycle.light.svg" alt="Device status lifecycle" className="block dark:hidden" />
+<img src="https://assets.mirurobotics.com/docs/v04/images/devices/status-lifecycle.dark.svg" alt="Device status lifecycle" className="hidden dark:block" />
 
 Devices begin in the `inactive` state. During the Miru Agent install process, devices briefly enter the `activating` state before transitioning to `online`.
 
@@ -100,5 +86,5 @@ The only exception to this is when a device is [reprovisioned](/learn/devices/pr
 To view a device's status, hover over its name on the Devices page.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/status-hover.png)
+  ![Device Status Hover](/images/devices/status-hover.png)
 </Frame>

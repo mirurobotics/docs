@@ -2,8 +2,16 @@
 title: "Reprovision a device"
 ---
 
+import { Framed } from '/snippets/components/framed.jsx';
 import Install from '/snippets/devices/provision/install-dialog.mdx';
 import Reprovision from '/snippets/devices/provision/reprovision-dialog.mdx';
+
+<Framed 
+  background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg" 
+  image="https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/header:reprovision-dialog.png" 
+  innerRadius="12px"
+  outerRadius="16px"
+/>
 
 Reprovisioning a device is the process of reassociating a physical machine with a Miru device. This can be the same physical machine that the Miru device was initially provisioned on, or a different physical machine.
 
@@ -33,7 +41,7 @@ Reprovisioning a device is only supported via the Miru dashboard. Support for pr
 To reprovision a device, click the ellipsis (...) next to the device you want to reprovision, then select **Reprovision**.
 
 <Frame>
-  ![Reprovision device dropdown](https://assets.mirurobotics.com/docs/v03/images/devices/ellipses-dropdown.png)
+  ![Reprovision device dropdown](/images/devices/ellipses-dropdown.png)
 </Frame>
 
 ### Install the `miru-agent` package

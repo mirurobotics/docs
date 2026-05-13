@@ -7,60 +7,60 @@ We're ready to deploy config instances to a device.
 Navigate back to the [Devices page](https://app.mirurobotics.com/devices) and click into the device we provisioned in the previous step.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/one-device-to-provision.png)
+  ![Provisioned Device](/images/devices/provisioned-device.png)
 </Frame>
 
 Select the release we just created and hit **Next**.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/editor/set-release-dialog-step1.png)
+  ![Set Release Dialog](/images/devices/editor/set-release-dialog.png)
 </Frame>
 
 Input the desired parameters for the `Mobility`, `Planning`, and `Communication` config instances respectively.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/editor/set-release-dialog-step2-edit.png)
+  ![Initial Deployment Editor Draft Page](/images/devices/editor/init-deployment-draft.png)
 </Frame>
 
 <Note>
   The instances are auto-populated with the default values defined in the release's config schemas. If using empty schemas, the auto-populated instances will be empty as well.
 </Note>
 
-Finally, provide a description for the deployment, then click **Deploy**.
+Finally, click **Deploy** in the top right, provide a description, and confirm the device name to deploy.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/editor/set-release-dialog-step2-description.png)
+  ![Initial Deployment Deploy Dialog](/images/devices/editor/init-deploy-dialog.png)
 </Frame>
 
 ## Verify the deployment
 
-To verify a config seen in the editor is deployed to the device, open a terminal on the device that has the Miru Agent installed and run `cat` on the file path of the config instance.
+To verify the config instances seen in the editor are deployed to the device, open a terminal on the machine being deployed to and run `cat` on the file path of a given config instance.
 
 
 ```bash
 cat /srv/miru/configs/mobility.json
 ```
 
-You should find that the editor's content is identical to the config instance on the device.
+You should find that the editor's content is identical to the config instance on the machine.
 
-## Patch a config instance
+## Patch a deployment
 
-To edit a config instance, make some changes to the current config instance. As edits are made, a log on the right maintains a list of all changes, categorizing them by their type: `added`, `deleted`, or `modified`.
+To edit a config instance, make some changes to the current deployment in the editor. As edits are made, a log on the right maintains a list of all changes, categorizing them by their type: `added`, `deleted`, or `modified`.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/editor/modifications.png)
+  ![Deployment Editor Modifications](/images/devices/editor/modifications.png)
 </Frame>
 
 <Warning>
-  Only the latest config instance for a config type may be edited. All other config instances are read-only.
+  Only the latest deployment may be edited; all others are read-only.
 </Warning>
 
 Once you are satisfied with the edits, click **Deploy** in the top right.
 
-A dialog will appear to confirm the deployment. Add a description, confirm the device, and click **Deploy**.
+As before, fill out the deployment dialog and click **Deploy**.
 
 <Frame>
-  ![Miru UI screenshot](https://assets.mirurobotics.com/docs/v03/images/devices/editor/deploy.png)
+  ![Deployment Editor Deploy Dialog](/images/devices/editor/deploy-dialog.png)
 </Frame>
 
-Congratulations! You've successfully deployed and edited a config instance to a device with Miru!
+Congratulations! You've successfully deployed configurations to a device with Miru!
