@@ -80,20 +80,11 @@ import { Separator } from '/snippets/components/separator.jsx';
         <DropdownItem>
             **Default config file type:** The default config file type now mirrors the file extension of the uploaded config schema instead of always defaulting to JSON.
         </DropdownItem>
-        <DropdownItem>
-            **`removing` deployment status:** Deployments now transition through an explicit `removing` status while config instances are torn down on the device, visible across the dashboard, [Platform API](/changelog/platform-api#2026-05-06-rainier), and [Device API](/changelog/device-api).
-        </DropdownItem>
-        <DropdownItem>
-            **Device list expansions:** Platform API device endpoints now support `expand=current_release` and `expand=current_deployment`, plus a `current_release_id` filter when listing devices. See the [Platform API changelog](/changelog/platform-api#2026-05-06-rainier) for details.
-        </DropdownItem>
     </Dropdown>
 
     <Separator />
 
     <Dropdown title="Fixes">
-        <DropdownItem>
-            **Agent network lockdown:** All agent network traffic is now restricted to `mirurobotics.com` and its subdomains (loopback addresses are still permitted for local testing). Devices behind a corporate proxy or on-prem mirror need to allow the `mirurobotics.com` domain before upgrading to Miru Agent `v0.9.0`.
-        </DropdownItem>
         <DropdownItem>
             **Broken editor loading:** Fixed a critical issue where the config editor would fail to load due to pulling excessively large numbers of config instances.
         </DropdownItem>
