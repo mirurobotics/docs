@@ -12,7 +12,7 @@ Usage: $(basename "$0") <ref> <environment>
 Promote a git ref to a target environment branch.
 
 Arguments:
-  ref           Git ref to promote (tag, commit SHA, or branch).
+  ref           Git ref to promote (tag or commit SHA).
                 Must be reachable from main.
   environment   Target environment (staging, uat, production).
 
