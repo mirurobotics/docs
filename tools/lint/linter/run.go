@@ -15,6 +15,13 @@ import (
 	"github.com/mirurobotics/docs/tools/lint/linter/nodoubledash"
 )
 
+// maxScanTokenSize caps bufio.Scanner's per-line buffer. Docs MDX
+// files can contain a single very long line (embedded base64 data
+// URIs, inline SVG, wide HTML table rows) that exceeds bufio's
+// default 64KB token limit; 16 MB comfortably covers realistic
+// documentation lines without unbounded memory growth.
+const maxScanTokenSize = 16 * 1024 * 1024
+
 // Rule identifies a linter rule.
 type Rule string
 
@@ -102,6 +109,7 @@ func ProcessFile(path, contentRoot string) ([]analysis.Violation, error) {
 
 	var lines []string
 	scanner := bufio.NewScanner(f)
+	scanner.Buffer(make([]byte, 0, 64*1024), maxScanTokenSize)
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
 	}
