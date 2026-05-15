@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: 'Git ref to promote (tag, commit SHA, or branch). Must be reachable from main.'
+        description: 'Git ref to promote (tag or commit SHA). Must be reachable from main.'
         required: true
         type: string
         default: main
