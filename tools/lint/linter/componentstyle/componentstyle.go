@@ -50,7 +50,7 @@ func checkBracketSpacing(
 	openBrace int,
 ) []analysis.Violation {
 	closeBrace := strings.LastIndex(raw, "}")
-	if closeBrace < 0 {
+	if closeBrace <= openBrace {
 		msg := "import-component-style: component import must use named import syntax { }"
 		return []analysis.Violation{{File: file, Line: lineNum, Col: 1, Message: msg}}
 	}

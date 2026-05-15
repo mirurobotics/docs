@@ -119,6 +119,20 @@ func TestCheck(t *testing.T) {
 		}
 	})
 
+	t.Run("malformed brace order does not panic", func(t *testing.T) {
+		line := "import Foo} from '/snippets/components/x.jsx' // {Bar"
+		vs := Check("test.mdx", []string{line})
+		found := false
+		for _, v := range vs {
+			if strings.Contains(v.Message, "named import syntax") {
+				found = true
+			}
+		}
+		if !found {
+			t.Errorf("expected named-import-syntax violation, got %v", vs)
+		}
+	})
+
 	t.Run("non-component import no violations", func(t *testing.T) {
 		line := "import Foo from '/snippets/definitions/foo.mdx';"
 		vs := Check("test.mdx", []string{line})

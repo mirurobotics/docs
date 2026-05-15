@@ -3,6 +3,7 @@ package linter
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -49,6 +50,19 @@ func TestProcessFile(t *testing.T) {
 		}
 		if !found {
 			t.Errorf("expected no-double-dash violation, got %v", vs)
+		}
+	})
+
+	t.Run("very long line does not error", func(t *testing.T) {
+		dir := t.TempDir()
+		path := filepath.Join(dir, "test.mdx")
+		longLine := strings.Repeat("x", 200*1024)
+		content := "# Title\n\n" + longLine + "\n"
+		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := ProcessFile(path, dir); err != nil {
+			t.Fatalf("unexpected error: %v", err)
 		}
 	})
 
