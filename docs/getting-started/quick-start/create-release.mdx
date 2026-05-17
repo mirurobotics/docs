@@ -19,7 +19,7 @@ git clone https://github.com/mirurobotics/getting-started.git
 
 ## Define the schemas
 
-Releases are primarily defined by the config schemas they contain. The getting-started repository contains two sets of schemas for each of the supported [schema languages](/learn/schemas/languages/overview):
+Releases are defined by the config schemas they contain. The getting-started repository contains two sets of schemas for each of the supported [schema languages](/learn/schemas/languages/overview):
 
 - Empty schemas - regard all config instances as valid
 - Strict schemas - constrain the valid fields, types, and values for instances of the config type they belong to
@@ -53,41 +53,6 @@ If you're unfamiliar with schema languages, we recommend starting with [JSON Sch
 Each of the above schema examples are annotated with the `x-miru-config-type` and `x-miru-instance-filepath` fields. These annotations are crucial metadata that Miru uses to process the schema and deploy config instances to the correct location on the device.
 
 <SchemaAnnotations />
-
-## Create the config types
-
-To be able to push the schemas to Miru, we must first create config types to house them. We'll start with the `Mobility` config type.
-
-Navigate to the [config types page](https://app.mirurobotics.com/configs).
-
-<Frame>
-  ![Config types page](https://assets.mirurobotics.com/docs/v04/images/config-types/create-page.png)
-</Frame>
-
-Click the **New Config Type** button, supply the name `Mobility` and slug `mobility`, and click **Create**.
-
-<Frame>
-  ![Create config type dialog](https://assets.mirurobotics.com/docs/v04/images/config-types/create-dialog.png)
-</Frame>
-
-The provided slug is a unique identifier for the config type—it's how the CLI determines which config type a schema belongs to. As such, config schemas _must_ be annotated with the slug of the config type to which they belong.
-
-<CodeGroup>
-
-```yaml JSON Schema
-x-miru-config-type: "mobility"
-```
-
-
-```cue CUE
-@miru(config_type="mobility")
-```
-
-</CodeGroup>
-
-The getting-started repository already annotates the schemas with the appropriate slugs, so no need to add them yourself.
-
-After creating the `Mobility` config type, **repeat this process** for the `Communication` and `Planning` config types, using the slugs `communication` and `planning` respectively.
 
 
 ## Set up the CLI
