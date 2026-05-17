@@ -6,6 +6,21 @@ description: "Changelog and migration steps for the Miru CLI"
 
 import { Dropdown } from '/snippets/components/api-dropdown.jsx';
 
+# v0.10.1
+
+*May 17, 2026*
+
+## Features
+
+- Config types referenced in schema annotations are now automatically created if they do not yet exist instead of throwing an error
+
+## Fixes
+
+- Don't rewrite `~/.miru/settings.json` on read-only commands when no defaults need to be applied
+- Fix the install-docs link printed in the CLI's update-available notification
+
+---
+
 # v0.10.0
 
 *April 12, 2026*
