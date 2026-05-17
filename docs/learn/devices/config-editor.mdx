@@ -202,7 +202,7 @@ The redeploy dialog shows:
 
 ---
 
-## External deployment sync
+## Deployment alert
 
 If another user (or system) deploys to the same device while you have the editor
 open, an alert appears with the new deployment's details. The alert offers different 
@@ -221,3 +221,31 @@ options depending on whether you have unsaved edits:
 <Frame>
   ![Deployment Alert](https://assets.mirurobotics.com/docs/v04/images/devices/editor/deployment-alert.png)
 </Frame>  
+
+---
+
+## Editor settings
+
+Three **admin-only** workspace settings control how the editor behaves.
+
+<Frame>
+  ![Editor Settings](https://assets.mirurobotics.com/docs/v04/images/devices/editor/settings.png)
+</Frame>
+
+- **Allow offline deployments** (off by default) — Allow deployments to
+  devices that are currently offline. When off, the Deploy button is disabled
+  on offline devices.
+- **Skip deploy confirmation** (off by default) — Remove the device-name
+  confirmation step from the [deploy dialog](#deploying-changes). When off,
+  you must type the device name to confirm each deployment.
+- **Format files on deploy** (on by default) — Automatically format config
+  files before each deployment.
+
+Formatting fires when the deploy dialog opens. With this setting off, you can
+still format any open file manually from the editor's overflow menu (**⋯**) —
+click **Format file** or press **⌘⇧F** (Mac) / **Ctrl+Shift+F**
+(Windows/Linux).
+
+<Frame>
+  ![Format action](https://assets.mirurobotics.com/docs/v04/images/devices/editor/format-action.png)
+</Frame>
