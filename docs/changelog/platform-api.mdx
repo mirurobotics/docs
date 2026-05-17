@@ -75,8 +75,8 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
   1. Expand the `current_deployment` field on a device.
 
   ```diff
-    GET /device
-  + GET /device?expand=current_deployment
+    GET /devices
+  + GET /devices?expand=current_deployment
   ```
 
   2. Expand the `current_release` field on a device.
