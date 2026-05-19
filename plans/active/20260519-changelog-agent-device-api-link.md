@@ -22,9 +22,9 @@ After this change, the affected sentence still reads identically to the user —
 
 ## Progress
 
-- [ ] Confirm the current state of line 26 in `docs/changelog/agent.mdx`.
-- [ ] Replace `/developers/device-api` with `/developers/device-api/overview` on that line.
-- [ ] Run `grep` assertions (see Concrete Steps) to verify the edit landed precisely.
+- [x] Confirm the current state of line 26 in `docs/changelog/agent.mdx`. (2026-05-19)
+- [x] Replace `/developers/device-api` with `/developers/device-api/overview` on that line. (2026-05-19)
+- [x] Run `grep` assertions (see Concrete Steps) to verify the edit landed precisely. (2026-05-19)
 - [ ] Run `pnpm lint`.
 - [ ] Run `pnpm test:lint`.
 - [ ] Run `./scripts/preflight.sh`.
