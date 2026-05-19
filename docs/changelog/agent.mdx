@@ -23,7 +23,7 @@ To learn more, visit the [provisioning tokens](/learn/devices/provision/provisio
 
 ## Fixes
 
-- Resources fetched from on-device applications via the [Device API](/developers/device-api) are now fetched from the Miru control plane if not found locally
+- Resources fetched from on-device applications via the [Device API](/developers/device-api/overview) are now fetched from the Miru control plane if not found locally
 - All network communications are now restricted to `mirurobotics.com` and its subdomains (loopback domains such as `127.0.0.1` are permitted for testing)
 - Fixed a Debian `postinst` failure (`useradd: group miru exists`) on systems with `USERGROUPS_ENAB=yes`, and added a `tmpfiles.d` entry so `/srv/miru` is recreated on boot
 - Resolved a `rustls-webpki` security advisory by routing MQTT TLS through `native-tls` instead of `rustls`
