@@ -22,34 +22,41 @@ The clearest user-visible verification surface is `docs/changelog/cli.mdx` lines
 
 ## Progress
 
-- [ ] Add `space-y-4` (or equivalent rhythm utility — see Plan of Work) to the Dropdown body wrapper in `docs/snippets/components/dropdown.jsx`.
-- [ ] Re-read `docs/snippets/components/api-dropdown.jsx` to confirm whether the same defect exists; record finding in Surprises & Discoveries (out of scope for fix per task constraints, but note it).
-- [ ] Run `pnpm lint` from `docs/`; verify no new findings attributable to the edit.
-- [ ] Run `pnpm test:lint` from `docs/`; verify no new findings attributable to the edit.
-- [ ] If a local preview server is feasible (see Concrete Steps), render `docs/changelog/cli.mdx` and confirm the "Default instance file path" dropdown shows three visually separated paragraphs with spacing matching surrounding non-dropdown paragraphs. If not feasible, record that explicitly in Surprises & Discoveries.
-- [ ] Run `./scripts/preflight.sh` from `docs/`; confirm it reports `clean`.
-- [ ] Commit the single-file edit (one commit for this single-milestone plan).
+- [x] Add `space-y-4` to the Dropdown body wrapper in `docs/snippets/components/dropdown.jsx`. (2026-05-19 13:23 -0700)
+- [x] Re-read `docs/snippets/components/api-dropdown.jsx` to confirm whether the same defect exists; recorded in Surprises & Discoveries. (2026-05-19 13:23 -0700)
+- [x] Run `pnpm lint` from `docs/`; exited 0 with `All documentation lint checks passed.` (2026-05-19 13:24 -0700)
+- [x] Run `pnpm test:lint` from `docs/`; exited 0. (2026-05-19 13:24 -0700)
+- [ ] Preview not performed — see Surprises & Discoveries (no preview server runnable in this non-interactive environment). (2026-05-19 13:24 -0700)
+- [x] Run `./scripts/preflight.sh` from `docs/`; exited 0. (2026-05-19 13:25 -0700)
+- [x] Commit the single-file edit. (2026-05-19 13:25 -0700 — see commit below)
 
 Use timestamps when you complete steps. Split partially completed work into "done" and "remaining" as needed.
 
 ## Surprises & Discoveries
 
-(Add entries as you go.)
+- Observation: `docs/snippets/components/api-dropdown.jsx` contains the same `<div className="pb-3">{children}</div>` wrapper pattern as `dropdown.jsx`, so it likely has the same inter-paragraph spacing defect.
+  Evidence: `grep -n 'pb-3' docs/snippets/components/api-dropdown.jsx` → `41:            {isOpen && <div className="pb-3">{children}</div>}`. Out of scope per this plan; file a follow-up if needed.
+  Date/Author: 2026-05-19 / Claude (claude/audit-docs-4CgNO)
 
-- Observation: …
-  Evidence: …
+- Observation: No local preview was performed.
+  Evidence: `mint dev` requires an interactive dev server and Mintlify account/network access that are not available in this non-interactive shell environment. Per the plan, "no preview performed" is recorded here in lieu of a fabricated visual verification. The lint + preflight gates passed, and visual verification is deferred to PR review render.
+  Date/Author: 2026-05-19 / Claude (claude/audit-docs-4CgNO)
 
 ## Decision Log
 
-(Add entries as you go.)
-
-- Decision: …
-  Rationale: …
-  Date/Author: …
+- Decision: Use `space-y-4` (1rem) without further adjustment.
+  Rationale: Matches the plan's recommended default and Tailwind's prose paragraph scale. No visual preview was available to motivate stepping to `space-y-3` or `space-y-6`; if PR-render review shows the gap is off, follow the plan's recovery instructions.
+  Date/Author: 2026-05-19 / Claude (claude/audit-docs-4CgNO)
 
 ## Outcomes & Retrospective
 
-(Summarize at completion or major milestones.)
+Completed 2026-05-19. Single-line className change applied to `docs/snippets/components/dropdown.jsx` (`pb-3` → `pb-3 space-y-4`). All validation gates passed:
+
+- `pnpm lint` → exit 0, "All documentation lint checks passed."
+- `pnpm test:lint` → exit 0.
+- `./scripts/preflight.sh` → exit 0 (Lint, Audit with 6 high vulns ignored as pre-existing, 26/26 bats tests passed).
+
+Local preview was not feasible in the non-interactive shell environment (recorded in Surprises & Discoveries). Visual verification is deferred to PR-render preview. The same defect appears to exist in `docs/snippets/components/api-dropdown.jsx`; out of scope per this plan, follow-up recommended.
 
 ## Context and Orientation
 
