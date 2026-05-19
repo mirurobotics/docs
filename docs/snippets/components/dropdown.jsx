@@ -64,7 +64,13 @@ export const Dropdown = ({
                 </svg>
             </button>
 
-            {isOpen && <div className="pb-3 space-y-4">{children}</div>}
+            {isOpen && (
+                <div className="pb-3 space-y-4">
+                    {React.Children.map(children, (child, i) => (
+                        <div key={i}>{child}</div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
