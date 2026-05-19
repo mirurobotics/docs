@@ -53,7 +53,7 @@ The default instance file path has been updated from `/srv/miru/config_instances
 
 Because the new default path is outside `/srv/miru/config_instances/`, it requires Miru Agent [v0.8.0](/changelog/agent#v0-8-0) or later, as noted above.
 
-We recommend adding the instance file path annotation pointing at the previous default location, `/srv/miru/config_instances/{config-type-slug}.json`, to preserve the old path. For example, for the `mobility` config type:
+We recommend adding the instance file path annotation pointing at the previous default location, `/srv/miru/config_instances/{config-type-slug}.json`, to preserve the old path. Below is an example for the `mobility` config type:
 
 ```diff
 # JSON Schema
