@@ -6,7 +6,12 @@ import { MutableBadge, EditableBadge, NullableBadge } from '/snippets/components
 import { Framed } from '/snippets/components/framed.jsx';
 import DeviceDef from '/snippets/definitions/device.mdx';
 
-<Framed background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/devices/header:list.png" borderWidth={"24px 0 0 36px"} innerRadius={"8px 0 0 0"} />
+<Framed 
+  background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg" 
+  image="https://assets.mirurobotics.com/docs/v04/images/devices/header:list.png" 
+  borderWidth={"24px 0 0 36px"} 
+  innerRadius={"8px 0 0 0"} 
+/>
 
 <DeviceDef />
 
@@ -72,7 +77,7 @@ Configurations are deployed to devices via the Miru Agent, a lightweight `system
 </ParamField>
 
 <ParamField path="group" type="Group">
-  <MutableBadge /> {' '} <NullableBadge />
+  <EditableBadge /> {' '} <NullableBadge />
 
   The [group](/learn/groups#properties) to which the device belongs. If the device's group is not set, the group id is `null`.
 
