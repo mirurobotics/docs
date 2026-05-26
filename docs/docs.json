@@ -80,6 +80,7 @@
                   "learn/devices/deployment-history"
                 ]
               },
+              "learn/groups",
               {
                 "group": "Releases",
                 "pages": [
