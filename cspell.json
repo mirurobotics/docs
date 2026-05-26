@@ -50,6 +50,7 @@
     "ENAB",
     "tmpfiles",
     "rustls",
-    "webpki"
+    "webpki",
+    "affordances"
   ]
 }
