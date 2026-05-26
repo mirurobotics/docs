@@ -32,7 +32,7 @@
       "brace-expansion": ">=5.0.6",
       "path-to-regexp": "0.1.13",
       "postcss": ">=8.5.10",
-      "qs": ">=6.14.2",
+      "qs": ">=6.15.2",
       "send": ">=0.19.0",
       "serve-static": ">=1.16.0",
       "socket.io-parser": ">=4.2.6",

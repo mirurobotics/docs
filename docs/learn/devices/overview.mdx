@@ -6,7 +6,12 @@ import { MutableBadge, EditableBadge, NullableBadge } from '/snippets/components
 import { Framed } from '/snippets/components/framed.jsx';
 import DeviceDef from '/snippets/definitions/device.mdx';
 
-<Framed background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/devices/header:list.png" borderWidth={"24px 0 0 36px"} innerRadius={"8px 0 0 0"} />
+<Framed 
+  background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg" 
+  image="https://assets.mirurobotics.com/docs/v04/images/devices/header:list.png" 
+  borderWidth={"24px 0 0 36px"} 
+  innerRadius={"8px 0 0 0"} 
+/>
 
 <DeviceDef />
 
@@ -35,12 +40,24 @@ Configurations are deployed to devices via the Miru Agent, a lightweight `system
 
 </ParamField>
 
+<ParamField path="last_connected_at" type="datetime">
+  <MutableBadge /> {' '} <NullableBadge />
+
+  The timestamp of when the device last connected to Miru's servers.
+
+  Examples: `2026-05-25T12:00:00Z`
+</ParamField>
+
+<ParamField path="last_disconnected_at" type="datetime">
+  <MutableBadge /> {' '} <NullableBadge />
+
+  The timestamp of when the device last disconnected from Miru's servers.
+
+  Examples: `2026-05-25T12:00:00Z`
+</ParamField>
+
 <ParamField path="agent version" type="string">
-  <MutableBadge />
-
-  {' '}
-
-  <NullableBadge />
+  <MutableBadge /> {' '} <NullableBadge />
 
   The version of the Miru Agent running on the device.
 
@@ -50,17 +67,21 @@ Configurations are deployed to devices via the Miru Agent, a lightweight `system
 </ParamField>
 
 <ParamField path="current release" type="Release">
-  <MutableBadge />
-
-  {' '}
-
-  <NullableBadge />
+  <MutableBadge /> {' '} <NullableBadge />
 
   The [release](/learn/releases/overview#properties) to which the device's current deployment belongs.
 
   If the device is `inactive` or `activating`, the current release id is `null`. If the device is `online` or `offline`, the current release may still be `null` if the device has no deployed config instances.
 
   Examples: `rls_123`
+</ParamField>
+
+<ParamField path="group" type="Group">
+  <EditableBadge /> {' '} <NullableBadge />
+
+  The [group](/learn/groups#properties) to which the device belongs. If the device's group is not set, the group id is `null`.
+
+  Examples: `grp_123`
 </ParamField>
 
 ## Status
