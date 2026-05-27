@@ -11,6 +11,90 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 <div className="changelog-page">
 
+<Update label="May 27, 2026">
+    ## Groups
+
+    Devices can now be organized into a **hierarchical tree of groups**.
+    Each device belongs to at most one group, and groups themselves can be
+    nested into arbitrary subgroup structures — so a workspace can be
+    organized by site, fleet, environment, customer, or whatever shape your
+    operations take.
+
+    <Framed
+        image="https://assets.mirurobotics.com/docs/changelog/26-05-27/grp.png"
+        borderWidth="0px"
+        innerRadius="8px"
+    />
+
+    [Groups Documentation »](/learn/groups)
+
+    ## Editor settings
+
+    Three new **admin-only workspace settings** under **Settings → Workspace
+    → Editor** control how the config editor behaves at deploy time.
+
+    - **Allow offline deployments** (default: off)
+    - **Skip device name confirmation on deploy** (default: off)
+    - **Format files on deploy** (default: on)
+
+    <Framed
+        image="https://assets.mirurobotics.com/docs/changelog/26-05-27/settings.png"
+        borderWidth="0px"
+        innerRadius="8px"
+    />
+
+    [Editor settings documentation »](/learn/devices/config-editor#editor-settings)
+
+    <Separator />
+
+    <Dropdown title="Improvements">
+        <DropdownItem>
+            **Manual file formatting:** In addition to formatting on deploy,
+            you can format the open config file at any time from the
+            editor's overflow menu (**⋯**) → **Format file**, or with
+            **⌘⇧F** (Mac) / **Ctrl+Shift+F** (Windows/Linux).
+        </DropdownItem>
+        <DropdownItem>
+            **Inline duplicate errors:** When you create something with a
+            name, slug, or version that's already taken (devices, groups,
+            releases, config types), the error now appears directly under
+            the field that caused it — instead of as a toast in the
+            bottom-right corner, away from where you're working.
+        </DropdownItem>
+        <DropdownItem>
+            **Deployment parent check:** A deployment's parent must be the
+            device's current deployment, or the deployment is rejected.
+        </DropdownItem>
+        <DropdownItem>
+            **Plan-based device limits:** The number of devices in your
+            workspace is now limited by your billing plan. If you hit your
+            cap, remove devices or upgrade to add more.
+        </DropdownItem>
+    </Dropdown>
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+        <DropdownItem>
+            **Redeploy from history:** Right-clicking a deployment in the
+            editor's History tab and selecting Redeploy now opens the
+            redeploy dialog. Previously the menu would close silently with
+            no console error and no network call. The same fix restores
+            Set as diff base, Copy ID, and Copy description.
+        </DropdownItem>
+        <DropdownItem>
+            **Config type deletion:** Deleting a config type works again,
+            as long as no deployment references one of its config
+            instances.
+        </DropdownItem>
+        <DropdownItem>
+            **Device online status:** Fixed an MQTT broker reconnection
+            issue that could cause devices to show the wrong
+            online/offline status.
+        </DropdownItem>
+    </Dropdown>
+</Update>
+
 <Update label="May 12, 2026">
     ## APT Repository
 
