@@ -16,7 +16,7 @@ Miru provides an official action for installing the Miru CLI. You can find it on
 
 ## Usage
 
-Since the CLI is still in beta, we highly recommend [pinning to a minor version](#pin-a-minor-version) to avoid breaking changes. Changes within a minor version are guaranteed to be backwards compatible.
+Since the CLI is still in beta, we highly recommend [pinning to a specific version](#pin-a-specific-version) to ensure a stable and predictable environment.
 
 You can find the CLI changelog in the [CLI changelog](/changelog/cli).
 
@@ -31,7 +31,7 @@ steps:
   - name: Setup Miru CLI
     uses: mirurobotics/setup-cli@v0.2
     with:
-      version: 'v0.10'
+      version: 'v0.10.1'
 
   - name: Run your CI task here
     env:
@@ -41,11 +41,25 @@ steps:
       miru version
 ```
 
+### Pin a specific version
+
+Pinning to a specific CLI version ensures a stable and predictable environment. You will need to manually update the version to receive bug fixes and improvements.
+
+To pin to a specific version, use the `version` input with the exact CLI version number:
+
+```yaml
+steps:
+  - uses: actions/checkout@v6
+
+  - name: Setup Miru CLI (v0.10.1)
+    uses: mirurobotics/setup-cli@v0.2
+    with:
+      version: 'v0.10.1'
+```
+
 ### Pin a minor version
 
-Pinning to a minor version of the CLI will install the latest release within that minor version range. For example, pinning to CLI version `v0.10` will install the latest `v0.10.x` release.
-
-This is the recommended approach to receive the latest bug fixes and improvements while avoiding breaking changes.
+Pinning to a minor version installs the latest release within that minor version range (e.g., `v0.10` installs the latest `v0.10.x`). This automatically picks up backwards-compatible bug fixes, but may introduce unexpected changes.
 
 ```yaml
 steps:
@@ -57,24 +71,10 @@ steps:
       version: 'v0.10'
 ```
 
-### Pin a specific version
-
-Although not recommended, you can pin to a specific version to ensure a stable and predictable environment. However, you won't receive the latest bug fixes and improvements unless you manually upgrade the CLI.
-
-```yaml
-steps:
-  - uses: actions/checkout@v6
-
-  - name: Setup Miru CLI
-    uses: mirurobotics/setup-cli@v0.2
-    with:
-      version: 'v0.10.0'
-```
-
 ## Inputs
 
 <ParamField path="version" type="string">
-  Miru version of the CLI to install. Supports exact (`v0.10.0`) and minor (`v0.10`) versions. We recommend using a minor version to avoid breaking changes.
+  Miru version of the CLI to install. Supports exact (`v0.10.1`) and minor (`v0.10`) versions. We recommend pinning to an exact version for a stable, predictable environment.
   
   Omit or use `latest` for the most recent release. However, this is not recommended as it may introduce breaking changes.
 </ParamField>
@@ -120,7 +120,7 @@ jobs:
       - name: Setup Miru CLI
         uses: mirurobotics/setup-cli@v0.2
         with:
-          version: 'v0.10'
+          version: 'v0.10.1'
 
       - name: Create the release
         env:
