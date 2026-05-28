@@ -1,4 +1,4 @@
-import { ADMIN_TOOLTIP } from '/snippets/components/users/roles.jsx';
+import { AdminBadge } from '/snippets/components/role-badges.jsx';
 
 To log in, run the `login` command.
 
@@ -6,11 +6,7 @@ To log in, run the `login` command.
 miru login
 ```
 
-Retrieve your authentication token from the [Secrets](https://app.mirurobotics.com/settings/cli-token) page.
-
-<Warning>
-  You must be an <Tooltip tip={ADMIN_TOOLTIP.tip} cta={ADMIN_TOOLTIP.cta} href={ADMIN_TOOLTIP.href}>admin</Tooltip> user to retrieve an authentication token.
-</Warning>
+Retrieve your authentication token from the [Secrets](https://app.mirurobotics.com/settings/cli-token) page. <AdminBadge />
 
 <Frame>
   <img

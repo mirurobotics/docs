@@ -3,6 +3,7 @@ title: "API keys"
 ---
 
 import { Framed } from '/snippets/components/framed.jsx';
+import { AdminBadge } from '/snippets/components/role-badges.jsx';
 
 <Framed 
 background="https://assets.mirurobotics.com/docs/v04/images/apikeys/background.jpeg" 
@@ -16,13 +17,7 @@ API keys allow you to authenticate to the Miru [Platform API](/developers/platfo
 
 Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
 
-## Create an API key
-
-import { ADMIN_TOOLTIP } from '/snippets/components/users/roles.jsx';
-
-<Warning>
-    You must be an <Tooltip tip={ADMIN_TOOLTIP.tip} cta={ADMIN_TOOLTIP.cta} href={ADMIN_TOOLTIP.href}>admin</Tooltip> user to create an API key.
-</Warning>
+## Create an API key  <AdminBadge />
 
 To create an API key, navigate to the [Secrets page](https://app.mirurobotics.com/settings/secrets) in the dashboard and click **New API Key** in the top right.
 
@@ -48,7 +43,7 @@ To see the scopes of an API key, hover over the information icon in the **Scopes
   ![API Key Scopes Popup](https://assets.mirurobotics.com/docs/v04/images/apikeys/scopes-popup.png)
 </Frame>
 
-## Delete an API key
+## Delete an API key  <AdminBadge />
 
 Deleting an API key immediately revokes it. Attempting to authenticate with a deleted API key will fail. Furthermore, deleting an API key is irreversible. Once an API key is deleted, it cannot be recovered.
 

@@ -2,8 +2,9 @@
 title: "Groups"
 ---
 
-import { EditableBadge, MutableBadge, NullableBadge } from '/snippets/components/badges.jsx';
+import { EditableBadge, MutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
+import { AdminBadge } from '/snippets/components/role-badges.jsx';
 import MoveDevice from '/snippets/devices/move.mdx';
 
 <Framed 
@@ -69,7 +70,7 @@ Groups organize devices into a tree hierarchy. A workspace can have multiple top
 
 Devices belong to at most one group. Devices that haven't been assigned to any group remain ungrouped at the workspace level.
 
-## Create a group
+## Create a group  <AdminBadge />
 
 Go to the [Groups page](https://app.mirurobotics.com/groups) and navigate into the group you want to create a group inside of. Ensure you're within the **Groups** tab for the group you're inside of and click the **+ Group** button in the top right corner.
 
@@ -83,7 +84,7 @@ Fill in the fields, then click **Create**.
   ![Create Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/create-dialog.png)
 </Frame>
 
-## Edit a group
+## Edit a group  <AdminBadge />
 
 Navigate to the [Groups page](https://assets.mirurobotics.com/docs/v04/images/groups/page.png), click the ellipses (...) on the group you want to edit, and hit **Edit**.
 
@@ -97,11 +98,11 @@ Update the desired fields, then click **Save**.
   ![Edit Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/edit-dialog.png)
 </Frame>
 
-## Move a device
+## Move a device  <AdminBadge />
 
 <MoveDevice />
 
-## Delete a group
+## Delete a group  <AdminBadge />
 
 A group can only be deleted if it has no subgroups and no assigned devices. If you need to delete a group that still contains devices or subgroups, first move or reassign its contents.
 

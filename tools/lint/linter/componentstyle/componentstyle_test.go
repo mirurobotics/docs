@@ -50,7 +50,7 @@ func TestCheck(t *testing.T) {
 	})
 
 	t.Run("no comma-space", func(t *testing.T) {
-		line := "import { A,B } from '/snippets/components/badges.jsx';"
+		line := "import { A,B } from '/snippets/components/field-badges.jsx';"
 		vs := Check("test.mdx", []string{line})
 		found := false
 		for _, v := range vs {
@@ -64,7 +64,7 @@ func TestCheck(t *testing.T) {
 	})
 
 	t.Run("space before comma", func(t *testing.T) {
-		line := "import { A , B } from '/snippets/components/badges.jsx';"
+		line := "import { A , B } from '/snippets/components/field-badges.jsx';"
 		vs := Check("test.mdx", []string{line})
 		found := false
 		for _, v := range vs {
