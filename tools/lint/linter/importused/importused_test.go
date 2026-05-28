@@ -37,7 +37,7 @@ Some text without the component.`
 	})
 
 	t.Run("named import two names one unused", func(t *testing.T) {
-		content := `import { A, B } from '/snippets/components/badges.jsx';
+		content := `import { A, B } from '/snippets/components/field-badges.jsx';
 
 <A />`
 		vs := Check("test.mdx", strings.Split(content, "\n"))

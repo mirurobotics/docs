@@ -2,10 +2,10 @@
 title: "Invites"
 ---
 
-import { MutableBadge, ImmutableBadge } from '/snippets/components/badges.jsx';
+import { MutableBadge, ImmutableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
+import { AdminBadge } from '/snippets/components/role-badges.jsx';
 import { ROLE_TOOLTIP } from '/snippets/components/users/roles.jsx';
-import { OWNER_TOOLTIP, ADMIN_TOOLTIP } from '/snippets/components/users/roles.jsx';
 import { LEFT_TOOLTIP } from '/snippets/components/users/statuses.jsx';
 import InviteDef from '/snippets/definitions/invite.mdx';
 
@@ -49,11 +49,7 @@ import InviteDef from '/snippets/definitions/invite.mdx';
 
 ## Sending invites
 
-### Prerequisites
-
-To send or revoke invites, you must be an <Tooltip tip={OWNER_TOOLTIP.tip} cta={OWNER_TOOLTIP.cta} href={OWNER_TOOLTIP.href}>owner</Tooltip> or <Tooltip tip={ADMIN_TOOLTIP.tip} cta={ADMIN_TOOLTIP.cta} href={ADMIN_TOOLTIP.href}>admin</Tooltip> of the workspace. You can check your role on the [members](https://app.mirurobotics.com/settings/members) page.
-
-### Send an invite
+### Send an invite  <AdminBadge />
 
 To invite a member to your workspace, navigate to the [members](https://app.mirurobotics.com/settings/members) page and click **Invite** in the top right corner.
 
@@ -67,7 +63,7 @@ An email will be sent to each member with a link to accept the invite.
 
 Invites expire after seven days. Once the invite expires, a new invite must be issued for a member to join your workspace.
 
-### Revoke an invite
+### Revoke an invite  <AdminBadge />
 
 To revoke an invite, click the **pending invites** button in the top right.
 
@@ -87,7 +83,7 @@ Finally, confirm the revocation by clicking **Revoke** in the confirmation dialo
   ![Revoke Invite Dialog](https://assets.mirurobotics.com/docs/v04/images/invites/revoke-invite-dialog.png)
 </Frame>
 
-### Resend an invite
+### Resend an invite  <AdminBadge />
 
 Resending an invite sends a new email to the invitee but does not affect the invite in any way — previous emails remain valid, and the invite's expiration date is unchanged.
 

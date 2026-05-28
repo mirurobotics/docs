@@ -26,7 +26,7 @@ func TestParseSingleImport(t *testing.T) {
 	})
 
 	t.Run("named multi", func(t *testing.T) {
-		line := "import { A, B } from '/snippets/components/badges.jsx'"
+		line := "import { A, B } from '/snippets/components/field-badges.jsx'"
 		pi := ParseSingleImport(2, line)
 		if pi == nil {
 			t.Fatal("expected non-nil ParsedImport")

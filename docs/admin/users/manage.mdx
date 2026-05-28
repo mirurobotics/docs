@@ -3,16 +3,13 @@ title: "Manage members"
 ---
 
 import { Framed } from '/snippets/components/framed.jsx';
-import { ROLE_TOOLTIP, OWNER_TOOLTIP, ADMIN_TOOLTIP } from '/snippets/components/users/roles.jsx';
+import { AdminBadge } from '/snippets/components/role-badges.jsx';
+import { ROLE_TOOLTIP } from '/snippets/components/users/roles.jsx';
 import { SUSPENDED_TOOLTIP } from '/snippets/components/users/statuses.jsx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v04/images/users/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/users/members/header:page2.png" borderWidth="20px" />
 
-## Prerequisites
-
-To manage members, you must be an <Tooltip tip={OWNER_TOOLTIP.tip} cta={OWNER_TOOLTIP.cta} href={OWNER_TOOLTIP.href}>owner</Tooltip> or <Tooltip tip={ADMIN_TOOLTIP.tip} cta={ADMIN_TOOLTIP.cta} href={ADMIN_TOOLTIP.href}>admin</Tooltip> of the workspace. You can check your role on the [members](https://app.mirurobotics.com/settings/members) page.
-
-## Change a member's role
+## Change a member's role  <AdminBadge />
 
 To change a member's <Tooltip tip={ROLE_TOOLTIP.tip} cta={ROLE_TOOLTIP.cta} href={ROLE_TOOLTIP.href}>role</Tooltip>, first navigate to the [members](https://app.mirurobotics.com/settings/members) page.
 
@@ -25,10 +22,10 @@ Next, click the ellipses (...) of the member you want to change the role of, and
 Select the new role and hit **Save**.
 
 <Info>
-  Changing an owner's role is not possible. Owners must transfer workspace ownership to another member to change their own role.
+  Changing the owner's role is not possible. Owners must transfer workspace ownership to another member to change their own role.
 </Info>
 
-## Suspend a member
+## Suspend a member  <AdminBadge />
 
 Suspending a member immediately revokes their access to the workspace and sets their status to <Tooltip tip={SUSPENDED_TOOLTIP.tip} cta={SUSPENDED_TOOLTIP.cta} href={SUSPENDED_TOOLTIP.href}>suspended</Tooltip>:
 
@@ -38,7 +35,7 @@ Suspending a member immediately revokes their access to the workspace and sets t
 Suspending a member is reversible. An admin can invite them back to the workspace at any time.
 
 <Info>
-  Suspending an owner is not possible. Owners must transfer workspace ownership to another member to be eligible for suspension.
+  Suspending the owner is not possible. Owners must transfer workspace ownership to another member to be eligible for suspension.
 </Info>
 
 To suspend a member, first navigate to the [members](https://app.mirurobotics.com/settings/members) page
