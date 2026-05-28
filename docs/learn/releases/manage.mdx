@@ -4,6 +4,7 @@ title: "Manage releases"
 
 import { Framed } from '/snippets/components/framed.jsx';
 import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+import { AdminBadge } from '/snippets/components/role-badges.jsx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v04/images/releases/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/releases/header:overview.png" borderWidth="28px" />
 
@@ -43,7 +44,7 @@ A dialog will appear—input the new version name and hit **Create**.
   ![Duplicate Release Dialog](https://assets.mirurobotics.com/docs/v04/images/releases/duplicate-dialog.png)
 </Frame>
 
-## Delete a release
+## Delete a release  <AdminBadge />
 
 Deleting a release is only possible if no deployments have been delivered to any device with that release. Otherwise, the release cannot be deleted.
 
