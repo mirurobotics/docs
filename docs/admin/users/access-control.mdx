@@ -4,13 +4,13 @@ title: "Access control"
 
 import { OwnerBadge, MemberBadge, ViewerBadge, OperatorBadge, ProvisionerBadge, PublisherBadge, GroupManagerBadge } from '/snippets/components/role-badges.jsx';
 
-There are two access control mechanisms for users in a workspace: **tiers** and **roles**.
+There are two access control mechanisms for users in a workspace: **user types** and **roles**.
 
-## Tiers
+## User types
 
-Tiers are the access levels of a user in a workspace. Below is a summary of the tiers and their permissions.
+User types are the access levels of a user in a workspace. Below is a summary of the user types and their permissions.
 
-| Tier | Description                                                                         |
+| User type | Description                                                                         |
 | -------- | ----------------------------------------------------------------------------------- |
 | `owner`  | Complete control over the workspace; exactly one per workspace                            |
 | `admin`  | Administrative and application access to the workspace; is subordinate to the owner |
@@ -49,9 +49,9 @@ Of course, owners have some special immunity from the above permissions to preve
 
 ### Owners  <OwnerBadge />
 
-A workspace must have exactly one owner. As such, owners cannot leave their workspace or be suspended.
+A workspace must have exactly one owner—owners cannot leave their workspace or be suspended.
 
-However, owners can transfer ownership to another member. Thus, in addition to the admin permissions above, owners also have a special permission for transferring workspace ownership to another member.
+Of course, owners can transfer ownership to another member. Thus, in addition to the admin permissions above, owners also have a special permission for transferring workspace ownership to another member.
 
 ### Members  <MemberBadge />
 
@@ -61,7 +61,7 @@ Every member starts as a viewer with read-only access to the workspace. From the
 
 ## Roles
 
-Tiers decide whether a user is an administrator. **Roles** decide what a member can actually do. Because owners and admins already have full access to the workspace, roles only apply to members.
+A user's type decides whether they are an administrator. **Roles** decide what a member can actually do. Because owners and admins already have full access to the workspace, roles only apply to members.
 
 A member's access comes from two independent sources:
 
@@ -86,7 +86,7 @@ A workspace role grants a member permissions across the **entire workspace**. Ev
 | **Config types, releases & schemas** — publishing pipeline | Read | Read | Read | Write |
 | **Groups** — tree structure & membership | Read | Read | Read | Read |
 
-Managing the group tree, members, and billing are administrative actions — they belong to owners and admins, not to workspace roles. See [Tiers](#tiers).
+Managing the group tree, members, and billing are administrative actions — they belong to owners and admins, not to workspace roles. See [User types](#user-types).
 
 ### Group roles
 
