@@ -2,107 +2,170 @@
 title: "Access control"
 ---
 
-import { OwnerBadge, MemberBadge, ViewerBadge, OperatorBadge, ProvisionerBadge, PublisherBadge, GroupManagerBadge } from '/snippets/components/role-badges.jsx';
+import { OwnerBadge, AdminBadge, MemberBadge, ViewerBadge, OperatorBadge, ProvisionerBadge, PublisherBadge, GroupManagerBadge } from '/snippets/components/role-badges.jsx';
 
 There are two access control mechanisms for users in a workspace: **user types** and **roles**.
 
 ## User types
 
-User types are the access levels of a user in a workspace. Below is a summary of the user types and their permissions.
+User types determine the broad access levels of a user. Below is a summary of the user types and their functions.
 
-| User type | Description                                                                         |
-| -------- | ----------------------------------------------------------------------------------- |
-| `owner`  | Complete control over the workspace; exactly one per workspace                            |
-| `admin`  | Administrative and application access to the workspace; is subordinate to the owner |
-| `member` | Application access to the workspace, but no administrative privileges               |
+<OwnerBadge /> - complete control over the workspace; exactly one per workspace
 
-### Administrators 
+<AdminBadge /> - complete administrative and application access; is subordinate to the owner
 
-Owners and admins hold administrative privileges, granting them the following permissions, which are unavailable to members:
+<MemberBadge /> - limited application access to the workspace with no administrative privileges
 
-**API Keys**
+Owners have unrestricted access to the workspace with the ability to execute any action.  Administrators hold nearly the same access as owners, but are unable to escalate themselves to be the workspace owner.
+
+Members are the only user type that can be granted fine-grained access to the workspace through [roles](#roles). Administrators and owners cannot be given any roles since they already have complete access to the workspace.
+
+### Administrative privileges
+
+There are a variety of privileges which are only available to owners and administrators — no roles exist that can grant members these privileges:
+
+[API Keys](/admin/apikeys)
 - Create a new API key
-- Delete an existing API key
+- Delete an API key
 
-**Groups**
-- Create a new group
-- Update an existing group
-- Delete an existing group
+[Groups](/learn/groups)
+- Create a group
+- Update a group
+- Delete a group
 - Move a device to a different group
 
-**Invites**
+[Invites](/admin/users/invites)
 - Send an invite
 - Resend an invite
 - Revoke an invite
 
-**Members**
+[Members](/admin/users/manage)
 - Suspend a member
 - Update another member's role
 
-**Workspace**
+[Workspace](/admin/workspace)
 - Update the workspace
-
-Of course, owners have some special immunity from the above permissions to prevent unwanted privilege escalation:
-
-- Owners cannot be suspended
-- Owners cannot have their role changed by another user
-
-### Owners  <OwnerBadge />
-
-A workspace must have exactly one owner—owners cannot leave their workspace or be suspended.
-
-Of course, owners can transfer ownership to another member. Thus, in addition to the admin permissions above, owners also have a special permission for transferring workspace ownership to another member.
-
-### Members  <MemberBadge />
-
-Members hold application access to the workspace but no administrative privileges. Unlike owners and admins, a member is not granted blanket access — what a member can actually do is determined by their **roles**.
-
-Every member starts as a viewer with read-only access to the workspace. From there, [workspace roles](#workspace-roles) and [group roles](#group-roles) grant the write access needed to create devices, deploy configurations, publish releases, and more.
 
 ## Roles
 
-A user's type decides whether they are an administrator. **Roles** decide what a member can actually do. Because owners and admins already have full access to the workspace, roles only apply to members.
+While a user's type determines broad access and administrative capabilities, **roles** grant fine-grained access to the workspace. Because owners and admins already have full access to the workspace, roles can only be granted to members.
 
-A member's access comes from two independent sources:
+A member's roles are defined in two independent sources:
 
-- **Workspace roles** apply across the entire workspace.
-- **Group roles** apply inside a single [group](/learn/groups) and every group beneath it.
+- **Workspace roles** apply across the entire workspace
+- **Group roles** apply to a [group](/learn/groups) and all of its subgroups
 
 A member can hold any combination of both. Permissions are always **additive** — Miru allows an action if any of the member's roles permit it, and one role never removes access granted by another.
 
 ### Workspace roles
 
-A workspace role grants a member permissions across the **entire workspace**. Every member is at least a viewer, with read-only access to all resources; the other roles add write access on top of that baseline. A member can hold several workspace roles at once.
+A workspace role grants a member permissions across the **entire workspace**. Every member is at least a viewer, with read-only access to the entire application.
 
-- **Viewer** <ViewerBadge /> — Read-only access to every resource in the workspace. This is the baseline that every member has.
-- **Operator** <OperatorBadge /> — Stage, deploy, and remove deployments.
-- **Provisioner** <ProvisionerBadge /> — Create and activate devices.
-- **Publisher** <PublisherBadge /> — Create and edit config types, schemas, and releases — the publishing pipeline.
+Beyond viewer, the other roles permit write access to specific resources. A member can hold multiple workspace roles at once.
 
-| Resource | Viewer | Operator | Provisioner | Publisher |
-| -------- | :----: | :------: | :---------: | :-------: |
-| **Deployments** — stage, deploy, remove | Read | Write | Read | Read |
-| **Devices** — create, activate | Read | Read | Write | Read |
-| **Config types, releases & schemas** — publishing pipeline | Read | Read | Read | Write |
-| **Groups** — tree structure & membership | Read | Read | Read | Read |
+#### Viewer  <ViewerBadge size="sm" /> 
 
-Managing the group tree, members, and billing are administrative actions — they belong to owners and admins, not to workspace roles. See [User types](#user-types).
+Viewers hold read-only access to the entire application. It is not possible to restrict read access to specific resources.
+
+#### Operator  <OperatorBadge size="sm" /> 
+
+The operator role allows members to deploy configurations to devices in the workspace. The operator role grants access to the following operations:
+
+[Config editor](/learn/devices/config-editor)
+
+- Deploy configurations to devices
+
+[Release staging area](/learn/releases/staging-area)
+
+- Stage a deployment
+- Patch a deployment
+- Review a deployment
+- Deploy a deployment
+- Archive a deployment
+
+#### Provisioner  <ProvisionerBadge size="sm" /> 
+
+The provisioner role allows members to create and activate devices in the workspace. The provisioner role grants access to the following operations:
+
+[Manage devices](/learn/devices/manage)
+
+- Create a device
+- Edit a device
+- Delete a device
+
+[Provision devices](/learn/devices/provision/dashboard)
+
+- Provision a device
+- Reprovision a device
+
+#### Publisher  <PublisherBadge size="sm" /> 
+
+The publisher role allows members to create and edit config types, schemas, and releases (all the resources needed to publish a release). The publisher role grants access to the following operations:
+
+[Config types](/learn/config-types)
+
+- Create a config type
+- Edit a config type
+
+[Config schemas](/learn/schemas/manage)
+
+- Create a config schema
+
+[Releases](/learn/releases/create)
+
+- Create a release
+- [Duplicate a release](/learn/releases/manage#duplicate-a-release)
 
 ### Group roles
 
 A group role grants permissions inside one [group](/learn/groups) **and every group beneath it**. Because a device belongs to every group above it in the tree, a role granted on a group cascades down to all of its subgroups and devices.
 
-Group roles mirror the workspace roles, scoped to the group:
+Group roles mirror the workspace roles, scoped to a single group. A member can hold multiple group roles at once.
 
-- **Viewer** <ViewerBadge /> — Read-only access to the group's resources. The baseline for every group member.
-- **Operator** <OperatorBadge /> — Stage, deploy, and remove deployments within the group.
-- **Provisioner** <ProvisionerBadge /> — Create and activate devices within the group.
-- **Manager** <GroupManagerBadge /> — Manage the group's members and their grants, and create subgroups. Includes everything the operator and provisioner roles can do.
+#### Viewer  <ViewerBadge size="sm" /> 
 
-| Resource | Viewer | Operator | Provisioner | Manager |
-| -------- | :----: | :------: | :---------: | :-----: |
-| **Deployments** — stage, deploy, remove | Read | Write | Read | Write |
-| **Devices** — create, activate | Read | Read | Write | Write |
-| **Groups** — subgroups & membership | Read | Read | Read | Write |
+Viewers hold read-only access to all of the group's resources.
+
+#### Operator  <OperatorBadge size="sm" /> 
+
+The operator role allows members to deploy configurations to devices in the group. The operator role grants access to the following operations:
+
+[Config editor](/learn/devices/config-editor)
+
+- Deploy configurations to devices
+
+[Release staging area](/learn/releases/staging-area)
+
+- Stage a deployment
+- Patch a deployment
+- Review a deployment
+- Deploy a deployment
+- Archive a deployment
+
+#### Provisioner  <ProvisionerBadge size="sm" /> 
+
+The provisioner role allows members to create and activate devices in the group. The provisioner role grants access to the following operations:
+
+[Manage devices](/learn/devices/manage)
+
+- Create a device
+- Edit a device
+- Delete a device
+
+[Provision devices](/learn/devices/provision/dashboard)
+
+- Provision a device
+- Reprovision a device
+
+#### Manager  <GroupManagerBadge size="sm" /> 
+
+The manager role allows members to manage a group's members, their grants, and its subgroups. It includes everything the operator and provisioner roles can do, along with the following operations:
+
+[Groups](/learn/groups)
+
+- Create a subgroup
+- Edit a group
+- Move a device
+- Delete a group
 
 A member's effective permissions are the union of their workspace roles and every group role they hold. For example, a member with the workspace viewer role plus the manager role on a `production` group can read everything in the workspace and fully manage `production` and all of its descendants.
