@@ -162,9 +162,9 @@
                 "group": "Users",
                 "pages": [
                   "admin/users/overview",
-                  "admin/users/roles",
                   "admin/users/invites",
                   "admin/users/profile",
+                  "admin/users/access-control",
                   "admin/users/manage"
                 ]
               }
