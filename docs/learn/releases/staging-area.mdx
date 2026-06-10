@@ -3,6 +3,7 @@ title: "Staging area"
 ---
 
 import { Framed } from '/snippets/components/framed.jsx';
+import { OperatorBadge } from '/snippets/components/role-badges.jsx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v04/images/releases/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/releases/stage/header:page.png" borderWidth="30px 0 0 48px" innerRadius="8px 0 0 0" />
 
@@ -38,7 +39,7 @@ Then select the **Stage** tab at the top of the page.
   ![Staging Area Page](https://assets.mirurobotics.com/docs/v04/images/releases/stage/page.png)
 </Frame>
 
-## Stage a deployment
+## Stage a deployment  <OperatorBadge />
 
 Staging a deployment creates a new deployment in the staging area but does not deploy it
 to any devices.
@@ -129,7 +130,7 @@ contains audit information—the author, creation date, description, etc.
   </Tab>
 </Tabs>
 
-## Patch a deployment
+## Patch a deployment  <OperatorBadge />
 
 Patching a deployment opens the release editor with the configuration content from an
 existing staged deployment, allowing you to create a replacement staged deployment for
@@ -157,7 +158,7 @@ A dialog will appear asking for a description. Enter a description, then click
 After staging, Miru returns you to the staging area, where the updated staged deployment
 appears in the list.
 
-## Archive a deployment
+## Archive a deployment  <OperatorBadge />
 
 Archiving a deployment removes it from the staging area and marks it as `archived`.
 
@@ -200,7 +201,7 @@ A confirmation dialog will appear—hit **Archive** to confirm.
   ![Archive Bulk Deployments Dialog](https://assets.mirurobotics.com/docs/v04/images/releases/stage/archive-dialog:bulk.png)
 </Frame>
 
-## Deploy a deployment
+## Deploy a deployment  <OperatorBadge />
 
 Deploying a deployment removes the existing deployment from the device and replaces it
 with the new deployment.
@@ -251,7 +252,7 @@ staged deployment.
 The concept of deployment drift ensures that configuration changes aren't lost during
 migrations between releases, preventing misconfigurations.
 
-## Review a deployment
+## Review a deployment  <OperatorBadge />
 
 Reviewing a deployment is only possible when a deployment has
 [drifted](#deployment-drift) and is in the `drifted` state. Otherwise, the review button

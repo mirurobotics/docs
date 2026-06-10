@@ -4,7 +4,7 @@ title: "Groups"
 
 import { EditableBadge, MutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
-import { AdminBadge } from '/snippets/components/role-badges.jsx';
+import { AdminBadge, GroupManagerBadge } from '/snippets/components/role-badges.jsx';
 import { ADMIN_TOOLTIP } from '/snippets/components/users/roles.jsx';
 import MoveDevice from '/snippets/devices/move.mdx';
 
@@ -75,7 +75,7 @@ Groups organize devices into a tree hierarchy. A workspace can have multiple top
 
 Devices belong to at most one group. Devices that haven't been assigned to any group remain ungrouped at the workspace level.
 
-## Create a group  <AdminBadge />
+## Create a group  <AdminBadge />  <GroupManagerBadge />
 
 Go to the [Groups page](https://app.mirurobotics.com/groups) and navigate into the group you want to create a group inside of. Ensure you're within the **Groups** tab for the group you're inside of and click the **+ Group** button in the top right corner.
 
@@ -89,7 +89,7 @@ Fill in the fields, then click **Create**.
   ![Create Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/create-dialog.png)
 </Frame>
 
-## Edit a group  <AdminBadge />
+## Edit a group  <AdminBadge />  <GroupManagerBadge />
 
 Navigate to the [Groups page](https://assets.mirurobotics.com/docs/v04/images/groups/page.png), click the ellipses (...) on the group you want to edit, and hit **Edit**.
 
@@ -103,11 +103,11 @@ Update the desired fields, then click **Save**.
   ![Edit Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/edit-dialog.png)
 </Frame>
 
-## Move a device  <AdminBadge />
+## Move a device  <AdminBadge />  <GroupManagerBadge />
 
 <MoveDevice />
 
-## Delete a group  <AdminBadge />
+## Delete a group  <AdminBadge />  <GroupManagerBadge />
 
 A group can only be deleted if it has no subgroups and no assigned devices. If you need to delete a group that still contains devices or subgroups, first move or reassign its contents.
 

@@ -4,7 +4,7 @@ title: "Manage releases"
 
 import { Framed } from '/snippets/components/framed.jsx';
 import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
-import { AdminBadge } from '/snippets/components/role-badges.jsx';
+import { AdminBadge, PublisherBadge } from '/snippets/components/role-badges.jsx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v04/images/releases/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/releases/header:overview.png" borderWidth="28px" />
 
@@ -24,7 +24,7 @@ To view a release and its schemas, click into the release from the releases page
 
 To retrieve a release programmatically, use the <PlatformApiLink endpoint="releases/get">get release endpoint »</PlatformApiLink>
 
-## Duplicate a release
+## Duplicate a release  <PublisherBadge />
 
 Duplicating a release creates a new release with the same config schemas and git information as the original. 
 

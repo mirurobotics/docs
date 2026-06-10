@@ -4,6 +4,7 @@ title: "Dashboard"
 
 import Verify from '/snippets/agent/install/verify.mdx';
 import { Framed } from '/snippets/components/framed.jsx';
+import { ProvisionerBadge } from '/snippets/components/role-badges.jsx';
 import CreateDevice from '/snippets/devices/create.mdx';
 import Install from '/snippets/devices/provision/install-dialog.mdx';
 import Provision from '/snippets/devices/provision/provision-dialog.mdx';
@@ -17,7 +18,7 @@ import Provision from '/snippets/devices/provision/provision-dialog.mdx';
 
 The Miru dashboard is the simplest method for provisioning a device, ideal for getting started or managing individual devices. For automated provisioning, consider using [provisioning tokens](/learn/devices/provision/provisioning-tokens) instead.
 
-## Create a device
+## Create a device  <ProvisionerBadge />
 
 If you don't yet have a device in Miru, you'll need to create one.
 
@@ -33,7 +34,7 @@ Click the **Provision** button on the device you want to provision.
 
 <Install />
 
-## Provision the device
+## Provision the device  <ProvisionerBadge />
 
 Once the `miru-agent` package is installed, continue to the provisioning step.
 
