@@ -80,7 +80,14 @@
                   "learn/devices/deployment-history"
                 ]
               },
-              "learn/groups",
+              {
+                "group": "Groups",
+                "pages": [
+                  "learn/groups/overview",
+                  "learn/groups/manage",
+                  "learn/groups/members"
+                ]
+              },
               {
                 "group": "Releases",
                 "pages": [

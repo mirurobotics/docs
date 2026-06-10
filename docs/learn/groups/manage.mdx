@@ -1,0 +1,62 @@
+---
+title: "Manage groups"
+---
+
+import { EditableBadge, MutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
+import { Framed } from '/snippets/components/framed.jsx';
+import { AdminBadge, GroupManagerBadge } from '/snippets/components/role-badges.jsx';
+import { ADMIN_TOOLTIP, GROUP_MANAGER_TOOLTIP } from '/snippets/components/users/roles.jsx';
+import MoveDevice from '/snippets/devices/move.mdx';
+
+<Warning>
+  Since group operations are a critical primitive to organizing your workspace, they are only available to <Tooltip tip={ADMIN_TOOLTIP.tip} cta={ADMIN_TOOLTIP.cta} href={ADMIN_TOOLTIP.href}>admins</Tooltip> and <Tooltip tip={GROUP_MANAGER_TOOLTIP.tip} cta={GROUP_MANAGER_TOOLTIP.cta} href={GROUP_MANAGER_TOOLTIP.href}>group managers</Tooltip>.
+</Warning>
+
+
+## Create a group  <AdminBadge />  <GroupManagerBadge />
+
+Go to the [Groups page](https://app.mirurobotics.com/groups) and navigate into the group you want to create a group inside of. Ensure you're within the **Groups** tab for the group you're inside of and click the **+ Group** button in the top right corner.
+
+<Frame>
+  ![Group Page](https://assets.mirurobotics.com/docs/v04/images/groups/page.png)
+</Frame>
+
+Fill in the fields, then click **Create**.
+
+<Frame>
+  ![Create Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/create-dialog.png)
+</Frame>
+
+## Edit a group  <AdminBadge />  <GroupManagerBadge />
+
+Navigate to the [Groups page](https://assets.mirurobotics.com/docs/v04/images/groups/page.png), click the ellipses (...) on the group you want to edit, and hit **Edit**.
+
+<Frame>
+  ![Group Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/groups/ellipses-dropdown.png)
+</Frame>
+
+Update the desired fields, then click **Save**.
+
+<Frame>
+  ![Edit Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/edit-dialog.png)
+</Frame>
+
+## Move a device  <AdminBadge />  <GroupManagerBadge />
+
+<MoveDevice />
+
+## Delete a group  <AdminBadge />  <GroupManagerBadge />
+
+A group can only be deleted if it has no subgroups and no assigned devices. If you need to delete a group that still contains devices or subgroups, first move or reassign its contents.
+
+To delete a group, click the ellipses (...) on the group you want to delete and select **Delete**.
+
+<Frame>
+  ![Group Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/groups/ellipses-dropdown.png)
+</Frame>
+
+A confirmation dialog will appear. Hit **Delete** to confirm the deletion.
+
+<Frame>
+  ![Delete Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/delete-dialog.png)
+</Frame>

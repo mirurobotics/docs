@@ -1,0 +1,72 @@
+---
+title: "Overview"
+---
+
+import { EditableBadge, MutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
+import { Framed } from '/snippets/components/framed.jsx';
+import { AdminBadge, GroupManagerBadge } from '/snippets/components/role-badges.jsx';
+import { ADMIN_TOOLTIP } from '/snippets/components/users/roles.jsx';
+import MoveDevice from '/snippets/devices/move.mdx';
+
+<Framed 
+  background="https://assets.mirurobotics.com/docs/v04/images/groups/background.jpeg" 
+  image="https://assets.mirurobotics.com/docs/v04/images/groups/header:page.png" 
+  borderWidth={"24px 0 0 36px"} 
+  innerRadius={"8px 0 0 0"} 
+/>
+
+A **group** is a hierarchical organizational unit for devices, allowing you to organize devices into a logical tree structure.
+
+Groups can contain both devices and subgroups. Devices may be assigned to at most one group, or be unassigned to any group.
+
+## Properties
+
+<ParamField path="name" type="string">
+  <EditableBadge />
+
+  A human-readable display name for the group. Must be unique within the workspace.
+
+  Examples: `Production`, `Warehouse Floor 2`, `Europe`
+</ParamField>
+
+<ParamField path="parent" type="Group">
+  <EditableBadge /> {' '} <NullableBadge />
+
+  The parent group in the hierarchy. Set to `null` for top-level groups; set to another group's ID to nest this group as a child group.
+
+  Examples: `grp_123`, `null`
+</ParamField>
+
+<ParamField path="devices" type="[]Device">
+  <MutableBadge />
+
+  The devices assigned to this group. Computed by the server—useful for determining whether to display device-related affordances in the UI.
+</ParamField>
+
+<ParamField path="subgroups" type="[]Group">
+  <MutableBadge />
+
+  The child subgroups within this group. Computed by the server—useful for rendering expand/collapse indicators in a tree view.
+</ParamField>
+
+## Structure
+
+Groups organize devices into a tree hierarchy. A workspace can have multiple top-level groups, and each group can contain subgroups.
+
+<Tree.Folder name="Workspace" defaultOpen>
+  <Tree.Folder name="Production" defaultOpen>
+    <Tree.Folder name="North America" defaultOpen>
+      <Tree.File name="Device A" />
+      <Tree.File name="Device B" />
+    </Tree.Folder>
+    <Tree.Folder name="Europe" defaultOpen>
+      <Tree.File name="Device C" />
+    </Tree.Folder>
+  </Tree.Folder>
+  <Tree.Folder name="Staging" defaultOpen>
+    <Tree.File name="Device D" />
+  </Tree.Folder>
+  <Tree.File name="Device E (unassigned)" />
+</Tree.Folder>
+
+Devices belong to at most one group. Devices that haven't been assigned to any group remain ungrouped at the workspace level.
