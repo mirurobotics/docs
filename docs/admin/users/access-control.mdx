@@ -22,7 +22,7 @@ Members are the only user type that can be granted fine-grained access to the wo
 
 ### Admin privileges
 
-There are a variety of privileges which are only available to owners and administrators. Outside of [group manager](#manager), no roles can grant these privileges.
+There are a variety of privileges which are only available to owners and administrators. Outside of [group manager](#group-manager), no roles can grant these privileges.
 
 [API Keys](/admin/apikeys)
 - Create a new API key
@@ -31,7 +31,7 @@ There are a variety of privileges which are only available to owners and adminis
 [Config types](/learn/config-types)
 - Delete a config type
 
-[Groups](/learn/groups)
+[Groups](/learn/groups/overview)
 - Create a group
 - Update a group
 - Delete a group
@@ -59,7 +59,7 @@ While a user's type determines broad access and administrative capabilities, **r
 A member's roles are defined in two independent sources:
 
 - **Workspace roles** apply across the entire workspace
-- **Group roles** apply to a [group](/learn/groups) and all of its subgroups
+- **Group roles** apply to a [group](/learn/groups/overview) and all of its subgroups
 
 A member can hold any combination of both. Permissions are always **additive** — Miru allows an action if any of the member's roles permit it, and one role never removes access granted by another.
 
@@ -134,7 +134,7 @@ Below are the roles which are only available at the group level. These roles can
 
 The group manager role allows members to manage the members in a group, the members' grants, and the group's subgroups. It includes everything the operator and provisioner roles can do, along with the following operations:
 
-[Groups](/learn/groups)
+[Groups](/learn/groups/overview)
 
 - Create a subgroup
 - Edit a group
