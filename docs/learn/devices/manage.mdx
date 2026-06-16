@@ -5,7 +5,7 @@ title: "Manage devices"
 import { ONLINE_TOOLTIP, OFFLINE_TOOLTIP } from '/snippets/components/devices/statuses.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
 import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
-import { AdminBadge } from '/snippets/components/role-badges.jsx';
+import { AdminBadge, ProvisionerBadge, ViewerBadge } from '/snippets/components/role-badges.jsx';
 import MoveDevice from '/snippets/devices/move.mdx';
 
 <Framed 
@@ -39,7 +39,7 @@ At the bottom of the page, you'll find a complete audit trail of deployments mad
 </Frame>
 
 
-## Edit a device
+## Edit a device  <ProvisionerBadge />
 
 **Dashboard**
 
@@ -59,7 +59,7 @@ Update the desired fields, then click **Save**.
 
 To edit a device programmatically, use the <PlatformApiLink endpoint="devices/update">update device endpoint »</PlatformApiLink>
 
-## Ping a device
+## Ping a device  <ViewerBadge />
 
 Pinging a device sends a real-time request to verify whether it is online. Ping requests wait up to 5 seconds for a response from the device before timing out.
 
@@ -79,7 +79,7 @@ On the other hand, <Tooltip tip={OFFLINE_TOOLTIP.tip} cta={OFFLINE_TOOLTIP.cta} 
 
 <MoveDevice />
 
-## Delete a device
+## Delete a device  <ProvisionerBadge />
 
 Deleting a device immediately invalidates its authentication session and removes all deployment and configuration history. This action is irreversible. Please proceed with caution.
 

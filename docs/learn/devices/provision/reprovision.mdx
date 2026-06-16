@@ -3,6 +3,7 @@ title: "Reprovision a device"
 ---
 
 import { Framed } from '/snippets/components/framed.jsx';
+import { ProvisionerBadge } from '/snippets/components/role-badges.jsx';
 import Install from '/snippets/devices/provision/install-dialog.mdx';
 import Reprovision from '/snippets/devices/provision/reprovision-dialog.mdx';
 
@@ -34,7 +35,7 @@ Reprovisioning a device is useful for:
 
 Reprovisioning is NOT meant to be used to upgrade the `miru-agent` package. If you simply want to upgrade the `miru-agent` package, follow the Miru Agent [upgrade documentation](/developers/agent/install#upgrade).
 
-## Dashboard
+## Dashboard  <ProvisionerBadge />
 
 Reprovisioning a device is only supported via the Miru dashboard. Support for programmatically reprovisioning devices is coming soon.
 
