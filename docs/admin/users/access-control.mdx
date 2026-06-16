@@ -4,25 +4,28 @@ title: "Access control"
 
 import { OwnerBadge, AdminBadge, MemberBadge, ViewerBadge, OperatorBadge, ProvisionerBadge, PublisherBadge, GroupManagerBadge } from '/snippets/components/role-badges.jsx';
 
-There are two access control mechanisms for users in a workspace: **user types** and **roles**. User types determine the broad access levels of a user. Roles grant fine-grained access to the workspace.
+There are two access control mechanisms for users in a workspace: 
+
+1. **User types** — determine the broad access levels of a user
+2. **Roles** — grant fine-grained access to the workspace
 
 ## User types
 
 User types determine the broad access levels of a user. Below is a summary of the user types and their functions.
 
-<OwnerBadge /> - complete control over the workspace; exactly one per workspace
+<OwnerBadge /> — complete control over the workspace; exactly one per workspace
 
-<AdminBadge /> - complete administrative and application access; is subordinate to the owner
+<AdminBadge /> — complete administrative and application access; is subordinate to the owner
 
-<MemberBadge /> - limited application access to the workspace with no administrative privileges
+<MemberBadge /> — limited application access with no administrative privileges
 
-Owners have unrestricted access to the workspace with the ability to execute any action.  Administrators hold nearly the same access as owners, but are unable to adjust the workspace access of owners.
+Owners have unrestricted access to the workspace with the ability to execute any action.  Administrators hold nearly the same access as owners, but are unable to adjust the access controls of owners.
 
-Members are the only user type that can be granted fine-grained access to the workspace through [roles](#roles). Administrators and owners cannot be given any roles since they already have complete access to the workspace.
+Members are the only user type that can be granted fine-grained access to the workspace through [roles](#roles). Since administrators and owners already have complete access to the workspace, they cannot be given any roles.
 
 ### Admin privileges
 
-There are a variety of privileges which are only available to owners and administrators. Outside of [group manager](#group-manager), no roles can grant these privileges.
+There are a variety of privileges which are only available to owners and administrators. Outside of the [group manager](#group-manager) role, no roles can grant any of these privileges.
 
 [API Keys](/admin/apikeys)
 - Create a new API key
@@ -46,7 +49,7 @@ There are a variety of privileges which are only available to owners and adminis
 - Suspend a member
 - Update another member's role
 
-[Releases](/learn/releases/create)
+[Releases](/learn/releases/manage)
 - Delete a release
 
 [Workspace](/admin/workspace)
@@ -71,7 +74,7 @@ Below are the roles which are only available at the workspace level. These roles
 
 Viewers hold read-only access to the entire application. It is not possible to restrict read access to specific groups or devices.
 
-Viewer is the least privileged role there is. All other roles implicitly include viewer access.
+Viewer is the least privileged role there is. All roles implicitly include viewer access.
 
 #### Publisher  <PublisherBadge size="sm" /> 
 
@@ -86,9 +89,9 @@ The publisher role allows members to create and edit config types, schemas, and 
 
 - Create a config schema
 
-[Releases](/learn/releases/create)
+Releases
 
-- Create a release
+- [Create a release](/learn/releases/create)
 - [Duplicate a release](/learn/releases/manage#duplicate-a-release)
 
 ### Shared roles
@@ -145,8 +148,8 @@ The group manager role allows members to manage the members in a group, the memb
 
 - Move a device to a different group
 
-[Members](/admin/users/manage)
+[Members](/learn/groups/members)
 
-- Assign group members
+- Add a group member
 - Edit group member permissions
 - Remove group members
