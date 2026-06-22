@@ -77,6 +77,7 @@
                   "learn/devices/manage",
                   "learn/devices/initial-deployment",
                   "learn/devices/config-editor",
+                  "learn/devices/compare",
                   "learn/devices/deployment-history"
                 ]
               },
