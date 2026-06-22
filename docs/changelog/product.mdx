@@ -11,6 +11,53 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 <div className="changelog-page">
 
+<Update label="June 23, 2026">
+    ## Access control
+
+    Workspaces now have **fine-grained access control**. Every member has a
+    **user type** that sets their baseline access, plus **roles** that are applied 
+    either across the whole workspace or to a single
+    group and its subgroups.
+
+    <Framed
+        image="https://assets.mirurobotics.com/docs/changelog/26-06-23/members.png"
+        borderWidth="0px"
+        innerRadius="8px"
+    />
+
+    ### User types and roles
+
+    A member's user type sets the baseline:
+
+    - **Owner** — full control of the workspace
+    - **Admin** — full administrative and application access
+    - **Member** — access is whatever their roles grant
+
+    Members can then be assigned roles, at the workspace level or per group:
+
+    - **Workspace roles** — viewer, publisher, operator, provisioner
+    - **Group roles** — operator, provisioner, and manager
+
+    Every member has **viewer** access, so anyone can read the entire
+    workspace. Other roles only add the ability to make changes.
+
+    [Access control documentation »](/admin/users/access-control)
+
+    ### Managing access
+
+    Access is editable wherever you're already working:
+
+    - Inline from **Settings → Members**
+    - From a per-member access panel covering workspace and group roles
+    - From any group's members dialog
+
+    Every control is permission-aware, so actions you can't perform are disabled
+    with a tooltip explaining why.
+
+    [Manage group members »](/learn/groups/members)
+
+</Update>
+
 <Update label="May 27, 2026">
     ## Groups
 
