@@ -1,0 +1,94 @@
+---
+title: "Upload rules"
+---
+
+An upload rule describes a standing intent: *whenever data like this appears at
+device location X, send it to bucket location Y.* Each rule runs continuously — the
+[Miru Agent](/developers/agent/overview) scans for matching data and uploads it as it
+completes.
+
+A rule has two parts — `source` and `destination`:
+
+```yaml
+source:
+  glob: "logs/**/*.mcap"         # paths within an approved directory
+  unit: file                     # "file", or "directory" for multi-file artifacts
+
+destination:
+  bucket: <your-registered-bucket>
+  # your layout — must include {device_id}, filled from the verified device
+  path: "devices/{device_id}/{filename}"
+```
+
+## Source
+
+<ParamField path="glob" type="string" required>
+  A glob describing which paths to collect, evaluated within an approved directory.
+</ParamField>
+
+<ParamField path="unit" type="enum" default="file">
+  How matched paths are grouped into an upload.
+
+  - `file` — each matching file is uploaded on its own.
+  - `directory` — a multi-file artifact (such as a rosbag2 recording) is treated as
+    one unit and uploaded only when the whole artifact is complete. See
+    [multi-file artifacts](/data-uploads/uploads#edge-cases).
+</ParamField>
+
+## Destination
+
+<ParamField path="bucket" type="string" required>
+  A bucket you have [registered with Miru](/data-uploads/destinations#connecting-your-bucket).
+</ParamField>
+
+<ParamField path="path" type="string" required>
+  The object-key template for uploaded data. **Must include the `{device_id}`
+  token**, which Miru fills from the verified identity of the device making the
+  request — this is what guarantees
+  [device data isolation](/data-uploads/destinations#device-data-isolation). Where
+  the token sits and how you lay out the rest of the path is up to you.
+</ParamField>
+
+## Retention
+
+By default Miru never deletes your data — it only copies it to your bucket. Because
+devices have limited disk, you can optionally configure the Agent to clean up local
+files after archiving them. Deletion is configurable per rule:
+
+```yaml
+destination:
+  bucket: <your-registered-bucket>
+  path: "devices/{device_id}/{filename}"
+  delete: after_upload          # never | after_upload | by_age
+  delete_after: 1h              # age threshold for after_upload / by_age
+```
+
+<ParamField path="delete" type="enum" default="never">
+  - `never` *(default)* — Miru leaves your files in place; you manage local
+    retention yourself.
+  - `after_upload` — delete a file once its upload is confirmed *and* it has reached
+    the `delete_after` age (for example, one hour after a successful upload).
+  - `by_age` — delete files older than `delete_after` *whether or not they have
+    uploaded* — a hard disk-pressure backstop. Because this can drop data that never
+    uploaded, it is opt-in and meant only for bounding disk usage.
+</ParamField>
+
+<ParamField path="delete_after" type="duration">
+  The age threshold used by `after_upload` and `by_age` (for example `1h`, `24h`).
+</ParamField>
+
+The `after_upload` mode keys off the same content-hash ledger that guarantees
+[exactly-once upload](/data-uploads/uploads#guarantees), so a file is only ever
+removed once Miru has confirmed it is safely in your bucket.
+
+## Rules ship with a release
+
+Upload rules are defined in a YAML file and uploaded via the [CLI](/developers/cli/overview)
+as **part of a [release](/learn/releases/overview)** — not device-by-device, and not
+in a separate console.
+
+An upload rule is therefore one piece of a release: defining what data leaves your
+devices is the same kind of versioned, reviewable, staged operation as defining
+anything else you ship.
+
+{/* TODO (product): document where the rule YAML lives within a release and the exact CLI command used to upload it, once the release/CLI surface is finalized. */}
