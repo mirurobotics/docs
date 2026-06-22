@@ -1,0 +1,128 @@
+---
+title: "Compare devices"
+---
+
+import { Framed } from '/snippets/components/framed.jsx';
+
+<Framed
+    background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg"
+    image="https://assets.mirurobotics.com/docs/v04/images/devices/compare/hero.png"
+    borderWidth="30px 0 0 30px"
+    innerRadius="8px 0 0 0"
+/>
+
+Compare lets you inspect the configuration differences between two device
+deployments side by side — whether that's two different devices or two
+deployments on the same device. It's read-only, so anyone on your workspace can
+use it.
+
+Open it from the sidebar under **Devices → Compare**.
+
+## Layout
+
+The page is split into three stacked regions:
+
+- **Selection** — Pick the **Base** (left) and **Head** (right)
+  device and deployment, with a swap button between them.
+- **Summary** — A collapsible overview of every difference across all files.
+- **Files** — A per-file diff card for each configuration file.
+
+---
+
+## Selection
+
+Each side — **Base** and **Head** — has a device picker and a deployment
+picker. Make your selections to load the comparison.
+
+<Frame>
+  ![Selection Header](https://assets.mirurobotics.com/docs/v04/images/devices/compare/selection.png)
+</Frame>
+
+<Steps>
+    <Step title="Pick a base device">
+        Click the device picker (**Select device...**) and choose a device. Devices 
+        with no deployments are disabled since there's nothing to compare.
+    </Step>
+    <Step title="Pick a base deployment">
+        The deployment picker (**Select deployment...**) is enabled once a
+        device is selected. Each row shows the deployment ID and description, and
+        the device's live deployment is marked with a **current** badge. It
+        defaults to the current deployment.
+    </Step>
+    <Step title="Repeat for the head">
+        Choose a device and deployment for the **Head** side the same way.
+    </Step>
+</Steps>
+
+<Note>
+    **You can compare a device against itself.** You don't need two devices —
+    pick the **same device** for both **Base** and **Head**, then choose two
+    different deployments to see exactly what changed between them.
+</Note>
+
+---
+
+## Summary
+
+The summary card sits above the files and totals every difference at a glance.
+Its header reads, for example, **"17 diffs across 3 of 3 files"**, or
+**"No differences — configurations are identical"** when the two deployments
+match.
+
+When there are changes, click the header to expand a per-file breakdown.
+
+<Frame>
+  ![Compare Summary](https://assets.mirurobotics.com/docs/v04/images/devices/compare/summary.png)
+</Frame>
+
+Each file section shows the file name and a label — **ADDED**, **REMOVED**, or
+a change count (e.g. "5 changes"). Within a section, every change lists:
+
+- The **type** of change — added, modified, or deleted — color-coded green,
+  yellow, or red respectively.
+- The **JSON path** of the affected value (e.g.
+  `kinematics > slip_compensation_enabled`). Long paths are truncated to the
+  first and last segments; hover to see the full path.
+
+---
+
+## Files
+
+Below the summary, every configuration file appears as its own collapsible
+card.
+
+<Frame>
+  ![Compare Files](https://assets.mirurobotics.com/docs/v04/images/devices/compare/files.png)
+</Frame>
+
+Each card shows the file name and a status badge:
+
+- **UNCHANGED** — No differences between the two deployments.
+- **ADDED** (green) — The file exists only in the head deployment.
+- **REMOVED** (red) — The file exists only in the base deployment.
+- For files with changes, a compact per-operation count — using **D** for deleted,
+  **M** for modified, and **A** for added, each color-coded.
+
+The first changed file is expanded by default. Expand any file to see the
+inline diff, with changes highlighted by color:
+
+- **Green** — Added lines.
+- **Yellow** — Modified lines, showing the old and new value inline
+  (e.g. `old → new`).
+- **Red** — Removed lines.
+
+Long runs of unchanged lines are collapsed into a summary row (e.g. "75
+unchanged lines"); click it to reveal the hidden lines.
+
+<Info>
+    The toolbar has an expand/collapse-all toggle.
+</Info>
+
+---
+
+## Sharing
+
+Your selections are saved in the page URL, so a comparison link always reopens the exact
+same view. Click the **copy-link** button in the top-right of the page header to
+copy the current URL and share it with your team.
+
