@@ -1,0 +1,44 @@
+---
+title: "Overview"
+---
+
+Miru uploads data *off* your devices and into *your* cloud storage.
+
+You define a small set of [**upload rules**](/data-uploads/upload-rules) — what to
+collect, when to collect it, and where it goes. The [Miru Agent](/developers/agent/overview)
+detects matching data, confirms each file is complete, and uploads it directly to
+your bucket.
+
+## How it works
+
+<img
+  src="https://assets.mirurobotics.com/docs/v04/images/data-uploads/upload-flow.svg"
+  alt="Upload flow: a device requests an upload from the Miru control plane, receives a short-lived signed URL for a path carrying its own device ID, and uploads the file directly to your cloud storage over HTTPS. Your data never passes through Miru."
+/>
+
+1. The device detects a completed file and makes an **upload request** to the Miru
+   control plane.
+2. The control plane verifies the device's identity and returns a **short-lived,
+   single-use signed URL** for a path carrying that device's own ID.
+3. The device performs a standard **HTTPS PUT**, uploading the file directly to your
+   bucket.
+
+Your data moves straight from the device to your storage — only the upload request
+touches Miru.
+
+## The pieces
+
+<CardGroup cols={3}>
+  <Card title="Destinations" icon="bucket" href="/data-uploads/destinations">
+    Connect your cloud storage bucket to Miru with keyless Workload Identity
+    Federation, and see how device data stays isolated.
+  </Card>
+  <Card title="Upload rules" icon="file-lines" href="/data-uploads/upload-rules">
+    Declare what to collect and where it goes. Rules ship as part of a
+    [release](/learn/releases/overview).
+  </Card>
+  <Card title="Uploads" icon="cloud-arrow-up" href="/data-uploads/uploads">
+    How the Agent decides a file is complete, the delivery guarantees, and the
+    provenance metadata stamped on every object.
+  </Card>
+</CardGroup>
