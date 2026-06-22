@@ -1,0 +1,72 @@
+---
+title: "Uploads"
+---
+
+Once an [upload rule](/data-uploads/upload-rules) is active on a device, the
+[Miru Agent](/developers/agent/overview) handles the rest: detecting when a file is
+finished, uploading it to your [destination](/data-uploads/destinations), and
+stamping it with provenance. This page describes how that works and what it
+guarantees.
+
+## Triggers
+
+The Agent uploads a file once it is confident the file has finished being written to.
+Completion is determined with two complementary checks:
+
+- **Footer check** — for formats that end with a finalization marker (MCAP, parquet),
+  Miru verifies the trailing bytes that only exist once the writer has closed the file
+  cleanly. For these formats, completion is guaranteed.
+- **Quiescence** — a file whose size and modification time have held steady for a
+  debounce window is treated as ready. This works for any file type, but it is a
+  heuristic: "looks done," not "proven done."
+
+If you would rather not rely on detection at all, you can **defer completion to the
+file producer**: have it write to a temporary name and rename on completion (or drop a
+marker file), and the Agent will only ever see finished files — zero false positives.
+
+### Edge cases
+
+The following are handled deliberately:
+
+- **Multi-file artifacts (`unit: directory`).** A directory unit — such as a rosbag2
+  recording (split files plus a `metadata.yaml`) — is ready only once the manifest is
+  finalized *and* every expected part is present, never when a single member file
+  happens to look done.
+- **Truncated or crash-interrupted files.** A file that goes quiet but was never
+  closed cleanly (no valid footer) is still uploaded, but stamped `incomplete`.
+- **Backfill on activation.** When a rule first reaches a device it collects new data
+  going forward, not the entire existing disk. Backfilling pre-existing data is
+  opt-in.
+
+## Guarantees
+
+The following properties are guaranteed by the Miru Agent.
+
+### Correctness
+
+- **Exactly one copy.** Each file is uploaded once, keyed on its path and content
+  hash.
+- **Integrity.** Every object is verified to match its source byte-for-byte.
+- **Atomic visibility.** An object appears in your bucket only when fully written; a
+  partial or in-flight upload is never visible to anything reading the bucket.
+
+### Safety
+
+- **Non-destructive.** Miru only ever *creates* new objects. The signing identity
+  cannot modify or delete existing data.
+- **Durable before acknowledged.** A file is recorded as uploaded only after the
+  bucket confirms a durable write.
+
+### Delivery
+
+- **Resumable.** Uploads are chunked and resume where they left off when encountering
+  a poor network connection.
+
+## Provenance
+
+Every uploaded object is stamped with metadata — the device ID, the release and config
+version it was collected under, the content hash, and the capture time — so each
+object is self-describing in your bucket and can be correlated back to exactly what
+produced it, without parsing the path.
+
+{/* TODO (product): confirm whether a device upload request appears in the Device API / events stream, and cross-link to /developers/device-api/events if so. */}
