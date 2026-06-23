@@ -1,0 +1,93 @@
+---
+title: "Overview"
+---
+
+import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+import BucketDef from '/snippets/definitions/bucket.mdx';
+
+<BucketDef />
+
+<Info>
+  Buckets are **Google Cloud Storage (GCS)** or **Amazon S3 (AWS)** buckets. The
+  provider you choose determines the configuration and how Miru connects to it — see
+  [GCS](/data-uploads/buckets/gcs) and [AWS](/data-uploads/buckets/aws).
+</Info>
+
+## Properties
+
+<ParamField path="provider" type="enum">
+  <ImmutableBadge />
+
+  The cloud storage provider backing the bucket.
+
+  Allowed values:
+  - `gcs`
+  - `aws`
+</ParamField>
+
+<ParamField path="config" type="Bucket Config">
+  <ImmutableBadge />
+
+  Provider-specific configuration, discriminated by `provider`. For `gcs`, see
+  [GCS](/data-uploads/buckets/gcs); for `aws`, see [AWS](/data-uploads/buckets/aws).
+</ParamField>
+
+## Device data isolation
+
+Isolation rests on a single requirement on the destination
+[path](/data-uploads/upload-rules/destinations): it must include the **device-identity
+token** (`{device_id}`) somewhere in the template. Where that token sits, and how you
+lay out the rest of the path, is entirely up to you.
+
+When the control plane mints an upload URL, it fills that token with the ID of the
+**authenticated device making the request** — a verified value, never something the
+rule author types in. So the resolved object key for any upload always carries the
+requesting device's own ID.
+
+That substitution is what makes isolation structural: because the device-ID segment
+comes from verified identity rather than user input, **a device can only ever be
+issued URLs for paths carrying its own ID.** A path bearing device A's ID is only
+mintable for device A; device B presents its own identity and gets its own ID
+substituted, never A's. No device can obtain a URL for another device's path —
+regardless of where the token sits or how the path is laid out, and with no per-rule
+policy to configure correctly or audit.
+
+The only thing Miru validates about the path is that the device-ID token is present.
+Everything else is yours.
+
+{/* TODO: add screenshots once the dashboard ships */}
+
+## Register a bucket  {/* TODO: confirm required role/scope */}
+
+From the **Buckets** page, select **New bucket**. Choose the provider and supply that
+provider's configuration — for [GCS](/data-uploads/buckets/gcs), the Workload Identity
+Federation identifiers; for [AWS](/data-uploads/buckets/aws), the bucket name, region,
+IAM role ARN, and external ID. No keys or secrets are entered; only identifiers and
+configuration.
+
+Select **Create** to register the bucket. Upload rules reference it by ID (`bkt_…`)
+once it exists.
+
+## Verify a bucket  {/* TODO: confirm required role/scope */}
+
+Verifying a bucket re-checks that Miru can still mint upload URLs against it. From the
+bucket's menu, select **Verify**. Miru exercises the full credential-minting chain end
+to end and signs a throwaway URL, so a failure points at the exact link in the chain
+that broke (a changed trust policy, a revoked grant, or a renamed bucket) rather than a
+generic credentials error.
+
+Run a verification after registering a bucket, and any time you change the underlying
+cloud configuration.
+
+## Archive a bucket  {/* TODO: confirm required role/scope */}
+
+A bucket can be **archived** when it is no longer in active use. Archiving retires the
+bucket without deleting it, and it can be **unarchived** later to bring it back. From
+the bucket's menu, select **Archive** (or **Unarchive** on an archived bucket).
+
+## Delete a bucket  {/* TODO: confirm required role/scope */}
+
+Deleting a bucket removes its registration from Miru. From the bucket's menu, select
+**Delete** and confirm. This only removes the integration record — the underlying
+cloud storage and any objects already written to it are untouched, since Miru never
+holds keys to your data and only ever creates objects in it.
