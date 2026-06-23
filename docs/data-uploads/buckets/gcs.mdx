@@ -1,43 +1,15 @@
 ---
-title: "Buckets"
+title: "GCS"
 ---
 
 import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
-import BucketDef from '/snippets/definitions/bucket.mdx';
-
-<BucketDef />
-
-{/* TODO (product, blocking): v1 is GCS-only (the integration below is entirely GCP/WIF). Confirm before publishing whether S3/other buckets are in scope for v1, and add them here if so. */}
-
-<Info>
-  Buckets are **Google Cloud Storage** buckets in v1. Support for additional
-  providers is on the roadmap.
-</Info>
-
-## Properties
-
-<ParamField path="provider" type="enum">
-  <ImmutableBadge />
-
-  The cloud storage provider backing the bucket.
-
-  Allowed values:
-  - `gcs`
-</ParamField>
-
-<ParamField path="config" type="GCS Config">
-  <ImmutableBadge />
-
-  Provider-specific configuration, discriminated by `provider`. For `gcs`, see
-  [GCS configuration](#gcs-configuration).
-</ParamField>
-
-## GCS configuration
 
 A GCS bucket is authenticated via **Workload Identity Federation (WIF)** — the
 native mechanism Google Cloud provides for letting an external identity act in your
 project *without* a service-account key. See [Connecting your bucket](#connecting-your-bucket)
 for how these values are produced.
+
+## Properties
 
 <ParamField path="project_id" type="string" required>
   <ImmutableBadge />
@@ -142,65 +114,3 @@ exchange with Google Cloud. The device is uninvolved here.
 4. The device uses the signed URL to perform the upload to your bucket.
 
 The chain is keyless end to end — no service-account key is ever downloaded.
-
-## Device data isolation
-
-Isolation rests on a single requirement on the destination [path](/data-uploads/upload-rules#destination):
-it must include the **device-identity token** (`{device_id}`) somewhere in the
-template. Where that token sits, and how you lay out the rest of the path, is entirely
-up to you.
-
-When the control plane mints an upload URL, it fills that token with the ID of the
-**authenticated device making the request** — a verified value, never something the
-rule author types in. So the resolved object key for any upload always carries the
-requesting device's own ID.
-
-That substitution is what makes isolation structural: because the device-ID segment
-comes from verified identity rather than user input, **a device can only ever be
-issued URLs for paths carrying its own ID.** A path bearing device A's ID is only
-mintable for device A; device B presents its own identity and gets its own ID
-substituted, never A's. No device can obtain a URL for another device's path —
-regardless of where the token sits or how the path is laid out, and with no per-rule
-policy to configure correctly or audit.
-
-The only thing Miru validates about the path is that the device-ID token is present.
-Everything else is yours.
-
-{/* TODO: add screenshots once the dashboard ships */}
-
-## Register a bucket  {/* TODO: confirm required role/scope */}
-
-From the **Buckets** page, select **New bucket**. Choose the provider (GCS in v1) and
-supply the Workload Identity Federation identifiers you produced in
-[Connecting your bucket](#connecting-your-bucket) — the GCP project ID, the destination
-bucket name, the Workload Identity Pool provider resource path, and the signing service
-account email. No keys or secrets are entered; only identifiers and configuration.
-
-Select **Create** to register the bucket. Upload rules reference it by ID (`bkt_…`)
-once it exists.
-
-## Verify a bucket  {/* TODO: confirm required role/scope */}
-
-Verifying a bucket re-checks that Miru can still mint upload URLs against it. From the
-bucket's menu, select **Verify**. Miru exercises the full keyless
-[mint chain](#how-a-credential-is-minted-at-runtime) end to end — it assumes its AWS
-role, exchanges that identity with Google STS for a short-lived federated token,
-impersonates your signing service account, and signs a throwaway URL — so a failure
-points at the exact link in the chain that broke (a changed pool condition, a revoked
-impersonation grant, or a renamed bucket) rather than a generic credentials error.
-
-Run a verification after registering a bucket, and any time you change the underlying
-GCP configuration.
-
-## Archive a bucket  {/* TODO: confirm required role/scope */}
-
-A bucket can be **archived** when it is no longer in active use. Archiving retires the
-bucket without deleting it, and it can be **unarchived** later to bring it back. From
-the bucket's menu, select **Archive** (or **Unarchive** on an archived bucket).
-
-## Delete a bucket  {/* TODO: confirm required role/scope */}
-
-Deleting a bucket removes its registration from Miru. From the bucket's menu, select
-**Delete** and confirm. This only removes the integration record — the underlying
-cloud storage and any objects already written to it are untouched, since Miru never
-holds keys to your data and only ever creates objects in it.

@@ -1,0 +1,97 @@
+---
+title: "AWS"
+---
+
+import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+
+An S3 bucket is authenticated by **assuming a cross-account IAM role** (STS
+AssumeRole) — there are **no access keys**. You create a role in your own AWS account
+whose trust policy allows Miru's account to assume it, and Miru uses that role to mint
+presigned upload URLs. See [Connecting your bucket](#connecting-your-bucket) for how
+these values are produced.
+
+## Properties
+
+<ParamField path="bucket_name" type="string" required>
+  <ImmutableBadge />
+
+  The name of the S3 bucket that uploads are written to.
+</ParamField>
+
+<ParamField path="region" type="string" required>
+  <ImmutableBadge />
+
+  The AWS region of the bucket, used for the S3 endpoint and SigV4 signing.
+
+  Example: `us-east-1`
+</ParamField>
+
+<ParamField path="role_arn" type="string" required>
+  <ImmutableBadge />
+
+  ARN of the IAM role in your account that Miru assumes to mint presigned upload URLs.
+  Its trust policy must allow Miru's account with the external ID, and it must grant
+  `s3:PutObject` on the bucket.
+
+  Example: `arn:aws:iam::123456789012:role/miru-uploader`
+</ParamField>
+
+<ParamField path="external_id" type="string" required>
+  <ImmutableBadge />
+
+  The external ID that must be present in the role's trust policy, guarding against the
+  confused-deputy problem.
+
+  Example: `miru-a1b2c3d4`
+</ParamField>
+
+## Connecting your bucket
+
+No secrets change hands in either direction. The integration is established by
+exchanging **identifiers and configuration only** — Miru never holds an access key to
+your account. Miru gives you its AWS account ID (the principal your role must trust)
+and an external ID; you give Miru the bucket name, region, and the ARN of the role it
+may assume.
+
+There are **no access keys, passwords, or long-lived tokens** in this exchange — by
+design. Nothing you hand Miru can be replayed or exfiltrated to reach your data.
+
+### Setup steps
+
+These are one-time steps in your own AWS account.
+
+<Steps>
+  <Step title="Choose or create the bucket">
+    Pick the S3 bucket that uploaded data should land in, and note its name and region.
+  </Step>
+  <Step title="Create a cross-account IAM role">
+    Create an IAM role in your account whose **trust policy** allows Miru's AWS account
+    as the principal **and** requires the `external_id` via an `sts:ExternalId`
+    condition. The external ID is the linchpin against the
+    [confused-deputy](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html)
+    problem: even another tenant of the same Miru service cannot trick Miru into
+    assuming your role without presenting your specific external ID.
+
+    {/* TODO (product): confirm exact IAM permissions / trust policy and the registration surface */}
+  </Step>
+  <Step title="Grant the role write access to the bucket">
+    Attach a permissions policy to the role granting `s3:PutObject` on the bucket —
+    optionally scoped to a key prefix so Miru can only ever write under it. Miru only
+    ever *creates* objects; it never needs read, delete, or list permissions.
+  </Step>
+  <Step title="Register the bucket in Miru">
+    Supply `bucket_name`, `region`, `role_arn`, and `external_id` to Miru.
+
+    {/* TODO (product): confirm where registration surfaces — dashboard or CLI — and document the concrete flow here. */}
+  </Step>
+</Steps>
+
+### How a credential is minted at runtime
+
+When a device requests an upload, the Miru control plane assumes your `role_arn` via
+**STS AssumeRole** (presenting the matching `external_id`), then uses the temporary
+credentials to mint a **SigV4 presigned PUT URL** scoped to a single object key. The
+device uses that URL to upload the file directly to your bucket over HTTPS.
+
+The control plane never receives a long-lived key, and the device never touches your
+AWS credentials — only the short-lived presigned URL.

@@ -1,0 +1,30 @@
+---
+title: "Destinations"
+---
+
+A rule's `destination` declares where collected data goes and how the local copy is
+handled. This is the rule's *destination configuration* — which registered
+[bucket](/data-uploads/buckets/overview) to write to, and the object path within it. It
+is distinct from the [Buckets](/data-uploads/buckets/overview) pages, which describe how
+the storage itself is registered and connected.
+
+<ParamField path="bucket_id" type="string" required>
+  ID of a registered [bucket](/data-uploads/buckets/overview) (`bkt_…`) this rule
+  uploads to.
+</ParamField>
+
+<ParamField path="path" type="string" required>
+  The object-path template the collected file is written to. **Must contain
+  `{device_id}`** so each device's uploads are namespaced under its own verified ID —
+  this is what guarantees
+  [device data isolation](/data-uploads/buckets/overview#device-data-isolation). Where
+  the token sits and how you lay out the rest of the path is up to you.
+</ParamField>
+
+<ParamField path="delete_policy" type="enum" default="never">
+  When the device deletes the local source file after collecting it.
+
+  - `never` *(default)* — keep the local file in place; you manage local retention
+    yourself.
+  - `after_upload` — delete the local file once the upload is durably confirmed.
+</ParamField>

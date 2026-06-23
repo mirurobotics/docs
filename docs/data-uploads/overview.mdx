@@ -4,9 +4,8 @@ title: "Overview"
 
 Miru uploads data *off* your devices and into *your* cloud storage.
 
-You define a small set of [**upload rules**](/data-uploads/upload-rules) — what to
-collect, when to collect it, and where it goes — grouped into
-[**upload types**](/data-uploads/upload-types). The [Miru Agent](/developers/agent/overview)
+You define a small set of [**upload rules**](/data-uploads/upload-rules/overview) — what to
+collect, when to collect it, and where it goes. The [Miru Agent](/developers/agent/overview)
 detects matching data, confirms each file is complete, and uploads it directly to
 your bucket.
 
@@ -30,16 +29,13 @@ touches Miru.
 ## The pieces
 
 <CardGroup cols={2}>
-  <Card title="Upload types" icon="layer-group" href="/data-uploads/upload-types">
-    The named categories you organize collected data around.
-  </Card>
-  <Card title="Upload rules" icon="file-lines" href="/data-uploads/upload-rules">
+  <Card title="Upload rules" icon="file-lines" href="/data-uploads/upload-rules/overview">
     Declare what to collect and where it goes. Rules ship as part of a
     [release](/learn/releases/overview).
   </Card>
-  <Card title="Buckets" icon="bucket" href="/data-uploads/buckets">
-    Connect your cloud storage bucket to Miru with keyless Workload Identity
-    Federation, and see how device data stays isolated.
+  <Card title="Buckets" icon="bucket" href="/data-uploads/buckets/overview">
+    Connect your GCS or S3 storage bucket to Miru with keyless credentials, and
+    see how device data stays isolated.
   </Card>
   <Card title="Uploads" icon="cloud-arrow-up" href="/data-uploads/uploads">
     How the Agent decides a file is complete, the delivery guarantees, and the

@@ -7,9 +7,9 @@ import UploadDef from '/snippets/definitions/upload.mdx';
 
 <UploadDef />
 
-Once an [upload rule](/data-uploads/upload-rules) is active on a device, the
+Once an [upload rule](/data-uploads/upload-rules/overview) is active on a device, the
 [Miru Agent](/developers/agent/overview) handles the rest: detecting when a matching
-file is finished, uploading it to your [bucket](/data-uploads/buckets), and
+file is finished, uploading it to your [bucket](/data-uploads/buckets/overview), and
 recording it with the provenance below.
 
 ## Properties
@@ -23,19 +23,19 @@ recording it with the provenance below.
 <ParamField path="upload_rule_id" type="string">
   <ImmutableBadge />
 
-  ID of the [upload rule](/data-uploads/upload-rules) that produced the upload.
+  ID of the [upload rule](/data-uploads/upload-rules/overview) that produced the upload.
 </ParamField>
 
 <ParamField path="upload_type_id" type="string">
   <ImmutableBadge />
 
-  ID of the [upload type](/data-uploads/upload-types) the upload belongs to.
+  ID of the upload type the upload belongs to.
 </ParamField>
 
 <ParamField path="bucket_id" type="string">
   <ImmutableBadge />
 
-  ID of the registered [bucket](/data-uploads/buckets) the file was written to.
+  ID of the registered [bucket](/data-uploads/buckets/overview) the file was written to.
 </ParamField>
 
 <ParamField path="object_key" type="string">
@@ -103,7 +103,7 @@ Completion is determined with two complementary checks:
   verifies the trailing bytes that only exist once the writer has closed the file
   cleanly. For these formats, completion is guaranteed.
 - **Quiescence** — a file whose size and modification time have held steady for the
-  rule's [`stability_window`](/data-uploads/upload-rules#source) is treated as ready.
+  rule's [`stability_window`](/data-uploads/upload-rules/sources) is treated as ready.
   This works for any file type, but it is a heuristic: "looks done," not "proven done."
 
 If you would rather not rely on detection at all, you can **defer completion to the
