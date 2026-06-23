@@ -37,7 +37,7 @@ destination:
 
 Upload rules are **immutable** and deduplicated by digest — defining an identical rule
 reuses the existing one rather than creating a duplicate. A rule is created once, then
-included in a [release](/learn/releases/overview) by ID and shipped to devices as part
+included in a [release](/fundamentals/releases/overview) by ID and shipped to devices as part
 of that release.
 
 Defining what data leaves your devices is therefore the same kind of versioned,
@@ -54,7 +54,7 @@ the `path` template, and the `delete_policy`), then create it.
 
 Because rules are deduplicated by digest, creating a rule identical to an existing one
 returns that existing rule rather than a duplicate. Once created, attach the rule to a
-[release](/learn/releases/overview) by its ID to ship it to devices.
+[release](/fundamentals/releases/overview) by its ID to ship it to devices.
 
 {/* TODO (product): document the exact authoring surface for creating a rule and attaching it to a release (CLI command, dashboard, or Platform API) once finalized. */}
 
@@ -62,6 +62,6 @@ returns that existing rule rather than a duplicate. Once created, attach the rul
 
 Upload rules **cannot be edited or deleted individually** — they are immutable by
 design. To change what a rule collects or where it goes, create a **new** rule with the
-updated definition and ship it in a new [release](/learn/releases/overview). The
+updated definition and ship it in a new [release](/fundamentals/releases/overview). The
 release a device is on determines which rules are active, so retiring a rule is a matter
 of shipping a release that no longer includes it.
