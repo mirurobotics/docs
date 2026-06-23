@@ -23,11 +23,6 @@ destination:
 
 ## Properties
 
-<ParamField path="upload_type" type="Upload Type">
-  The upload type this rule belongs to — a named category that groups related
-  uploads.
-</ParamField>
-
 <ParamField path="source" type="Source">
   Where data is collected on the device. See
   [Sources](/data-uploads/upload-rules/sources).
@@ -52,8 +47,7 @@ reviewable, staged operation as defining anything else you ship.
 
 ## Create an upload rule  {/* TODO: confirm required role/scope */}
 
-From the **Upload Rules** area, select **New upload rule**. Pick the
-upload type it belongs to, define its
+From the **Upload Rules** area, select **New upload rule**. Define its
 [`source`](/data-uploads/upload-rules/sources) (the glob and completion settings) and
 its [`destination`](/data-uploads/upload-rules/destinations) (the target `bucket_id`,
 the `path` template, and the `delete_policy`), then create it.
