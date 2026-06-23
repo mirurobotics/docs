@@ -2,93 +2,111 @@
 title: "Upload rules"
 ---
 
-An upload rule describes a standing intent: *whenever data like this appears at
-device location X, send it to bucket location Y.* Each rule runs continuously — the
-[Miru Agent](/developers/agent/overview) scans for matching data and uploads it as it
-completes.
+import UploadRuleDef from '/snippets/definitions/upload-rule.mdx';
 
-A rule has two parts — `source` and `destination`:
+<UploadRuleDef />
+
+A rule has two parts — a `source` (what to collect on the device) and a `destination`
+(where it goes in your bucket):
 
 ```yaml
 source:
-  glob: "logs/**/*.mcap"         # paths within an approved directory
-  unit: file                     # "file", or "directory" for multi-file artifacts
+  glob: "/var/log/robot/*.log"        # absolute glob (must start with /)
+  poll_interval: 60s                  # how often the agent checks for eligible files
+  stability_window: 60s               # quiescence before a file is considered finished
 
 destination:
-  bucket: <your-registered-bucket>
-  # your layout — must include {device_id}, filled from the verified device
-  path: "devices/{device_id}/{filename}"
+  bucket_id: bkt_123                  # a registered bucket
+  path: "logs/{device_id}/{filename}" # object-path template; must include {device_id}
+  delete_policy: never                # never | after_upload
 ```
+
+## Properties
+
+<ParamField path="upload_type" type="Upload Type">
+  The [upload type](/data-uploads/upload-types) this rule belongs to.
+</ParamField>
+
+<ParamField path="source" type="Source">
+  Where data is collected on the device. See [Source](#source).
+</ParamField>
+
+<ParamField path="destination" type="Destination">
+  Where collected data is written, and how the local copy is handled. See
+  [Destination](#destination).
+</ParamField>
 
 ## Source
 
 <ParamField path="glob" type="string" required>
-  A glob describing which paths to collect, evaluated within an approved directory.
+  An absolute glob pattern (must start with `/`) that selects the files to upload.
+
+  Example: `/var/log/robot/*.log`
 </ParamField>
 
-<ParamField path="unit" type="enum" default="file">
-  How matched paths are grouped into an upload.
+<ParamField path="poll_interval" type="duration" default="60s">
+  How often the agent checks matching files for upload eligibility.
+</ParamField>
 
-  - `file` — each matching file is uploaded on its own.
-  - `directory` — a multi-file artifact (such as a rosbag2 recording) is treated as
-    one unit and uploaded only when the whole artifact is complete. See
-    [multi-file artifacts](/data-uploads/uploads#edge-cases).
+<ParamField path="stability_window" type="duration" default="60s">
+  How long a matching file's size and modification time must stay unchanged
+  (quiescent) before it is considered finished and eligible for upload. Files in a
+  format with a finalization marker (such as MCAP or parquet) are detected directly;
+  this window is the fallback for other files. See
+  [completion detection](/data-uploads/uploads#completion-detection).
 </ParamField>
 
 ## Destination
 
-<ParamField path="bucket" type="string" required>
-  A bucket you have [registered with Miru](/data-uploads/destinations#connecting-your-bucket).
+<ParamField path="bucket_id" type="string" required>
+  ID of a registered [bucket](/data-uploads/buckets) (`bkt_…`) this rule uploads to.
 </ParamField>
 
 <ParamField path="path" type="string" required>
-  The object-key template for uploaded data. **Must include the `{device_id}`
-  token**, which Miru fills from the verified identity of the device making the
-  request — this is what guarantees
-  [device data isolation](/data-uploads/destinations#device-data-isolation). Where
-  the token sits and how you lay out the rest of the path is up to you.
+  The object-path template the collected file is written to. **Must contain
+  `{device_id}`** so each device's uploads are namespaced under its own verified ID —
+  this is what guarantees
+  [device data isolation](/data-uploads/buckets#device-data-isolation). Where the
+  token sits and how you lay out the rest of the path is up to you.
 </ParamField>
 
-## Retention
+<ParamField path="delete_policy" type="enum" default="never">
+  When the device deletes the local source file after collecting it.
 
-By default Miru never deletes your data — it only copies it to your bucket. Because
-devices have limited disk, you can optionally configure the Agent to clean up local
-files after archiving them. Deletion is configurable per rule:
-
-```yaml
-destination:
-  bucket: <your-registered-bucket>
-  path: "devices/{device_id}/{filename}"
-  delete: after_upload          # never | after_upload | by_age
-  delete_after: 1h              # age threshold for after_upload / by_age
-```
-
-<ParamField path="delete" type="enum" default="never">
-  - `never` *(default)* — Miru leaves your files in place; you manage local
-    retention yourself.
-  - `after_upload` — delete a file once its upload is confirmed *and* it has reached
-    the `delete_after` age (for example, one hour after a successful upload).
-  - `by_age` — delete files older than `delete_after` *whether or not they have
-    uploaded* — a hard disk-pressure backstop. Because this can drop data that never
-    uploaded, it is opt-in and meant only for bounding disk usage.
+  - `never` *(default)* — keep the local file in place; you manage local retention
+    yourself.
+  - `after_upload` — delete the local file once the upload is durably confirmed.
 </ParamField>
 
-<ParamField path="delete_after" type="duration">
-  The age threshold used by `after_upload` and `by_age` (for example `1h`, `24h`).
-</ParamField>
+## Immutability and releases
 
-The `after_upload` mode keys off the same content-hash ledger that guarantees
-[exactly-once upload](/data-uploads/uploads#guarantees), so a file is only ever
-removed once Miru has confirmed it is safely in your bucket.
+Upload rules are **immutable** and deduplicated by digest — defining an identical rule
+reuses the existing one rather than creating a duplicate. A rule is created once, then
+included in a [release](/learn/releases/overview) by ID and shipped to devices as part
+of that release.
 
-## Rules ship with a release
+Defining what data leaves your devices is therefore the same kind of versioned,
+reviewable, staged operation as defining anything else you ship.
 
-Upload rules are defined in a YAML file and uploaded via the [CLI](/developers/cli/overview)
-as **part of a [release](/learn/releases/overview)** — not device-by-device, and not
-in a separate console.
+{/* TODO: add screenshots once the dashboard ships */}
 
-An upload rule is therefore one piece of a release: defining what data leaves your
-devices is the same kind of versioned, reviewable, staged operation as defining
-anything else you ship.
+## Create an upload rule  {/* TODO: confirm required role/scope */}
 
-{/* TODO (product): document where the rule YAML lives within a release and the exact CLI command used to upload it, once the release/CLI surface is finalized. */}
+From the **Upload Rules** area, select **New upload rule**. Pick the
+[upload type](/data-uploads/upload-types) it belongs to, define its [`source`](#source)
+(the glob and completion settings) and its [`destination`](#destination) (the target
+`bucket_id`, the `path` template, and the `delete_policy`), then create it.
+
+Because rules are deduplicated by digest, creating a rule identical to an existing one
+returns that existing rule rather than a duplicate. Once created, attach the rule to a
+[release](/learn/releases/overview) by its ID to ship it to devices.
+
+{/* TODO (product): document the exact authoring surface for creating a rule and attaching it to a release (CLI command, dashboard, or Platform API) once finalized. */}
+
+## Editing and deleting rules  {/* TODO: confirm required role/scope */}
+
+Upload rules **cannot be edited or deleted individually** — they are immutable by
+design. To change what a rule collects or where it goes, create a **new** rule with the
+updated definition and ship it in a new [release](/learn/releases/overview). The
+release a device is on determines which rules are active, so retiring a rule is a matter
+of shipping a release that no longer includes it.
