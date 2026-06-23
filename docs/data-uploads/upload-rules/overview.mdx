@@ -1,5 +1,5 @@
 ---
-title: "Upload rules"
+title: "Overview"
 ---
 
 import UploadRuleDef from '/snippets/definitions/upload-rule.mdx';
@@ -24,58 +24,18 @@ destination:
 ## Properties
 
 <ParamField path="upload_type" type="Upload Type">
-  The [upload type](/data-uploads/upload-types) this rule belongs to.
+  The upload type this rule belongs to — a named category that groups related
+  uploads.
 </ParamField>
 
 <ParamField path="source" type="Source">
-  Where data is collected on the device. See [Source](#source).
+  Where data is collected on the device. See
+  [Sources](/data-uploads/upload-rules/sources).
 </ParamField>
 
 <ParamField path="destination" type="Destination">
   Where collected data is written, and how the local copy is handled. See
-  [Destination](#destination).
-</ParamField>
-
-## Source
-
-<ParamField path="glob" type="string" required>
-  An absolute glob pattern (must start with `/`) that selects the files to upload.
-
-  Example: `/var/log/robot/*.log`
-</ParamField>
-
-<ParamField path="poll_interval" type="duration" default="60s">
-  How often the agent checks matching files for upload eligibility.
-</ParamField>
-
-<ParamField path="stability_window" type="duration" default="60s">
-  How long a matching file's size and modification time must stay unchanged
-  (quiescent) before it is considered finished and eligible for upload. Files in a
-  format with a finalization marker (such as MCAP or parquet) are detected directly;
-  this window is the fallback for other files. See
-  [completion detection](/data-uploads/uploads#completion-detection).
-</ParamField>
-
-## Destination
-
-<ParamField path="bucket_id" type="string" required>
-  ID of a registered [bucket](/data-uploads/buckets) (`bkt_…`) this rule uploads to.
-</ParamField>
-
-<ParamField path="path" type="string" required>
-  The object-path template the collected file is written to. **Must contain
-  `{device_id}`** so each device's uploads are namespaced under its own verified ID —
-  this is what guarantees
-  [device data isolation](/data-uploads/buckets#device-data-isolation). Where the
-  token sits and how you lay out the rest of the path is up to you.
-</ParamField>
-
-<ParamField path="delete_policy" type="enum" default="never">
-  When the device deletes the local source file after collecting it.
-
-  - `never` *(default)* — keep the local file in place; you manage local retention
-    yourself.
-  - `after_upload` — delete the local file once the upload is durably confirmed.
+  [Destinations](/data-uploads/upload-rules/destinations).
 </ParamField>
 
 ## Immutability and releases
@@ -93,9 +53,10 @@ reviewable, staged operation as defining anything else you ship.
 ## Create an upload rule  {/* TODO: confirm required role/scope */}
 
 From the **Upload Rules** area, select **New upload rule**. Pick the
-[upload type](/data-uploads/upload-types) it belongs to, define its [`source`](#source)
-(the glob and completion settings) and its [`destination`](#destination) (the target
-`bucket_id`, the `path` template, and the `delete_policy`), then create it.
+upload type it belongs to, define its
+[`source`](/data-uploads/upload-rules/sources) (the glob and completion settings) and
+its [`destination`](/data-uploads/upload-rules/destinations) (the target `bucket_id`,
+the `path` template, and the `delete_policy`), then create it.
 
 Because rules are deduplicated by digest, creating a rule identical to an existing one
 returns that existing rule rather than a duplicate. Once created, attach the rule to a
