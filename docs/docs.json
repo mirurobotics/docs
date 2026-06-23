@@ -24,9 +24,9 @@
         "product": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
             "pages": [
-              "getting-started/intro",
+              "getting-started/welcome",
               {
                 "group": "Quick start",
                 "pages": [
@@ -35,31 +35,12 @@
                   "getting-started/quick-start/provision-device",
                   "getting-started/quick-start/deploy-configs"
                 ]
-              },
-              "getting-started/concepts"
+              }
             ]
           },
           {
             "group": "Learn",
             "pages": [
-              "learn/config-instances",
-              {
-                "group": "Config schemas",
-                "pages": [
-                  "learn/schemas/overview",
-                  {
-                    "group": "Languages",
-                    "pages": [
-                      "learn/schemas/languages/overview",
-                      "learn/schemas/languages/jsonschema",
-                      "learn/schemas/languages/cue"
-                    ]
-                  },
-                  "learn/schemas/manage"
-                ]
-              },
-              "learn/config-types",
-              "learn/deployments",
               {
                 "group": "Devices",
                 "pages": [
@@ -74,10 +55,7 @@
                       "learn/devices/provision/reprovision"
                     ]
                   },
-                  "learn/devices/manage",
-                  "learn/devices/initial-deployment",
-                  "learn/devices/config-editor",
-                  "learn/devices/deployment-history"
+                  "learn/devices/manage"
                 ]
               },
               {
@@ -93,10 +71,51 @@
                 "pages": [
                   "learn/releases/overview",
                   "learn/releases/create",
-                  "learn/releases/manage",
-                  "learn/releases/staging-area"
+                  "learn/releases/manage"
+                ]
+              },
+              {
+                "group": "Deployments",
+                "pages": [
+                  "cfg-mgmt/deployments/overview",
+                  "cfg-mgmt/deployments/initial-deployment",
+                  "cfg-mgmt/deployments/config-editor",
+                  "cfg-mgmt/deployments/deployment-history",
+                  "cfg-mgmt/deployments/staging-area"
                 ]
               }
+            ]
+          },
+          {
+            "group": "Config Management",
+            "pages": [
+              "cfg-mgmt/config-types",
+              {
+                "group": "Config schemas",
+                "pages": [
+                  "cfg-mgmt/schemas/overview",
+                  {
+                    "group": "Languages",
+                    "pages": [
+                      "cfg-mgmt/schemas/languages/overview",
+                      "cfg-mgmt/schemas/languages/jsonschema",
+                      "cfg-mgmt/schemas/languages/cue"
+                    ]
+                  },
+                  "cfg-mgmt/schemas/manage"
+                ]
+              },
+              "cfg-mgmt/config-instances"
+            ]
+          },
+          {
+            "group": "Data Uploads",
+            "pages": [
+              "data-uploads/overview",
+              "data-uploads/upload-types",
+              "data-uploads/upload-rules",
+              "data-uploads/buckets",
+              "data-uploads/uploads"
             ]
           },
           {

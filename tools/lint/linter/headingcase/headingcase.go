@@ -39,6 +39,8 @@ func htmlTagRe() *regexp.Regexp { return regexp.MustCompile(`<[^>]*>`) }
 
 func mdLinkRe() *regexp.Regexp { return regexp.MustCompile(`\[([^\]]*)\]\([^)]*\)`) }
 
+func mdxCommentRe() *regexp.Regexp { return regexp.MustCompile(`(?s)\{/\*.*?\*/\}`) }
+
 // allowlist returns the set of tokens that are exempt from the casing
 // check (case-sensitive exact match). It is a function rather than a
 // package-level variable to avoid mutable global state.
@@ -62,6 +64,11 @@ func allowlist() map[string]struct{} {
 		"ACLs":    {},
 		"SSE":     {},
 		"OpenAPI": {},
+		"AWS":     {},
+		"GCP":     {},
+		"GCS":     {},
+		"WIF":     {},
+		"STS":     {},
 		// Proper nouns.
 		"Miru":   {},
 		"GitHub": {},
@@ -86,7 +93,7 @@ func allowlist() map[string]struct{} {
 type checker struct {
 	title, heading, version *regexp.Regexp
 	inlineCode, htmlTag     *regexp.Regexp
-	mdLink                  *regexp.Regexp
+	mdLink, mdxComment      *regexp.Regexp
 	allow                   map[string]struct{}
 }
 
@@ -98,6 +105,7 @@ func newChecker() *checker {
 		inlineCode: inlineCodeRe(),
 		htmlTag:    htmlTagRe(),
 		mdLink:     mdLinkRe(),
+		mdxComment: mdxCommentRe(),
 		allow:      allowlist(),
 	}
 }
@@ -194,9 +202,10 @@ func headingTextCol(line string) int {
 }
 
 // maskHeading removes content from heading text that should not contribute
-// to the casing check: inline code, HTML/JSX tags, and the URL portion of
-// Markdown links (the link text is preserved).
+// to the casing check: MDX comments ({/* ... */}), inline code, HTML/JSX
+// tags, and the URL portion of Markdown links (the link text is preserved).
 func (c *checker) maskHeading(s string) string {
+	s = c.mdxComment.ReplaceAllString(s, "")
 	s = c.inlineCode.ReplaceAllString(s, "")
 	s = c.htmlTag.ReplaceAllString(s, "")
 	s = c.mdLink.ReplaceAllString(s, "$1")

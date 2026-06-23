@@ -1,0 +1,69 @@
+---
+title: "Upload types"
+---
+
+import { ImmutableBadge, EditableBadge } from '/snippets/components/field-badges.jsx';
+import UploadTypeDef from '/snippets/definitions/upload-type.mdx';
+
+<UploadTypeDef />
+
+An upload type is the unit you organize collected data around. A type like `robot-logs`
+might be populated by several [upload rules](/data-uploads/upload-rules) — one per log
+directory, say — and every resulting [upload](/data-uploads/uploads) carries the type it
+belongs to, so you can browse and manage your data by category rather than by individual
+rule.
+
+## Properties
+
+<ParamField path="name" type="string">
+  <EditableBadge />
+
+  A human-readable display name for the upload type.
+
+  Examples: `Robot Logs`, `Camera Footage`, `Diagnostics`
+</ParamField>
+
+<ParamField path="slug" type="string">
+  <ImmutableBadge />
+
+  A unique, code-friendly identifier for the upload type, used to reference it from
+  code and upload rules.
+
+  Slugs are immutable and must contain only lowercase letters, digits, and hyphens
+  (`-`), starting and ending with a letter or digit.
+
+  Examples: `robot-logs`, `camera-footage`, `diagnostics`
+</ParamField>
+
+{/* TODO: add screenshots once the dashboard ships */}
+
+## Create an upload type  {/* TODO: confirm required role/scope */}
+
+From the **Upload Types** page, select **New upload type**. Provide a display `name`
+and a `slug`, then select **Create**.
+
+<Warning>
+  Upload type slugs are immutable and cannot be changed after creation.
+</Warning>
+
+## Edit an upload type  {/* TODO: confirm required role/scope */}
+
+From the upload type's menu, select **Edit**, update the `name`, and select **Save**.
+Only the display name is editable — the `slug` is fixed once the type is created.
+
+## Archive / unarchive an upload type  {/* TODO: confirm required role/scope */}
+
+An upload type can be **archived** when it is no longer in active use. Archiving
+retires the type without deleting its history, and it can be **unarchived** later to
+bring it back. This keeps your list of active types focused while preserving the
+record of data already collected under it.
+
+From the upload type's menu, select **Archive** (or **Unarchive** on an archived
+type).
+
+{/* TODO (product): the API exposes only per-upload-type archive/unarchive (no bulk endpoint, unlike config types). Confirm whether bulk archive/unarchive of upload types is planned before documenting it. */}
+
+## Delete an upload type  {/* TODO: confirm required role/scope */}
+
+Deleting an upload type removes it permanently. From the upload type's menu, select
+**Delete** and confirm.
