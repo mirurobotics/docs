@@ -14,22 +14,28 @@ recording it with the provenance below.
 
 ## Properties
 
-<ParamField path="device_id" type="string">
+<ParamField path="device" type="Device">
   <ImmutableBadge />
 
-  ID of the device that produced the upload.
+  The [device](/fundamentals/devices/overview) that produced the upload.
+
+  Example: `dvc_123`
 </ParamField>
 
-<ParamField path="upload_rule_id" type="string">
+<ParamField path="upload rule" type="Upload Rule">
   <ImmutableBadge />
 
-  ID of the [upload rule](/data-uploads/upload-rules/overview) that produced the upload.
+  The [upload rule](/data-uploads/upload-rules/overview) that produced the upload.
+
+  Example: `upl_rule_123`
 </ParamField>
 
-<ParamField path="bucket_id" type="string">
+<ParamField path="bucket" type="Bucket">
   <ImmutableBadge />
 
-  ID of the registered [bucket](/data-uploads/buckets/overview) the file was written to.
+  The registered [bucket](/data-uploads/buckets/overview) the file was written to.
+
+  Example: `bkt_123`
 </ParamField>
 
 <ParamField path="object_key" type="string">
@@ -69,11 +75,13 @@ recording it with the provenance below.
   finalization). Independent of `status`.
 </ParamField>
 
-<ParamField path="release_id" type="string">
+<ParamField path="release" type="Release">
   <ImmutableBadge />
 
-  ID of the [release](/learn/releases/overview) the device was on when the upload was
+  The [release](/fundamentals/releases/overview) the device was on when the upload was
   produced.
+
+  Example: `rls_123`
 </ParamField>
 
 <ParamField path="uploading_at" type="datetime">
