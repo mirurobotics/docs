@@ -26,12 +26,6 @@ recording it with the provenance below.
   ID of the [upload rule](/data-uploads/upload-rules/overview) that produced the upload.
 </ParamField>
 
-<ParamField path="upload_type_id" type="string">
-  <ImmutableBadge />
-
-  ID of the upload type the upload belongs to.
-</ParamField>
-
 <ParamField path="bucket_id" type="string">
   <ImmutableBadge />
 
@@ -141,7 +135,7 @@ The following properties are guaranteed by the Miru Agent.
 
 The properties above are also stamped onto each object as storage metadata, so every
 file is self-describing in your bucket and can be correlated back to exactly what
-produced it — the device, rule, upload type, and release — without parsing the path.
+produced it — the device, rule, and release — without parsing the path.
 
 {/* TODO (product): confirm whether a device upload request appears in the Device API / events stream, and cross-link to /developers/device-api/events if so. */}
 
@@ -151,8 +145,8 @@ produced it — the device, rule, upload type, and release — without parsing t
 
 Uploads are records the [Miru Agent](/developers/agent/overview) produces — you don't
 create or edit them by hand. From the **Uploads** view you can browse the ledger and
-open any upload to inspect its [properties](#properties): the device, rule, upload type,
-and release that produced it, its `object_key`, `digest`, `size`, lifecycle
+open any upload to inspect its [properties](#properties): the device, rule, and
+release that produced it, its `object_key`, `digest`, `size`, lifecycle
 [`status`](#properties), and whether it was flagged [`incomplete`](#completion-detection).
 
 {/* TODO (product): confirm the exact uploads listing/inspection surface (dashboard view, filters) once the flow is finalized — no user-facing list/get upload endpoint is defined in the API yet. */}
