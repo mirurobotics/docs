@@ -24,71 +24,63 @@
         "product": "Documentation",
         "groups": [
           {
-            "group": "Getting Started",
+            "group": "Welcome",
             "pages": [
               "getting-started/welcome",
-              {
-                "group": "Quick start",
-                "pages": [
-                  "getting-started/quick-start/overview",
-                  "getting-started/quick-start/create-release",
-                  "getting-started/quick-start/provision-device",
-                  "getting-started/quick-start/deploy-configs"
-                ]
-              }
+              "getting-started/start-guide"
             ]
           },
           {
-            "group": "Learn",
+            "group": "Fundamentals",
             "pages": [
               {
                 "group": "Devices",
                 "pages": [
-                  "learn/devices/overview",
+                  "fundamentals/devices/overview",
                   {
                     "group": "Provision devices",
                     "pages": [
-                      "learn/devices/provision/overview",
-                      "learn/devices/provision/dashboard",
-                      "learn/devices/provision/provisioning-tokens",
-                      "learn/devices/provision/provisioning-script",
-                      "learn/devices/provision/reprovision"
+                      "fundamentals/devices/provision/overview",
+                      "fundamentals/devices/provision/dashboard",
+                      "fundamentals/devices/provision/provisioning-tokens",
+                      "fundamentals/devices/provision/provisioning-script",
+                      "fundamentals/devices/provision/reprovision"
                     ]
                   },
-                  "learn/devices/manage"
+                  "fundamentals/devices/manage"
                 ]
               },
               {
                 "group": "Groups",
                 "pages": [
-                  "learn/groups/overview",
-                  "learn/groups/manage",
-                  "learn/groups/members"
+                  "fundamentals/groups/overview",
+                  "fundamentals/groups/manage",
+                  "fundamentals/groups/members"
                 ]
               },
               {
                 "group": "Releases",
                 "pages": [
-                  "learn/releases/overview",
-                  "learn/releases/create",
-                  "learn/releases/manage"
+                  "fundamentals/releases/overview",
+                  "fundamentals/releases/create",
+                  "fundamentals/releases/manage"
                 ]
               },
-              {
-                "group": "Deployments",
-                "pages": [
-                  "cfg-mgmt/deployments/overview",
-                  "cfg-mgmt/deployments/initial-deployment",
-                  "cfg-mgmt/deployments/config-editor",
-                  "cfg-mgmt/deployments/deployment-history",
-                  "cfg-mgmt/deployments/staging-area"
-                ]
-              }
+              "fundamentals/deployments"
             ]
           },
           {
             "group": "Config Management",
             "pages": [
+              {
+                "group": "Quick start",
+                "pages": [
+                  "cfg-mgmt/quick-start/overview",
+                  "cfg-mgmt/quick-start/create-release",
+                  "cfg-mgmt/quick-start/provision-device",
+                  "cfg-mgmt/quick-start/deploy-configs"
+                ]
+              },
               "cfg-mgmt/config-types",
               {
                 "group": "Config schemas",
@@ -105,16 +97,47 @@
                   "cfg-mgmt/schemas/manage"
                 ]
               },
-              "cfg-mgmt/config-instances"
+              "cfg-mgmt/config-instances",
+              {
+                "group": "Deploying configs",
+                "pages": [
+                  "cfg-mgmt/deployments/initial-deployment",
+                  "cfg-mgmt/deployments/config-editor",
+                  "cfg-mgmt/deployments/deployment-history",
+                  "cfg-mgmt/deployments/staging-area"
+                ]
+              }
             ]
+
           },
           {
             "group": "Data Uploads",
             "pages": [
-              "data-uploads/overview",
-              "data-uploads/upload-types",
-              "data-uploads/upload-rules",
-              "data-uploads/buckets",
+              {
+                "group": "Quick start",
+                "pages": [
+                  "data-uploads/quick-start/overview",
+                  "data-uploads/quick-start/create-release",
+                  "data-uploads/quick-start/provision-device",
+                  "data-uploads/quick-start/deploy-configs"
+                ]
+              },
+              {
+                "group": "Upload rules",
+                "pages": [
+                  "data-uploads/upload-rules/overview",
+                  "data-uploads/upload-rules/sources",
+                  "data-uploads/upload-rules/destinations"
+                ]
+              },
+              {
+                "group": "Buckets",
+                "pages": [
+                  "data-uploads/buckets/overview",
+                  "data-uploads/buckets/gcs",
+                  "data-uploads/buckets/aws"
+                ]
+              },
               "data-uploads/uploads"
             ]
           },
