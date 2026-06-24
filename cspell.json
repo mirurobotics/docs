@@ -12,6 +12,8 @@
     "docs/references/**/*.yaml"
   ],
   "words": [
+    "ARN",
+    "AssumeRole",
     "ENAB",
     "Jetson",
     "Lohuizen",
@@ -20,6 +22,7 @@
     "Netlink",
     "Npfzv",
     "STS",
+    "SigV4",
     "USERGROUPS",
     "WIF",
     "affordances",
@@ -29,6 +32,7 @@
     "dearmor",
     "diffable",
     "exfiltrated",
+    "gcloud",
     "idempotently",
     "inlines",
     "journalctl",
@@ -40,6 +44,7 @@
     "newgrp",
     "objectCreator",
     "parquet",
+    "principalSet",
     "postinst",
     "presigned",
     "quiescence",

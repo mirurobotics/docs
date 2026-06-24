@@ -69,6 +69,10 @@ func allowlist() map[string]struct{} {
 		"GCS":     {},
 		"WIF":     {},
 		"STS":     {},
+		"IAM":     {},
+		"S3":      {},
+		"ARN":     {},
+		"SigV4":   {},
 		// Proper nouns.
 		"Miru":   {},
 		"GitHub": {},
