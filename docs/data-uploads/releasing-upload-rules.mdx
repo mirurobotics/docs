@@ -1,0 +1,44 @@
+---
+title: "Defining releases"
+---
+
+import { Framed } from '/snippets/components/framed.jsx';
+
+<Framed
+background="https://assets.mirurobotics.com/docs/v04/images/releases/background.jpeg"
+image="https://assets.mirurobotics.com/docs/v04/images/releases/header:release-create.png"
+borderWidth="28px"
+innerRadius="10px"
+outerRadius="12px"
+/>
+
+[Upload rules](/data-uploads/upload-rules/overview) reach your devices the same way
+configuration does — as part of a [release](/fundamentals/releases/overview). A release
+is the versioned, reviewable unit that defines what your fleet runs *and* what data it
+collects, so shipping a rule to your fleet means including it in a release.
+
+## Define the rules
+
+Define each [upload rule](/data-uploads/upload-rules/overview) — its
+[source](/data-uploads/upload-rules/sources) (what to collect on the device) and its
+[destination](/data-uploads/upload-rules/destinations) (which registered
+[bucket](/data-uploads/buckets/overview) and path it writes to). Rules are immutable and
+deduplicated by digest, so defining a rule identical to an existing one reuses it rather
+than creating a duplicate.
+
+## Include the rules in a release
+
+A release can contain any number of upload rules, referenced by their IDs — and a single
+release can carry both upload rules and
+[config schemas](/cfg-mgmt/releasing-config-schemas), so one versioned, staged change
+defines what your fleet runs and what it collects.
+
+{/* TODO (product): document the exact authoring flow for creating an upload rule and attaching it to a release (CLI flag, dashboard, or Platform API). Unlike config schemas — which the CLI creates inline with the release — upload rules are referenced by ID, so the command differs. */}
+
+## Shared release mechanics
+
+Versioning, the staging area, Git-metadata capture, and the full set of `release create`
+flags are common to every release, regardless of what it contains. See the
+[Releases](/fundamentals/releases/overview) overview and
+[Releasing config schemas](/cfg-mgmt/releasing-config-schemas) for the shared workflow, or
+the [CLI reference](/references/cli/release-create) for a concise command summary.

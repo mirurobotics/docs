@@ -1,5 +1,5 @@
 ---
-title: "Create releases"
+title: "Defining releases"
 ---
 
 import { Framed } from '/snippets/components/framed.jsx';
@@ -18,7 +18,7 @@ innerRadius="10px"
 outerRadius="12px"
 />
 
-The primary method of creating releases is via the command line. The dashboard does not support creating new releases (although you can [duplicate existing releases](/learn/releases/manage#duplicate-a-release)).
+The primary method of creating releases is via the command line. The dashboard does not support creating new releases (although you can [duplicate existing releases](/fundamentals/releases/manage#duplicate-a-release)).
 
 Creating releases from the CLI is a deliberate design choice. We believe that config schemas should live in the same Git repository as the code which uses them. The CLI promotes such practices, simplifying the release process and encouraging better software development habits.
 
@@ -32,7 +32,7 @@ To create a release, the following prerequisites must be met:
 
 1. CLI installed - [install](/developers/cli/install) the Miru CLI on your development machine and authenticate using the [login](/developers/cli/login) command
 1. Local Git repository - the release's schemas must be committed to a local Git repository
-1. Config types annotations - each schema must be annotated with its [config type](/learn/config-types)
+1. Config types annotations - each schema must be annotated with its [config type](/cfg-mgmt/config-types)
 
 ## Config schemas
 
@@ -46,7 +46,7 @@ The CLI identifies schemas by hashing their content. Schemas with equivalent con
 
 ### Define the schemas
 
-Schemas must be defined in a supported schema [language](/learn/schemas/languages/overview). You can find example schemas in our [getting-started repository](https://github.com/mirurobotics/getting-started).
+Schemas must be defined in a supported schema [language](/cfg-mgmt/schemas/languages/overview). You can find example schemas in our [getting-started repository](https://github.com/mirurobotics/getting-started).
 
 If you're not sure which language to use, we recommend starting with JSON Schema — it's the most widely used and easiest to get started with.
 

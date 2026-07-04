@@ -27,7 +27,15 @@
             "group": "Welcome",
             "pages": [
               "getting-started/welcome",
-              "getting-started/start-guide"
+              {
+                "group": "Quick start",
+                "pages": [
+                  "getting-started/quick-start/overview",
+                  "getting-started/quick-start/create-release",
+                  "getting-started/quick-start/provision-device",
+                  "getting-started/quick-start/deploy-configs"
+                ]
+              }
             ]
           },
           {
@@ -72,15 +80,7 @@
           {
             "group": "Config Management",
             "pages": [
-              {
-                "group": "Quick start",
-                "pages": [
-                  "cfg-mgmt/quick-start/overview",
-                  "cfg-mgmt/quick-start/create-release",
-                  "cfg-mgmt/quick-start/provision-device",
-                  "cfg-mgmt/quick-start/deploy-configs"
-                ]
-              },
+
               "cfg-mgmt/config-types",
               {
                 "group": "Config schemas",
@@ -98,30 +98,27 @@
                 ]
               },
               "cfg-mgmt/config-instances",
+              "cfg-mgmt/releasing-config-schemas",
               {
-                "group": "Deploying configs",
+                "group": "Deploy configs",
                 "pages": [
-                  "cfg-mgmt/deployments/initial-deployment",
-                  "cfg-mgmt/deployments/config-editor",
-                  "cfg-mgmt/deployments/deployment-history",
-                  "cfg-mgmt/deployments/staging-area"
+                  "cfg-mgmt/deploy/initial-deployment",
+                  "cfg-mgmt/deploy/config-editor",
+                  "cfg-mgmt/deploy/staging-area"
+                ]
+              },
+              {
+                "group": "Audit configs",
+                "pages": [
+                  "cfg-mgmt/audit/device-history",
+                  "cfg-mgmt/audit/compare-devices"
                 ]
               }
             ]
-
           },
           {
             "group": "Data Uploads",
             "pages": [
-              {
-                "group": "Quick start",
-                "pages": [
-                  "data-uploads/quick-start/overview",
-                  "data-uploads/quick-start/create-release",
-                  "data-uploads/quick-start/provision-device",
-                  "data-uploads/quick-start/deploy-configs"
-                ]
-              },
               {
                 "group": "Upload rules",
                 "pages": [
@@ -138,7 +135,9 @@
                   "data-uploads/buckets/aws"
                 ]
               },
-              "data-uploads/uploads"
+              "data-uploads/uploads",
+              "data-uploads/releasing-upload-rules",
+              "data-uploads/audit-uploads"
             ]
           },
           {
