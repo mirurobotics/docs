@@ -6,18 +6,16 @@ import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
 
 An S3 bucket is authenticated by **assuming a cross-account IAM role** (STS
 AssumeRole) — there are **no access keys**. You create a role in your own AWS account
-whose trust policy allows Miru's account to assume it, gated by an external ID, and
-grant that role write access to your bucket. At upload time Miru assumes the role and
-mints a short-lived SigV4 presigned PUT URL. See
+whose trust policy allows Miru's integration role to assume it, gated by an external
+ID, and grant that role write access to your bucket. At upload time Miru assumes the
+role and vends the device **short-lived session credentials downscoped to a single
+object key**; the device uploads directly with the native S3 SDK. See
 [Connecting your bucket](#connecting-your-bucket) for the click-by-click setup.
 
 ## Properties
 
-<ParamField path="bucket_name" type="string" required>
-  <ImmutableBadge />
-
-  The name of the S3 bucket that uploads are written to.
-</ParamField>
+The top-level bucket [`name`](/data-uploads/buckets/overview#properties) is the name
+of the S3 bucket itself. The AWS-specific `config` adds:
 
 <ParamField path="region" type="string" required>
   <ImmutableBadge />
@@ -30,18 +28,19 @@ mints a short-lived SigV4 presigned PUT URL. See
 <ParamField path="role_arn" type="string" required>
   <ImmutableBadge />
 
-  ARN of the IAM role in your account that Miru assumes to mint presigned upload URLs.
-  Its trust policy must allow Miru's account with the external ID, and it must grant
-  `s3:PutObject` on the bucket.
+  ARN of the IAM role in your account that Miru assumes to broker uploads. Its trust
+  policy must allow Miru's integration role with the external ID, and it must grant
+  write access on the bucket.
 
   Example: `arn:aws:iam::123456789012:role/miru-uploader`
 </ParamField>
 
-<ParamField path="external_id" type="string" required>
+<ParamField path="external_id" type="string">
   <ImmutableBadge />
 
-  The external ID that must be present in the role's trust policy, guarding against the
-  confused-deputy problem.
+  The external ID that must be present in the role's trust policy, guarding against
+  the confused-deputy problem. **Issued by Miru** when you register the bucket — you
+  never supply it, you copy it into your trust policy.
 
   Example: `miru-a1b2c3d4`
 </ParamField>
@@ -54,18 +53,17 @@ your account:
 
 | Miru provides to you | You provide to Miru |
 | --- | --- |
-| Miru's AWS account ID (`<miru-aws-account-id>`) | The bucket name |
-| An external ID (`<external-id>`) | The bucket region |
-| | The IAM role ARN it may assume |
-| | The external ID (echoed back) |
+| Miru's integration role ARN (`<miru-integration-role-arn>`) | The bucket name |
+| An external ID, issued when you register the bucket | The bucket region |
+| | The IAM role ARN Miru may assume |
 
 There are **no access keys, passwords, or long-lived tokens** in this exchange — by
 design. Nothing you hand Miru can be replayed or exfiltrated to reach your data.
 
-The steps below are one-time setup in **your own AWS account**. Each gives the AWS
-Console path, the equivalent AWS CLI command, and literal policy JSON. Replace `<…>`
-placeholders with your own values; `<miru-aws-account-id>` and `<external-id>` are the
-values Miru gives you at registration.
+The steps below are one-time setup, mostly in **your own AWS account**. Each gives the
+AWS Console path, the equivalent AWS CLI command, and literal policy JSON. Replace
+`<…>` placeholders with your own values; `<miru-integration-role-arn>` is the value
+Miru gives you, and the external ID is issued when you register the bucket in step 4.
 
 <Steps>
   <Step title="Create or choose the S3 bucket">
@@ -87,13 +85,10 @@ values Miru gives you at registration.
     {/* TODO (screenshot): AWS Console, S3 → Create bucket, highlight the bucket name and AWS Region fields (or the target bucket row in the S3 buckets list if reusing one). */}
   </Step>
 
-  <Step title="Create a cross-account IAM role with the trust policy">
-    Create an IAM role whose **trust policy** allows **Miru's AWS account** as the
-    principal **and** requires the `external_id` via an `sts:ExternalId` condition. The
-    external ID is the guard against the
-    [confused-deputy](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html)
-    problem: even another tenant of the same Miru service cannot trick Miru into
-    assuming your role without presenting your specific external ID.
+  <Step title="Create a cross-account IAM role">
+    Create an IAM role whose **trust policy** allows **Miru's integration role** as
+    the principal. You will tighten this policy with the external ID in step 5, once
+    Miru has issued it.
 
     Console: **IAM → Roles → Create role → Custom trust policy**, and paste:
 
@@ -103,17 +98,12 @@ values Miru gives you at registration.
       "Statement": [
         {
           "Effect": "Allow",
-          "Principal": { "AWS": "arn:aws:iam::<miru-aws-account-id>:root" },
-          "Action": "sts:AssumeRole",
-          "Condition": {
-            "StringEquals": { "sts:ExternalId": "<external-id>" }
-          }
+          "Principal": { "AWS": "<miru-integration-role-arn>" },
+          "Action": "sts:AssumeRole"
         }
       ]
     }
     ```
-
-    {/* TODO (product): confirm the exact Miru principal (account root vs. a specific role/user ARN) and that sts:ExternalId is the only required trust condition. Not implemented in backend yet. */}
 
     CLI: save the JSON above as `trust-policy.json`, then:
 
@@ -127,15 +117,16 @@ values Miru gives you at registration.
     `role_arn`.
 
     <Frame>
-      ![IAM Create role page with a custom trust policy pasted in, showing the Miru principal and the sts:ExternalId condition](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/aws/trust-policy.png)
+      ![IAM Create role page with a custom trust policy pasted in, showing the Miru integration role principal](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/aws/trust-policy.png)
     </Frame>
-    {/* TODO (screenshot): AWS Console, IAM → Roles → Create role → Custom trust policy editor, highlight the Principal (Miru account) and the sts:ExternalId condition. */}
+    {/* TODO (screenshot): AWS Console, IAM → Roles → Create role → Custom trust policy editor, highlight the Principal (Miru's integration role ARN). */}
   </Step>
 
   <Step title="Grant the role write access to the bucket">
-    Attach a permissions policy granting **`s3:PutObject`** on the bucket — optionally
-    scoped to a key prefix so Miru can only ever write under it. Miru only ever
-    *creates* objects; it never needs read, delete, or list permissions.
+    Attach a permissions policy granting **`s3:PutObject`** and
+    **`s3:AbortMultipartUpload`** on the bucket — devices upload via native S3
+    multipart uploads, and the abort permission lets a failed multipart upload clean
+    up after itself. Miru never needs read, list, or delete permissions on your data.
 
     Console: **IAM → Roles → miru-uploader → Add permissions → Create inline policy →
     JSON**, and paste:
@@ -146,14 +137,25 @@ values Miru gives you at registration.
       "Statement": [
         {
           "Effect": "Allow",
-          "Action": "s3:PutObject",
+          "Action": [
+            "s3:PutObject",
+            "s3:AbortMultipartUpload"
+          ],
           "Resource": "arn:aws:s3:::<bucket-name>/*"
         }
       ]
     }
     ```
 
-    {/* TODO (product): confirm s3:PutObject is the only required action (no s3:PutObjectAcl or KMS kms:GenerateDataKey for SSE-KMS buckets) and the resource/key-prefix scoping. Not implemented in backend yet. */}
+    <Note>
+      [Verification](/data-uploads/buckets/overview#verify-a-bucket) writes a
+      zero-byte probe object under `.miru/probe/` and then attempts to delete it.
+      Cleanup is best-effort — verification succeeds without it — but if you want the
+      probe objects removed, also grant `s3:DeleteObject` on
+      `arn:aws:s3:::<bucket-name>/.miru/probe/*`.
+    </Note>
+
+    {/* TODO (product): confirm whether SSE-KMS buckets need an additional kms:GenerateDataKey grant for the role. */}
 
     CLI: save the JSON above as `put-policy.json`, then:
 
@@ -165,38 +167,91 @@ values Miru gives you at registration.
     ```
 
     <Frame>
-      ![IAM role inline policy editor showing the s3:PutObject permission scoped to the bucket](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/aws/put-object-policy.png)
+      ![IAM role inline policy editor showing the s3:PutObject and s3:AbortMultipartUpload permissions scoped to the bucket](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/aws/put-object-policy.png)
     </Frame>
-    {/* TODO (screenshot): AWS Console, IAM → role → Add permissions → Create inline policy → JSON editor, highlight the s3:PutObject action and the bucket Resource ARN. */}
+    {/* TODO (screenshot): AWS Console, IAM → role → Add permissions → Create inline policy → JSON editor, highlight the s3:PutObject and s3:AbortMultipartUpload actions and the bucket Resource ARN. */}
   </Step>
 
   <Step title="Register the bucket in Miru">
     From the **Buckets** page in Miru, select **New bucket**, choose **AWS**, and
     supply:
 
-    - `bucket_name` — the bucket from step 1
+    - `name` — the bucket from step 1
     - `region` — the bucket's region
     - `role_arn` — the role ARN from step 2
-    - `external_id` — the external ID Miru issued
 
-    Select **Create**, then run **Verify** to exercise the full AssumeRole and signing
-    chain.
+    Select **Create**. Miru issues the bucket's **external ID** and returns it —
+    copy it for the next step.
 
-    {/* TODO (product): confirm where registration surfaces — dashboard or CLI — and document the concrete flow here. */}
+    {/* TODO (product): confirm where registration surfaces — dashboard or CLI — and where the issued external ID is displayed. */}
 
     <Frame>
-      ![Miru New bucket form for the AWS provider with the four configuration fields](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/aws/register-bucket.png)
+      ![Miru New bucket form for the AWS provider showing the name, region, and role ARN fields and the issued external ID](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/aws/register-bucket.png)
     </Frame>
-    {/* TODO (screenshot): Miru dashboard, Buckets → New bucket form with provider set to AWS, highlight the bucket_name, region, role_arn, and external_id fields. */}
+    {/* TODO (screenshot): Miru dashboard, Buckets → New bucket form with provider set to AWS, highlight the name, region, and role_arn fields and the external_id Miru returns after creation. */}
+  </Step>
+
+  <Step title="Add the external ID to the trust policy">
+    Update the role's trust policy to **require the external ID Miru issued** via an
+    `sts:ExternalId` condition. The external ID is the guard against the
+    [confused-deputy](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html)
+    problem: even another tenant of the same Miru service cannot trick Miru into
+    assuming your role without presenting your specific external ID.
+
+    Console: **IAM → Roles → miru-uploader → Trust relationships → Edit trust
+    policy**, and replace with:
+
+    ```json
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": { "AWS": "<miru-integration-role-arn>" },
+          "Action": "sts:AssumeRole",
+          "Condition": {
+            "StringEquals": { "sts:ExternalId": "<external-id>" }
+          }
+        }
+      ]
+    }
+    ```
+
+    CLI: save the JSON above as `trust-policy.json`, then:
+
+    ```bash
+    aws iam update-assume-role-policy \
+      --role-name miru-uploader \
+      --policy-document file://trust-policy.json
+    ```
+
+    <Frame>
+      ![IAM trust policy editor showing the sts:ExternalId condition added to the Miru principal](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/aws/external-id-condition.png)
+    </Frame>
+    {/* TODO (screenshot): AWS Console, IAM → role → Trust relationships → Edit trust policy, highlight the sts:ExternalId condition value. */}
+  </Step>
+
+  <Step title="Verify the bucket">
+    Back in Miru, run **Verify** on the bucket to exercise the full AssumeRole chain
+    end to end. The bucket's [status](/data-uploads/buckets/overview#properties) flips
+    to `verified` on success, or `invalid` with the failure reason in
+    `verification_error`.
+
+    <Frame>
+      ![Miru bucket page showing the Verify action and a verified status](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/aws/verify-bucket.png)
+    </Frame>
+    {/* TODO (screenshot): Miru dashboard, bucket detail/menu with the Verify action and the resulting verified status badge. */}
   </Step>
 </Steps>
 
-### How a credential is minted at runtime
+### How device credentials are minted at runtime
 
 When a device requests an upload, the Miru control plane assumes your `role_arn` via
-**STS AssumeRole** (presenting the matching `external_id`), then uses the temporary
-credentials to mint a **SigV4 presigned PUT URL** scoped to a single object key. The
-device uses that URL to upload the file directly to your bucket over HTTPS.
+**STS AssumeRole** (presenting the matching `external_id`), and downscopes the
+resulting session to a **single object key** — one carrying the requesting device's
+own verified ID. The device receives those short-lived session credentials and drives
+a native **S3 multipart upload** directly to your bucket; if the credentials expire
+mid-upload, it requests fresh credentials for the same key and resumes.
 
 The control plane never receives a long-lived key, and the device never touches your
-AWS credentials — only the short-lived presigned URL.
+AWS account credentials — only a short-lived session scoped to creating one object.
