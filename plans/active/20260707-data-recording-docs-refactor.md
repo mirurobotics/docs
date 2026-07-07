@@ -26,7 +26,7 @@ The `docs/data-uploads/` section was drafted in June 2026 and has drifted from t
 - [x] Milestone 4: Uploads page and section overview rewrite (token-only flow, current properties)
 - [x] Milestone 5: Buckets group rewrite (overview, AWS, GCS)
 - [x] Milestone 6: Releasing upload rules rewrite (CLI YAML flow)
-- [ ] Milestone 7: Audit page content and final validation (preflight clean)
+- [x] Milestone 7: Audit page content and final validation (preflight clean)
 
 ## Surprises & Discoveries
 
@@ -60,7 +60,9 @@ The `docs/data-uploads/` section was drafted in June 2026 and has drifted from t
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+Completed 2026-07-07 in seven milestone commits on `feat/data-recording`. The section now mirrors cfg-mgmt's shape (collection page → rules group with manage → uploads → releasing → buckets group → audit group), every documented property/enum/step was re-verified against the openapi/backend/cli-private sources, and the stale presigned-URL story is fully replaced by the token-only downscoped-credentials flow. Validation: `./scripts/lint.sh`, `npm run test:lint`, and `./scripts/preflight.sh` all exit 0; orphan/link/content-grep checks return clean; docs.json's Data Uploads group matches the target block exactly (verified programmatically; `mint dev` browser check skipped in this environment).
+
+Notable deviations: none structural. Additions beyond the letter of the plan: an AWS "Verify the bucket" step and external-ID trust-policy step split (register must precede the external-ID condition, but the role must exist before registration, so the trust policy is created principal-only first and tightened after registration); `.miru/probe/` verification-probe cleanup guidance on both provider pages; `downscoped`/`downscopes` added to cspell. Follow-ups spawned/left as TODOs: CLI reference lacks `--upload-rule`/`--upload-rules` flags; upload-flow.svg and credential-mint.svg assets still depict the old signed-URL flow; the openapi spec's `{filename}` path examples and "presigned URL" enum wording contradict the backend and should be fixed upstream.
 
 ## Context and Orientation
 
