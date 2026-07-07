@@ -2,7 +2,7 @@
 title: "Overview"
 ---
 
-import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+import { ImmutableBadge, MutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
 import BucketDef from '/snippets/definitions/bucket.mdx';
 
 <BucketDef />
@@ -14,6 +14,16 @@ import BucketDef from '/snippets/definitions/bucket.mdx';
 </Info>
 
 ## Properties
+
+<ParamField path="name" type="string">
+  <ImmutableBadge />
+
+  The name of the cloud storage bucket that uploads are written to, unique within the
+  workspace. This is also how the bucket is referenced — [upload
+  rules](/data-uploads/upload-rules/destinations) point at a bucket by its name.
+
+  Example: `my-uploads-bucket`
+</ParamField>
 
 <ParamField path="provider" type="enum">
   <ImmutableBadge />
@@ -32,49 +42,80 @@ import BucketDef from '/snippets/definitions/bucket.mdx';
   [GCS](/data-uploads/buckets/gcs); for `aws`, see [AWS](/data-uploads/buckets/aws).
 </ParamField>
 
+<ParamField path="status" type="enum">
+  <MutableBadge />
+
+  The current status of the bucket's credentials, updated by
+  [verification](#verify-a-bucket).
+
+  - `pending` — the credentials have not been checked yet.
+  - `verified` — the credentials have been checked and are valid.
+  - `invalid` — the credentials have been checked and are invalid.
+</ParamField>
+
+<ParamField path="last_verified_at" type="datetime">
+  <MutableBadge /> <NullableBadge />
+
+  Timestamp of when the bucket's credentials were last successfully verified, or null
+  if it has never been verified.
+</ParamField>
+
+<ParamField path="verification_error" type="string">
+  <MutableBadge /> <NullableBadge />
+
+  Human-readable reason for the most recent verification failure, or null when the
+  bucket is unverified or verified.
+</ParamField>
+
+Buckets are **immutable** — there is no edit operation. To change a bucket's name or
+configuration, register a new bucket and point your upload rules at it.
+
 ## Device data isolation
 
 Isolation rests on a single requirement on the destination
 [path](/data-uploads/upload-rules/destinations): it must include the **device-identity
-token** (`{device_id}`) somewhere in the template. Where that token sits, and how you
-lay out the rest of the path, is entirely up to you.
+variable** (`{device_id}`) somewhere in the template. Where that variable sits, and how
+you lay out the rest of the path, is entirely up to you.
 
-When the control plane mints an upload URL, it fills that token with the ID of the
+When the control plane authorizes an upload, it fills that variable with the ID of the
 **authenticated device making the request** — a verified value, never something the
 rule author types in. So the resolved object key for any upload always carries the
 requesting device's own ID.
 
-That substitution is what makes isolation structural: because the device-ID segment
-comes from verified identity rather than user input, **a device can only ever be
-issued URLs for paths carrying its own ID.** A path bearing device A's ID is only
-mintable for device A; device B presents its own identity and gets its own ID
-substituted, never A's. No device can obtain a URL for another device's path —
-regardless of where the token sits or how the path is laid out, and with no per-rule
-policy to configure correctly or audit.
-
-The only thing Miru validates about the path is that the device-ID token is present.
-Everything else is yours.
+That substitution is what makes isolation structural: the credentials a device
+receives are scoped to that one resolved object key, so **a device can only ever be
+issued credentials for paths carrying its own ID.** A path bearing device A's ID is
+only mintable for device A; device B presents its own identity and gets its own ID
+substituted, never A's. No device can obtain credentials for another device's path —
+regardless of where the variable sits or how the path is laid out, and with no
+per-rule policy to configure correctly or audit.
 
 {/* TODO: add screenshots once the dashboard ships */}
 
 ## Register a bucket  {/* TODO: confirm required role/scope */}
 
-From the **Buckets** page, select **New bucket**. Choose the provider and supply that
-provider's configuration — for [GCS](/data-uploads/buckets/gcs), the Workload Identity
-Federation identifiers; for [AWS](/data-uploads/buckets/aws), the bucket name, region,
-IAM role ARN, and external ID. No keys or secrets are entered; only identifiers and
+From the **Buckets** page, select **New bucket**. Enter the bucket's `name` (the cloud
+bucket's own name), choose the provider, and supply that provider's configuration —
+for [GCS](/data-uploads/buckets/gcs), the Workload Identity Federation identifiers;
+for [AWS](/data-uploads/buckets/aws), the region and IAM role ARN (Miru issues the
+external ID for you). No keys or secrets are entered; only identifiers and
 configuration.
 
-Select **Create** to register the bucket. Upload rules reference it by ID (`bkt_…`)
-once it exists.
+Select **Create** to register the bucket. Upload rules reference it by name (or by its
+`bkt_…` ID) once it exists.
 
 ## Verify a bucket  {/* TODO: confirm required role/scope */}
 
-Verifying a bucket re-checks that Miru can still mint upload URLs against it. From the
-bucket's menu, select **Verify**. Miru exercises the full credential-minting chain end
-to end and signs a throwaway URL, so a failure points at the exact link in the chain
-that broke (a changed trust policy, a revoked grant, or a renamed bucket) rather than a
-generic credentials error.
+Verifying a bucket checks that Miru can still write to it. From the bucket's menu,
+select **Verify**. Miru exercises the full credential chain end to end — assuming
+roles, federating identities, and writing (then removing) a zero-byte probe object
+under `.miru/probe/` — so a failure points at the exact link in the chain that broke
+(a changed trust policy, a revoked grant, or a renamed bucket) rather than a generic
+credentials error.
+
+Verification updates the bucket's [`status`](#properties): `verified` on success
+(setting `last_verified_at`), or `invalid` on failure with the reason recorded in
+`verification_error`.
 
 Run a verification after registering a bucket, and any time you change the underlying
 cloud configuration.

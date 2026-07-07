@@ -24,7 +24,7 @@ The `docs/data-uploads/` section was drafted in June 2026 and has drifted from t
 - [x] Milestone 2: Upload collections page and definition snippets
 - [x] Milestone 3: Upload rules group rewrite (overview, sources, destinations, manage)
 - [x] Milestone 4: Uploads page and section overview rewrite (token-only flow, current properties)
-- [ ] Milestone 5: Buckets group rewrite (overview, AWS, GCS)
+- [x] Milestone 5: Buckets group rewrite (overview, AWS, GCS)
 - [ ] Milestone 6: Releasing upload rules rewrite (CLI YAML flow)
 - [ ] Milestone 7: Audit page content and final validation (preflight clean)
 
@@ -36,7 +36,10 @@ The `docs/data-uploads/` section was drafted in June 2026 and has drifted from t
 - Backend rule create is find-or-create *with join*: a dedup hit still appends the git-commit link if that commit isn't already linked, so re-releasing an identical rule from a new commit accrues provenance. Documented on manage.mdx.
 - The device-API POST /uploads create/dedup/credential-vending path and the agent-side upload scanner are not yet implemented in backend/agent main — the spec (openapi agent uploads.yaml) is the only source for the broker flow. Upload dedup is documented as "deduplicates by digest" at the level the spec states, without inventing a scope.
 - The old integrity guarantee ("verified byte-for-byte") had no verifiable implementation backing; softened to digest-recorded + unique-key + native-SDK chunking claims that follow from the API contract.
-- The upload-flow.svg asset still depicts the signed-URL flow; alt text updated and a design TODO left to refresh the asset (assets live outside this repo).
+- The upload-flow.svg asset still depicts the signed-URL flow; alt text updated and a design TODO left to refresh the asset (assets live outside this repo). Same for credential-mint.svg on the GCS page.
+- Bucket verification (`bktverify/probe.go`) writes a zero-byte probe object at `.miru/probe/<random>` and best-effort deletes it (failure only warns). Documented on both provider pages with an optional scoped-delete grant for cleanup.
+- The AWS trust-policy principal is Miru's *integration role* (verify chain assumes `GetPubS3ConnectorRoleARN` before the customer role), not the account root the old page guessed at — the old "confirm principal" TODO is resolved and the policy JSON now uses `<miru-integration-role-arn>`.
+- S3 IAM actions (plan item 15): the device vend path is spec-only so far; per the spec ("s3:PutObject plus the multipart actions") the policy documents `s3:PutObject` + `s3:AbortMultipartUpload` (multipart create/upload-part/complete authorize against PutObject; only abort needs its own action). SSE-KMS remains a product TODO.
 
 ## Decision Log
 

@@ -8,23 +8,21 @@ A GCS bucket is authenticated via **Workload Identity Federation (WIF)** — the
 native mechanism Google Cloud provides for letting an external identity act in your
 project *without* a service-account key. Miru presents its AWS identity to Google,
 Google checks it against a Workload Identity Pool you configure, and Miru impersonates
-a signing service account to mint short-lived V4-signed upload URLs. No
-service-account key is ever downloaded. See [Connecting your bucket](#connecting-your-bucket)
-for the click-by-click setup.
+an uploader service account to mint **short-lived access tokens downscoped to a single
+object**; the device uploads directly with that token. No service-account key is ever
+downloaded. See [Connecting your bucket](#connecting-your-bucket) for the
+click-by-click setup.
 
 ## Properties
+
+The top-level bucket [`name`](/data-uploads/buckets/overview#properties) is the name
+of the GCS bucket itself. The GCS-specific `config` adds:
 
 <ParamField path="project_id" type="string" required>
   <ImmutableBadge />
 
   The GCP project ID that owns the bucket and the Workload Identity Federation
   configuration.
-</ParamField>
-
-<ParamField path="bucket_name" type="string" required>
-  <ImmutableBadge />
-
-  The name of the GCS bucket that uploads are written to.
 </ParamField>
 
 <ParamField path="wip_provider" type="string" required>
@@ -39,8 +37,8 @@ for the click-by-click setup.
 <ParamField path="service_account_email" type="string" required>
   <ImmutableBadge />
 
-  The email of the GCP service account Miru impersonates to mint V4-signed upload
-  URLs.
+  The email of the GCP service account Miru impersonates to mint short-lived,
+  downscoped upload tokens.
 
   Example: `miru-uploader@my-gcp-project.iam.gserviceaccount.com`
 </ParamField>
@@ -55,7 +53,7 @@ exchanging **identifiers and configuration only**:
 | Miru's AWS account ID | Your GCP project ID |
 | Miru's IAM role ARN (`<miru-aws-role-arn>`) | The bucket name |
 | | The Workload Identity Pool provider resource name |
-| | The signing service account email |
+| | The uploader service account email |
 
 There are **no service-account keys, passwords, or long-lived tokens** in this list —
 by design. Nothing you hand Miru can be replayed or exfiltrated to reach your data.
@@ -117,7 +115,7 @@ you at registration.
     google.subject == '<miru-aws-role-arn>'
     ```
 
-    {/* TODO (product): confirm the exact attribute condition expression and which CEL attribute is matched (e.g. assertion.arn / attribute.aws_role / google.subject) and the precise assumed-role ARN string format. Not implemented in backend yet. */}
+    {/* TODO (product): confirm the exact attribute condition expression and which CEL attribute is matched (e.g. assertion.arn / attribute.aws_role / google.subject) and the precise assumed-role ARN string format. */}
 
     ```bash
     gcloud iam workload-identity-pools providers create-aws miru-provider \
@@ -137,8 +135,9 @@ you at registration.
     {/* TODO (screenshot): GCP Console, pool's Add Provider form, provider type AWS, highlight the AWS account ID field and the Attribute conditions box with the pinned role ARN. */}
   </Step>
 
-  <Step title="Create the signing service account">
-    Miru impersonates this service account to V4-sign upload URLs.
+  <Step title="Create the uploader service account">
+    Miru impersonates this service account to mint the downscoped tokens devices
+    upload with.
 
     Console: **IAM & Admin → Service Accounts → Create Service Account**. Name it (for
     example `miru-uploader`) and create. Its email becomes your
@@ -157,7 +156,7 @@ you at registration.
   </Step>
 
   <Step title="Let the service account create objects in the bucket">
-    Grant the signing service account permission to create objects on the bucket —
+    Grant the uploader service account permission to create objects on the bucket —
     optionally scoped with an IAM condition so it can only ever write under a key
     prefix.
 
@@ -171,24 +170,30 @@ you at registration.
       --role="roles/storage.objectCreator"
     ```
 
-    {/* TODO (product, blocking): confirm the exact bucket grant the signing SA needs — roles/storage.objectCreator vs. a narrower storage.objects.create custom role — once the control plane implements GCS signing. Not implemented in backend yet. */}
+    <Note>
+      [Verification](/data-uploads/buckets/overview#verify-a-bucket) writes a
+      zero-byte probe object under `.miru/probe/` and then attempts to delete it.
+      Cleanup is best-effort — verification succeeds without it — but if you want the
+      probe objects removed, also grant a delete-capable role scoped to the
+      `.miru/probe/` prefix with an IAM condition.
+    </Note>
 
     <Frame>
-      ![Bucket Permissions tab with Grant Access granting Storage Object Creator to the signing service account](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/grant-object-creator.png)
+      ![Bucket Permissions tab with Grant Access granting Storage Object Creator to the uploader service account](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/grant-object-creator.png)
     </Frame>
     {/* TODO (screenshot): GCP Console, bucket → Permissions → Grant Access dialog, highlight the principal (service account email) and the Storage Object Creator role selection. */}
   </Step>
 
   <Step title="Let Miru's federated principal impersonate the service account">
     Bind the **Service Account Token Creator** role
-    (`roles/iam.serviceAccountTokenCreator`) on the signing service account to the
+    (`roles/iam.serviceAccountTokenCreator`) on the uploader service account to the
     principal that represents Miru's pinned AWS role via the pool. This lets the
-    federated identity impersonate the signing account to call `signBlob` — and
+    federated identity mint short-lived access tokens as the uploader account — and
     nothing else.
 
-    Console: **Service Accounts → (the signing SA) → Permissions → Grant Access**. Set
-    the principal to the pool principal set and the role to **Service Account Token
-    Creator**.
+    Console: **Service Accounts → (the uploader SA) → Permissions → Grant Access**.
+    Set the principal to the pool principal set and the role to **Service Account
+    Token Creator**.
 
     ```bash
     gcloud iam service-accounts add-iam-policy-binding \
@@ -198,49 +203,66 @@ you at registration.
       --member="principalSet://iam.googleapis.com/projects/<project-number>/locations/global/workloadIdentityPools/miru-pool/*"
     ```
 
-    {/* TODO (product): confirm the exact principalSet selector — whole pool (`/*`) vs. a single subject (`/subject/<miru-aws-role-arn>`) — and that signBlob is the only required IAM permission on the SA. Not implemented in backend yet. */}
+    {/* TODO (product): confirm the exact principalSet selector — whole pool (`/*`) vs. a single subject (`/subject/<miru-aws-role-arn>`) — and that token creation is the only required IAM permission on the SA. */}
 
     <Frame>
       ![Service account Permissions tab granting Service Account Token Creator to the pool principal set](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/grant-token-creator.png)
     </Frame>
-    {/* TODO (screenshot): GCP Console, signing service account → Permissions → Grant Access dialog, highlight the principalSet member and the Service Account Token Creator role. */}
+    {/* TODO (screenshot): GCP Console, uploader service account → Permissions → Grant Access dialog, highlight the principalSet member and the Service Account Token Creator role. */}
   </Step>
 
   <Step title="Register the bucket in Miru">
     From the **Buckets** page in Miru, select **New bucket**, choose **GCS**, and
     supply:
 
+    - `name` — the bucket from step 1
     - `project_id` — your GCP project ID
-    - `bucket_name` — the bucket from step 1
     - `wip_provider` — the provider resource name from step 3
-    - `service_account_email` — the signing SA email from step 4
+    - `service_account_email` — the uploader SA email from step 4
 
-    Select **Create**, then run **Verify** to exercise the full signing chain.
+    Select **Create** to register the bucket.
 
     {/* TODO (product): confirm where registration surfaces — dashboard or CLI — and document the concrete flow here. */}
 
     <Frame>
-      ![Miru New bucket form for the GCS provider with the four configuration fields](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/register-bucket.png)
+      ![Miru New bucket form for the GCS provider with the four fields](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/register-bucket.png)
     </Frame>
-    {/* TODO (screenshot): Miru dashboard, Buckets → New bucket form with provider set to GCS, highlight the project_id, bucket_name, wip_provider, and service_account_email fields. */}
+    {/* TODO (screenshot): Miru dashboard, Buckets → New bucket form with provider set to GCS, highlight the name, project_id, wip_provider, and service_account_email fields. */}
+  </Step>
+
+  <Step title="Verify the bucket">
+    Run **Verify** on the bucket to exercise the full federation and impersonation
+    chain end to end. The bucket's
+    [status](/data-uploads/buckets/overview#properties) flips to `verified` on
+    success, or `invalid` with the failure reason in `verification_error`.
+
+    <Frame>
+      ![Miru bucket page showing the Verify action and a verified status](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/verify-bucket.png)
+    </Frame>
+    {/* TODO (screenshot): Miru dashboard, bucket detail/menu with the Verify action and the resulting verified status badge. */}
   </Step>
 </Steps>
 
-### How a credential is minted at runtime
+### How device credentials are minted at runtime
 
 When a device requests an upload, the Miru control plane performs this exchange with
-Google Cloud. The device is uninvolved.
+Google Cloud. The device only ever sees the final token.
 
 <img
   src="https://assets.mirurobotics.com/docs/v04/images/data-uploads/credential-mint.svg"
-  alt="Credential minting: the Miru control plane assumes its AWS role, presents that identity to Google STS (which checks it against your Workload Identity pool's attribute condition) for a short-lived federated token, then acts as your signing service account to mint a V4 signed URL. The chain is keyless — no service-account key is ever downloaded."
+  alt="Credential minting: the Miru control plane assumes its AWS role, presents that identity to Google STS (which checks it against your Workload Identity pool's attribute condition) for a short-lived federated token, impersonates your uploader service account, and downscopes the resulting access token to a single object. The chain is keyless — no service-account key is ever downloaded."
 />
+{/* TODO (design): refresh credential-mint.svg — it still depicts V4 signed URLs; the final step now downscopes an access token with a Credential Access Boundary instead of signing a URL. */}
 
 1. The Miru control plane assumes its **AWS role**.
 2. It presents that identity to **Google STS**, which checks it against your pool's
    attribute condition and returns a **short-lived federated Google token**.
-3. Using that token, the control plane impersonates your signing service account
-   (`signBlob`) to produce a **V4 signed URL**.
-4. The device uses the signed URL to upload directly to your bucket.
+3. Using that token, the control plane impersonates your uploader service account to
+   mint a short-lived access token, and **downscopes** it with a Credential Access
+   Boundary to creating **one specific object** — a key carrying the requesting
+   device's own verified ID.
+4. The device uses the downscoped token to drive a native **resumable upload**
+   directly to your bucket; if it expires mid-upload, the device requests a fresh
+   token for the same key and resumes.
 
 The chain is keyless end to end — no service-account key is ever downloaded.
