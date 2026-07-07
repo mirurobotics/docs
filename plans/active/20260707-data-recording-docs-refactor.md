@@ -21,7 +21,7 @@ The `docs/data-uploads/` section was drafted in June 2026 and has drifted from t
 ## Progress
 
 - [x] Milestone 1: Restructure section and navigation (delete orphans, move audit page, scaffold new pages, update docs.json)
-- [ ] Milestone 2: Upload collections page and definition snippets
+- [x] Milestone 2: Upload collections page and definition snippets
 - [ ] Milestone 3: Upload rules group rewrite (overview, sources, destinations, manage)
 - [ ] Milestone 4: Uploads page and section overview rewrite (token-only flow, current properties)
 - [ ] Milestone 5: Buckets group rewrite (overview, AWS, GCS)
@@ -30,7 +30,10 @@ The `docs/data-uploads/` section was drafted in June 2026 and has drifted from t
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds.)
+- The openapi spec's destination-path examples use `{filename}` (`logs/{device_id}/{filename}`), but backend validation (`destpath.go`) only supports `{file_name}` — the spec's own example would fail validation. Docs document `{file_name}` (backend wins). Worth an upstream spec fix.
+- The CLI find-or-creates upload collections by slug during `miru release create` (`uplcolls.Push`), naming them from the slug — collections rarely need manual creation. Documented on the upload-collections and releasing pages.
+- `miru release create` rejects two upload-rule files sharing a `collection_slug` (`LoadFromGit` duplicate check) — one rule file per collection per release. Documented on the releasing page.
+- Backend rule create is find-or-create *with join*: a dedup hit still appends the git-commit link if that commit isn't already linked, so re-releasing an identical rule from a new commit accrues provenance. Documented on manage.mdx.
 
 ## Decision Log
 
