@@ -23,7 +23,7 @@ The `docs/data-uploads/` section was drafted in June 2026 and has drifted from t
 - [x] Milestone 1: Restructure section and navigation (delete orphans, move audit page, scaffold new pages, update docs.json)
 - [x] Milestone 2: Upload collections page and definition snippets
 - [x] Milestone 3: Upload rules group rewrite (overview, sources, destinations, manage)
-- [ ] Milestone 4: Uploads page and section overview rewrite (token-only flow, current properties)
+- [x] Milestone 4: Uploads page and section overview rewrite (token-only flow, current properties)
 - [ ] Milestone 5: Buckets group rewrite (overview, AWS, GCS)
 - [ ] Milestone 6: Releasing upload rules rewrite (CLI YAML flow)
 - [ ] Milestone 7: Audit page content and final validation (preflight clean)
@@ -34,6 +34,9 @@ The `docs/data-uploads/` section was drafted in June 2026 and has drifted from t
 - The CLI find-or-creates upload collections by slug during `miru release create` (`uplcolls.Push`), naming them from the slug — collections rarely need manual creation. Documented on the upload-collections and releasing pages.
 - `miru release create` rejects two upload-rule files sharing a `collection_slug` (`LoadFromGit` duplicate check) — one rule file per collection per release. Documented on the releasing page.
 - Backend rule create is find-or-create *with join*: a dedup hit still appends the git-commit link if that commit isn't already linked, so re-releasing an identical rule from a new commit accrues provenance. Documented on manage.mdx.
+- The device-API POST /uploads create/dedup/credential-vending path and the agent-side upload scanner are not yet implemented in backend/agent main — the spec (openapi agent uploads.yaml) is the only source for the broker flow. Upload dedup is documented as "deduplicates by digest" at the level the spec states, without inventing a scope.
+- The old integrity guarantee ("verified byte-for-byte") had no verifiable implementation backing; softened to digest-recorded + unique-key + native-SDK chunking claims that follow from the API contract.
+- The upload-flow.svg asset still depicts the signed-URL flow; alt text updated and a design TODO left to refresh the asset (assets live outside this repo).
 
 ## Decision Log
 

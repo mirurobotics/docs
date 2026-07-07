@@ -2,7 +2,7 @@
 title: "Uploads"
 ---
 
-import { ImmutableBadge, MutableBadge } from '/snippets/components/field-badges.jsx';
+import { ImmutableBadge, MutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
 import UploadDef from '/snippets/definitions/upload.mdx';
 
 <UploadDef />
@@ -10,46 +10,84 @@ import UploadDef from '/snippets/definitions/upload.mdx';
 Once an [upload rule](/data-uploads/upload-rules/overview) is active on a device, the
 [Miru Agent](/developers/agent/overview) handles the rest: detecting when a matching
 file is finished, uploading it to your [bucket](/data-uploads/buckets/overview), and
-recording it with the provenance below.
+recording it in the ledger with the properties below.
 
 ## Properties
 
-<ParamField path="device" type="Device">
+<ParamField path="id" type="string">
   <ImmutableBadge />
 
-  The [device](/fundamentals/devices/overview) that produced the upload.
+  ID of the upload.
+
+  Example: `upl_123`
+</ParamField>
+
+<ParamField path="device_id" type="string">
+  <ImmutableBadge />
+
+  ID of the [device](/fundamentals/devices/overview) that produced the upload.
 
   Example: `dvc_123`
 </ParamField>
 
-<ParamField path="upload rule" type="Upload Rule">
+<ParamField path="upload_rule_id" type="string">
   <ImmutableBadge />
 
-  The [upload rule](/data-uploads/upload-rules/overview) that produced the upload.
+  ID of the [upload rule](/data-uploads/upload-rules/overview) that produced the
+  upload.
 
   Example: `upl_rule_123`
 </ParamField>
 
-<ParamField path="bucket" type="Bucket">
+<ParamField path="upload_collection_name" type="string">
   <ImmutableBadge />
 
-  The registered [bucket](/data-uploads/buckets/overview) the file was written to.
+  The name of the [upload collection](/data-uploads/upload-collections) the producing
+  rule belongs to.
+
+  Example: `Robot Logs`
+</ParamField>
+
+<ParamField path="source.file_path" type="string">
+  <ImmutableBadge />
+
+  Absolute path of the file on the device. Its basename renders the `{file_name}`
+  variable in the [destination path template](/data-uploads/upload-rules/destinations#path-template-variables).
+
+  Example: `/var/log/robot/robot.log`
+</ParamField>
+
+<ParamField path="source.file_modified_at" type="datetime">
+  <ImmutableBadge />
+
+  The file's last-modified time (mtime) on the device — roughly when writing finished.
+</ParamField>
+
+<ParamField path="destination.bucket_id" type="string">
+  <ImmutableBadge />
+
+  ID of the registered [bucket](/data-uploads/buckets/overview) the file was uploaded
+  to.
 
   Example: `bkt_123`
 </ParamField>
 
-<ParamField path="object_key" type="string">
+<ParamField path="destination.object_key" type="string">
   <ImmutableBadge />
 
-  The object path the file was written to in the destination bucket. Carries the
-  device's verified ID.
+  The object path the file was written to in the destination bucket. Rendered from the
+  rule's path template, it carries the device's verified ID.
+
+  Example: `logs/dvc_123/upl_123/robot.log`
 </ParamField>
 
 <ParamField path="digest" type="string">
   <ImmutableBadge />
 
-  The digest of the uploaded file. Used to verify integrity and to guarantee each file
-  is uploaded exactly once.
+  The digest of the uploaded file. Used to deduplicate uploads, so each file is
+  uploaded exactly once, and to verify integrity.
+
+  Example: `sha256:1234567890`
 </ParamField>
 
 <ParamField path="size" type="integer">
@@ -63,8 +101,8 @@ recording it with the provenance below.
 
   The lifecycle status of the upload in the ledger.
 
-  - `pending` — a presigned URL has been minted but the device has not started uploading.
-  - `uploading` — the device is uploading the file to the bucket.
+  - `pending` — the upload has been authorized and credentials vended, but the device
+    has not yet confirmed a durable write.
   - `uploaded` — the device confirmed a durable write to the bucket.
 </ParamField>
 
@@ -72,29 +110,64 @@ recording it with the provenance below.
   <ImmutableBadge />
 
   Whether the file was incomplete when collected (uploaded without a confirmed
-  finalization). Independent of `status`.
+  finalization). Independent of `status` — see
+  [completion detection](#completion-detection).
 </ParamField>
 
-<ParamField path="release" type="Release">
+<ParamField path="release_id" type="string">
   <ImmutableBadge />
 
-  The [release](/fundamentals/releases/overview) the device was on when the upload was
-  produced.
+  ID of the [release](/fundamentals/releases/overview) the device was on when the
+  upload was produced.
 
   Example: `rls_123`
 </ParamField>
 
-<ParamField path="uploading_at" type="datetime">
-  <MutableBadge />
+<ParamField path="deployment_id" type="string">
+  <ImmutableBadge />
 
-  Timestamp of when the device began uploading the file. Null until the upload starts.
+  ID of the [deployment](/fundamentals/deployments) that was active on the device when
+  the upload was produced.
+
+  Example: `dpl_123`
 </ParamField>
 
 <ParamField path="uploaded_at" type="datetime">
-  <MutableBadge />
+  <MutableBadge /> <NullableBadge />
 
   Timestamp of when the upload was durably confirmed. Null until the upload completes.
 </ParamField>
+
+<ParamField path="metadata" type="map<string, string>">
+  <ImmutableBadge />
+
+  Provenance the device stamps as cloud object metadata on the uploaded object (S3
+  `x-amz-meta-*` / GCS `x-goog-meta-*`) — see [object metadata](#object-metadata).
+  Returned on Device API responses only.
+</ParamField>
+
+Uploads also carry the standard `created_at`, `updated_at`, and `workspace_id`
+bookkeeping fields.
+
+## How an upload happens
+
+Devices never hold long-lived cloud credentials, and Miru never proxies your data.
+Each upload is brokered with short-lived, downscoped credentials:
+
+1. The Agent detects a completed file matching a rule and **requests an upload** from
+   the Miru control plane, sending the rule ID, file details, digest, and size.
+2. The control plane verifies the device's identity from its session token, records a
+   `pending` ledger entry, deduplicates by digest, and vends **short-lived downscoped
+   cloud credentials** scoped to exactly one object key — a key carrying that device's
+   own verified ID.
+3. The device uploads the file **directly to your bucket** with the native cloud SDK —
+   a multipart upload for S3, a resumable upload for GCS. If the credentials expire
+   mid-upload, the device requests fresh credentials for the same key and resumes.
+4. The device **confirms** the durable write; the ledger entry flips to `uploaded` and
+   `uploaded_at` is set.
+
+Your data moves straight from the device to your storage — only the upload request and
+the credential exchange touch Miru.
 
 ## Completion detection
 
@@ -105,8 +178,9 @@ Completion is determined with two complementary checks:
   verifies the trailing bytes that only exist once the writer has closed the file
   cleanly. For these formats, completion is guaranteed.
 - **Quiescence** — a file whose size and modification time have held steady for the
-  rule's [`stability_window`](/data-uploads/upload-rules/sources) is treated as ready.
-  This works for any file type, but it is a heuristic: "looks done," not "proven done."
+  rule's [`stability_window_secs`](/data-uploads/upload-rules/sources) is treated as
+  ready. This works for any file type, but it is a heuristic: "looks done," not
+  "proven done."
 
 If you would rather not rely on detection at all, you can **defer completion to the
 file producer**: have it write to a temporary name and rename on completion (or drop a
@@ -117,44 +191,45 @@ A file that goes quiet but was never closed cleanly is still uploaded, but flagg
 
 ## Guarantees
 
-The following properties are guaranteed by the Miru Agent.
+The following properties are guaranteed by the upload flow.
 
 **Correctness**
 
-- **Exactly one copy.** Each file is uploaded once, keyed on its
-  [`digest`](#properties).
-- **Integrity.** Every object is verified to match its source byte-for-byte.
+- **Exactly one copy.** The ledger deduplicates by [`digest`](#properties), so each
+  file is uploaded exactly once.
+- **Unique keys.** Every object key contains the [upload's ID](#properties), so an
+  upload can never overwrite another object.
 - **Atomic visibility.** An object appears in your bucket only when fully written; a
   partial or in-flight upload is never visible to anything reading the bucket.
 
 **Safety**
 
-- **Non-destructive.** Miru only ever *creates* new objects. The signing identity
-  cannot modify or delete existing data.
-- **Durable before acknowledged.** A file is recorded as
-  [`uploaded`](#properties) only after the bucket confirms a durable write.
+- **Non-destructive.** The credentials a device receives only allow *creating* one
+  specific object — they cannot read, list, modify, or delete anything else in your
+  bucket.
+- **Durable before acknowledged.** A file is recorded as [`uploaded`](#properties)
+  only after the device confirms a durable write to the bucket.
 
 **Delivery**
 
-- **Resumable.** Uploads are chunked and resume where they left off across poor
-  network conditions.
+- **Resumable.** Uploads are chunked (S3 multipart / GCS resumable) and resume where
+  they left off across poor network conditions; expired credentials are re-vended
+  mid-upload without restarting.
 
-## Provenance
+## Object metadata
 
-The properties above are also stamped onto each object as storage metadata, so every
-file is self-describing in your bucket and can be correlated back to exactly what
-produced it — the device, rule, and release — without parsing the path.
+Each uploaded object is stamped with the upload's provenance as cloud object metadata
+(S3 `x-amz-meta-*` / GCS `x-goog-meta-*`), so every file is self-describing in your
+bucket and can be correlated back to exactly what produced it without parsing the
+path.
 
-{/* TODO (product): confirm whether a device upload request appears in the Device API / events stream, and cross-link to /developers/device-api/events if so. */}
+The metadata is a generic map of string keys to string values. The keys currently
+stamped include `device_id`, `release_id`, `release_version`, `deployment_id`,
+`digest`, and `file_modified_at`, but the set may evolve. The map stays within the
+cloud provider's object-metadata size limits (roughly 2 KB on S3, 8 KB on GCS).
 
-{/* TODO: add screenshots once the dashboard ships */}
-
-## Viewing uploads  {/* TODO: confirm required role/scope */}
+## Viewing uploads
 
 Uploads are records the [Miru Agent](/developers/agent/overview) produces — you don't
-create or edit them by hand. From the **Uploads** view you can browse the ledger and
-open any upload to inspect its [properties](#properties): the device, rule, and
-release that produced it, its `object_key`, `digest`, `size`, lifecycle
-[`status`](#properties), and whether it was flagged [`incomplete`](#completion-detection).
-
-{/* TODO (product): confirm the exact uploads listing/inspection surface (dashboard view, filters) once the flow is finalized — no user-facing list/get upload endpoint is defined in the API yet. */}
+create or edit them by hand. To browse the ledger and inspect individual uploads, see
+[Upload history](/data-uploads/audit/upload-history).
