@@ -20,7 +20,7 @@ The `docs/data-uploads/` section was drafted in June 2026 and has drifted from t
 
 ## Progress
 
-- [ ] Milestone 1: Restructure section and navigation (delete orphans, move audit page, scaffold new pages, update docs.json)
+- [x] Milestone 1: Restructure section and navigation (delete orphans, move audit page, scaffold new pages, update docs.json)
 - [ ] Milestone 2: Upload collections page and definition snippets
 - [ ] Milestone 3: Upload rules group rewrite (overview, sources, destinations, manage)
 - [ ] Milestone 4: Uploads page and section overview rewrite (token-only flow, current properties)

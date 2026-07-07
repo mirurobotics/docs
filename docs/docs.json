@@ -119,14 +119,19 @@
           {
             "group": "Data Uploads",
             "pages": [
+              "data-uploads/overview",
+              "data-uploads/upload-collections",
               {
                 "group": "Upload rules",
                 "pages": [
                   "data-uploads/upload-rules/overview",
                   "data-uploads/upload-rules/sources",
-                  "data-uploads/upload-rules/destinations"
+                  "data-uploads/upload-rules/destinations",
+                  "data-uploads/upload-rules/manage"
                 ]
               },
+              "data-uploads/uploads",
+              "data-uploads/releasing-upload-rules",
               {
                 "group": "Buckets",
                 "pages": [
@@ -135,9 +140,12 @@
                   "data-uploads/buckets/aws"
                 ]
               },
-              "data-uploads/uploads",
-              "data-uploads/releasing-upload-rules",
-              "data-uploads/audit-uploads"
+              {
+                "group": "Audit uploads",
+                "pages": [
+                  "data-uploads/audit/upload-history"
+                ]
+              }
             ]
           },
           {
