@@ -2,66 +2,80 @@
 title: "Overview"
 ---
 
+import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
 import UploadRuleDef from '/snippets/definitions/upload-rule.mdx';
 
 <UploadRuleDef />
 
 A rule has two parts — a `source` (what to collect on the device) and a `destination`
-(where it goes in your bucket):
+(where it goes in your bucket) — and belongs to an
+[upload collection](/data-uploads/upload-collections) that gives its data stream a
+stable identity. As a [rule file](/data-uploads/releasing-upload-rules):
 
 ```yaml
+collection_slug: robot-logs             # the collection this rule belongs to
+
 source:
-  glob: "/var/log/robot/*.log"        # absolute glob (must start with /)
-  poll_interval: 60s                  # how often the agent checks for eligible files
-  stability_window: 60s               # quiescence before a file is considered finished
+  glob: "/var/log/robot/*.log"          # absolute glob (must start with /)
+  stability_window_secs: 60             # quiescence before a file is considered finished
 
 destination:
-  bucket_id: bkt_123                  # a registered bucket
-  path: "logs/{device_id}/{filename}" # object-path template; must include {device_id}
-  delete_policy: never                # never | after_upload
+  bucket: my-uploads-bucket             # a registered bucket, referenced by name
+  path: "logs/{device_id}/{upload_id}/{file_name}"  # object-path template
+  delete_policy: never                  # never | after_upload
 ```
 
 ## Properties
 
+<ParamField path="upload_collection_id" type="string">
+  <ImmutableBadge />
+
+  ID of the [upload collection](/data-uploads/upload-collections) this rule belongs to
+  (`upl_col_…`). In rule files, the collection is referenced by its `collection_slug`
+  instead.
+</ParamField>
+
+<ParamField path="digest" type="string">
+  <ImmutableBadge />
+
+  A hash of the rule's resolved definition — its collection, source, and destination.
+  Upload rules are deduplicated by digest within their collection: creating a rule
+  identical to an existing one returns the existing rule instead of a duplicate.
+
+  Example: `sha256:1234567890`
+</ParamField>
+
 <ParamField path="source" type="Source">
-  Where data is collected on the device. See
+  <ImmutableBadge />
+
+  What to collect on the device: the file glob and the completion settings. See
   [Sources](/data-uploads/upload-rules/sources).
 </ParamField>
 
 <ParamField path="destination" type="Destination">
-  Where collected data is written, and how the local copy is handled. See
+  <ImmutableBadge />
+
+  Where collected files are written — the target bucket and object-path template —
+  and how the local copy is handled. See
   [Destinations](/data-uploads/upload-rules/destinations).
 </ParamField>
 
 ## Immutability and releases
 
-Upload rules are **immutable** and deduplicated by digest — defining an identical rule
-reuses the existing one rather than creating a duplicate. A rule is created once, then
-included in a [release](/fundamentals/releases/overview) by ID and shipped to devices as part
-of that release.
+Upload rules are **immutable**. A rule is created once, shipped to devices as part of
+a [release](/fundamentals/releases/overview), and never edited in place — to change
+what is collected, you release a revised rule and the old one simply stops being
+referenced. Defining what data leaves your devices is therefore the same kind of
+versioned, reviewable, staged operation as defining anything else you ship.
 
-Defining what data leaves your devices is therefore the same kind of versioned,
-reviewable, staged operation as defining anything else you ship.
+Because rules are deduplicated by digest within their collection, releasing the same
+rule definition twice never creates a duplicate — the release simply references the
+existing rule.
 
-{/* TODO: add screenshots once the dashboard ships */}
+## Git provenance
 
-## Create an upload rule  {/* TODO: confirm required role/scope */}
-
-From the **Upload Rules** area, select **New upload rule**. Define its
-[`source`](/data-uploads/upload-rules/sources) (the glob and completion settings) and
-its [`destination`](/data-uploads/upload-rules/destinations) (the target `bucket_id`,
-the `path` template, and the `delete_policy`), then create it.
-
-Because rules are deduplicated by digest, creating a rule identical to an existing one
-returns that existing rule rather than a duplicate. Once created, attach the rule to a
-[release](/fundamentals/releases/overview) by its ID to ship it to devices.
-
-{/* TODO (product): document the exact authoring surface for creating a rule and attaching it to a release (CLI command, dashboard, or Platform API) once finalized. */}
-
-## Editing and deleting rules  {/* TODO: confirm required role/scope */}
-
-Upload rules **cannot be edited or deleted individually** — they are immutable by
-design. To change what a rule collects or where it goes, create a **new** rule with the
-updated definition and ship it in a new [release](/fundamentals/releases/overview). The
-release a device is on determines which rules are active, so retiring a rule is a matter
-of shipping a release that no longer includes it.
+Rules are defined as YAML files in your Git repository and created by
+[releasing them via the CLI](/data-uploads/releasing-upload-rules). Each rule records
+the Git commits it was released from — the commit and the rule file's path within the
+repository — so any rule in Miru can be traced back to the exact lines of YAML that
+defined it. See [Manage rules](/data-uploads/upload-rules/manage#git-commit-metadata).

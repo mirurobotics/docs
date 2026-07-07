@@ -8,17 +8,28 @@ handled. This is the rule's *destination configuration* — which registered
 is distinct from the [Buckets](/data-uploads/buckets/overview) pages, which describe how
 the storage itself is registered and connected.
 
-<ParamField path="bucket_id" type="string" required>
-  ID of a registered [bucket](/data-uploads/buckets/overview) (`bkt_…`) this rule
-  uploads to.
+## Properties
+
+<ParamField path="bucket_id" type="string">
+  ID of the registered [bucket](/data-uploads/buckets/overview) this rule uploads to
+  (`bkt_…`).
 </ParamField>
 
-<ParamField path="path" type="string" required>
-  The object-path template the collected file is written to. **Must contain
-  `{device_id}`** so each device's uploads are namespaced under its own verified ID —
-  this is what guarantees
-  [device data isolation](/data-uploads/buckets/overview#device-data-isolation). Where
-  the token sits and how you lay out the rest of the path is up to you.
+<ParamField path="bucket_name" type="string">
+  Name of the registered bucket this rule uploads to. When creating a rule — including
+  in [rule files](/data-uploads/releasing-upload-rules), where the field is
+  `destination.bucket` — the bucket can be referenced by either its ID or its name.
+
+  Example: `my-uploads-bucket`
+</ParamField>
+
+<ParamField path="path" type="string" default="{device_id}/{year}-{month}-{day}/{upload_id}/{file_name}">
+  The object-path template collected files are written to. Optional when creating a
+  rule — if omitted, the server fills in the default template above.
+
+  A custom template **must contain `{device_id}` and `{upload_id}`**, and may use any
+  of the [supported variables](#path-template-variables). Everything else about the
+  layout is up to you.
 </ParamField>
 
 <ParamField path="delete_policy" type="enum" default="never">
@@ -28,3 +39,28 @@ the storage itself is registered and connected.
     yourself.
   - `after_upload` — delete the local file once the upload is durably confirmed.
 </ParamField>
+
+## Path template variables
+
+The `path` template supports the following variables, filled in when each upload's
+object key is rendered:
+
+| Variable | Renders to |
+| --- | --- |
+| `{device_id}` | The uploading device's verified ID. **Required** — it namespaces every device's uploads under its own identity, which is what guarantees [device data isolation](/data-uploads/buckets/overview#device-data-isolation). |
+| `{upload_id}` | The [upload's](/data-uploads/uploads) ID. **Required** — it makes every rendered object key globally unique, so uploads can never overwrite one another. |
+| `{device_name}` | The device's name. |
+| `{file_name}` | The source file's basename (e.g. `robot.log`). |
+| `{year}` | The upload's creation year (e.g. `2026`). |
+| `{month}` | The upload's creation month. |
+| `{day}` | The upload's creation day. |
+| `{hour}` | The upload's creation hour. |
+| `{minute}` | The upload's creation minute. |
+
+Templates are validated when the rule is created:
+
+- `{device_id}` and `{upload_id}` must both be present; only the variables above are
+  supported.
+- The rendered path is a *relative* object key — no leading `/`, no empty segments
+  (`//` or a trailing `/`), and no `..` segments.
+- At most 1024 bytes, with no control characters.
