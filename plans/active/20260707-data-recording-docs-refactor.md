@@ -25,7 +25,7 @@ The `docs/data-uploads/` section was drafted in June 2026 and has drifted from t
 - [x] Milestone 3: Upload rules group rewrite (overview, sources, destinations, manage)
 - [x] Milestone 4: Uploads page and section overview rewrite (token-only flow, current properties)
 - [x] Milestone 5: Buckets group rewrite (overview, AWS, GCS)
-- [ ] Milestone 6: Releasing upload rules rewrite (CLI YAML flow)
+- [x] Milestone 6: Releasing upload rules rewrite (CLI YAML flow)
 - [ ] Milestone 7: Audit page content and final validation (preflight clean)
 
 ## Surprises & Discoveries
@@ -40,6 +40,8 @@ The `docs/data-uploads/` section was drafted in June 2026 and has drifted from t
 - Bucket verification (`bktverify/probe.go`) writes a zero-byte probe object at `.miru/probe/<random>` and best-effort deletes it (failure only warns). Documented on both provider pages with an optional scoped-delete grant for cleanup.
 - The AWS trust-policy principal is Miru's *integration role* (verify chain assumes `GetPubS3ConnectorRoleARN` before the customer role), not the account root the old page guessed at — the old "confirm principal" TODO is resolved and the policy JSON now uses `<miru-integration-role-arn>`.
 - S3 IAM actions (plan item 15): the device vend path is spec-only so far; per the spec ("s3:PutObject plus the multipart actions") the policy documents `s3:PutObject` + `s3:AbortMultipartUpload` (multipart create/upload-part/complete authorize against PutObject; only abort needs its own action). SSE-KMS remains a product TODO.
+- A release cannot contain only upload rules — `miru release create` errors without at least one schema (`NewNoSchemasProvided`). Listed as a prerequisite on the releasing page.
+- The CLI reference (`references/cli/release-create` + its flags snippet) doesn't document `--upload-rule`/`--upload-rules`; out of this plan's scope — flagged as a follow-up task.
 
 ## Decision Log
 
