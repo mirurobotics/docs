@@ -70,7 +70,6 @@
                 "group": "Releases",
                 "pages": [
                   "fundamentals/releases/overview",
-                  "fundamentals/releases/create",
                   "fundamentals/releases/manage"
                 ]
               },
