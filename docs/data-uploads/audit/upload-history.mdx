@@ -1,3 +1,52 @@
 ---
-title: "Audit uploads"
+title: "Upload history"
 ---
+
+Every file collected from your fleet is a ledger entry — an
+[upload](/data-uploads/uploads) recording what was collected, from which device, under
+which rule, and where it landed. Uploads are produced by the
+[Miru Agent](/developers/agent/overview); you never create or edit them by hand.
+
+{/* TODO: add screenshots once the dashboard ships */}
+
+## Browse the ledger  {/* TODO: confirm required role/scope */}
+
+The **Uploads** view lists every upload in the workspace, newest first. Narrow the
+list by:
+
+- **Device** — everything collected from one machine.
+- **Upload rule** — everything one rule has produced.
+- **Upload collection** — one stream of data (e.g. `Robot Logs`) across every rule
+  revision it has ever had.
+- **Status** — `pending` uploads that were authorized but never confirmed, or
+  `uploaded` files durably written to your bucket.
+
+## Inspect an upload
+
+Open an upload to see its full [properties](/data-uploads/uploads#properties): the
+source file path on the device, the destination bucket and object key, the digest and
+size, the release and deployment the device was on, and the lifecycle timestamps.
+
+Two flags deserve attention when auditing:
+
+- A [`status`](/data-uploads/uploads#properties) stuck at `pending` means credentials
+  were vended but the device never confirmed a durable write — the upload never
+  finished.
+- [`incomplete`](/data-uploads/uploads#properties) marks a file that was uploaded
+  without a confirmed finalization (it went quiet but was never closed cleanly).
+  Independent of `status`: an `uploaded` entry can still be `incomplete`. See
+  [completion detection](/data-uploads/uploads#completion-detection).
+
+## From an object back to its origin
+
+Auditing also works from the bucket side. Every object Miru writes is
+self-describing:
+
+- Its **object key** carries the producing device's verified ID and the upload's ID —
+  see [path templates](/data-uploads/upload-rules/destinations#path-template-variables).
+- Its **object metadata** (S3 `x-amz-meta-*` / GCS `x-goog-meta-*`) stamps the
+  provenance — device, release, deployment, digest — directly on the object. See
+  [object metadata](/data-uploads/uploads#object-metadata).
+
+Given any file in your bucket, you can correlate it back to the exact upload ledger
+entry, device, and release that produced it without parsing paths or guessing.
