@@ -69,7 +69,7 @@ Configurations are deployed to devices via the Miru Agent, a lightweight `system
 <ParamField path="current release" type="Release">
   <MutableBadge /> {' '} <NullableBadge />
 
-  The [release](/learn/releases/overview#properties) to which the device's current deployment belongs.
+  The [release](/fundamentals/releases/overview#properties) to which the device's current deployment belongs.
 
   If the device is `inactive` or `activating`, the current release id is `null`. If the device is `online` or `offline`, the current release may still be `null` if the device has no deployed config instances.
 
@@ -79,7 +79,7 @@ Configurations are deployed to devices via the Miru Agent, a lightweight `system
 <ParamField path="group" type="Group">
   <EditableBadge /> {' '} <NullableBadge />
 
-  The [group](/learn/groups/overview#properties) to which the device belongs. If the device's group is not set, the group id is `null`.
+  The [group](/fundamentals/groups/overview#properties) to which the device belongs. If the device's group is not set, the group id is `null`.
 
   Examples: `grp_123`
 </ParamField>
@@ -102,7 +102,7 @@ Devices begin in the `inactive` state. During the Miru Agent install process, de
 
 Once the Miru Agent has been provisioned on a device, the device remains `online` or `offline` for the remainder of its existence—devices don't transition back to `inactive` or `activating`.
 
-The only exception to this is when a device is [reprovisioned](/learn/devices/provision/reprovision). During reprovisioning, devices briefly enter the `activating` state before transitioning back to `online`.
+The only exception to this is when a device is [reprovisioned](/fundamentals/devices/provision/reprovision). During reprovisioning, devices briefly enter the `activating` state before transitioning back to `online`.
 
 To view a device's status, hover over its name on the Devices page.
 

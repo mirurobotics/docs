@@ -31,10 +31,10 @@ There are a variety of privileges which are only available to owners and adminis
 - Create a new API key
 - Delete an API key
 
-[Config types](/learn/config-types)
+[Config types](/cfg-mgmt/config-types)
 - Delete a config type
 
-[Groups](/learn/groups/overview)
+[Groups](/fundamentals/groups/overview)
 - Create a group
 - Update a group
 - Delete a group
@@ -49,7 +49,7 @@ There are a variety of privileges which are only available to owners and adminis
 - Suspend a member
 - Update another member's role
 
-[Releases](/learn/releases/manage)
+[Releases](/fundamentals/releases/manage)
 - Delete a release
 
 [Workspace](/admin/workspace)
@@ -62,7 +62,7 @@ While a user's type determines broad access and administrative capabilities, **r
 A member's roles are defined in two independent sources:
 
 - **Workspace roles** apply across the entire workspace
-- **Group roles** apply to a [group](/learn/groups/overview) and all of its subgroups
+- **Group roles** apply to a [group](/fundamentals/groups/overview) and all of its subgroups
 
 A member can hold any combination of both. Permissions are always **additive** — Miru allows an action if any of the member's roles permit it, and one role never removes access granted by another.
 
@@ -80,19 +80,19 @@ Viewer is the least privileged role there is. All roles implicitly include viewe
 
 The publisher role allows members to create and edit config types, schemas, and releases (all the resources needed to publish a release). The publisher role grants access to the following operations:
 
-[Config types](/learn/config-types)
+[Config types](/cfg-mgmt/config-types)
 
 - Create a config type
 - Edit a config type
 
-[Config schemas](/learn/schemas/manage)
+[Config schemas](/cfg-mgmt/schemas/manage)
 
 - Create a config schema
 
 Releases
 
-- [Create a release](/learn/releases/create)
-- [Duplicate a release](/learn/releases/manage#duplicate-a-release)
+- [Create a release](/cfg-mgmt/releasing-config-schemas)
+- [Duplicate a release](/fundamentals/releases/manage#duplicate-a-release)
 
 ### Shared roles
 
@@ -102,11 +102,11 @@ Below are the roles which are available at both the workspace and group levels. 
 
 The operator role allows members to deploy configurations to devices. The operator role grants access to the following operations:
 
-[Config editor](/learn/devices/config-editor)
+[Config editor](/cfg-mgmt/deploy/config-editor)
 
 - Deploy configurations to devices
 
-[Release staging area](/learn/releases/staging-area)
+[Release staging area](/cfg-mgmt/deploy/staging-area)
 
 - Stage a deployment
 - Patch a deployment
@@ -118,13 +118,13 @@ The operator role allows members to deploy configurations to devices. The operat
 
 The provisioner role allows members to create and activate devices. The provisioner role grants access to the following operations:
 
-[Manage devices](/learn/devices/manage)
+[Manage devices](/fundamentals/devices/manage)
 
 - Create a device
 - Edit a device
 - Delete a device
 
-[Provision devices](/learn/devices/provision/dashboard)
+[Provision devices](/fundamentals/devices/provision/dashboard)
 
 - Provision a device
 - Reprovision a device
@@ -137,18 +137,18 @@ Below are the roles which are only available at the group level. These roles can
 
 The group manager role allows members to manage the members in a group, the members' grants, and the group's subgroups. It includes everything the operator and provisioner roles can do, along with the following operations:
 
-[Groups](/learn/groups/overview)
+[Groups](/fundamentals/groups/overview)
 
 - Create a subgroup
 - Edit a group
 - Move a device
 - Delete a subgroup
 
-[Devices](/learn/devices/manage)
+[Devices](/fundamentals/devices/manage)
 
 - Move a device to a different group
 
-[Members](/learn/groups/members)
+[Members](/fundamentals/groups/members)
 
 - Add a group member
 - Edit group member permissions
