@@ -1,3 +1,82 @@
 ---
 title: "Upload collections"
 ---
+
+import { ImmutableBadge, EditableBadge } from '/snippets/components/field-badges.jsx';
+import UploadCollectionDef from '/snippets/definitions/upload-collection.mdx';
+
+<UploadCollectionDef />
+
+For example, a `Robot Logs` collection groups the rules that upload log files,
+while a `Crash Reports` collection groups the rules that upload crash dumps. When you
+change what a collection records — a new glob, a different destination — a new
+immutable [upload rule](/data-uploads/upload-rules/overview) is created under the same
+collection, so every [upload](/data-uploads/uploads) stays attributable to the same
+logical stream of data.
+
+## Properties
+
+<ParamField path="name" type="string">
+  <EditableBadge />
+
+  A human-readable display name that can contain most characters, such as spaces,
+  special characters, and punctuation.
+
+  Examples: `Robot Logs`, `Crash Reports`, `Camera Footage`
+</ParamField>
+
+<ParamField path="slug" type="string">
+  <ImmutableBadge />
+
+  A unique, code-friendly identifier for an upload collection.
+
+  Slugs are primarily used in code to reference upload collections in a human-readable
+  format. Most importantly, [upload rule files](/data-uploads/releasing-upload-rules)
+  reference their collection by its `collection_slug`.
+
+  Examples: `robot-logs`, `crash-reports`, `camera-footage`
+</ParamField>
+
+## Collections and rules
+
+Upload rules are immutable, so a collection is what gives a stream of data a stable
+identity over time:
+
+- Every upload rule belongs to exactly one collection, and rules are **deduplicated by
+  digest within their collection** — an identical rule in a different collection is a
+  distinct rule.
+- Every upload records the name of the collection its rule belongs to, so the ledger
+  can be [filtered by collection](/data-uploads/audit/upload-history) no matter how
+  many times the underlying rules have been revised.
+
+{/* TODO: add screenshots once the dashboard ships */}
+
+## Create an upload collection  {/* TODO: confirm required role/scope */}
+
+From the **Upload Collections** view, select **New upload collection**, fill in the
+`name` and `slug`, and create it.
+
+<Warning>
+  Upload collection slugs are immutable and cannot be modified after creation.
+</Warning>
+
+You rarely need to create collections by hand: when
+[releasing upload rules](/data-uploads/releasing-upload-rules), the CLI resolves each
+rule file's `collection_slug` and automatically creates any collection that does not
+exist yet.
+
+## Rename an upload collection  {/* TODO: confirm required role/scope */}
+
+A collection's `name` can be edited at any time — it is display-only. The `slug` (and
+therefore every `collection_slug` reference in your upload rule files) is immutable.
+
+## Archive an upload collection  {/* TODO: confirm required role/scope */}
+
+A collection can be **archived** when its data stream is no longer in active use.
+Archiving retires the collection without deleting it or its rules, and it can be
+**unarchived** later to bring it back.
+
+## Delete an upload collection  {/* TODO: confirm required role/scope */}
+
+Deleting an upload collection is irreversible. Once a collection is deleted, it cannot
+be recovered.
