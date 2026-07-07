@@ -80,7 +80,6 @@
           {
             "group": "Config Management",
             "pages": [
-
               "cfg-mgmt/config-types",
               {
                 "group": "Config schemas",
