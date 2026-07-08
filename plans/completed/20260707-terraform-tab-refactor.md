@@ -20,11 +20,12 @@ The two bucket-integration pages each have Console / CLI / Terraform tabs. Today
 
 - [x] Milestone 1: Rewrite the GCS Terraform tab; lint; commit. (2026-07-08: spliced replacement block verbatim from this plan; `terraform fmt -check` + `validate` passed on the extracted HCL before commit; lint clean.)
 - [x] Milestone 2: Rewrite the AWS Terraform tab; lint; commit. (2026-07-08: same splice-from-plan procedure; `terraform fmt -check` + `validate` passed on the extracted HCL before commit; lint clean.)
-- [ ] Validate drafted HCL with `terraform fmt`/`validate`; run `./scripts/preflight.sh` clean.
+- [x] Validate drafted HCL with `terraform fmt`/`validate`; run `./scripts/preflight.sh` clean. (2026-07-08: both extracted configs — `fmt -check` clean, `validate` "Success! The configuration is valid."; preflight exit 0, all sections pass.)
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds.)
+- None of substance. The sandbox had network access, so `terraform init` downloaded the hashicorp providers and full `validate` ran for both configs — the no-network fallback documented in Concrete Steps step 6 was not needed. Validation order deviated slightly from Concrete Steps: each config was validated *before* its milestone commit rather than after both, so no amends were ever needed.
+- To rule out transcription errors, the replacement `<Tab>` blocks were spliced into the MDX pages programmatically from this plan (strip four leading spaces) rather than retyped.
 
 ## Decision Log
 
@@ -50,7 +51,7 @@ The two bucket-integration pages each have Console / CLI / Terraform tabs. Today
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+Completed 2026-07-08 on `feat/data-recording` in two milestone commits (`53e121d` GCS, `dfec86b` AWS), exactly as planned. Both Terraform tabs are now complete variable-driven configs whose outputs mirror the registration form field for field (GCS: `name`, `project_id`, `wip_provider`, `service_account_email`; AWS: `name`, `region`, `role_arn` — verified mechanically against the register snippets, which are byte-identical to `main`). Both extracted configs passed `terraform fmt -check` and `terraform validate` (Terraform v1.14.x, real provider downloads); `./scripts/lint.sh` passed after each milestone and `./scripts/preflight.sh` exited 0 at the end. No deviations from the drafted HCL; no scope creep beyond the two `<Tab title="Terraform">` elements and their Steps prose.
 
 ## Context and Orientation
 
