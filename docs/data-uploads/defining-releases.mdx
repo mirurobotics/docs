@@ -18,7 +18,7 @@ via the CLI. You define each rule as a **YAML file** living in the same Git repo
 as your code, and `miru release create` pushes the rule files alongside your schemas.
 Defining what data leaves your fleet is versioned, reviewable, and traceable to a
 commit, and the CLI can run in a [CI pipeline](/developers/ci/overview) just like it
-does for [config schemas](/cfg-mgmt/releasing-config-schemas).
+does for [config schemas](/cfg-mgmt/defining-releases).
 
 ## Prerequisites
 
@@ -32,7 +32,7 @@ To release upload rules, the following prerequisites must be met:
    [bucket](/data-uploads/buckets/overview) by name, so the bucket must be registered
    first
 1. At least one config schema - a release must contain at least one
-   [config schema](/cfg-mgmt/releasing-config-schemas); upload rules ride along with
+   [config schema](/cfg-mgmt/defining-releases); upload rules ride along with
    it
 
 ## Upload rule files
@@ -94,7 +94,7 @@ is always safe.
 ## Git commit
 
 The CLI captures the same Git metadata for upload rules as it does for
-[config schemas](/cfg-mgmt/releasing-config-schemas#git-commit): the commit SHA, the
+[config schemas](/cfg-mgmt/defining-releases#git-commit): the commit SHA, the
 repository's origin URL, and each rule file's path relative to the repository root.
 Every rule permanently records the commits it was released from, so any rule in Miru
 traces back to the exact lines of YAML that defined it — see
@@ -151,7 +151,7 @@ Upload rules are passed to `miru release create` with two flags, alongside the u
 </Tabs>
 
 A single release carries both the upload rules and the
-[config schemas](/cfg-mgmt/releasing-config-schemas), so one versioned, staged change
+[config schemas](/cfg-mgmt/defining-releases), so one versioned, staged change
 defines what your fleet runs and what it collects.
 
 ## Shared release mechanics
@@ -159,6 +159,6 @@ defines what your fleet runs and what it collects.
 Versioning, the staging area, Git-metadata capture, and the full set of
 `release create` flags are common to every release, regardless of what it contains.
 See the [Releases](/fundamentals/releases/overview) overview and
-[Releasing config schemas](/cfg-mgmt/releasing-config-schemas) for the shared
+[Defining releases](/cfg-mgmt/defining-releases) for the shared
 workflow, or the [CLI reference](/references/cli/release-create) for a concise command
 summary.
