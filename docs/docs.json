@@ -450,6 +450,118 @@
       "destination": "/developers/cli/install"
     },
     {
+      "source": "/getting-started/intro",
+      "destination": "/getting-started/welcome"
+    },
+    {
+      "source": "/getting-started/concepts",
+      "destination": "/fundamentals/devices/overview"
+    },
+    {
+      "source": "/learn/config-instances",
+      "destination": "/cfg-mgmt/config-instances"
+    },
+    {
+      "source": "/learn/config-types",
+      "destination": "/cfg-mgmt/config-types"
+    },
+    {
+      "source": "/learn/deployments",
+      "destination": "/fundamentals/deployments"
+    },
+    {
+      "source": "/learn/devices/compare",
+      "destination": "/cfg-mgmt/audit/compare-devices"
+    },
+    {
+      "source": "/learn/devices/config-editor",
+      "destination": "/cfg-mgmt/deploy/config-editor"
+    },
+    {
+      "source": "/learn/devices/deployment-history",
+      "destination": "/cfg-mgmt/audit/device-history"
+    },
+    {
+      "source": "/learn/devices/initial-deployment",
+      "destination": "/cfg-mgmt/deploy/initial-deployment"
+    },
+    {
+      "source": "/learn/devices/manage",
+      "destination": "/fundamentals/devices/manage"
+    },
+    {
+      "source": "/learn/devices/overview",
+      "destination": "/fundamentals/devices/overview"
+    },
+    {
+      "source": "/learn/devices/provision/dashboard",
+      "destination": "/fundamentals/devices/provision/dashboard"
+    },
+    {
+      "source": "/learn/devices/provision/overview",
+      "destination": "/fundamentals/devices/provision/overview"
+    },
+    {
+      "source": "/learn/devices/provision/provisioning-script",
+      "destination": "/fundamentals/devices/provision/provisioning-script"
+    },
+    {
+      "source": "/learn/devices/provision/provisioning-tokens",
+      "destination": "/fundamentals/devices/provision/provisioning-tokens"
+    },
+    {
+      "source": "/learn/devices/provision/reprovision",
+      "destination": "/fundamentals/devices/provision/reprovision"
+    },
+    {
+      "source": "/learn/groups/manage",
+      "destination": "/fundamentals/groups/manage"
+    },
+    {
+      "source": "/learn/groups/members",
+      "destination": "/fundamentals/groups/members"
+    },
+    {
+      "source": "/learn/groups/overview",
+      "destination": "/fundamentals/groups/overview"
+    },
+    {
+      "source": "/learn/releases/create",
+      "destination": "/cfg-mgmt/releasing-config-schemas"
+    },
+    {
+      "source": "/learn/releases/manage",
+      "destination": "/fundamentals/releases/manage"
+    },
+    {
+      "source": "/learn/releases/overview",
+      "destination": "/fundamentals/releases/overview"
+    },
+    {
+      "source": "/learn/releases/staging-area",
+      "destination": "/cfg-mgmt/deploy/staging-area"
+    },
+    {
+      "source": "/learn/schemas/languages/cue",
+      "destination": "/cfg-mgmt/schemas/languages/cue"
+    },
+    {
+      "source": "/learn/schemas/languages/jsonschema",
+      "destination": "/cfg-mgmt/schemas/languages/jsonschema"
+    },
+    {
+      "source": "/learn/schemas/languages/overview",
+      "destination": "/cfg-mgmt/schemas/languages/overview"
+    },
+    {
+      "source": "/learn/schemas/manage",
+      "destination": "/cfg-mgmt/schemas/manage"
+    },
+    {
+      "source": "/learn/schemas/overview",
+      "destination": "/cfg-mgmt/schemas/overview"
+    },
+    {
       "source": "/docs/:slug*",
       "destination": "/:slug*"
     }
