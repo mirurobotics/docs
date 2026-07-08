@@ -355,16 +355,54 @@ values; `<miru-aws-role-arn>` is the assumed-role ARN Miru gives you at registra
 
   <Tab title="Terraform">
     Terraform provisions the GCP-side resources only — registering the bucket in
-    Miru still happens in the dashboard.
+    Miru still happens in the dashboard: Miru does not publish a Terraform module
+    or provider today, so the config below is yours to paste and own.
 
     <Steps>
-      <Step title="Provision the GCP resources">
-        The config below creates everything the Console tab does: the bucket, the
-        uploader service account and its object-creation grant, the Workload
-        Identity Pool with an AWS provider pinned to Miru's role, and the
-        impersonation binding.
+      <Step title="Write and apply the Terraform config">
+        Save the config below in a new or existing workspace; it assumes an
+        authenticated `google` provider is already configured. It creates
+        everything the Console tab does: the bucket, the uploader service
+        account and its object-creation grant, the Workload Identity Pool with
+        an AWS provider pinned to Miru's role, and the impersonation binding.
+        The variables up top are the only knobs; the outputs at the bottom
+        match the Miru registration form field for field.
 
         ```hcl
+        variable "project_id" {
+          description = "GCP project ID that owns the bucket and the Workload Identity Federation resources"
+          type        = string
+        }
+
+        variable "bucket_name" {
+          description = "Name of the GCS bucket device uploads land in"
+          type        = string
+        }
+
+        variable "bucket_location" {
+          description = "Location of the bucket (region or multi-region)"
+          type        = string
+          default     = "US"
+        }
+
+        variable "pool_id" {
+          description = "ID for the Workload Identity Pool"
+          type        = string
+          default     = "miru-pool"
+        }
+
+        variable "provider_id" {
+          description = "ID for the pool's AWS provider"
+          type        = string
+          default     = "miru-provider"
+        }
+
+        variable "service_account_id" {
+          description = "Account ID for the uploader service account"
+          type        = string
+          default     = "miru-uploader"
+        }
+
         variable "miru_aws_account_id" {
           description = "Miru's AWS account ID (provided by Miru)"
           type        = string
@@ -376,18 +414,20 @@ values; `<miru-aws-role-arn>` is the assumed-role ARN Miru gives you at registra
         }
 
         resource "google_storage_bucket" "uploads" {
-          name                        = "<bucket-name>"
-          project                     = "<project-id>"
-          location                    = "<region>"
+          name                        = var.bucket_name
+          project                     = var.project_id
+          location                    = var.bucket_location
           uniform_bucket_level_access = true
         }
 
         resource "google_service_account" "miru_uploader" {
-          project      = "<project-id>"
-          account_id   = "miru-uploader"
+          project      = var.project_id
+          account_id   = var.service_account_id
           display_name = "Miru uploader"
         }
 
+        # Create-only: the uploader can write objects but never read, list,
+        # or delete your data.
         resource "google_storage_bucket_iam_member" "miru_uploader_creator" {
           bucket = google_storage_bucket.uploads.name
           role   = "roles/storage.objectCreator"
@@ -395,14 +435,17 @@ values; `<miru-aws-role-arn>` is the assumed-role ARN Miru gives you at registra
         }
 
         resource "google_iam_workload_identity_pool" "miru" {
-          project                   = "<project-id>"
-          workload_identity_pool_id = "miru-pool"
+          project                   = var.project_id
+          workload_identity_pool_id = var.pool_id
         }
 
+        # attribute.aws_role strips the per-session suffix from the
+        # assumed-role ARN; the attribute condition accepts only Miru's
+        # exact role.
         resource "google_iam_workload_identity_pool_provider" "miru_aws" {
-          project                            = "<project-id>"
+          project                            = var.project_id
           workload_identity_pool_id          = google_iam_workload_identity_pool.miru.workload_identity_pool_id
-          workload_identity_pool_provider_id = "miru-provider"
+          workload_identity_pool_provider_id = var.provider_id
 
           attribute_mapping = {
             "google.subject"     = "assertion.arn"
@@ -422,17 +465,40 @@ values; `<miru-aws-role-arn>` is the assumed-role ARN Miru gives you at registra
           member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.miru.name}/attribute.aws_role/${var.miru_aws_role_arn}"
         }
 
+        # The four fields the Miru registration form asks for, 1:1.
+        output "name" {
+          description = "Bucket name — the form's `name` field"
+          value       = google_storage_bucket.uploads.name
+        }
+
+        output "project_id" {
+          description = "GCP project ID — the form's `project_id` field"
+          value       = var.project_id
+        }
+
         output "wip_provider" {
-          value = google_iam_workload_identity_pool_provider.miru_aws.name
+          description = "Workload Identity Pool provider resource name — the form's `wip_provider` field"
+          value       = google_iam_workload_identity_pool_provider.miru_aws.name
         }
 
         output "service_account_email" {
-          value = google_service_account.miru_uploader.email
+          description = "Uploader service account email — the form's `service_account_email` field"
+          value       = google_service_account.miru_uploader.email
         }
         ```
 
-        Run `terraform init && terraform apply`. The outputs are the `wip_provider`
-        and `service_account_email` values you register in the next step.
+        Set the required variables in `terraform.tfvars`:
+
+        ```hcl
+        project_id          = "<project-id>"
+        bucket_name         = "<bucket-name>"
+        miru_aws_account_id = "<miru-aws-account-id>"
+        miru_aws_role_arn   = "<miru-aws-role-arn>"
+        ```
+
+        Then run `terraform init && terraform apply`. When it completes,
+        `terraform output` prints exactly the four values the registration
+        form asks for in the next step.
 
         <Note>
           [Verification](/data-uploads/buckets/manage#verify-a-bucket) writes a

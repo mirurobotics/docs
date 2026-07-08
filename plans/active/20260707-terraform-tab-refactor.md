@@ -18,7 +18,7 @@ The two bucket-integration pages each have Console / CLI / Terraform tabs. Today
 
 ## Progress
 
-- [ ] Milestone 1: Rewrite the GCS Terraform tab; lint; commit.
+- [x] Milestone 1: Rewrite the GCS Terraform tab; lint; commit. (2026-07-08: spliced replacement block verbatim from this plan; `terraform fmt -check` + `validate` passed on the extracted HCL before commit; lint clean.)
 - [ ] Milestone 2: Rewrite the AWS Terraform tab; lint; commit.
 - [ ] Validate drafted HCL with `terraform fmt`/`validate`; run `./scripts/preflight.sh` clean.
 
