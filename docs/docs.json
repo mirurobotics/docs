@@ -119,15 +119,7 @@
             "pages": [
               "data-uploads/overview",
               "data-uploads/upload-collections",
-              {
-                "group": "Upload rules",
-                "pages": [
-                  "data-uploads/upload-rules/overview",
-                  "data-uploads/upload-rules/sources",
-                  "data-uploads/upload-rules/destinations",
-                  "data-uploads/upload-rules/manage"
-                ]
-              },
+              "data-uploads/upload-rules",
               {
                 "group": "Buckets",
                 "pages": [
