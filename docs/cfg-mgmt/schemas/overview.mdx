@@ -200,3 +200,32 @@ $schema: "https://json-schema.org/draft/2020-12/schema"
 ```
 
 </CodeGroup>
+
+## Immutability and releases
+
+Config schemas are **immutable**. A schema is created once as part of a
+[release](/fundamentals/releases/overview) via the CLI and never edited in place — to
+change what a config type accepts, you release a revised schema file and the old
+schema simply stops being referenced. Defining what your devices accept is therefore
+the same kind of versioned, reviewable, staged operation as defining anything else
+you ship.
+
+Schemas are deduplicated by digest within their config type: releasing a schema whose
+*content* is equivalent to an existing one — comments, whitespace, and formatting
+ignored, per the [`digest`](#properties) property above — attaches the existing schema
+to the release instead of creating a duplicate, so re-releasing unchanged schema files
+is always safe.
+
+## Git provenance
+
+Schemas are defined as files in your Git repository and created by
+[releasing them via the CLI](/cfg-mgmt/defining-releases). Each schema records the
+Git commits it was released from — the commit itself and the schema file's paths
+relative to the repository root (a CUE package schema may span multiple files; a
+JSON Schema is a single file) — so any schema in Miru can be traced back to the exact
+lines that defined it. If the same schema content is released again from a later
+commit, the existing schema accrues a link to that commit too — the schema's commit
+history shows every commit that has shipped it. See
+[Git commit](/cfg-mgmt/defining-releases#git-commit) for the metadata the CLI
+captures, and the **Metadata** tab when
+[viewing a schema](/cfg-mgmt/schemas/manage#view-a-schema) for the commit history.
