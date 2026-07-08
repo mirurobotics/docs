@@ -1,0 +1,18 @@
+<Step title="Register the bucket in Miru">
+  From the **Buckets** page in the Miru dashboard, select **New bucket**, choose
+  **AWS**, and supply:
+
+  - `name` — the name of the S3 bucket
+  - `region` — the bucket's region
+  - `role_arn` — the role's ARN
+
+  Select **Create**. Miru issues the bucket's **external ID** and returns it —
+  copy it for the next step.
+
+  {/* TODO (product): confirm where the dashboard displays the issued external ID after creation. */}
+
+  <Frame>
+    ![Miru New bucket form for the AWS provider showing the name, region, and role ARN fields and the issued external ID](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/aws/register-bucket.png)
+  </Frame>
+  {/* TODO (screenshot): Miru dashboard, Buckets → New bucket form with provider set to AWS, highlight the name, region, and role_arn fields and the external_id Miru returns after creation. */}
+</Step>
