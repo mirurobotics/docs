@@ -7,7 +7,7 @@ import UploadDef from '/snippets/definitions/upload.mdx';
 
 <UploadDef />
 
-Once an [upload rule](/data-uploads/upload-rules/overview) is active on a device, the
+Once an [upload rule](/data-uploads/upload-rules) is active on a device, the
 [Miru Agent](/developers/agent/overview) handles the rest: detecting when a matching
 file is finished, uploading it to your [bucket](/data-uploads/buckets/overview), and
 recording it in the ledger with the properties below.
@@ -33,7 +33,7 @@ recording it in the ledger with the properties below.
 <ParamField path="upload_rule_id" type="string">
   <ImmutableBadge />
 
-  ID of the [upload rule](/data-uploads/upload-rules/overview) that produced the
+  ID of the [upload rule](/data-uploads/upload-rules) that produced the
   upload.
 
   Example: `upl_rule_123`
@@ -52,7 +52,7 @@ recording it in the ledger with the properties below.
   <ImmutableBadge />
 
   Absolute path of the file on the device. Its basename renders the `{file_name}`
-  variable in the [destination path template](/data-uploads/upload-rules/destinations#path-template-variables).
+  variable in the [destination path template](/data-uploads/upload-rules#path-templates).
 
   Example: `/var/log/robot/robot.log`
 </ParamField>
@@ -178,7 +178,7 @@ Completion is determined with two complementary checks:
   verifies the trailing bytes that only exist once the writer has closed the file
   cleanly. For these formats, completion is guaranteed.
 - **Quiescence** — a file whose size and modification time have held steady for the
-  rule's [`stability_window_secs`](/data-uploads/upload-rules/sources) is treated as
+  rule's [`stability_window_secs`](/data-uploads/upload-rules#sources) is treated as
   ready. This works for any file type, but it is a heuristic: "looks done," not
   "proven done."
 

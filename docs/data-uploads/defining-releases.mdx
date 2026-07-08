@@ -12,7 +12,7 @@ innerRadius="10px"
 outerRadius="12px"
 />
 
-[Upload rules](/data-uploads/upload-rules/overview) reach your devices the same way
+[Upload rules](/data-uploads/upload-rules) reach your devices the same way
 config schemas do — as part of a [release](/fundamentals/releases/overview) created
 via the CLI. You define each rule as a **YAML file** living in the same Git repository
 as your code, and `miru release create` pushes the rule files alongside your schemas.
@@ -62,12 +62,12 @@ destination:
 
 <ParamField path="source.glob" type="string" required>
   An absolute glob pattern (must start with `/`) selecting the files to upload. See
-  [Sources](/data-uploads/upload-rules/sources).
+  [Sources](/data-uploads/upload-rules#sources).
 </ParamField>
 
 <ParamField path="source.stability_window_secs" type="integer" default="60">
   How long, in seconds, a matching file must stay unchanged before it is considered
-  finished. See [Sources](/data-uploads/upload-rules/sources).
+  finished. See [Sources](/data-uploads/upload-rules#sources).
 </ParamField>
 
 <ParamField path="destination.bucket" type="string" required>
@@ -78,12 +78,12 @@ destination:
 <ParamField path="destination.path" type="string">
   The object-path template. Optional — omit it to use the server default. When
   provided, it must contain `{device_id}` and `{upload_id}`. See
-  [Destinations](/data-uploads/upload-rules/destinations).
+  [Destinations](/data-uploads/upload-rules#destinations).
 </ParamField>
 
 <ParamField path="destination.delete_policy" type="enum" default="never">
   When the device deletes the local source file after collecting it: `never` or
-  `after_upload`. See [Destinations](/data-uploads/upload-rules/destinations).
+  `after_upload`. See [Destinations](/data-uploads/upload-rules#destinations).
 </ParamField>
 
 Rules are identified by the digest of their resolved definition. Releasing a rule file
@@ -98,7 +98,7 @@ The CLI captures the same Git metadata for upload rules as it does for
 repository's origin URL, and each rule file's path relative to the repository root.
 Every rule permanently records the commits it was released from, so any rule in Miru
 traces back to the exact lines of YAML that defined it — see
-[Git commit metadata](/data-uploads/upload-rules/manage#git-commit-metadata).
+[Git provenance](/data-uploads/upload-rules#git-provenance).
 
 Git metadata is not optional: rule files must live in a local Git repository with a
 remote URL, and their latest changes must be committed (not dirty or unstaged), or the
