@@ -1,6 +1,5 @@
-A **config type** represents a logical grouping of parameters used by your robot's software. It consists of
+A **config type** is a named grouping of [config schemas](/cfg-mgmt/config-schemas) and their [config instances](/cfg-mgmt/config-instances).
 
-1. The config instances in its domain (the actual parameters deployed to devices)
-2. A versioned config schema, which defines the structure and constraints for those instances
+Every config instance and config schema belongs to exactly one config type. Config types gives the configurations in your fleet records a stable, human-readable identity (`Mobility`, `Perception`) that survives across the schemas and instances that come and go beneath it.
 
 For example, a `Mobility` config type houses configs related to the robot's motion while a `Perception` config type houses configs related to the robot's perception. Each config type has its own versioned schema, which its config instances must adhere to depending on the release they are deployed under.
