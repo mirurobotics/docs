@@ -6,8 +6,8 @@ Miru uploads data *off* your devices and into *your* cloud storage.
 
 You define a small set of [**upload rules**](/data-uploads/upload-rules) — what to
 collect, when it is considered finished, and where it goes. The
-[Miru Agent](/developers/agent/overview) detects matching data, confirms each file is
-complete, and uploads it directly to your bucket.
+[Miru Agent](/developers/agent/overview) detects matching data, waits for each file
+to finish, and uploads it directly to your bucket.
 
 ## How it works
 
@@ -17,7 +17,7 @@ complete, and uploads it directly to your bucket.
 />
 {/* TODO (design): refresh upload-flow.svg — it still depicts the old signed-URL flow; the current flow vends downscoped credentials used with the native cloud SDK. */}
 
-1. The device detects a completed file and makes an **upload request** to the Miru
+1. The device detects a finished file and makes an **upload request** to the Miru
    control plane.
 2. The control plane verifies the device's identity, records the upload in a ledger,
    and returns **short-lived, downscoped cloud credentials** valid for exactly one
