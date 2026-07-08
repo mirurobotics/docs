@@ -26,7 +26,7 @@ After this change, a reader of `docs.mirurobotics.com/data-uploads/buckets/integ
 
 - [x] Milestone 1: Rename Properties → Config on both integrate pages, anchored to the `config` field
 - [x] Milestone 2: GCS — tabbed Console/Terraform workflows + WIF corrections from infra
-- [ ] Milestone 3: AWS — tabbed Console/Terraform workflows with two-phase external-ID flow
+- [x] Milestone 3: AWS — tabbed Console/Terraform workflows with two-phase external-ID flow
 
 ## Surprises & Discoveries
 
@@ -35,9 +35,10 @@ After this change, a reader of `docs.mirurobotics.com/data-uploads/buckets/integ
   `.../gcs/grant-workload-identity-user.png` so the asset contract matches the
   corrected `roles/iam.workloadIdentityUser` grant (the screenshot is still a
   `TODO (screenshot)` — nothing deployed under either name yet).
-- `cspell` needed no new words for the Terraform tabs: camelCase/snake_case splitting
-  covers `workloadIdentityUser`, `startsWith`, and all HCL identifiers, and lint
-  passed with the `hcl` fence language untouched.
+- `cspell` needed only one new word for the Terraform tabs: `tfvars` (AWS tab's
+  `terraform.tfvars` reference). camelCase/snake_case splitting covers
+  `workloadIdentityUser`, `startsWith`, and all HCL identifiers, and the `hcl` fence
+  language needed no allowlisting.
 
 ## Decision Log
 
@@ -67,7 +68,19 @@ After this change, a reader of `docs.mirurobotics.com/data-uploads/buckets/integ
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+All three milestones landed as one signed commit each on `feat/data-recording`.
+Both integrate pages now open with a `## Config` section that mirrors
+`GcsBucketConfig`/`AwsBucketConfig` field-for-field (including the `provider`
+discriminator), and "Connecting your bucket" offers Console and Terraform tabs
+whose register/verify steps are shared via four snippets under
+`docs/snippets/data-uploads/buckets/`. The GCS page's two stale WIF
+`TODO (product)` comments were resolved against the working infra fixture
+(`startsWith` attribute condition + `attribute.aws_role` mapping;
+`roles/iam.workloadIdentityUser` on the principal set), and the AWS two-phase
+external-ID ordering is preserved in both tabs (Terraform via a `dynamic`
+condition block keyed on `miru_external_id`). No CLI tab was added — the CLI has
+no bucket commands. Only deviation of note: the pending impersonation screenshot
+placeholder URL was renamed to match the corrected role (see Surprises).
 
 ## Context and Orientation
 
