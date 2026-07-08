@@ -21,13 +21,13 @@ A reader of docs.mirurobotics.com can then follow any release- or upload-related
 
 ## Progress
 
-- [ ] Milestone 1: Fix defining-releases rename fallout (links, redirect, upload-history repointing)
+- [x] Milestone 1: Fix defining-releases rename fallout (links, redirect, upload-history repointing)
 - [ ] Milestone 2: Move AWS/GCS guides into an Integrate subgroup
 - [ ] Milestone 3: Add the buckets manage page and finish validation
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds.)
+- `docs/references/cli/release-create.mdx` had three stale links, not two as the inventory said: `/data-uploads/releasing-upload-rules` appeared twice (intro sentence and the closing "see also" sentence) plus one `/cfg-mgmt/releasing-config-schemas`. All three updated; the "[releasing upload rules]" display text became "[defining releases]".
 
 ## Decision Log
 

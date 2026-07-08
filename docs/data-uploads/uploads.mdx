@@ -228,8 +228,9 @@ stamped include `device_id`, `release_id`, `release_version`, `deployment_id`,
 `digest`, and `file_modified_at`, but the set may evolve. The map stays within the
 cloud provider's object-metadata size limits (roughly 2 KB on S3, 8 KB on GCS).
 
-## Viewing uploads
+## Viewing uploads  {/* TODO: confirm required role/scope */}
 
 Uploads are records the [Miru Agent](/developers/agent/overview) produces — you don't
-create or edit them by hand. To browse the ledger and inspect individual uploads, see
-[Upload history](/data-uploads/audit/upload-history).
+create or edit them by hand. The **Uploads** view lists every upload in the workspace,
+newest first. Narrow the list by **device**, **upload rule**, **upload collection**,
+or **status**, and open an upload to inspect its full [properties](#properties).

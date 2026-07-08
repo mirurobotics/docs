@@ -10,7 +10,7 @@ import UploadRuleDef from '/snippets/definitions/upload-rule.mdx';
 A rule has two parts — a `source` (what to collect on the device) and a `destination`
 (where it goes in your bucket) — and belongs to an
 [upload collection](/data-uploads/upload-collections) that gives its data stream a
-stable identity. As a [rule file](/data-uploads/releasing-upload-rules):
+stable identity. As a [rule file](/data-uploads/defining-releases):
 
 ```yaml
 collection_slug: robot-logs             # the collection this rule belongs to
@@ -75,7 +75,7 @@ existing rule.
 ## Git provenance
 
 Rules are defined as YAML files in your Git repository and created by
-[releasing them via the CLI](/data-uploads/releasing-upload-rules). Each rule records
+[releasing them via the CLI](/data-uploads/defining-releases). Each rule records
 the Git commits it was released from — the commit and the rule file's path within the
 repository — so any rule in Miru can be traced back to the exact lines of YAML that
 defined it. See [Manage rules](/data-uploads/upload-rules/manage#git-commit-metadata).

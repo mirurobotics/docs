@@ -31,7 +31,7 @@ logical stream of data.
   A unique, code-friendly identifier for an upload collection.
 
   Slugs are primarily used in code to reference upload collections in a human-readable
-  format. Most importantly, [upload rule files](/data-uploads/releasing-upload-rules)
+  format. Most importantly, [upload rule files](/data-uploads/defining-releases)
   reference their collection by its `collection_slug`.
 
   Examples: `robot-logs`, `crash-reports`, `camera-footage`
@@ -46,7 +46,7 @@ identity over time:
   digest within their collection** — an identical rule in a different collection is a
   distinct rule.
 - Every upload records the name of the collection its rule belongs to, so the ledger
-  can be [filtered by collection](/data-uploads/audit/upload-history) no matter how
+  can be [filtered by collection](/data-uploads/uploads#viewing-uploads) no matter how
   many times the underlying rules have been revised.
 
 {/* TODO: add screenshots once the dashboard ships */}
@@ -61,7 +61,7 @@ From the **Upload Collections** view, select **New upload collection**, fill in 
 </Warning>
 
 You rarely need to create collections by hand: when
-[releasing upload rules](/data-uploads/releasing-upload-rules), the CLI resolves each
+[defining a release](/data-uploads/defining-releases), the CLI resolves each
 rule file's `collection_slug` and automatically creates any collection that does not
 exist yet.
 

@@ -521,7 +521,7 @@
     },
     {
       "source": "/learn/releases/create",
-      "destination": "/cfg-mgmt/releasing-config-schemas"
+      "destination": "/cfg-mgmt/defining-releases"
     },
     {
       "source": "/learn/releases/manage",
