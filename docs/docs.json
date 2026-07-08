@@ -122,6 +122,7 @@
                 "group": "Buckets",
                 "pages": [
                   "data-uploads/buckets/overview",
+                  "data-uploads/buckets/manage",
                   {
                     "group": "Integrate",
                     "pages": [

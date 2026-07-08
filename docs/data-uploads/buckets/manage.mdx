@@ -1,0 +1,51 @@
+---
+title: "Manage buckets"
+---
+
+{/* TODO: add screenshots once the dashboard ships */}
+
+## Register a bucket  {/* TODO: confirm required role/scope */}
+
+From the **Buckets** page, select **New bucket**. Enter the bucket's `name` (the cloud
+bucket's own name), choose the provider, and supply that provider's configuration —
+for [GCS](/data-uploads/buckets/integrate/gcs), the Workload Identity Federation identifiers;
+for [AWS](/data-uploads/buckets/integrate/aws), the region and IAM role ARN (Miru issues the
+external ID for you). No keys or secrets are entered; only identifiers and
+configuration.
+
+Select **Create** to register the bucket. Upload rules reference it by name (or by its
+`bkt_…` ID) once it exists.
+
+## Verify a bucket  {/* TODO: confirm required role/scope */}
+
+Verifying a bucket checks that Miru can still write to it. From the bucket's menu,
+select **Verify**. Miru exercises the full credential chain end to end — assuming
+roles, federating identities, and writing (then removing) a zero-byte probe object
+under `.miru/probe/` — so a failure points at the exact link in the chain that broke
+(a changed trust policy, a revoked grant, or a renamed bucket) rather than a generic
+credentials error.
+
+Verification updates the bucket's [`status`](/data-uploads/buckets/overview#properties):
+`verified` on success (setting `last_verified_at`), or `invalid` on failure with the
+reason recorded in `verification_error`.
+
+Run a verification after registering a bucket, and any time you change the underlying
+cloud configuration.
+
+## Edit a bucket
+
+Buckets are **immutable** — there is no edit operation. To change a bucket's name or
+configuration, register a new bucket and point your upload rules at it.
+
+## Archive a bucket  {/* TODO: confirm required role/scope */}
+
+A bucket can be **archived** when it is no longer in active use. Archiving retires the
+bucket without deleting it, and it can be **unarchived** later to bring it back. From
+the bucket's menu, select **Archive** (or **Unarchive** on an archived bucket).
+
+## Delete a bucket  {/* TODO: confirm required role/scope */}
+
+Deleting a bucket removes its registration from Miru. From the bucket's menu, select
+**Delete** and confirm. This only removes the integration record — the underlying
+cloud storage and any objects already written to it are untouched, since Miru never
+holds keys to your data and only ever creates objects in it.
