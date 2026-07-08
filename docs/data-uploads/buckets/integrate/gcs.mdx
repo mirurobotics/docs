@@ -13,10 +13,19 @@ object**; the device uploads directly with that token. No service-account key is
 downloaded. See [Connecting your bucket](#connecting-your-bucket) for the
 click-by-click setup.
 
-## Properties
+## Config
 
-The top-level bucket [`name`](/data-uploads/buckets/overview#properties) is the name
-of the GCS bucket itself. The GCS-specific `config` adds:
+These are the fields of the bucket's
+[`config`](/data-uploads/buckets/overview#properties) property when the bucket's
+`provider` is `gcs`. The top-level bucket
+[`name`](/data-uploads/buckets/overview#properties) is the name of the GCS bucket
+itself; `config` carries everything provider-specific:
+
+<ParamField path="provider" type="string" required>
+  <ImmutableBadge />
+
+  The provider discriminator, always `gcs` for this shape.
+</ParamField>
 
 <ParamField path="project_id" type="string" required>
   <ImmutableBadge />

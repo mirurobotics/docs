@@ -24,7 +24,7 @@ After this change, a reader of `docs.mirurobotics.com/data-uploads/buckets/integ
 
 ## Progress
 
-- [ ] Milestone 1: Rename Properties → Config on both integrate pages, anchored to the `config` field
+- [x] Milestone 1: Rename Properties → Config on both integrate pages, anchored to the `config` field
 - [ ] Milestone 2: GCS — tabbed Console/Terraform workflows + WIF corrections from infra
 - [ ] Milestone 3: AWS — tabbed Console/Terraform workflows with two-phase external-ID flow
 
