@@ -25,12 +25,19 @@ After this change, a reader of `docs.mirurobotics.com/data-uploads/buckets/integ
 ## Progress
 
 - [x] Milestone 1: Rename Properties → Config on both integrate pages, anchored to the `config` field
-- [ ] Milestone 2: GCS — tabbed Console/Terraform workflows + WIF corrections from infra
+- [x] Milestone 2: GCS — tabbed Console/Terraform workflows + WIF corrections from infra
 - [ ] Milestone 3: AWS — tabbed Console/Terraform workflows with two-phase external-ID flow
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds. Findings from planning research are in Context.)
+- The GCS impersonation step's pending screenshot asset was named after the old role
+  (`.../gcs/grant-token-creator.png`). Renamed the placeholder URL to
+  `.../gcs/grant-workload-identity-user.png` so the asset contract matches the
+  corrected `roles/iam.workloadIdentityUser` grant (the screenshot is still a
+  `TODO (screenshot)` — nothing deployed under either name yet).
+- `cspell` needed no new words for the Terraform tabs: camelCase/snake_case splitting
+  covers `workloadIdentityUser`, `startsWith`, and all HCL identifiers, and lint
+  passed with the `hcl` fence language untouched.
 
 ## Decision Log
 

@@ -3,6 +3,8 @@ title: "Google Cloud Storage"
 ---
 
 import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+import RegisterGcs from '/snippets/data-uploads/buckets/register-gcs.mdx';
+import VerifyGcs from '/snippets/data-uploads/buckets/verify-gcs.mdx';
 
 A GCS bucket is authenticated via **Workload Identity Federation (WIF)** — the
 native mechanism Google Cloud provides for letting an external identity act in your
@@ -67,190 +69,273 @@ exchanging **identifiers and configuration only**:
 There are **no service-account keys, passwords, or long-lived tokens** in this list —
 by design. Nothing you hand Miru can be replayed or exfiltrated to reach your data.
 
-The steps below are one-time setup in **your own GCP project**. Each gives the GCP
-Console path and the equivalent `gcloud` command. Throughout, replace `<…>`
-placeholders with your own values; `<miru-aws-role-arn>` is the role ARN Miru gives
-you at registration.
+The setup below is one-time, in **your own GCP project**, and can be done two ways:
+the **Console** tab walks through the GCP Console click-by-click with the equivalent
+`gcloud` commands; the **Terraform** tab provisions the same resources as a single
+infrastructure-as-code config. Throughout, replace `<…>` placeholders with your own
+values; `<miru-aws-role-arn>` is the assumed-role ARN Miru gives you at registration
+(`arn:aws:sts::<miru-aws-account-id>:assumed-role/…`).
 
-<Steps>
-  <Step title="Create or choose the GCS bucket">
-    Pick (or create) the bucket uploads should land in. Note its **name** and the
-    **project** that owns it.
+<Tabs>
+  <Tab title="Console">
+    <Steps>
+      <Step title="Create or choose the GCS bucket">
+        Pick (or create) the bucket uploads should land in. Note its **name** and the
+        **project** that owns it.
 
-    Console: **Cloud Storage → Buckets → Create**. Pick a name, region, and storage
-    class, then create.
+        Console: **Cloud Storage → Buckets → Create**. Pick a name, region, and
+        storage class, then create.
 
-    ```bash
-    gcloud storage buckets create gs://<bucket-name> \
-      --project=<project-id> \
-      --location=<region>
-    ```
+        ```bash
+        gcloud storage buckets create gs://<bucket-name> \
+          --project=<project-id> \
+          --location=<region>
+        ```
 
-    <Frame>
-      ![Cloud Storage Buckets list with the Create button highlighted](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/create-bucket.png)
-    </Frame>
-    {/* TODO (screenshot): GCP Console, Cloud Storage → Buckets list, highlight the "Create" button (or the target bucket row if reusing an existing bucket). */}
-  </Step>
+        <Frame>
+          ![Cloud Storage Buckets list with the Create button highlighted](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/create-bucket.png)
+        </Frame>
+        {/* TODO (screenshot): GCP Console, Cloud Storage → Buckets list, highlight the "Create" button (or the target bucket row if reusing an existing bucket). */}
+      </Step>
 
-  <Step title="Create a Workload Identity Pool">
-    The pool is the container that holds the AWS provider Miru federates through.
+      <Step title="Create a Workload Identity Pool">
+        The pool is the container that holds the AWS provider Miru federates through.
 
-    Console: **IAM & Admin → Workload Identity Federation → Create Pool**. Give it a
-    name (for example `miru-pool`) and create it.
+        Console: **IAM & Admin → Workload Identity Federation → Create Pool**. Give
+        it a name (for example `miru-pool`) and create it.
 
-    ```bash
-    gcloud iam workload-identity-pools create miru-pool \
-      --project=<project-id> \
-      --location=global \
-      --display-name="Miru pool"
-    ```
+        ```bash
+        gcloud iam workload-identity-pools create miru-pool \
+          --project=<project-id> \
+          --location=global \
+          --display-name="Miru pool"
+        ```
 
-    <Frame>
-      ![Workload Identity Federation page with the Create Pool form open](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/create-pool.png)
-    </Frame>
-    {/* TODO (screenshot): GCP Console, IAM & Admin → Workload Identity Federation → Create Pool form, highlight the pool name field and the "Continue" button. */}
-  </Step>
+        <Frame>
+          ![Workload Identity Federation page with the Create Pool form open](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/create-pool.png)
+        </Frame>
+        {/* TODO (screenshot): GCP Console, IAM & Admin → Workload Identity Federation → Create Pool form, highlight the pool name field and the "Continue" button. */}
+      </Step>
 
-  <Step title="Add an AWS provider that pins Miru's role">
-    Add an **AWS** provider to the pool and set its **attribute condition** to accept
-    **only Miru's exact role**. This is the linchpin: a copy of the configuration is
-    useless to anyone who is not presenting Miru's specific AWS identity.
+      <Step title="Add an AWS provider that pins Miru's role">
+        Add an **AWS** provider to the pool. Set its **attribute mapping** so the
+        federated subject is the caller's ARN, plus an `attribute.aws_role` mapping
+        that strips the per-session suffix from the assumed-role ARN so the
+        impersonation binding can target the role itself:
 
-    Console: in the pool, **Add Provider → Provider type: AWS**, enter Miru's AWS
-    account ID, then under **Attribute conditions** add a condition pinning the
-    assumed-role ARN Miru gives you.
+        ```text
+        google.subject = assertion.arn
+        attribute.aws_role = assertion.arn.contains('assumed-role') ? assertion.arn.extract('{account_arn}assumed-role/') + 'assumed-role/' + assertion.arn.extract('assumed-role/{role_name}/') : assertion.arn
+        ```
 
-    ```text
-    google.subject == '<miru-aws-role-arn>'
-    ```
+        Then set its **attribute condition** to accept **only Miru's exact role**.
+        This is the linchpin: a copy of the configuration is useless to anyone who is
+        not presenting Miru's specific AWS identity. Miru presents an assumed-role
+        ARN that carries a per-session suffix, so pin the role with a prefix match
+        rather than an equality check:
 
-    {/* TODO (product): confirm the exact attribute condition expression and which CEL attribute is matched (e.g. assertion.arn / attribute.aws_role / google.subject) and the precise assumed-role ARN string format. */}
+        ```text
+        assertion.arn.startsWith('<miru-aws-role-arn>/')
+        ```
 
-    ```bash
-    gcloud iam workload-identity-pools providers create-aws miru-provider \
-      --project=<project-id> \
-      --location=global \
-      --workload-identity-pool=miru-pool \
-      --account-id=<miru-aws-account-id> \
-      --attribute-condition="google.subject == '<miru-aws-role-arn>'"
-    ```
+        Console: in the pool, **Add Provider → Provider type: AWS**, enter Miru's AWS
+        account ID, then set the attribute mapping and the attribute condition above.
 
-    The provider's full resource name is your `wip_provider` value:
-    `projects/<project-number>/locations/global/workloadIdentityPools/miru-pool/providers/miru-provider`.
+        ```bash
+        gcloud iam workload-identity-pools providers create-aws miru-provider \
+          --project=<project-id> \
+          --location=global \
+          --workload-identity-pool=miru-pool \
+          --account-id=<miru-aws-account-id> \
+          --attribute-mapping="google.subject=assertion.arn,attribute.aws_role=assertion.arn.contains('assumed-role') ? assertion.arn.extract('{account_arn}assumed-role/') + 'assumed-role/' + assertion.arn.extract('assumed-role/{role_name}/') : assertion.arn" \
+          --attribute-condition="assertion.arn.startsWith('<miru-aws-role-arn>/')"
+        ```
 
-    <Frame>
-      ![Add provider form with provider type AWS and the attribute condition pinning Miru's role](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/add-aws-provider.png)
-    </Frame>
-    {/* TODO (screenshot): GCP Console, pool's Add Provider form, provider type AWS, highlight the AWS account ID field and the Attribute conditions box with the pinned role ARN. */}
-  </Step>
+        The provider's full resource name is your `wip_provider` value:
+        `projects/<project-number>/locations/global/workloadIdentityPools/miru-pool/providers/miru-provider`.
 
-  <Step title="Create the uploader service account">
-    Miru impersonates this service account to mint the downscoped tokens devices
-    upload with.
+        <Frame>
+          ![Add provider form with provider type AWS and the attribute condition pinning Miru's role](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/add-aws-provider.png)
+        </Frame>
+        {/* TODO (screenshot): GCP Console, pool's Add Provider form, provider type AWS, highlight the AWS account ID field and the Attribute conditions box with the pinned role ARN. */}
+      </Step>
 
-    Console: **IAM & Admin → Service Accounts → Create Service Account**. Name it (for
-    example `miru-uploader`) and create. Its email becomes your
-    `service_account_email`.
+      <Step title="Create the uploader service account">
+        Miru impersonates this service account to mint the downscoped tokens devices
+        upload with.
 
-    ```bash
-    gcloud iam service-accounts create miru-uploader \
-      --project=<project-id> \
-      --display-name="Miru uploader"
-    ```
+        Console: **IAM & Admin → Service Accounts → Create Service Account**. Name it
+        (for example `miru-uploader`) and create. Its email becomes your
+        `service_account_email`.
 
-    <Frame>
-      ![Create Service Account form with the name miru-uploader](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/create-service-account.png)
-    </Frame>
-    {/* TODO (screenshot): GCP Console, IAM & Admin → Service Accounts → Create Service Account, highlight the service account name field and the generated email. */}
-  </Step>
+        ```bash
+        gcloud iam service-accounts create miru-uploader \
+          --project=<project-id> \
+          --display-name="Miru uploader"
+        ```
 
-  <Step title="Let the service account create objects in the bucket">
-    Grant the uploader service account permission to create objects on the bucket —
-    optionally scoped with an IAM condition so it can only ever write under a key
-    prefix.
+        <Frame>
+          ![Create Service Account form with the name miru-uploader](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/create-service-account.png)
+        </Frame>
+        {/* TODO (screenshot): GCP Console, IAM & Admin → Service Accounts → Create Service Account, highlight the service account name field and the generated email. */}
+      </Step>
 
-    Console: on the bucket, **Permissions → Grant Access**. Set the principal to the
-    service account email and the role to **Storage Object Creator**
-    (`roles/storage.objectCreator`).
+      <Step title="Let the service account create objects in the bucket">
+        Grant the uploader service account permission to create objects on the bucket
+        — optionally scoped with an IAM condition so it can only ever write under a
+        key prefix.
 
-    ```bash
-    gcloud storage buckets add-iam-policy-binding gs://<bucket-name> \
-      --member="serviceAccount:miru-uploader@<project-id>.iam.gserviceaccount.com" \
-      --role="roles/storage.objectCreator"
-    ```
+        Console: on the bucket, **Permissions → Grant Access**. Set the principal to
+        the service account email and the role to **Storage Object Creator**
+        (`roles/storage.objectCreator`).
 
-    <Note>
-      [Verification](/data-uploads/buckets/manage#verify-a-bucket) writes a
-      zero-byte probe object under `.miru/probe/` and then attempts to delete it.
-      Cleanup is best-effort — verification succeeds without it — but if you want the
-      probe objects removed, also grant a delete-capable role scoped to the
-      `.miru/probe/` prefix with an IAM condition.
-    </Note>
+        ```bash
+        gcloud storage buckets add-iam-policy-binding gs://<bucket-name> \
+          --member="serviceAccount:miru-uploader@<project-id>.iam.gserviceaccount.com" \
+          --role="roles/storage.objectCreator"
+        ```
 
-    <Frame>
-      ![Bucket Permissions tab with Grant Access granting Storage Object Creator to the uploader service account](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/grant-object-creator.png)
-    </Frame>
-    {/* TODO (screenshot): GCP Console, bucket → Permissions → Grant Access dialog, highlight the principal (service account email) and the Storage Object Creator role selection. */}
-  </Step>
+        <Note>
+          [Verification](/data-uploads/buckets/manage#verify-a-bucket) writes a
+          zero-byte probe object under `.miru/probe/` and then attempts to delete it.
+          Cleanup is best-effort — verification succeeds without it — but if you want
+          the probe objects removed, also grant a delete-capable role scoped to the
+          `.miru/probe/` prefix with an IAM condition.
+        </Note>
 
-  <Step title="Let Miru's federated principal impersonate the service account">
-    Bind the **Service Account Token Creator** role
-    (`roles/iam.serviceAccountTokenCreator`) on the uploader service account to the
-    principal that represents Miru's pinned AWS role via the pool. This lets the
-    federated identity mint short-lived access tokens as the uploader account — and
-    nothing else.
+        <Frame>
+          ![Bucket Permissions tab with Grant Access granting Storage Object Creator to the uploader service account](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/grant-object-creator.png)
+        </Frame>
+        {/* TODO (screenshot): GCP Console, bucket → Permissions → Grant Access dialog, highlight the principal (service account email) and the Storage Object Creator role selection. */}
+      </Step>
 
-    Console: **Service Accounts → (the uploader SA) → Permissions → Grant Access**.
-    Set the principal to the pool principal set and the role to **Service Account
-    Token Creator**.
+      <Step title="Let Miru's federated principal impersonate the service account">
+        Bind the **Workload Identity User** role (`roles/iam.workloadIdentityUser`)
+        on the uploader service account to the principal set that represents Miru's
+        pinned AWS role via the pool's `aws_role` attribute. This lets the federated
+        identity mint short-lived access tokens as the uploader account — and nothing
+        else.
 
-    ```bash
-    gcloud iam service-accounts add-iam-policy-binding \
-      miru-uploader@<project-id>.iam.gserviceaccount.com \
-      --project=<project-id> \
-      --role="roles/iam.serviceAccountTokenCreator" \
-      --member="principalSet://iam.googleapis.com/projects/<project-number>/locations/global/workloadIdentityPools/miru-pool/*"
-    ```
+        Console: **Service Accounts → (the uploader SA) → Permissions → Grant
+        Access**. Set the principal to the principal set below and the role to
+        **Workload Identity User**.
 
-    {/* TODO (product): confirm the exact principalSet selector — whole pool (`/*`) vs. a single subject (`/subject/<miru-aws-role-arn>`) — and that token creation is the only required IAM permission on the SA. */}
+        ```bash
+        gcloud iam service-accounts add-iam-policy-binding \
+          miru-uploader@<project-id>.iam.gserviceaccount.com \
+          --project=<project-id> \
+          --role="roles/iam.workloadIdentityUser" \
+          --member="principalSet://iam.googleapis.com/projects/<project-number>/locations/global/workloadIdentityPools/miru-pool/attribute.aws_role/<miru-aws-role-arn>"
+        ```
 
-    <Frame>
-      ![Service account Permissions tab granting Service Account Token Creator to the pool principal set](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/grant-token-creator.png)
-    </Frame>
-    {/* TODO (screenshot): GCP Console, uploader service account → Permissions → Grant Access dialog, highlight the principalSet member and the Service Account Token Creator role. */}
-  </Step>
+        <Frame>
+          ![Service account Permissions tab granting Workload Identity User to the pool principal set](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/grant-workload-identity-user.png)
+        </Frame>
+        {/* TODO (screenshot): GCP Console, uploader service account → Permissions → Grant Access dialog, highlight the principalSet member and the Workload Identity User role. */}
+      </Step>
 
-  <Step title="Register the bucket in Miru">
-    From the **Buckets** page in Miru, select **New bucket**, choose **GCS**, and
-    supply:
+      <RegisterGcs />
 
-    - `name` — the bucket from step 1
-    - `project_id` — your GCP project ID
-    - `wip_provider` — the provider resource name from step 3
-    - `service_account_email` — the uploader SA email from step 4
+      <VerifyGcs />
+    </Steps>
+  </Tab>
 
-    Select **Create** to register the bucket.
+  <Tab title="Terraform">
+    Terraform provisions the GCP-side resources only — registering the bucket in
+    Miru still happens in the dashboard.
 
-    {/* TODO (product): confirm where registration surfaces — dashboard or CLI — and document the concrete flow here. */}
+    <Steps>
+      <Step title="Provision the GCP resources">
+        The config below creates everything the Console tab does: the bucket, the
+        uploader service account and its object-creation grant, the Workload
+        Identity Pool with an AWS provider pinned to Miru's role, and the
+        impersonation binding.
 
-    <Frame>
-      ![Miru New bucket form for the GCS provider with the four fields](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/register-bucket.png)
-    </Frame>
-    {/* TODO (screenshot): Miru dashboard, Buckets → New bucket form with provider set to GCS, highlight the name, project_id, wip_provider, and service_account_email fields. */}
-  </Step>
+        ```hcl
+        variable "miru_aws_account_id" {
+          description = "Miru's AWS account ID (provided by Miru)"
+          type        = string
+        }
 
-  <Step title="Verify the bucket">
-    Run **Verify** on the bucket to exercise the full federation and impersonation
-    chain end to end. The bucket's
-    [status](/data-uploads/buckets/overview#properties) flips to `verified` on
-    success, or `invalid` with the failure reason in `verification_error`.
+        variable "miru_aws_role_arn" {
+          description = "Assumed-role ARN of Miru's integration identity (provided by Miru)"
+          type        = string
+        }
 
-    <Frame>
-      ![Miru bucket page showing the Verify action and a verified status](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/verify-bucket.png)
-    </Frame>
-    {/* TODO (screenshot): Miru dashboard, bucket detail/menu with the Verify action and the resulting verified status badge. */}
-  </Step>
-</Steps>
+        resource "google_storage_bucket" "uploads" {
+          name                        = "<bucket-name>"
+          project                     = "<project-id>"
+          location                    = "<region>"
+          uniform_bucket_level_access = true
+        }
+
+        resource "google_service_account" "miru_uploader" {
+          project      = "<project-id>"
+          account_id   = "miru-uploader"
+          display_name = "Miru uploader"
+        }
+
+        resource "google_storage_bucket_iam_member" "miru_uploader_creator" {
+          bucket = google_storage_bucket.uploads.name
+          role   = "roles/storage.objectCreator"
+          member = "serviceAccount:${google_service_account.miru_uploader.email}"
+        }
+
+        resource "google_iam_workload_identity_pool" "miru" {
+          project                   = "<project-id>"
+          workload_identity_pool_id = "miru-pool"
+        }
+
+        resource "google_iam_workload_identity_pool_provider" "miru_aws" {
+          project                            = "<project-id>"
+          workload_identity_pool_id          = google_iam_workload_identity_pool.miru.workload_identity_pool_id
+          workload_identity_pool_provider_id = "miru-provider"
+
+          attribute_mapping = {
+            "google.subject"     = "assertion.arn"
+            "attribute.aws_role" = "assertion.arn.contains('assumed-role') ? assertion.arn.extract('{account_arn}assumed-role/') + 'assumed-role/' + assertion.arn.extract('assumed-role/{role_name}/') : assertion.arn"
+          }
+
+          attribute_condition = "assertion.arn.startsWith('${var.miru_aws_role_arn}/')"
+
+          aws {
+            account_id = var.miru_aws_account_id
+          }
+        }
+
+        resource "google_service_account_iam_member" "miru_wif_impersonation" {
+          service_account_id = google_service_account.miru_uploader.name
+          role               = "roles/iam.workloadIdentityUser"
+          member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.miru.name}/attribute.aws_role/${var.miru_aws_role_arn}"
+        }
+
+        output "wip_provider" {
+          value = google_iam_workload_identity_pool_provider.miru_aws.name
+        }
+
+        output "service_account_email" {
+          value = google_service_account.miru_uploader.email
+        }
+        ```
+
+        Run `terraform init && terraform apply`. The outputs are the `wip_provider`
+        and `service_account_email` values you register in the next step.
+
+        <Note>
+          [Verification](/data-uploads/buckets/manage#verify-a-bucket) writes a
+          zero-byte probe object under `.miru/probe/` and then attempts to delete it.
+          Cleanup is best-effort — verification succeeds without it — but if you want
+          the probe objects removed, also grant a delete-capable role scoped to the
+          `.miru/probe/` prefix with an IAM condition.
+        </Note>
+      </Step>
+
+      <RegisterGcs />
+
+      <VerifyGcs />
+    </Steps>
+  </Tab>
+</Tabs>
 
 ### How device credentials are minted at runtime
 
