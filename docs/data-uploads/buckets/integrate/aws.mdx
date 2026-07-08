@@ -71,10 +71,11 @@ your account:
 There are **no access keys, passwords, or long-lived tokens** in this exchange — by
 design. Nothing you hand Miru can be replayed or exfiltrated to reach your data.
 
-The setup below is one-time, mostly in **your own AWS account**, and can be done two
+The setup below is one-time, mostly in **your own AWS account**, and can be done three
 ways: the **Console** tab walks through the AWS Console click-by-click with the
-equivalent AWS CLI commands and literal policy JSON; the **Terraform** tab provisions
-the same resources as a single infrastructure-as-code config. Either way the ordering
+equivalent AWS CLI commands and literal policy JSON; the **CLI** tab runs the same
+setup as a plain `aws` command sequence; the **Terraform** tab provisions the same
+resources as a single infrastructure-as-code config. Whichever you choose, the ordering
 is the same: the role exists first, registering it in Miru yields the external ID,
 and the trust policy is tightened with that external ID before verification. Replace
 `<…>` placeholders with your own values; `<miru-integration-role-arn>` is the value
@@ -230,6 +231,128 @@ Miru gives you, and the external ID is issued when you register the bucket.
           ![IAM trust policy editor showing the sts:ExternalId condition added to the Miru principal](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/aws/external-id-condition.png)
         </Frame>
         {/* TODO (screenshot): AWS Console, IAM → role → Trust relationships → Edit trust policy, highlight the sts:ExternalId condition value. */}
+      </Step>
+
+      <VerifyAws />
+    </Steps>
+  </Tab>
+
+  <Tab title="CLI">
+    <Steps>
+      <Step title="Create the S3 bucket">
+        Create (or choose) the bucket uploads should land in. Note its **name** and
+        **region**.
+
+        ```bash
+        aws s3api create-bucket \
+          --bucket <bucket-name> \
+          --region <region> \
+          --create-bucket-configuration LocationConstraint=<region>
+        ```
+
+        In `us-east-1`, omit `--create-bucket-configuration` — the API rejects a
+        location constraint there.
+      </Step>
+
+      <Step title="Create a cross-account IAM role">
+        Create an IAM role whose **trust policy** allows **Miru's integration role**
+        as the principal. You will tighten this policy with the external ID once Miru
+        has issued it at registration.
+
+        ```bash
+        cat > trust-policy.json <<'EOF'
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": { "AWS": "<miru-integration-role-arn>" },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        }
+        EOF
+
+        aws iam create-role \
+          --role-name miru-uploader \
+          --assume-role-policy-document file://trust-policy.json
+        ```
+
+        The role's ARN (`arn:aws:iam::<your-account-id>:role/miru-uploader`) is your
+        `role_arn`.
+      </Step>
+
+      <Step title="Grant the role write access to the bucket">
+        Attach a permissions policy granting **`s3:PutObject`** and
+        **`s3:AbortMultipartUpload`** on the bucket — devices upload via native S3
+        multipart uploads, and the abort permission lets a failed multipart upload
+        clean up after itself. Miru never needs read, list, or delete permissions on
+        your data.
+
+        ```bash
+        cat > put-policy.json <<'EOF'
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:PutObject",
+                "s3:AbortMultipartUpload"
+              ],
+              "Resource": "arn:aws:s3:::<bucket-name>/*"
+            }
+          ]
+        }
+        EOF
+
+        aws iam put-role-policy \
+          --role-name miru-uploader \
+          --policy-name miru-put-object \
+          --policy-document file://put-policy.json
+        ```
+
+        <Note>
+          [Verification](/data-uploads/buckets/manage#verify-a-bucket) writes a
+          zero-byte probe object under `.miru/probe/` and then attempts to delete it.
+          Cleanup is best-effort — verification succeeds without it — but if you want
+          the probe objects removed, also grant `s3:DeleteObject` on
+          `arn:aws:s3:::<bucket-name>/.miru/probe/*`.
+        </Note>
+
+        {/* TODO (product): confirm whether SSE-KMS buckets need an additional kms:GenerateDataKey grant for the role. */}
+      </Step>
+
+      <RegisterAws />
+
+      <Step title="Add the external ID to the trust policy">
+        Update the role's trust policy to **require the external ID Miru issued** via
+        an `sts:ExternalId` condition. The external ID is the guard against the
+        [confused-deputy](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html)
+        problem: even another tenant of the same Miru service cannot trick Miru into
+        assuming your role without presenting your specific external ID.
+
+        ```bash
+        cat > trust-policy.json <<'EOF'
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": { "AWS": "<miru-integration-role-arn>" },
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": { "sts:ExternalId": "<external-id>" }
+              }
+            }
+          ]
+        }
+        EOF
+
+        aws iam update-assume-role-policy \
+          --role-name miru-uploader \
+          --policy-document file://trust-policy.json
+        ```
       </Step>
 
       <VerifyAws />

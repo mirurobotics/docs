@@ -27,7 +27,7 @@ Observable outcome: on `mint dev` (or the built site), `/data-uploads/upload-rul
 
 - [x] Milestone 1: Merged upload-rules page, nav update, repo-wide link repoints, delete `upload-rules/` dir
 - [x] Milestone 2: Config schemas "Immutability and releases" and "Git provenance" sections
-- [ ] Milestone 3: CLI tabs on `gcs.mdx` and `aws.mdx`
+- [x] Milestone 3: CLI tabs on `gcs.mdx` and `aws.mdx`
 - [ ] Final validation: `./scripts/preflight.sh` clean
 
 ## Surprises & Discoveries
