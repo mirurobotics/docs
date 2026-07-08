@@ -23,11 +23,12 @@ A reader of docs.mirurobotics.com can then follow any release- or upload-related
 
 - [x] Milestone 1: Fix defining-releases rename fallout (links, redirect, upload-history repointing)
 - [x] Milestone 2: Move AWS/GCS guides into an Integrate subgroup
-- [ ] Milestone 3: Add the buckets manage page and finish validation
+- [x] Milestone 3: Add the buckets manage page and finish validation
 
 ## Surprises & Discoveries
 
 - `docs/references/cli/release-create.mdx` had three stale links, not two as the inventory said: `/data-uploads/releasing-upload-rules` appeared twice (intro sentence and the closing "see also" sentence) plus one `/cfg-mgmt/releasing-config-schemas`. All three updated; the "[releasing upload rules]" display text became "[defining releases]".
+- The "Verify a bucket" section carries an intra-page `[`status`](#properties)` link that the plan's "move verbatim" instruction didn't call out. Moving the section to `manage.mdx` would have left it dangling (the Properties heading stays on overview), so it was repointed to `/data-uploads/buckets/overview#properties` — the only non-verbatim change in the moved sections.
 
 ## Decision Log
 
@@ -55,7 +56,7 @@ A reader of docs.mirurobotics.com can then follow any release- or upload-related
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+Delivered as planned in three commits on `feat/data-recording`: (1) every inbound reference to the renamed `defining-releases` pages and the deleted `audit/upload-history` page now resolves, the `/learn/releases/create` redirect destination is fixed, and `uploads.mdx` absorbed the browse/filter guidance under "Viewing uploads"; (2) the AWS/GCS guides moved to `data-uploads/buckets/integrate/{aws,gcs}` with titles "AWS S3" / "Google Cloud Storage" and `Cloud`/`Storage` added to the headingcase allowlist; (3) bucket operations (register / verify / edit / archive / delete) split onto `data-uploads/buckets/manage.mdx`, leaving overview with definition, properties, and device data isolation — the user's fresh wording untouched. `./scripts/lint.sh`, `pnpm run test:lint`, and `./scripts/preflight.sh` all exit 0; the stale-reference, orphan, link-resolution, and anchor checks all come back clean. The `mint dev` behavioral check was skipped (no browser); the Buckets block in `docs/docs.json` was verified textually against the target block instead. Only deviation from the plan: one intra-page anchor in the moved Verify section had to be repointed to the overview page (see Surprises).
 
 ## Context and Orientation
 
