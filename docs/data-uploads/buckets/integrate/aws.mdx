@@ -361,32 +361,48 @@ Miru gives you, and the external ID is issued when you register the bucket.
 
   <Tab title="Terraform">
     Terraform provisions the AWS-side resources only — registering the bucket in
-    Miru still happens in the dashboard. One config covers both phases of the
-    external-ID flow: apply it once to create the role, register the bucket to get
-    the external ID, then apply again to tighten the trust policy with it.
+    Miru still happens in the dashboard: Miru does not publish a Terraform module
+    or provider today, so the config below is yours to paste and own. One config
+    covers both phases of the external-ID flow: apply it once to create the role,
+    register the bucket to get the external ID, then apply again to tighten the
+    trust policy with it.
 
     <Steps>
-      <Step title="Provision the AWS resources">
-        The config below creates the bucket, the cross-account role whose trust
-        policy allows Miru's integration role, and the bucket-scoped write policy.
-        The `miru_external_id` variable drives the two-phase flow: while it is unset,
-        the trust policy carries no `sts:ExternalId` condition — Miru has not issued
-        an external ID yet.
+      <Step title="Write and apply the Terraform config">
+        Save the config below in a new or existing workspace; it assumes an
+        authenticated `aws` provider is already configured — the bucket is
+        created in that provider's region, and the `region` output reports it.
+        The config creates everything the Console tab does: the bucket, the
+        cross-account role whose trust policy allows Miru's integration role,
+        and the bucket-scoped write-only policy. The variables up top are the
+        only knobs; the outputs at the bottom match the Miru registration form
+        field for field.
 
         ```hcl
+        variable "bucket_name" {
+          description = "Name of the S3 bucket device uploads land in"
+          type        = string
+        }
+
+        variable "role_name" {
+          description = "Name for the IAM role Miru assumes"
+          type        = string
+          default     = "miru-uploader"
+        }
+
         variable "miru_integration_role_arn" {
           description = "Miru's integration role ARN (provided by Miru)"
           type        = string
         }
 
         variable "miru_external_id" {
-          description = "External ID issued by Miru at registration; leave unset for the first apply"
+          description = "External ID issued by Miru at registration; leave unset until then"
           type        = string
           default     = null
         }
 
         resource "aws_s3_bucket" "uploads" {
-          bucket = "<bucket-name>"
+          bucket = var.bucket_name
         }
 
         data "aws_iam_policy_document" "miru_trust" {
@@ -399,6 +415,10 @@ Miru gives you, and the external ID is issued when you register the bucket.
               identifiers = [var.miru_integration_role_arn]
             }
 
+            # Only present once miru_external_id is set. Miru issues the
+            # external ID when the bucket is registered, and registration
+            # needs the role ARN — so the first apply creates the role
+            # without the condition, and a second apply tightens it.
             dynamic "condition" {
               for_each = var.miru_external_id == null ? [] : [1]
               content {
@@ -411,10 +431,14 @@ Miru gives you, and the external ID is issued when you register the bucket.
         }
 
         resource "aws_iam_role" "miru_uploader" {
-          name               = "miru-uploader"
+          name               = var.role_name
           assume_role_policy = data.aws_iam_policy_document.miru_trust.json
         }
 
+        # Write-only and bucket-scoped: PutObject covers multipart uploads,
+        # and AbortMultipartUpload lets a failed upload clean up after
+        # itself. Miru never needs read, list, or delete permissions on
+        # your data.
         data "aws_iam_policy_document" "miru_uploader_write" {
           statement {
             effect    = "Allow"
@@ -429,13 +453,35 @@ Miru gives you, and the external ID is issued when you register the bucket.
           policy = data.aws_iam_policy_document.miru_uploader_write.json
         }
 
+        # The three fields the Miru registration form asks for, 1:1.
+        output "name" {
+          description = "Bucket name — the form's `name` field"
+          value       = aws_s3_bucket.uploads.bucket
+        }
+
+        output "region" {
+          description = "Bucket region — the form's `region` field"
+          value       = aws_s3_bucket.uploads.region
+        }
+
         output "role_arn" {
-          value = aws_iam_role.miru_uploader.arn
+          description = "IAM role ARN — the form's `role_arn` field"
+          value       = aws_iam_role.miru_uploader.arn
         }
         ```
 
-        Run `terraform init && terraform apply` with `miru_external_id` unset. The
-        `role_arn` output is the value you register in the next step.
+        Set the required variables in `terraform.tfvars`, leaving
+        `miru_external_id` out — Miru has not issued it yet, so the trust
+        policy carries no `sts:ExternalId` condition on this first pass:
+
+        ```hcl
+        bucket_name               = "<bucket-name>"
+        miru_integration_role_arn = "<miru-integration-role-arn>"
+        ```
+
+        Then run `terraform init && terraform apply`. When it completes,
+        `terraform output` prints exactly the three values the registration
+        form asks for in the next step.
 
         <Note>
           [Verification](/data-uploads/buckets/manage#verify-a-bucket) writes a
@@ -451,7 +497,7 @@ Miru gives you, and the external ID is issued when you register the bucket.
       <RegisterAws />
 
       <Step title="Tighten the trust policy with the external ID">
-        Set `miru_external_id` in `terraform.tfvars` to the external ID Miru issued:
+        Add the external ID Miru issued to `terraform.tfvars`:
 
         ```hcl
         miru_external_id = "<external-id>"
