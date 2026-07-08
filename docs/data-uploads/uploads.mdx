@@ -109,9 +109,8 @@ recording it in the ledger with the properties below.
 <ParamField path="incomplete" type="boolean">
   <ImmutableBadge />
 
-  Whether the file was incomplete when collected (uploaded without a confirmed
-  finalization). Independent of `status` — see
-  [completion detection](#completion-detection).
+  Whether the device flagged the file as incomplete when it was collected.
+  Independent of `status` — see [completion detection](#completion-detection).
 </ParamField>
 
 <ParamField path="release_id" type="string">
@@ -154,7 +153,7 @@ bookkeeping fields.
 Devices never hold long-lived cloud credentials, and Miru never proxies your data.
 Each upload is brokered with short-lived, downscoped credentials:
 
-1. The Agent detects a completed file matching a rule and **requests an upload** from
+1. The Agent detects a finished file matching a rule and **requests an upload** from
    the Miru control plane, sending the rule ID, file details, digest, and size.
 2. The control plane verifies the device's identity from its session token, records a
    `pending` ledger entry, deduplicates by digest, and vends **short-lived downscoped
@@ -172,22 +171,16 @@ the credential exchange touch Miru.
 ## Completion detection
 
 The Agent uploads a file once it is confident the file has finished being written to.
-Completion is determined with two complementary checks:
+Completion is determined by **quiescence**: a file whose size and modification time
+have held steady for the rule's
+[`stability_window_secs`](/data-uploads/upload-rules#sources) is considered finished
+and eligible for upload. This works for any file type, but it is a heuristic: "looks
+done," not "proven done."
 
-- **Finalization marker** — for formats that end with one (MCAP, parquet), Miru
-  verifies the trailing bytes that only exist once the writer has closed the file
-  cleanly. For these formats, completion is guaranteed.
-- **Quiescence** — a file whose size and modification time have held steady for the
-  rule's [`stability_window_secs`](/data-uploads/upload-rules#sources) is treated as
-  ready. This works for any file type, but it is a heuristic: "looks done," not
-  "proven done."
-
-If you would rather not rely on detection at all, you can **defer completion to the
-file producer**: have it write to a temporary name and rename on completion (or drop a
-marker file), and the Agent will only ever see finished files — zero false positives.
-
-A file that goes quiet but was never closed cleanly is still uploaded, but flagged
-[`incomplete`](#properties).
+If you would rather not rely on the heuristic, you can **defer completion to the file
+producer**: have it write to a temporary name the rule's glob does not match and
+rename on completion, and the Agent will only ever see finished files — zero false
+positives.
 
 ## Guarantees
 
