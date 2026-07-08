@@ -28,11 +28,11 @@ Observable outcome: on `mint dev` (or the built site), `/data-uploads/upload-rul
 - [x] Milestone 1: Merged upload-rules page, nav update, repo-wide link repoints, delete `upload-rules/` dir
 - [x] Milestone 2: Config schemas "Immutability and releases" and "Git provenance" sections
 - [x] Milestone 3: CLI tabs on `gcs.mdx` and `aws.mdx`
-- [ ] Final validation: `./scripts/preflight.sh` clean
+- [x] Final validation: `./scripts/preflight.sh` clean
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds.)
+- None material. The inbound-link inventory in Context matched the repo exactly (grep found no links beyond those listed), the Console tabs already carried every CLI command verbatim as the plan claimed, and the infra fixtures matched the documented resource shapes (`attribute.aws_role` mapping + `startsWith` condition + `workloadIdentityUser` principal-set binding for GCS; `sts:ExternalId` trust condition + `s3:PutObject` write policy for AWS).
 
 ## Decision Log
 
@@ -57,7 +57,15 @@ Observable outcome: on `mint dev` (or the built site), `/data-uploads/upload-rul
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+Completed 2026-07-07 in three signed commits on `feat/data-recording`:
+
+1. `docs(data-uploads): collapse upload rules into a single page` — new `docs/data-uploads/upload-rules.mdx` with the seven-section outline (Properties / File formats / Sources+Globs / Destinations+Path templates / Immutability and releases / Git provenance / Viewing upload rules), four old pages deleted, nav flattened to a plain string entry, all inbound links repointed (overview → page, sources/destinations → in-page anchors, `#path-template-variables` → `#path-templates`, manage `#git-commit-metadata` → `#git-provenance`).
+2. `docs(cfg-mgmt): add immutability and git provenance sections to schemas overview` — appended after "Empty schemas"; stays silent on schema deletion per the Decision Log; multi-file CUE vs. single-file JSON Schema path note included.
+3. `docs(data-uploads): add cloud-CLI tabs to bucket integrate pages` — CLI tab inserted between Console and Terraform on both integrate pages; GCS tab mirrors the six Console steps plus the two lookup commands (`providers describe --format="value(name)"`, `projects describe --format="value(projectNumber)"`); AWS tab preserves the two-phase external-ID ordering with heredoc policy JSON in the same code blocks.
+
+Validation: `./scripts/lint.sh` clean after each milestone; `./scripts/preflight.sh` exit 0 at the end; all grep/nav/anchor/tab checks in Validation and Acceptance pass. The `mint dev` behavior check (step 7) was skipped — non-interactive environment; static checks cover the anchors and nav shape.
+
+Retrospective: the plan's verbatim content mapping and pre-verified command sets made execution mechanical — no source re-derivation was needed beyond confirming `spec.go` glob rules, the two `defining-releases` anchors, and the infra fixtures. No deviations from the plan.
 
 ## Context and Orientation
 
