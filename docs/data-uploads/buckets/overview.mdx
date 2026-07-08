@@ -7,22 +7,14 @@ import BucketDef from '/snippets/definitions/bucket.mdx';
 
 <BucketDef />
 
-<Info>
-  Buckets are **Google Cloud Storage (GCS)** or **Amazon S3 (AWS)** buckets. The
-  provider you choose determines the configuration and how Miru connects to it — see
-  [GCS](/data-uploads/buckets/gcs) and [AWS](/data-uploads/buckets/aws).
-</Info>
-
 ## Properties
 
 <ParamField path="name" type="string">
   <ImmutableBadge />
 
-  The name of the cloud storage bucket that uploads are written to, unique within the
-  workspace. This is also how the bucket is referenced — [upload
-  rules](/data-uploads/upload-rules/destinations) point at a bucket by its name.
+  The name of the bucket in your cloud storage account that uploads are written to. Bucket names must be unique within a Miru workspace. 
 
-  Example: `my-uploads-bucket`
+  Example: `robot-logs-bucket`
 </ParamField>
 
 <ParamField path="provider" type="enum">

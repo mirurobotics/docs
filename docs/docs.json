@@ -96,7 +96,7 @@
                 ]
               },
               "cfg-mgmt/config-instances",
-              "cfg-mgmt/releasing-config-schemas",
+              "cfg-mgmt/defining-releases",
               {
                 "group": "Deploy configs",
                 "pages": [
@@ -118,6 +118,14 @@
             "group": "Data Uploads",
             "pages": [
               "data-uploads/overview",
+              {
+                "group": "Buckets",
+                "pages": [
+                  "data-uploads/buckets/overview",
+                  "data-uploads/buckets/gcs",
+                  "data-uploads/buckets/aws"
+                ]
+              },
               "data-uploads/upload-collections",
               {
                 "group": "Upload rules",
@@ -129,21 +137,7 @@
                 ]
               },
               "data-uploads/uploads",
-              "data-uploads/releasing-upload-rules",
-              {
-                "group": "Buckets",
-                "pages": [
-                  "data-uploads/buckets/overview",
-                  "data-uploads/buckets/gcs",
-                  "data-uploads/buckets/aws"
-                ]
-              },
-              {
-                "group": "Audit uploads",
-                "pages": [
-                  "data-uploads/audit/upload-history"
-                ]
-              }
+              "data-uploads/defining-releases"
             ]
           },
           {
