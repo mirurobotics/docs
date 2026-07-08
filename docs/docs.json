@@ -122,8 +122,13 @@
                 "group": "Buckets",
                 "pages": [
                   "data-uploads/buckets/overview",
-                  "data-uploads/buckets/gcs",
-                  "data-uploads/buckets/aws"
+                  {
+                    "group": "Integrate",
+                    "pages": [
+                      "data-uploads/buckets/integrate/gcs",
+                      "data-uploads/buckets/integrate/aws"
+                    ]
+                  }
                 ]
               },
               "data-uploads/upload-collections",

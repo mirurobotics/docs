@@ -22,7 +22,7 @@ A reader of docs.mirurobotics.com can then follow any release- or upload-related
 ## Progress
 
 - [x] Milestone 1: Fix defining-releases rename fallout (links, redirect, upload-history repointing)
-- [ ] Milestone 2: Move AWS/GCS guides into an Integrate subgroup
+- [x] Milestone 2: Move AWS/GCS guides into an Integrate subgroup
 - [ ] Milestone 3: Add the buckets manage page and finish validation
 
 ## Surprises & Discoveries

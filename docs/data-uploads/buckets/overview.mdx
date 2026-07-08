@@ -31,7 +31,7 @@ import BucketDef from '/snippets/definitions/bucket.mdx';
   <ImmutableBadge />
 
   Provider-specific configuration, discriminated by `provider`. For `gcs`, see
-  [GCS](/data-uploads/buckets/gcs); for `aws`, see [AWS](/data-uploads/buckets/aws).
+  [GCS](/data-uploads/buckets/integrate/gcs); for `aws`, see [AWS](/data-uploads/buckets/integrate/aws).
 </ParamField>
 
 <ParamField path="status" type="enum">
@@ -88,8 +88,8 @@ per-rule policy to configure correctly or audit.
 
 From the **Buckets** page, select **New bucket**. Enter the bucket's `name` (the cloud
 bucket's own name), choose the provider, and supply that provider's configuration —
-for [GCS](/data-uploads/buckets/gcs), the Workload Identity Federation identifiers;
-for [AWS](/data-uploads/buckets/aws), the region and IAM role ARN (Miru issues the
+for [GCS](/data-uploads/buckets/integrate/gcs), the Workload Identity Federation identifiers;
+for [AWS](/data-uploads/buckets/integrate/aws), the region and IAM role ARN (Miru issues the
 external ID for you). No keys or secrets are entered; only identifiers and
 configuration.
 
