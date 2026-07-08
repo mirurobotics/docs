@@ -17,7 +17,7 @@ Product decision (authoritative, overrides anything found in code): for the firs
 
 ## Progress
 
-- [ ] Milestone 1: rewrite completion-detection claims across the two affected pages and prune `cspell.json`; lint and preflight pass; commit.
+- [x] Milestone 1: rewrite completion-detection claims across the two affected pages and prune `cspell.json`; lint and preflight pass; commit. (2026-07-08, commit `078eb7e`)
 
 ## Surprises & Discoveries
 
@@ -45,7 +45,17 @@ Product decision (authoritative, overrides anything found in code): for the firs
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+Completed 2026-07-08 in a single milestone commit (`078eb7e`, signed) on
+`feat/data-recording`. All six edits applied exactly as planned: the two overview
+sentences now say "waits for each file to finish" / "detects a finished file", the
+`incomplete` ParamField describes a device-declared flag, the `## Completion
+detection` section documents quiescence as the only mechanism plus the producer-side
+rename pattern, the `stability_window_secs` ParamField lost its finalization-marker
+sentence, and `"mcap"`/`"parquet"` were removed from `cspell.json`. All five
+verification greps matched expectations (no mcap/parquet/finaliz hits in MDX, both
+`#completion-detection` cross-links and the `## File formats` heading intact), and
+`./scripts/lint.sh` and `./scripts/preflight.sh` passed. No deviations from the plan;
+prose was rewrapped to the files' ~88-column style with wording unchanged.
 
 ## Context and Orientation
 
