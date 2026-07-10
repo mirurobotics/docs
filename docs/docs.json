@@ -39,41 +39,41 @@
             ]
           },
           {
-            "group": "Fundamentals",
+            "group": "Essentials",
             "pages": [
               {
                 "group": "Devices",
                 "pages": [
-                  "fundamentals/devices/overview",
+                  "essentials/devices/overview",
                   {
                     "group": "Provision devices",
                     "pages": [
-                      "fundamentals/devices/provision/overview",
-                      "fundamentals/devices/provision/dashboard",
-                      "fundamentals/devices/provision/provisioning-tokens",
-                      "fundamentals/devices/provision/provisioning-script",
-                      "fundamentals/devices/provision/reprovision"
+                      "essentials/devices/provision/overview",
+                      "essentials/devices/provision/dashboard",
+                      "essentials/devices/provision/provisioning-tokens",
+                      "essentials/devices/provision/provisioning-script",
+                      "essentials/devices/provision/reprovision"
                     ]
                   },
-                  "fundamentals/devices/manage"
+                  "essentials/devices/manage"
                 ]
               },
               {
                 "group": "Groups",
                 "pages": [
-                  "fundamentals/groups/overview",
-                  "fundamentals/groups/manage",
-                  "fundamentals/groups/members"
+                  "essentials/groups/overview",
+                  "essentials/groups/manage",
+                  "essentials/groups/members"
                 ]
               },
               {
                 "group": "Releases",
                 "pages": [
-                  "fundamentals/releases/overview",
-                  "fundamentals/releases/manage"
+                  "essentials/releases/overview",
+                  "essentials/releases/manage"
                 ]
               },
-              "fundamentals/deployments"
+              "essentials/deployments"
             ]
           },
           {
@@ -447,7 +447,11 @@
     },
     {
       "source": "/getting-started/concepts",
-      "destination": "/fundamentals/devices/overview"
+      "destination": "/essentials/devices/overview"
+    },
+    {
+      "source": "/fundamentals/:slug*",
+      "destination": "/essentials/:slug*"
     },
     {
       "source": "/learn/config-instances",
@@ -459,7 +463,7 @@
     },
     {
       "source": "/learn/deployments",
-      "destination": "/fundamentals/deployments"
+      "destination": "/essentials/deployments"
     },
     {
       "source": "/learn/devices/compare",
@@ -479,43 +483,43 @@
     },
     {
       "source": "/learn/devices/manage",
-      "destination": "/fundamentals/devices/manage"
+      "destination": "/essentials/devices/manage"
     },
     {
       "source": "/learn/devices/overview",
-      "destination": "/fundamentals/devices/overview"
+      "destination": "/essentials/devices/overview"
     },
     {
       "source": "/learn/devices/provision/dashboard",
-      "destination": "/fundamentals/devices/provision/dashboard"
+      "destination": "/essentials/devices/provision/dashboard"
     },
     {
       "source": "/learn/devices/provision/overview",
-      "destination": "/fundamentals/devices/provision/overview"
+      "destination": "/essentials/devices/provision/overview"
     },
     {
       "source": "/learn/devices/provision/provisioning-script",
-      "destination": "/fundamentals/devices/provision/provisioning-script"
+      "destination": "/essentials/devices/provision/provisioning-script"
     },
     {
       "source": "/learn/devices/provision/provisioning-tokens",
-      "destination": "/fundamentals/devices/provision/provisioning-tokens"
+      "destination": "/essentials/devices/provision/provisioning-tokens"
     },
     {
       "source": "/learn/devices/provision/reprovision",
-      "destination": "/fundamentals/devices/provision/reprovision"
+      "destination": "/essentials/devices/provision/reprovision"
     },
     {
       "source": "/learn/groups/manage",
-      "destination": "/fundamentals/groups/manage"
+      "destination": "/essentials/groups/manage"
     },
     {
       "source": "/learn/groups/members",
-      "destination": "/fundamentals/groups/members"
+      "destination": "/essentials/groups/members"
     },
     {
       "source": "/learn/groups/overview",
-      "destination": "/fundamentals/groups/overview"
+      "destination": "/essentials/groups/overview"
     },
     {
       "source": "/learn/releases/create",
@@ -523,11 +527,11 @@
     },
     {
       "source": "/learn/releases/manage",
-      "destination": "/fundamentals/releases/manage"
+      "destination": "/essentials/releases/manage"
     },
     {
       "source": "/learn/releases/overview",
-      "destination": "/fundamentals/releases/overview"
+      "destination": "/essentials/releases/overview"
     },
     {
       "source": "/learn/releases/staging-area",

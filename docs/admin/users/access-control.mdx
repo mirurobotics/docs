@@ -34,7 +34,7 @@ There are a variety of privileges which are only available to owners and adminis
 [Config types](/cfg-mgmt/config-types)
 - Delete a config type
 
-[Groups](/fundamentals/groups/overview)
+[Groups](/essentials/groups/overview)
 - Create a group
 - Update a group
 - Delete a group
@@ -49,7 +49,7 @@ There are a variety of privileges which are only available to owners and adminis
 - Suspend a member
 - Update another member's role
 
-[Releases](/fundamentals/releases/manage)
+[Releases](/essentials/releases/manage)
 - Delete a release
 
 [Workspace](/admin/workspace)
@@ -62,7 +62,7 @@ While a user's type determines broad access and administrative capabilities, **r
 A member's roles are defined in two independent sources:
 
 - **Workspace roles** apply across the entire workspace
-- **Group roles** apply to a [group](/fundamentals/groups/overview) and all of its subgroups
+- **Group roles** apply to a [group](/essentials/groups/overview) and all of its subgroups
 
 A member can hold any combination of both. Permissions are always **additive** — Miru allows an action if any of the member's roles permit it, and one role never removes access granted by another.
 
@@ -92,7 +92,7 @@ The publisher role allows members to create and edit config types, schemas, and 
 Releases
 
 - [Create a release](/cfg-mgmt/defining-releases)
-- [Duplicate a release](/fundamentals/releases/manage#duplicate-a-release)
+- [Duplicate a release](/essentials/releases/manage#duplicate-a-release)
 
 ### Shared roles
 
@@ -118,13 +118,13 @@ The operator role allows members to deploy configurations to devices. The operat
 
 The provisioner role allows members to create and activate devices. The provisioner role grants access to the following operations:
 
-[Manage devices](/fundamentals/devices/manage)
+[Manage devices](/essentials/devices/manage)
 
 - Create a device
 - Edit a device
 - Delete a device
 
-[Provision devices](/fundamentals/devices/provision/dashboard)
+[Provision devices](/essentials/devices/provision/dashboard)
 
 - Provision a device
 - Reprovision a device
@@ -137,18 +137,18 @@ Below are the roles which are only available at the group level. These roles can
 
 The group manager role allows members to manage the members in a group, the members' grants, and the group's subgroups. It includes everything the operator and provisioner roles can do, along with the following operations:
 
-[Groups](/fundamentals/groups/overview)
+[Groups](/essentials/groups/overview)
 
 - Create a subgroup
 - Edit a group
 - Move a device
 - Delete a subgroup
 
-[Devices](/fundamentals/devices/manage)
+[Devices](/essentials/devices/manage)
 
 - Move a device to a different group
 
-[Members](/fundamentals/groups/members)
+[Members](/essentials/groups/members)
 
 - Add a group member
 - Edit group member permissions
