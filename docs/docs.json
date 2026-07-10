@@ -126,10 +126,10 @@
                   "data-uploads/buckets/overview",
                   "data-uploads/buckets/manage",
                   {
-                    "group": "Integrate",
+                    "group": "Connect buckets",
                     "pages": [
-                      "data-uploads/buckets/integrate/gcs",
-                      "data-uploads/buckets/integrate/aws"
+                      "data-uploads/buckets/connect/aws",
+                      "data-uploads/buckets/connect/gcs"
                     ]
                   }
                 ]
