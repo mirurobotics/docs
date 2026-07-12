@@ -2,7 +2,7 @@
 title: "AWS S3"
 ---
 
-import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+import { ImmutableBadge, MutableBadge } from '/snippets/components/field-badges.jsx';
 import { PublisherBadge } from '/snippets/components/role-badges.jsx';
 
 An S3 bucket is connected by **assuming a cross-account IAM role** (STS AssumeRole) —
@@ -26,12 +26,6 @@ configuration values. No access keys, passwords, or long-lived tokens change han
 either direction.
 
 ### Miru provides you
-
-<ParamField path="miru_aws_account_id">
-  Miru's AWS account ID. This is a fixed value that never changes.
-
-  `008971655189`
-</ParamField>
 
 <ParamField path="miru_integration_role_arn">
   The AWS role Miru assumes into your account. You name this role as the trusted
@@ -67,7 +61,7 @@ either direction.
 </ParamField>
 
 <ParamField path="role_arn">
-  <ImmutableBadge />
+  <MutableBadge />
 
   ARN of the IAM role in your account that Miru assumes to broker bucket access. Its
   trust policy must trust Miru's integration role with the external ID.

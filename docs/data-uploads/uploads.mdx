@@ -14,71 +14,16 @@ recording it in the ledger with the properties below.
 
 ## Properties
 
-<ParamField path="id" type="string">
+<ParamField path="source" type="Source">
   <ImmutableBadge />
 
-  ID of the upload.
-
-  Example: `upl_123`
+  The source file collected from the device. See [Sources](#sources).
 </ParamField>
 
-<ParamField path="device_id" type="string">
+<ParamField path="destination" type="Destination">
   <ImmutableBadge />
 
-  ID of the [device](/essentials/devices/overview) that produced the upload.
-
-  Example: `dvc_123`
-</ParamField>
-
-<ParamField path="upload_rule_id" type="string">
-  <ImmutableBadge />
-
-  ID of the [upload rule](/data-uploads/upload-rules) that produced the
-  upload.
-
-  Example: `upl_rule_123`
-</ParamField>
-
-<ParamField path="upload_collection_name" type="string">
-  <ImmutableBadge />
-
-  The name of the [upload collection](/data-uploads/upload-collections) the producing
-  rule belongs to.
-
-  Example: `Robot Logs`
-</ParamField>
-
-<ParamField path="source.file_path" type="string">
-  <ImmutableBadge />
-
-  Absolute path of the file on the device. Its basename renders the `{file_name}`
-  variable in the [destination path template](/data-uploads/upload-rules#path-templates).
-
-  Example: `/var/log/robot/robot.log`
-</ParamField>
-
-<ParamField path="source.file_modified_at" type="datetime">
-  <ImmutableBadge />
-
-  The file's last-modified time (mtime) on the device — roughly when writing finished.
-</ParamField>
-
-<ParamField path="destination.bucket_id" type="string">
-  <ImmutableBadge />
-
-  ID of the registered [bucket](/data-uploads/buckets/overview) the file was uploaded
-  to.
-
-  Example: `bkt_123`
-</ParamField>
-
-<ParamField path="destination.object_key" type="string">
-  <ImmutableBadge />
-
-  The object path the file was written to in the destination bucket. Rendered from the
-  rule's path template, it carries the device's verified ID.
-
-  Example: `logs/dvc_123/upl_123/robot.log`
+  Where the collected file was uploaded. See [Destinations](#destinations).
 </ParamField>
 
 <ParamField path="digest" type="string">
@@ -99,11 +44,11 @@ recording it in the ledger with the properties below.
 <ParamField path="status" type="enum">
   <MutableBadge />
 
-  The lifecycle status of the upload in the ledger.
+  The [status](#status) of the upload.
 
-  - `pending` — the upload has been authorized and credentials vended, but the device
-    has not yet confirmed a durable write.
-  - `uploaded` — the device confirmed a durable write to the bucket.
+  Allowed values:
+  - `pending`
+  - `uploaded`
 </ParamField>
 
 <ParamField path="incomplete" type="boolean">
@@ -113,117 +58,84 @@ recording it in the ledger with the properties below.
   Independent of `status` — see [completion detection](#completion-detection).
 </ParamField>
 
-<ParamField path="release_id" type="string">
-  <ImmutableBadge />
-
-  ID of the [release](/essentials/releases/overview) the device was on when the
-  upload was produced.
-
-  Example: `rls_123`
-</ParamField>
-
-<ParamField path="deployment_id" type="string">
-  <ImmutableBadge />
-
-  ID of the [deployment](/essentials/deployments) that was active on the device when
-  the upload was produced.
-
-  Example: `dpl_123`
-</ParamField>
-
 <ParamField path="uploaded_at" type="datetime">
   <MutableBadge /> <NullableBadge />
 
   Timestamp of when the upload was durably confirmed. Null until the upload completes.
 </ParamField>
 
-<ParamField path="metadata" type="map<string, string>">
+<ParamField path="device" type="Device">
   <ImmutableBadge />
 
-  Provenance the device stamps as cloud object metadata on the uploaded object (S3
-  `x-amz-meta-*` / GCS `x-goog-meta-*`) — see [object metadata](#object-metadata).
-  Returned on Device API responses only.
+  The [device](/essentials/devices/overview) that produced the upload.
+</ParamField>
+
+<ParamField path="upload rule" type="Upload Rule">
+  <ImmutableBadge />
+
+  The [upload rule](/data-uploads/upload-rules) that produced the upload.
+</ParamField>
+
+<ParamField path="deployment" type="Deployment">
+  <ImmutableBadge />
+
+  The [deployment](/essentials/deployments) that was active on the device when the
+  upload was produced.
 </ParamField>
 
 Uploads also carry the standard `created_at`, `updated_at`, and `workspace_id`
 bookkeeping fields.
 
-## How an upload happens
+## Sources
 
-Devices never hold long-lived cloud credentials, and Miru never proxies your data.
-Each upload is brokered with short-lived, downscoped credentials:
+An upload's `source` identifies the file collected from the device and when it was
+last modified.
 
-1. The Agent detects a finished file matching a rule and **requests an upload** from
-   the Miru control plane, sending the rule ID, file details, digest, and size.
-2. The control plane verifies the device's identity from its session token, records a
-   `pending` ledger entry, deduplicates by digest, and vends **short-lived downscoped
-   cloud credentials** scoped to exactly one object key — a key carrying that device's
-   own verified ID.
-3. The device uploads the file **directly to your bucket** with the native cloud SDK —
-   a multipart upload for S3, a resumable upload for GCS. If the credentials expire
-   mid-upload, the device requests fresh credentials for the same key and resumes.
-4. The device **confirms** the durable write; the ledger entry flips to `uploaded` and
-   `uploaded_at` is set.
+<ParamField path="file_path" type="string">
+  <ImmutableBadge />
 
-Your data moves straight from the device to your storage — only the upload request and
-the credential exchange touch Miru.
+  Absolute path of the file on the device. Its basename renders the `{file_name}`
+  variable in the [destination path template](/data-uploads/upload-rules#destinations).
 
-## Completion detection
+  Example: `/var/log/robot/robot.log`
+</ParamField>
 
-The Agent uploads a file once it is confident the file has finished being written to.
-Completion is determined by **quiescence**: a file whose size and modification time
-have held steady for the rule's
-[`stability_window_secs`](/data-uploads/upload-rules#sources) is considered finished
-and eligible for upload. This works for any file type, but it is a heuristic: "looks
-done," not "proven done."
+<ParamField path="file_modified_at" type="datetime">
+  <ImmutableBadge />
 
-If you would rather not rely on the heuristic, you can **defer completion to the file
-producer**: have it write to a temporary name the rule's glob does not match and
-rename on completion, and the Agent will only ever see finished files — zero false
-positives.
+  The file's last-modified time (mtime) on the device — roughly when writing finished.
+</ParamField>
 
-## Guarantees
+## Destinations
 
-The following properties are guaranteed by the upload flow.
+An upload's `destination` identifies the bucket and object key where the file was
+written.
 
-**Correctness**
+<ParamField path="bucket" type="Bucket">
+  <ImmutableBadge />
 
-- **Exactly one copy.** The ledger deduplicates by [`digest`](#properties), so each
-  file is uploaded exactly once.
-- **Unique keys.** Every object key contains the [upload's ID](#properties), so an
-  upload can never overwrite another object.
-- **Atomic visibility.** An object appears in your bucket only when fully written; a
-  partial or in-flight upload is never visible to anything reading the bucket.
+  The registered [bucket](/data-uploads/buckets/overview) the file was uploaded to.
+</ParamField>
 
-**Safety**
+<ParamField path="object_key" type="string">
+  <ImmutableBadge />
 
-- **Non-destructive.** The credentials a device receives only allow *creating* one
-  specific object — they cannot read, list, modify, or delete anything else in your
-  bucket.
-- **Durable before acknowledged.** A file is recorded as [`uploaded`](#properties)
-  only after the device confirms a durable write to the bucket.
+  The object path the file was written to in the destination bucket. Rendered from the
+  rule's path template, it carries the device's verified ID.
 
-**Delivery**
+  Example: `logs/dvc_123/upl_123/robot.log`
+</ParamField>
 
-- **Resumable.** Uploads are chunked (S3 multipart / GCS resumable) and resume where
-  they left off across poor network conditions; expired credentials are re-vended
-  mid-upload without restarting.
+## Status
 
-## Object metadata
+An upload's status tracks whether the device has confirmed that the file was durably
+written to the destination bucket.
 
-Each uploaded object is stamped with the upload's provenance as cloud object metadata
-(S3 `x-amz-meta-*` / GCS `x-goog-meta-*`), so every file is self-describing in your
-bucket and can be correlated back to exactly what produced it without parsing the
-path.
+| Status | Description |
+| --- | --- |
+| `pending` | Miru has authorized the upload and issued credentials, but the device has not yet completed the upload. |
+| `uploaded` | The device has confirmed that the file was durably written to its destination bucket. |
 
-The metadata is a generic map of string keys to string values. The keys currently
-stamped include `device_id`, `release_id`, `release_version`, `deployment_id`,
-`digest`, and `file_modified_at`, but the set may evolve. The map stays within the
-cloud provider's object-metadata size limits (roughly 2 KB on S3, 8 KB on GCS).
-
-## Viewing uploads  {/* TODO: confirm required role/scope */}
-
-Uploads are records the [Miru Agent](/developers/agent/overview) produces — you don't
-create or edit them by hand. The **Uploads** view lists every upload in the workspace,
-newest first. Narrow the list by **device**, **upload rule**, **upload collection**,
-or **status**, and open an upload to inspect its full [properties](#properties).
+Uploads begin in the `pending` state. A device may retry or resume the transfer while
+the upload remains pending. After the device confirms the durable write, the upload
+transitions to `uploaded`, which is its terminal state.

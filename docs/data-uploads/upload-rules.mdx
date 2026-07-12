@@ -15,19 +15,11 @@ stable identity. Rules are created by defining them as rule files and
 
 ## Properties
 
-<ParamField path="upload_collection_id" type="string">
-  <ImmutableBadge />
-
-  ID of the [upload collection](/data-uploads/upload-collections) this rule belongs to
-  (`upl_col_…`). In rule files, the collection is referenced by its `collection_slug`
-  instead.
-</ParamField>
-
 <ParamField path="digest" type="string">
   <ImmutableBadge />
 
   A hash of the rule's resolved definition — its collection, source, and destination.
-  Upload rules are deduplicated by digest within their collection: creating a rule
+  Upload rules are deduplicated by digest within their collection: pushing a rule
   identical to an existing one returns the existing rule instead of a duplicate.
 
   Example: `sha256:1234567890`
@@ -36,39 +28,45 @@ stable identity. Rules are created by defining them as rule files and
 <ParamField path="source" type="Source">
   <ImmutableBadge />
 
-  What to collect on the device: the file glob and the completion settings. See
-  [Sources](#sources).
+  What files to upload from the device. See [Sources](#sources). 
 </ParamField>
 
 <ParamField path="destination" type="Destination">
   <ImmutableBadge />
 
-  Where collected files are written — the target bucket and object-path template —
-  and how the local copy is handled. See
-  [Destinations](#destinations).
+  Where uploaded files are uploaded to. See [Destinations](#destinations).
 </ParamField>
 
-## File formats
+<ParamField path="upload collection" type="Upload Collection">
+  <ImmutableBadge />
 
-Each rule is defined as a single YAML **rule file** in your Git repository:
+  The [upload collection](/data-uploads/upload-collections#properties) to which the
+  rule belongs.
+
+  Examples: `Robot Logs`, `Crash Reports`, `Camera Footage`
+</ParamField>
+
+## File format
+
+Each rule is defined as a single YAML file in your Git repository:
 
 ```yaml
-collection_slug: robot-logs             # the collection this rule belongs to
+collection_slug: robot-logs  # collection this rule belongs to             
 
 source:
-  glob: "/var/log/robot/*.log"          # absolute glob (must start with /)
-  stability_window_secs: 60             # quiescence before a file is considered finished
+  glob: "/var/log/robot/*.log"          
+  stability_window_secs: 60             
 
 destination:
-  bucket: my-uploads-bucket             # a registered bucket, referenced by name
-  path: "logs/{device_id}/{upload_id}/{file_name}"  # object-path template
-  delete_policy: never                  # never | after_upload
+  bucket: my-uploads-bucket             
+  path: "logs/{device_id}/{upload_id}/{file_name}"  
+  delete_policy: never  # never | after_upload
 ```
 
 Rule files reference the rule's collection by its `collection_slug` and the bucket by
-name (`destination.bucket`). See
-[upload rule files](/data-uploads/defining-releases#upload-rule-files) for the
-field-by-field reference.
+name (`destination.bucket`). 
+
+See [defining releases](/data-uploads/defining-releases#upload-rule-files) for more information about a particular field.
 
 ## Sources
 
@@ -76,53 +74,57 @@ A rule's `source` declares what to collect on the device: which files to match, 
 when a matching file is considered finished and eligible for upload.
 
 <ParamField path="glob" type="string" required>
-  An absolute glob pattern (must start with `/`) that selects the files to upload.
+  An absolute glob pattern that selects the files to upload.
+
+  Must satisfy the following criteria:
+  - Absolute — it starts with `/`
+  - At most 1024 bytes, with no control characters
+  - No `..` segments, and no empty segments (`//` or a trailing `/`)
 
   Example: `/var/log/robot/*.log`
 </ParamField>
 
 <ParamField path="stability_window_secs" type="integer" default="60">
   How long, in seconds, a matching file's size and modification time must stay
-  unchanged (quiescent) before it is considered finished and eligible for upload.
+  unchanged (quiescent) before it is considered stable and eligible for upload.
   See [completion detection](/data-uploads/uploads#completion-detection).
 </ParamField>
 
-### Globs
-
-Globs are validated when the rule is created:
-
-- The glob must be absolute — it starts with `/` (e.g. `/var/log/robot/*.log`).
-- At most 1024 bytes, with no control characters.
-- No `..` segments, and no empty segments (`//` or a trailing `/`).
-
 ## Destinations
 
-A rule's `destination` declares where collected data goes and how the local copy is
-handled. This is the rule's *destination configuration* — which registered
-[bucket](/data-uploads/buckets/overview) to write to, and the object path within it. It
-is distinct from the [Buckets](/data-uploads/buckets/overview) pages, which describe how
-the storage itself is registered and connected.
+A rule's `destination` declares where which registered [bucket](/data-uploads/buckets/overview) to write to, and the object path within it. 
 
-<ParamField path="bucket_id" type="string">
-  ID of the registered [bucket](/data-uploads/buckets/overview) this rule uploads to
-  (`bkt_…`).
-</ParamField>
-
-<ParamField path="bucket_name" type="string">
-  Name of the registered bucket this rule uploads to. When creating a rule — including
-  in [rule files](/data-uploads/defining-releases), where the field is
-  `destination.bucket` — the bucket can be referenced by either its ID or its name.
+<ParamField path="bucket" type="string">
+  Name of the registered bucket this rule uploads to.
 
   Example: `my-uploads-bucket`
 </ParamField>
 
-<ParamField path="path" type="string" default="{device_id}/{year}-{month}-{day}/{upload_id}/{file_name}">
-  The object-path template collected files are written to. Optional when creating a
-  rule — if omitted, the server fills in the default template above.
+<ParamField 
+  path="path"
+  type="string"
+  default="{device_id}/{year}-{month}-{day}/{upload_id}/{file_name}"
+>
+  The template which defines the object path to which the uploaded file is written.
 
-  A custom template **must contain `{device_id}` and `{upload_id}`**, and may use any
-  of the [supported variables](#path-templates). Everything else about the
-  layout is up to you.
+  The following variables are supported, which are filled in when each upload's
+  object key is rendered:
+
+  | Variable | Example | Description |
+  | --- | --- | --- |
+  | `{upload_id}` | `upl_123` | The upload's ID. |
+  | `{device_id}` | `dvc_123` | The uploading device's ID. |
+  | `{device_name}` | `my-robot` | The device's name. |
+  | `{file_name}` | `robot.log` | The source file's basename. |
+  | `{year}` | `2026` | The upload's creation year (e.g. `2026`). |
+  | `{month}` | `01` | The upload's creation month. |
+  | `{day}` | `01` | The upload's creation day. |
+  | `{hour}` | `00` | The upload's creation hour. |
+  | `{minute}` | `00` | The upload's creation minute. |
+
+  <Warning>
+    Templates must contain the `{upload_id}` variable.
+  </Warning>
 </ParamField>
 
 <ParamField path="delete_policy" type="enum" default="never">
@@ -133,48 +135,11 @@ the storage itself is registered and connected.
   - `after_upload` — delete the local file once the upload is durably confirmed.
 </ParamField>
 
-### Path templates
-
-The `path` template supports the following variables, filled in when each upload's
-object key is rendered:
-
-| Variable | Renders to |
-| --- | --- |
-| `{device_id}` | The uploading device's verified ID. **Required** — it namespaces every device's uploads under its own identity, which is what guarantees [device data isolation](/data-uploads/buckets/overview#device-data-isolation). |
-| `{upload_id}` | The [upload's](/data-uploads/uploads) ID. **Required** — it makes every rendered object key globally unique, so uploads can never overwrite one another. |
-| `{device_name}` | The device's name. |
-| `{file_name}` | The source file's basename (e.g. `robot.log`). |
-| `{year}` | The upload's creation year (e.g. `2026`). |
-| `{month}` | The upload's creation month. |
-| `{day}` | The upload's creation day. |
-| `{hour}` | The upload's creation hour. |
-| `{minute}` | The upload's creation minute. |
-
-Templates are validated when the rule is created:
-
-- `{device_id}` and `{upload_id}` must both be present; only the variables above are
-  supported.
-- The rendered path is a *relative* object key — no leading `/`, no empty segments
-  (`//` or a trailing `/`), and no `..` segments.
-- At most 1024 bytes, with no control characters.
-
-## Immutability and releases
+## Immutability
 
 Upload rules are **immutable**. A rule is created once, shipped to devices as part of
-a [release](/essentials/releases/overview), and never edited in place — to change
-what is collected, you release a revised rule and the old one simply stops being
-referenced. Defining what data leaves your devices is therefore the same kind of
-versioned, reviewable, staged operation as defining anything else you ship.
-
-Because rules are deduplicated by digest within their collection, releasing the same
-rule definition twice never creates a duplicate — the release simply references the
-existing rule.
-
-Rules **cannot be edited or deleted**. To change what a rule collects or where it
-goes, edit the rule's YAML file and ship it in a new release; this creates a new rule
-under the same collection. The release a device is on determines which rules are
-active, so retiring a rule is a matter of shipping a release that no longer
-includes it.
+a [release](/essentials/releases/overview), and never edited in place. To change
+what is collected, you must create a new rule, release it, and deploy it to your devices. 
 
 ## Git provenance
 
@@ -182,17 +147,8 @@ Rules are defined as YAML files in your Git repository and created by
 [releasing them via the CLI](/data-uploads/defining-releases). Each rule records the
 Git commits it was released from — the commit itself and the rule file's path relative
 to the repository root — so any rule in Miru can be traced back to the exact lines of
-YAML that defined it. If the same rule definition is released again from a later
-commit, the existing rule accrues a link to that commit too — the rule's commit
-history shows every commit that has shipped it. See
-[Git commit](/data-uploads/defining-releases#git-commit) for the metadata the CLI
-captures.
+YAML that defined it. 
 
-## Viewing upload rules  {/* TODO: confirm required role/scope */}
+## View an upload rule
 
-Rules ship with releases, so a release lists the upload rules it contains alongside
-its config schemas. Open a release and select an upload rule to inspect its
-[source](#sources), [destination](#destinations), digest, and
-[collection](/data-uploads/upload-collections).
-
-{/* TODO: add screenshots once the dashboard ships */}
+[TODO]

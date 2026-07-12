@@ -96,7 +96,7 @@
                 ]
               },
               "cfg-mgmt/config-instances",
-              "cfg-mgmt/defining-releases",
+              "cfg-mgmt/define-releases",
               {
                 "group": "Deploy configs",
                 "pages": [
@@ -118,13 +118,10 @@
             "group": "Data Uploads",
             "pages": [
               "data-uploads/overview",
-              "data-uploads/upload-collections",
-              "data-uploads/upload-rules",
               {
                 "group": "Buckets",
                 "pages": [
                   "data-uploads/buckets/overview",
-                  "data-uploads/buckets/manage",
                   {
                     "group": "Connect buckets",
                     "pages": [
@@ -134,6 +131,8 @@
                   }
                 ]
               },
+              "data-uploads/upload-collections",
+              "data-uploads/upload-rules",
               "data-uploads/uploads",
               "data-uploads/defining-releases"
             ]
