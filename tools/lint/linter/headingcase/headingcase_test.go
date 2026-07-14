@@ -191,6 +191,16 @@ func TestCheck_Allowlist(t *testing.T) {
 			wantLine:  1,
 			wantCol:   5,
 		},
+		{
+			name:      "clean AWS S3 heading",
+			content:   "## Create the S3 bucket\n",
+			wantCount: 0,
+		},
+		{
+			name:      "clean IAM heading",
+			content:   "## Create the IAM role\n",
+			wantCount: 0,
+		},
 	}
 
 	for _, tc := range tests {
@@ -286,6 +296,16 @@ func TestCheck_FrontmatterTitle(t *testing.T) {
 			wantCount: 1,
 			wantLine:  2,
 			wantCol:   9,
+		},
+		{
+			name:      "clean Amazon S3 title",
+			content:   "---\ntitle: \"Amazon S3\"\n---\n",
+			wantCount: 0,
+		},
+		{
+			name:      "clean Google Cloud Storage title",
+			content:   "---\ntitle: \"Google Cloud Storage\"\n---\n",
+			wantCount: 0,
 		},
 	}
 

@@ -51,6 +51,15 @@
     "tmpfiles",
     "rustls",
     "webpki",
-    "affordances"
+    "affordances",
+    "GCS",
+    "GCP",
+    "WIF",
+    "presigned",
+    "gcloud",
+    "gsutil",
+    "SigV4",
+    "ExternalId",
+    "RoleSessionName"
   ]
 }
