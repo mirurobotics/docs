@@ -97,6 +97,13 @@
                   "learn/releases/manage",
                   "learn/releases/staging-area"
                 ]
+              },
+              {
+                "group": "Buckets",
+                "pages": [
+                  "learn/buckets/aws",
+                  "learn/buckets/gcs"
+                ]
               }
             ]
           },

@@ -1,0 +1,99 @@
+---
+title: "Google Cloud Storage"
+description: "Configure a Google Cloud Storage bucket so Miru can verify and use it for uploads."
+---
+
+Miru writes uploads to your own Google Cloud Storage bucket. It authenticates with Workload Identity Federation rather than service-account keys: Miru's AWS identity (`MiruGCSIntegrationRole`) federates into your GCP project and impersonates a service account you control. Miru binds the federation to your workspace by setting the STS session name to your workspace id, so you can pin your provider to exactly your tenant.
+
+<Note>
+  You need Miru's AWS account id to write the provider's attribute condition. Copy it from the bucket-setup screen in the Miru dashboard, or ask Miru support. This guide shows it as the placeholder `<miru-aws-account>`. The role name `MiruGCSIntegrationRole` is fixed.
+</Note>
+
+## Prerequisites
+
+- A GCP project where you can create buckets, service accounts, and Workload Identity pools.
+- Your Miru workspace id (`wsp_…`). Miru shows it as the read-only `session_name` field, and it is the session value your provider must pin.
+- Miru's AWS account id (`<miru-aws-account>`) and the fixed role name `MiruGCSIntegrationRole`.
+
+## Create the bucket
+
+Create a GCS bucket in your project. Uniform bucket-level access is recommended.
+
+## Create a service account
+
+Create the service account Miru impersonates, and grant it `roles/storage.objectAdmin` on the bucket (bucket-scoped, not project-wide). This write and delete access covers uploads and the create-time verification probe, which writes a zero-byte object under the `.miru/probe/` prefix.
+
+## Set up workload identity federation
+
+Create a Workload Identity pool and an AWS provider that trusts Miru's `MiruGCSIntegrationRole`. The provider's attribute condition must pin the full assumed-role ARN including your workspace id as the session name — this is what binds federation to your tenant:
+
+<CodeGroup>
+
+```bash gcloud
+gcloud iam workload-identity-pools create miru-pool \
+  --location="global" --display-name="Miru"
+
+gcloud iam workload-identity-pools providers create-aws miru-provider \
+  --location="global" --workload-identity-pool="miru-pool" \
+  --account-id="<miru-aws-account>" \
+  --attribute-mapping="google.subject=assertion.arn" \
+  --attribute-condition="assertion.arn == 'arn:aws:sts::<miru-aws-account>:assumed-role/MiruGCSIntegrationRole/<workspace-id>'"
+```
+
+```hcl Terraform
+resource "google_iam_workload_identity_pool" "miru" {
+  workload_identity_pool_id = "miru-pool"
+}
+
+resource "google_iam_workload_identity_pool_provider" "miru_aws" {
+  workload_identity_pool_id          = google_iam_workload_identity_pool.miru.workload_identity_pool_id
+  workload_identity_pool_provider_id = "miru-provider"
+
+  attribute_mapping   = { "google.subject" = "assertion.arn" }
+  attribute_condition = "assertion.arn == 'arn:aws:sts::<miru-aws-account>:assumed-role/MiruGCSIntegrationRole/<workspace-id>'"
+
+  aws {
+    account_id = "<miru-aws-account>"
+  }
+}
+```
+
+</CodeGroup>
+
+<Warning>
+  Pin the session, not just the role. The attribute condition must match the full ARN ending in `/MiruGCSIntegrationRole/<workspace-id>`. A condition that matches only the role prefix — accepting any session name — will fail verification: Miru probes that your provider rejects a wrong session name, and rejects providers that do not enforce it.
+</Warning>
+
+## Grant impersonation to the pinned session
+
+Grant `roles/iam.workloadIdentityUser` on the service account to exactly your workspace's federated session:
+
+<CodeGroup>
+
+```bash gcloud
+gcloud iam service-accounts add-iam-policy-binding <service-account-email> \
+  --role="roles/iam.workloadIdentityUser" \
+  --member="principal://iam.googleapis.com/<pool-name>/subject/arn:aws:sts::<miru-aws-account>:assumed-role/MiruGCSIntegrationRole/<workspace-id>"
+```
+
+```hcl Terraform
+resource "google_service_account_iam_member" "miru" {
+  service_account_id = google_service_account.uploader.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "principal://iam.googleapis.com/<pool-name>/subject/arn:aws:sts::<miru-aws-account>:assumed-role/MiruGCSIntegrationRole/<workspace-id>"
+}
+```
+
+</CodeGroup>
+
+Binding the member as `principal://…/subject/…` (not a role-wide `principalSet`) ties impersonation to your workspace's exact federated session, so no other tenant can impersonate your service account.
+
+## Recommended lifecycle rule
+
+<Tip>
+  Add a lifecycle rule that deletes objects under the `.miru/probe/` prefix after one day, as a safety net for any probe objects left behind.
+</Tip>
+
+## Create the bucket in Miru
+
+In the Miru dashboard or via the Platform API, create a GCS bucket, providing the `wip_provider` (the full provider resource name, `//iam.googleapis.com/projects/…/locations/global/workloadIdentityPools/…/providers/…`) and the `service_account_email`. The `session_name` (your workspace id) is shown read-only. Because Miru verifies at creation by federating, impersonating the service account, and running the write probe, finish the federation setup first. See the [Platform API reference](/developers/platform-api/overview) for the bucket-create endpoint.

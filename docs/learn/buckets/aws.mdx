@@ -1,0 +1,86 @@
+---
+title: "Amazon S3"
+description: "Configure an Amazon S3 bucket so Miru can verify and use it for uploads."
+---
+
+Miru writes uploads to your own Amazon S3 bucket. It never uses long-lived access keys: instead it assumes a cross-account IAM role in your account, scoped by an external id that is your Miru workspace id. This guide walks through creating the bucket, the role, and its policies, then registering the bucket in Miru.
+
+<Note>
+  You need Miru's AWS integration role ARN and account id to write the trust policy. Copy them from the bucket-setup screen in the Miru dashboard, or ask Miru support. This guide shows them as the placeholders `<miru-aws-account>` and `<miru-connector-role>`.
+</Note>
+
+## Prerequisites
+
+- An AWS account where you can create S3 buckets and IAM roles.
+- Your Miru workspace id (`wsp_…`). Miru shows it as the read-only `external_id` field when you create the bucket, and it is the value your trust policy must pin.
+- Miru's AWS integration role ARN and account id (see the note above).
+
+## Create the S3 bucket
+
+Create a bucket in the AWS region you want Miru to use, and note the bucket name and region — you enter both into Miru later. No public access is required.
+
+## Create the IAM role
+
+Create an IAM role that Miru assumes. The next two sections define the role's trust policy (who may assume it) and permissions policy (what it may do); nothing else about the role matters to Miru.
+
+## Configure the trust policy
+
+The trust policy must allow Miru's integration role to assume this role, and must require your workspace id as the `sts:ExternalId`:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": { "AWS": "arn:aws:iam::<miru-aws-account>:role/<miru-connector-role>" },
+      "Action": "sts:AssumeRole",
+      "Condition": {
+        "StringEquals": { "sts:ExternalId": "wsp_your_workspace_id" }
+      }
+    }
+  ]
+}
+```
+
+<Warning>
+  The `sts:ExternalId` condition must be an exact `StringEquals` match on your workspace id. A `StringLike` or wildcard condition, or omitting the external-id condition entirely, will fail verification: during setup Miru actively probes that your trust policy enforces the external id, and rejects roles that do not.
+</Warning>
+
+## Attach a permissions policy
+
+Grant the role write access to the bucket. `s3:PutObject` is used both for uploads and for the create-time verification probe, which writes a zero-byte object under the `.miru/probe/` prefix:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::<your-bucket-name>/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "s3:DeleteObject",
+      "Resource": "arn:aws:s3:::<your-bucket-name>/.miru/probe/*"
+    }
+  ]
+}
+```
+
+The `s3:DeleteObject` statement is optional and scoped to the probe prefix. Miru best-effort-deletes each probe object after writing it, and verification still succeeds if the delete is denied; granting it simply keeps your bucket tidy.
+
+## Expected access-denied events
+
+To confirm your trust policy actually enforces the external id, Miru runs a deliberate negative probe during verification: it attempts to assume your role once *without* the external id and requires that attempt to be denied. As a result you see benign `AccessDenied` AssumeRole events for your role in CloudTrail. These are expected and are not a sign of misconfiguration.
+
+## Recommended lifecycle rule
+
+<Tip>
+  Add an S3 lifecycle rule that expires objects under the `.miru/probe/` prefix (for example, after one day). This cleans up any probe objects left behind when a best-effort delete was denied.
+</Tip>
+
+## Create the bucket in Miru
+
+In the Miru dashboard or via the Platform API, create an S3 bucket, providing the `region` and the `role_arn` of the role you created. The `external_id` (your workspace id) is shown read-only — it is the value Miru sends as `sts:ExternalId`. Because Miru verifies the bucket at creation (a probe write and delete plus the external-id enforcement check), finish the trust and permissions policies first. See the [Platform API reference](/developers/platform-api/overview) for the bucket-create endpoint.
