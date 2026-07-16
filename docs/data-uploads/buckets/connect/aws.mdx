@@ -27,7 +27,7 @@ either direction.
 
 ### Miru provides you
 
-<ParamField path="miru_integration_role_arn">
+<ParamField path="miru_role_arn">
   The AWS role Miru assumes into your account. You name this role as the trusted
   principal in your bucket role's trust policy. This is a fixed value that never changes.
 
@@ -118,8 +118,8 @@ bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
     The external ID is the guard against the [confused deputy](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html) problem: another tenant of the same Miru service cannot trick Miru into assuming your role without presenting your specific external ID.
 
     ```bash
-    ROLE_NAME="miru-uploader"
-    MIRU_INTEGRATION_ROLE_ARN="arn:aws:iam::008971655189:role/MiruS3IntegrationRole"
+    INTERNAL_ROLE_NAME="MiruUploaderRole"
+    MIRU_EXTERNAL_ROLE_ARN="arn:aws:iam::008971655189:role/MiruS3IntegrationRole"
 
     cat > trust-policy.json <<EOF
     {
@@ -127,7 +127,7 @@ bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
       "Statement": [
         {
           "Effect": "Allow",
-          "Principal": { "AWS": "${MIRU_INTEGRATION_ROLE_ARN}" },
+          "Principal": { "AWS": "${MIRU_EXTERNAL_ROLE_ARN}" },
           "Action": "sts:AssumeRole",
           "Condition": {
             "StringEquals": { "sts:ExternalId": "${EXTERNAL_ID}" }
@@ -137,13 +137,13 @@ bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
     }
     EOF
 
-    ROLE_ARN="$(aws iam create-role \
-      --role-name "${ROLE_NAME}" \
+    INTERNAL_ROLE_ARN="$(aws iam create-role \
+      --role-name "${INTERNAL_ROLE_NAME}" \
       --assume-role-policy-document file://trust-policy.json \
       --query 'Role.Arn' --output text)"
     ```
 
-    The captured `${ROLE_ARN}` is your `role_arn` for registration.
+    The captured `${INTERNAL_ROLE_ARN}` is your `role_arn` for registration.
   </Step>
 
   <Step title="Grant the role write access to the bucket">
@@ -171,7 +171,7 @@ bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
     EOF
 
     aws iam put-role-policy \
-      --role-name "${ROLE_NAME}" \
+      --role-name "${INTERNAL_ROLE_NAME}" \
       --policy-name miru-put-object \
       --policy-document file://put-policy.json
     ```
@@ -189,7 +189,7 @@ bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
     printf 'name: %s\nregion: %s\nrole_arn: %s\n' \
       "${BUCKET_NAME}" \
       "${REGION}" \
-      "${ROLE_ARN}"
+      "${INTERNAL_ROLE_ARN}"
     ```
 
     From the **Buckets** page in the Miru dashboard, select **New bucket**, choose
