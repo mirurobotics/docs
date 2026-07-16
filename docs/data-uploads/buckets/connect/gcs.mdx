@@ -38,6 +38,12 @@ Connecting your bucket to Miru is a one-time setup that uses only configuration 
   `arn:aws:iam::008971655189:role/MiruGCSIntegrationRole`
 </ParamField>
 
+<ParamField path="workspace_id">
+  Your Miru workspace ID. Miru sets this as the STS **session name** when it assumes its integration role, and your Workload Identity provider must pin it (below) so only Miru acting for your workspace can federate. Shown in the Miru dashboard.
+
+  Example: `wsp_123`
+</ParamField>
+
 ### You provide Miru
 
 <ParamField path="bucket_name">
@@ -71,6 +77,17 @@ Follow the steps below to connect a bucket to Miru using the Google Cloud CLI.
 To connect a bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
 
 <Steps>
+  <Step title="Get your workspace ID from Miru">
+    In the Miru dashboard, copy your **workspace ID** and set it as a variable. Your
+    Workload Identity provider will pin to this value — Miru presents it as the STS
+    session name when it federates, so only Miru acting for your workspace can assume
+    the identity.
+
+    ```bash
+    WORKSPACE_ID="<workspace-id>"
+    ```
+  </Step>
+
   <Step title="Define the bucket">
     Set your Google Cloud project ID and bucket variables.
 
@@ -103,20 +120,24 @@ To connect a bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
 
   <Step title="Add an AWS provider that pins Miru's role">
     
-    The attribute mapping makes the federated subject the caller's ARN, and the attribute condition accepts **only
-    Miru's exact role** — a copy of the configuration is useless to anyone who is
-    not presenting Miru's specific AWS identity.
+    The attribute mapping makes the federated subject the caller's full assumed-role
+    ARN — including the session name — and the attribute condition accepts **only
+    Miru's exact role AND your workspace's session name**. Pinning the session name is
+    what blocks another Miru workspace from federating through a copy of this
+    configuration (the confused-deputy guard): a caller presenting Miru's role but a
+    different session name is rejected.
 
     ```bash
+    WIP_PROVIDER_ID="miru-provider"
     MIRU_AWS_ACCOUNT_ID="008971655189"
-    MIRU_AWS_ROLE_ARN="arn:aws:iam::008971655189:role/MiruGCSIntegrationRole"
+    MIRU_ASSUMED_ROLE="arn:aws:sts::${MIRU_AWS_ACCOUNT_ID}:assumed-role/MiruGCSIntegrationRole"
     gcloud iam workload-identity-pools providers create-aws "${WIP_PROVIDER_ID}" \
       --project="${PROJECT_ID}" \
       --location=global \
       --workload-identity-pool="${WIP_ID}" \
       --account-id="${MIRU_AWS_ACCOUNT_ID}" \
-      --attribute-mapping="google.subject=assertion.arn,attribute.aws_role=assertion.arn.contains('assumed-role') ? assertion.arn.extract('{account_arn}assumed-role/') + 'assumed-role/' + assertion.arn.extract('assumed-role/{role_name}/') : assertion.arn" \
-      --attribute-condition="assertion.arn.startsWith('${MIRU_AWS_ROLE_ARN}/')"
+      --attribute-mapping="google.subject=assertion.arn" \
+      --attribute-condition="assertion.arn == '${MIRU_ASSUMED_ROLE}/${WORKSPACE_ID}'"
     ```
 
     Save the provider's full resource name for bucket registration:
@@ -162,17 +183,19 @@ To connect a bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
 
   <Step title="Let Miru's federated principal impersonate the service account">
     Bind the **Workload Identity User** role
-    (`roles/iam.workloadIdentityUser`) on the uploader service account to the
-    principal set that represents Miru's pinned AWS role via the pool's
-    `aws_role` attribute. This lets the federated identity mint short-lived
-    access tokens as the uploader account — and nothing else.
+    (`roles/iam.workloadIdentityUser`) on the uploader service account as a
+    **per-subject** binding on the exact session
+    (`principal://.../subject/<assumed-role ARN>/<workspace id>`). This lets only
+    Miru's pinned session mint short-lived access tokens as the uploader account —
+    and nothing else.
 
     ```bash
+    PROJECT_NUMBER="$(gcloud projects describe "${PROJECT_ID}" --format='value(projectNumber)')"
     gcloud iam service-accounts add-iam-policy-binding \
       "${SERVICE_ACCOUNT_EMAIL}" \
       --project="${PROJECT_ID}" \
       --role="roles/iam.workloadIdentityUser" \
-      --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${WIP_ID}/attribute.aws_role/${MIRU_AWS_ROLE_ARN}"
+      --member="principal://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${WIP_ID}/subject/${MIRU_ASSUMED_ROLE}/${WORKSPACE_ID}"
     ```
   </Step>
 
