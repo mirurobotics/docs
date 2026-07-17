@@ -6,110 +6,42 @@ Data uploads move data *off* your devices and into *your* cloud storage.
 
 You define a small set of [**upload rules**](/data-uploads/upload-rules) — what to
 collect, when it is considered finished, and where it goes. The
-[Miru Agent](/developers/agent/overview) detects matching data, waits for each file
-to finish, and uploads it directly to your bucket.
+[Miru Agent](/developers/agent/overview) detects matching files, waits for each file
+to finish being written to, and uploads it directly to your bucket.
 
 ## How it works
 
 <img
-  src="https://assets.mirurobotics.com/docs/v04/images/data-uploads/upload-flow.svg"
+  src="/images/data-upload-flow.svg"
   alt="Upload flow: a device requests an upload from the Miru control plane, receives short-lived downscoped credentials for a single object key carrying its own device ID, and uploads the file directly to your cloud storage with the native cloud SDK. Your data never passes through Miru."
 />
 {/* TODO (design): refresh upload-flow.svg — it still depicts the old signed-URL flow; the current flow vends downscoped credentials used with the native cloud SDK. */}
 
-1. The device detects a finished file and makes an **upload request** to the Miru
-   control plane.
-2. The control plane verifies the device's identity, records the upload in a ledger,
-   and returns **short-lived, downscoped cloud credentials** valid for exactly one
-   object key — a key carrying that device's own verified ID.
-3. The device uploads the file **directly to your bucket** using the native cloud SDK
-   (a multipart upload for S3, a resumable upload for GCS), then confirms the durable
-   write.
+1. The Miru Agent detects a new file to upload
+2. The Agent registers a new [upload](/data-uploads/uploads) with the Miru control plane.
+3. Using credentials setup in the [bucket connection](/data-uploads/buckets/connect), the control plane issues a short-lived token valid only for the exact storage object key the file will be uploaded to.
+4. The Agent uploads the file **directly to your bucket**.
 
 Your data moves straight from the device to your storage — only the upload request and
-the credential exchange touch Miru. See [Uploads](/data-uploads/uploads) for the full
-flow and its guarantees.
+the credential exchange touch Miru. 
+
+## File detection
+
+The Agent uploads a file once it is confident the file has finished being written to.
+Completion is determined by **quiescence**: a file whose size and modification time have
+held steady for the rule's [`stability_window_secs`](/data-uploads/upload-rules#sources)
+is considered finished and eligible for upload. 
+
+While this works for any file type, it is a heuristic for detecting when a file is
+finished being written to. For deterministic completion detection, write to a file location that does not match the rule's glob and rename on completion. This ensures the Miru Agent only ever sees finished files — zero false positives.
+
 
 ## Device data isolation
 
-Isolation rests on a single requirement on the destination
-[path](/data-uploads/upload-rules#path-templates): it must include the **device-identity
-variable** (`{device_id}`) somewhere in the template. Where that variable sits, and how
-you lay out the rest of the path, is entirely up to you.
+Devices' uploads are strictly isolated from each other. Isolation rests on a single requirement on the [destination
+path](/data-uploads/upload-rules#path-templates): it must include the `{upload_id}` variable somewhere in the template. 
 
-When the control plane authorizes an upload, it fills that variable with the ID of the
-**authenticated device making the request** — a verified value, never something the
-rule author types in. So the resolved object key for any upload always carries the
-requesting device's own ID.
-
-That substitution is what makes isolation structural: the credentials a device
-receives are scoped to that one resolved object key, so **a device can only ever be
-issued credentials for paths carrying its own ID.** A path bearing device A's ID is
-only mintable for device A; device B presents its own identity and gets its own ID
-substituted, never A's. No device can obtain credentials for another device's path —
-regardless of where the variable sits or how the path is laid out, and with no
-per-rule policy to configure correctly or audit.
-
-## How an upload happens
-
-Devices never hold long-lived cloud credentials, and Miru never proxies your data.
-Each upload is brokered with short-lived, downscoped credentials:
-
-1. The Agent detects a finished file matching a rule and **requests an upload** from
-   the Miru control plane, sending the rule ID, file details, digest, and size.
-2. The control plane verifies the device's identity from its session token, records a
-   `pending` ledger entry, deduplicates by digest, and vends **short-lived downscoped
-   cloud credentials** scoped to exactly one object key — a key carrying that device's
-   own verified ID.
-3. The device uploads the file **directly to your bucket** with the native cloud SDK —
-   a multipart upload for S3, a resumable upload for GCS. If the credentials expire
-   mid-upload, the device requests fresh credentials for the same key and resumes.
-4. The device **confirms** the durable write; the ledger entry flips to `uploaded` and
-   `uploaded_at` is set.
-
-Your data moves straight from the device to your storage — only the upload request and
-the credential exchange touch Miru.
-
-## Completion detection
-
-The Agent uploads a file once it is confident the file has finished being written to.
-Completion is determined by **quiescence**: a file whose size and modification time
-have held steady for the rule's
-[`stability_window_secs`](/data-uploads/upload-rules#sources) is considered finished
-and eligible for upload. This works for any file type, but it is a heuristic: "looks
-done," not "proven done."
-
-If you would rather not rely on the heuristic, you can **defer completion to the file
-producer**: have it write to a temporary name the rule's glob does not match and
-rename on completion, and the Agent will only ever see finished files — zero false
-positives.
-
-## Guarantees
-
-The following properties are guaranteed by the upload flow.
-
-**Correctness**
-
-- **Exactly one copy.** The ledger deduplicates by [`digest`](#properties), so each
-  file is uploaded exactly once.
-- **Unique keys.** Every object key contains the [upload's ID](#properties), so an
-  upload can never overwrite another object.
-- **Atomic visibility.** An object appears in your bucket only when fully written; a
-  partial or in-flight upload is never visible to anything reading the bucket.
-
-**Safety**
-
-- **Non-destructive.** The credentials a device receives only allow *creating* one
-  specific object — they cannot read, list, modify, or delete anything else in your
-  bucket.
-- **Durable before acknowledged.** A file is recorded as [`uploaded`](#properties)
-  only after the device confirms a durable write to the bucket.
-
-**Delivery**
-
-- **Resumable.** Uploads are chunked (S3 multipart / GCS resumable) and resume where
-  they left off across poor network conditions; expired credentials are re-vended
-  mid-upload without restarting.
+Since devices receive credentials scoped to an **exact object key** for each upload, and a given upload ID is authorized to its device, devices never receive credentials which grant any access to another device's data.
 
 ## Object metadata
 
@@ -119,6 +51,45 @@ bucket and can be correlated back to exactly what produced it without parsing th
 path.
 
 The metadata is a generic map of string keys to string values. The keys currently
-stamped include `device_id`, `release_id`, `release_version`, `deployment_id`,
-`digest`, and `file_modified_at`, but the set may evolve. The map stays within the
-cloud provider's object-metadata size limits (roughly 2 KB on S3, 8 KB on GCS).
+stamped are listed below, but the set may evolve. The map stays within the cloud
+provider's object-metadata size limits (roughly 2 KB on S3, 8 KB on GCS). 
+
+<ParamField path="device_id" type="string">
+  <ImmutableBadge />
+
+  The ID of the device that uploaded the file.
+
+  Example: `dvc_123`
+</ParamField>
+
+<ParamField path="deployment_id" type="string">
+  <ImmutableBadge />
+
+  The ID of the deployment that was running when the file was detected.
+
+  Example: `dpl_123`
+</ParamField>
+
+<ParamField path="release_id" type="string">
+  <ImmutableBadge />
+
+  The ID of the release that was running when the file was detected.
+
+  Example: `rls_1234567890`
+</ParamField>
+
+<ParamField path="release_version" type="string">
+  <ImmutableBadge />
+
+  The [version](/essentials/releases/overview#param-version) field of the release that was running when the file was detected.
+
+  Example: `v1.0.0`
+</ParamField>
+
+<ParamField path="mtime" type="string">
+  <ImmutableBadge />
+
+  The file's `mtime` timestamp as reported by the operating system.
+
+  Example: `2021-01-01T00:00:00Z`
+</ParamField>

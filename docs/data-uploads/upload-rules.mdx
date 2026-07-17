@@ -3,14 +3,14 @@ title: "Upload rules"
 ---
 
 import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+import { PublisherBadge } from '/snippets/components/role-badges.jsx';
 import UploadRuleDef from '/snippets/definitions/upload-rule.mdx';
 
 <UploadRuleDef />
 
 A rule has two parts — a `source` (what to collect on the device) and a `destination`
-(where it goes in your bucket) — and belongs to an
-[upload collection](/data-uploads/upload-collections) that gives its data stream a
-stable identity. Rules are created by defining them as rule files and
+(where it goes in your bucket) — and belongs to an upload collection that gives its data
+stream a stable identity. Rules are created by defining them as rule files and
 [releasing them via the CLI](/data-uploads/defining-releases).
 
 ## Properties
@@ -149,6 +149,26 @@ Git commits it was released from — the commit itself and the rule file's path 
 to the repository root — so any rule in Miru can be traced back to the exact lines of
 YAML that defined it. 
 
-## View an upload rule
+## Create an upload rule  <PublisherBadge />
 
-[TODO]
+Upload rules must be created as part of a [release](/essentials/releases/overview). Visit the [define releases](/data-uploads/releases/define) page to learn how to create upload rules and releases.
+
+## View an upload rule 
+
+To view an upload rule in Miru, navigate to the [Releases page](https://app.mirurobotics.com/releases), and click into the release that contains the upload rule you want to view.
+
+<Frame>
+  ![Releases Page](https://assets.mirurobotics.com/docs/v04/images/releases/page.png)
+</Frame>
+
+At the bottom of the page under the **Overview** tab, you will find a list of the release's upload rules.
+
+<Frame>
+  ![Release Upload Rules List](/images/releases/upload-rule-list.png)
+</Frame>
+
+To see more details about an upload rule, simply click on the dropdown arrow next to the upload rule.
+
+<Frame>
+  ![Release Upload Rule Details](/images/releases/upload-rule-details.png)
+</Frame>

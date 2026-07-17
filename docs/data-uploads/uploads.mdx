@@ -7,10 +7,9 @@ import UploadDef from '/snippets/definitions/upload.mdx';
 
 <UploadDef />
 
-Once an [upload rule](/data-uploads/upload-rules) is active on a device, the
-[Miru Agent](/developers/agent/overview) handles the rest: detecting when a matching
-file is finished, uploading it to your [bucket](/data-uploads/buckets/overview), and
-recording it in the ledger with the properties below.
+Once an [upload rule](/data-uploads/upload-rules) is deployed to a device, the Miru Agent
+handles the rest: detecting when a matching file is finished, uploading it to your
+bucket, and recording it in the ledger with the properties below.
 
 ## Properties
 
@@ -49,13 +48,6 @@ recording it in the ledger with the properties below.
   Allowed values:
   - `pending`
   - `uploaded`
-</ParamField>
-
-<ParamField path="incomplete" type="boolean">
-  <ImmutableBadge />
-
-  Whether the device flagged the file as incomplete when it was collected.
-  Independent of `status` — see [completion detection](#completion-detection).
 </ParamField>
 
 <ParamField path="uploaded_at" type="datetime">
@@ -100,10 +92,22 @@ last modified.
   Example: `/var/log/robot/robot.log`
 </ParamField>
 
-<ParamField path="file_modified_at" type="datetime">
+<ParamField path="mtime" type="datetime">
   <ImmutableBadge />
 
-  The file's last-modified time (mtime) on the device — roughly when writing finished.
+  The file's `mtime` timestamp as reported by the operating system.
+</ParamField>
+
+<ParamField path="first_observed_at" type="datetime">
+  <ImmutableBadge />
+
+  The timestamp of when the file was first observed by the Miru Agent for this upload.
+</ParamField>
+
+<ParamField path="last_observed_at" type="datetime">
+  <ImmutableBadge />
+
+  The timestamp of when the file was last observed by the Miru Agent for this upload.
 </ParamField>
 
 ## Destinations
