@@ -5,18 +5,18 @@ title: "Google Cloud Storage"
 import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
 import { PublisherBadge } from '/snippets/components/role-badges.jsx';
 
-A Google Cloud Storage (GCS) bucket is connected by **granting a Miru-managed service
-account write access** — there are **no service-account keys**. Miru provisions a
+A Google Cloud Storage (GCS) bucket is connected by granting a **Miru-managed service
+account** write access — there are no service-account keys. Miru provisions a
 dedicated service account for your workspace, and you grant it object-create access on
 your bucket.
 
 ## How it works
 
-You grant Miru's uploader service account write access to your bucket.
+You grant Miru's dedicated service account write access to your bucket.
 
 Then, when a device needs to upload data to your bucket:
 
-1. Miru impersonates its uploader service account
+1. Miru impersonates your workspace's dedicated service account
 2. Miru creates a short-lived token scoped to the exact object key the device is uploading to
 3. Miru distributes the token to the device
 4. The device uploads the data to the bucket using the token
@@ -37,7 +37,7 @@ change hands in either direction.
   register the bucket. You grant this account object-create access on your bucket. Shown
   in the Miru dashboard at registration.
 
-  Example: `mu-a1b2c3d4@miru-uploads.iam.gserviceaccount.com`
+  Example: `wsp_1234567890@miru-uploads.iam.gserviceaccount.com`
 </ParamField>
 
 ### You provide Miru
