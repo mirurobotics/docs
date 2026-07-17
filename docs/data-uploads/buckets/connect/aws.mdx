@@ -5,16 +5,20 @@ title: "AWS S3"
 import { ImmutableBadge, MutableBadge } from '/snippets/components/field-badges.jsx';
 import { PublisherBadge } from '/snippets/components/role-badges.jsx';
 
-An S3 bucket is connected by **assuming a cross-account IAM role** (STS AssumeRole) —
+An S3 bucket is connected by **assuming a cross-account IAM role** —
 there are **no access keys**. You create a role in your own AWS account that grants
 write access to your bucket and trusts Miru's integration role to assume it.
 
 ## How it works
 
-1. Miru assumes a role in your AWS account via **STS AssumeRole**
-2. Your role's trust policy accepts **only Miru's integration role**, gated by an external ID
-3. Miru downscopes the session to a **single object key**
-4. Miru vends the device **short-lived session credentials** to upload to your bucket
+You create a role in your AWS account that grants write access to the bucket and trusts Miru's AWS role to assume it.
+
+Then, when a device needs to upload data to you bucket:
+
+1. Miru assumes the role in your AWS account
+1. Miru creates a short-lived token scoped to the exact object key the device is uploading to
+1. Miru distributes the token to the device
+1. The device uploads the data to the bucket using the token
 
 <img
   src="/images/aws-sts-assume-role.svg"
@@ -94,6 +98,9 @@ bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
 
     ```bash
     BUCKET_NAME="<bucket-name>"
+    ```
+
+    ```bash
     REGION="<region>"
     ```
 
