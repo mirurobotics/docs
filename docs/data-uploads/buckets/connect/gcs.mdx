@@ -2,46 +2,42 @@
 title: "Google Cloud Storage"
 ---
 
-import { ImmutableBadge, MutableBadge } from '/snippets/components/field-badges.jsx';
+import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
 import { PublisherBadge } from '/snippets/components/role-badges.jsx';
 
-A Google Cloud Storage (GCS) bucket is connected via **Workload Identity Federation
-(WIF)** — the native mechanism Google Cloud provides for letting an external identity
-act in your project *without* a service-account key. 
-
+A Google Cloud Storage (GCS) bucket is connected by **granting a Miru-managed service
+account write access** — there are **no service-account keys**. Miru provisions a
+dedicated service account for your workspace, and you grant it object-create access on
+your bucket.
 
 ## How it works
 
-1. Miru presents its AWS identity to Google
-2. Google checks it against a Workload Identity Pool you configure
-3. Miru impersonates an service account in your project
-4. Miru mints **short-lived access tokens** to access your bucket
+You grant Miru's uploader service account write access to your bucket.
 
-<img 
-  src="/images/gcs-wif-token-exchange.svg" 
-  alt="GCS WIF token exchange" 
+Then, when a device needs to upload data to your bucket:
+
+1. Miru impersonates its uploader service account
+2. Miru creates a short-lived token scoped to the exact object key the device is uploading to
+3. Miru distributes the token to the device
+4. The device uploads the data to the bucket using the token
+
+<img
+  src="/images/gcs-uploader-sa-flow.svg"
+  alt="GCS uploader service account token flow"
 />
 
-Connecting your bucket to Miru is a one-time setup that uses only configuration values. No service-account keys, passwords, or other secrets change hands in either direction. 
+Connecting your bucket to Miru is a one-time setup that grants a single dedicated
+identity access to one bucket. No service-account keys, passwords, or long-lived tokens
+change hands in either direction.
 
 ### Miru provides you
 
-<ParamField path="miru_aws_account_id">
-  The AWS account ID Miru uses to federate into your GCP project. You grant this account access to your bucket. This is a fixed value that never changes.
+<ParamField path="service_account_email">
+  The dedicated uploader service account Miru provisions for your workspace when you
+  register the bucket. You grant this account object-create access on your bucket. Shown
+  in the Miru dashboard at registration.
 
-  `008971655189`
-</ParamField>
-
-<ParamField path="miru_aws_role_arn">
-  The identity-only AWS role Miru uses to federate into your GCP project. You grant this role access to your bucket. This is a fixed value that never changes.
-
-  `arn:aws:iam::008971655189:role/MiruGCSIntegrationRole`
-</ParamField>
-
-<ParamField path="workspace_id">
-  Your Miru workspace ID. Miru sets this as the STS **session name** when it assumes its integration role, and your Workload Identity provider must pin it (below) so only Miru acting for your workspace can federate. Shown in the Miru dashboard.
-
-  Example: `wsp_123`
+  Example: `mu-a1b2c3d4@miru-uploads.iam.gserviceaccount.com`
 </ParamField>
 
 ### You provide Miru
@@ -54,47 +50,18 @@ Connecting your bucket to Miru is a one-time setup that uses only configuration 
   Example: `my-upload-bucket`
 </ParamField>
 
-<ParamField path="wip_provider">
-  <MutableBadge />
-
-  The full Workload Identity Pool provider resource name used to federate Miru's
-  identity into your GCP project.
-
-  Example: `projects/123456789/locations/global/workloadIdentityPools/miru-pool/providers/miru-provider`
-</ParamField>
-
-<ParamField path="service_account_email">
-  <MutableBadge />
-
-  The email of the GCP service account Miru impersonates to access your bucket.
-
-  Example: `miru@my-gcp-project.iam.gserviceaccount.com`
-</ParamField>
-
 ## Connect a bucket
 
-Follow the steps below to connect a bucket to Miru using the Google Cloud CLI.
-To connect a bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
+Follow the steps below to connect a bucket to Miru using the Google Cloud CLI. To
+connect a bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
 
 <Steps>
-  <Step title="Get your workspace ID from Miru">
-    In the Miru dashboard, copy your **workspace ID** and set it as a variable. Your
-    Workload Identity provider will pin to this value — Miru presents it as the STS
-    session name when it federates, so only Miru acting for your workspace can assume
-    the identity.
-
-    ```bash
-    WORKSPACE_ID="<workspace-id>"
-    ```
-  </Step>
-
   <Step title="Define the bucket">
-    Set your Google Cloud project ID and bucket variables.
+    Set your Google Cloud project and bucket name.
 
     ```bash
     PROJECT_ID="<project-id>"
     BUCKET_NAME="<bucket-name>"
-    BUCKET_LOCATION="<region>"
     ```
 
     Create the bucket if it doesn't yet exist.
@@ -102,72 +69,29 @@ To connect a bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
     ```bash
     gcloud storage buckets create "gs://${BUCKET_NAME}" \
       --project="${PROJECT_ID}" \
-      --location="${BUCKET_LOCATION}"
+      --location="<location>"
     ```
   </Step>
 
-  <Step title="Create a Workload Identity Pool">
-    The pool is the container that holds the AWS provider Miru federates through.
+  <Step title="Register the bucket in Miru">
+    From the **Buckets** page in the Miru dashboard, select **New bucket**, choose
+    **GCS**, and supply your bucket name. Select **Create**.
+
+    Miru provisions a dedicated uploader service account for your workspace and returns
+    its email. Copy it for the next step.
 
     ```bash
-    WIP_ID="miru-pool"
-    gcloud iam workload-identity-pools create "${WIP_ID}" \
-      --project="${PROJECT_ID}" \
-      --location=global \
-      --display-name="Miru pool"
+    SERVICE_ACCOUNT_EMAIL="<uploader-sa-email>"
     ```
+
+    <Frame>
+      ![Miru New bucket form for the GCS provider showing the bucket name field and the provisioned service account email](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/register-bucket.png)
+    </Frame>
+    {/* TODO (screenshot): Miru dashboard, Buckets → New bucket form with provider set to GCS, highlight the bucket name field and the returned service account email. */}
   </Step>
 
-  <Step title="Add an AWS provider that pins Miru's role">
-    
-    The attribute mapping makes the federated subject the caller's full assumed-role
-    ARN — including the session name — and the attribute condition accepts **only
-    Miru's exact role AND your workspace's session name**. Pinning the session name is
-    what blocks another Miru workspace from federating through a copy of this
-    configuration (the confused-deputy guard): a caller presenting Miru's role but a
-    different session name is rejected.
-
-    ```bash
-    WIP_PROVIDER_ID="miru-provider"
-    MIRU_AWS_ACCOUNT_ID="008971655189"
-    MIRU_ASSUMED_ROLE="arn:aws:sts::${MIRU_AWS_ACCOUNT_ID}:assumed-role/MiruGCSIntegrationRole"
-    gcloud iam workload-identity-pools providers create-aws "${WIP_PROVIDER_ID}" \
-      --project="${PROJECT_ID}" \
-      --location=global \
-      --workload-identity-pool="${WIP_ID}" \
-      --account-id="${MIRU_AWS_ACCOUNT_ID}" \
-      --attribute-mapping="google.subject=assertion.arn" \
-      --attribute-condition="assertion.arn == '${MIRU_ASSUMED_ROLE}/${WORKSPACE_ID}'"
-    ```
-
-    Save the provider's full resource name for bucket registration:
-
-    ```bash
-    WIP_PROVIDER="$(gcloud iam workload-identity-pools providers describe \
-      "${WIP_PROVIDER_ID}" \
-      --project="${PROJECT_ID}" \
-      --location=global \
-      --workload-identity-pool="${WIP_ID}" \
-      --format="value(name)")"
-    ```
-  </Step>
-
-  <Step title="Create the service account">
-    Miru impersonates this service account to mint the downscoped tokens devices
-    upload with. Its email
-    (`${SERVICE_ACCOUNT_EMAIL}`) becomes your `service_account_email`.
-
-    ```bash
-    SERVICE_ACCOUNT_ID="miru-uploader"
-    gcloud iam service-accounts create "${SERVICE_ACCOUNT_ID}" \
-      --project="${PROJECT_ID}" \
-      --display-name="Miru uploader"
-    SERVICE_ACCOUNT_EMAIL="${SERVICE_ACCOUNT_ID}@${PROJECT_ID}.iam.gserviceaccount.com"
-    ```
-  </Step>
-
-  <Step title="Let the service account create objects in the bucket">
-    Grant the uploader service account permission to create objects on the bucket.
+  <Step title="Grant the service account write access">
+    Grant Miru's uploader service account permission to create objects on your bucket.
 
     ```bash
     gcloud storage buckets add-iam-policy-binding "gs://${BUCKET_NAME}" \
@@ -176,53 +100,14 @@ To connect a bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
     ```
 
     <Note>
-      [Verification](/data-uploads/buckets/manage#verify-a-bucket) writes a
-      zero-byte probe object under `.miru/probe/`.
+      [Verification](/data-uploads/buckets/manage#verify-a-bucket) writes a zero-byte
+      probe object under `.miru/probe/` as this service account to confirm the grant.
     </Note>
   </Step>
 
-  <Step title="Let Miru's federated principal impersonate the service account">
-    Bind the **Workload Identity User** role
-    (`roles/iam.workloadIdentityUser`) on the uploader service account as a
-    **per-subject** binding on the exact session
-    (`principal://.../subject/<assumed-role ARN>/<workspace id>`). This lets only
-    Miru's pinned session mint short-lived access tokens as the uploader account —
-    and nothing else.
-
-    ```bash
-    PROJECT_NUMBER="$(gcloud projects describe "${PROJECT_ID}" --format='value(projectNumber)')"
-    gcloud iam service-accounts add-iam-policy-binding \
-      "${SERVICE_ACCOUNT_EMAIL}" \
-      --project="${PROJECT_ID}" \
-      --role="roles/iam.workloadIdentityUser" \
-      --member="principal://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${WIP_ID}/subject/${MIRU_ASSUMED_ROLE}/${WORKSPACE_ID}"
-    ```
-  </Step>
-
-  <Step title="Register the bucket in Miru">
-    Print the values needed to register the bucket:
-
-    ```bash
-    printf 'name: %s\nwip_provider: %s\nservice_account_email: %s\n' \
-      "${BUCKET_NAME}" \
-      "${WIP_PROVIDER}" \
-      "${SERVICE_ACCOUNT_EMAIL}"
-    ```
-
-    From the **Buckets** page in the Miru dashboard, select **New bucket**, choose
-    **GCS**, and supply:
-
-    - `bucket_name` — the name of the GCS bucket
-    - `wip_provider` — the Workload Identity Pool provider resource name
-    - `service_account_email` — the uploader service account's email
-
-    Select **Create** to register the bucket.
-
-    {/* TODO (product): confirm the exact form of the Miru-provided identity values shown at registration (AWS account ID and assumed-role ARN) and where the dashboard displays them. */}
-
-    <Frame>
-      ![Miru New bucket form for the GCS provider with the three fields](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/register-bucket.png)
-    </Frame>
-    {/* TODO (screenshot): Miru dashboard, Buckets → New bucket form with provider set to GCS, highlight the name, wip_provider, and service_account_email fields. */}
+  <Step title="Verify the bucket">
+    Back in Miru, run **Verify** on the bucket. Miru writes a probe object as the
+    uploader service account; the bucket's
+    [status](/data-uploads/buckets/overview#properties) flips to `verified` on success.
   </Step>
 </Steps>
