@@ -12,10 +12,9 @@ to finish being written to, and uploads it directly to your bucket.
 ## How it works
 
 <img
-  src="/images/data-upload-flow.svg"
+  src="https://assets.mirurobotics.com/docs/v04/images/data-uploads/data-upload-flow.svg"
   alt="Upload flow: a device requests an upload from the Miru control plane, receives short-lived downscoped credentials for a single object key carrying its own device ID, and uploads the file directly to your cloud storage with the native cloud SDK. Your data never passes through Miru."
 />
-{/* TODO (design): refresh upload-flow.svg — it still depicts the old signed-URL flow; the current flow vends downscoped credentials used with the native cloud SDK. */}
 
 1. The Miru Agent detects a new file to upload
 2. The Agent registers a new [upload](/data-uploads/uploads) with the Miru control plane.
