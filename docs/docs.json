@@ -145,7 +145,14 @@
                 "pages": [
                   "developers/agent/overview",
                   "developers/agent/install",
-                  "developers/agent/file-permissions",
+                  {
+                    "group": "File permissions",
+                    "pages": [
+                      "developers/agent/file-permissions/overview",
+                      "developers/agent/file-permissions/configs",
+                      "developers/agent/file-permissions/data-uploads"
+                    ]
+                  },
                   "developers/agent/versions",
                   "developers/agent/commands",
                   "developers/agent/security",
@@ -420,6 +427,10 @@
     "twitter:image": "/favicon-black.svg"
   },
   "redirects": [
+    {
+      "source": "/developers/agent/file-permissions",
+      "destination": "/developers/agent/file-permissions/overview"
+    },
     {
       "source": "/changelogs/:slug*",
       "destination": "/changelog/:slug*"
