@@ -56,6 +56,24 @@ Follow the steps below to connect a bucket to Miru using the Google Cloud CLI. T
 connect a bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
 
 <Steps>
+
+  <Step title="Get the service account email">
+
+    In the Miru dashboard, navigate to the [Buckets page](https://app.mirurobotics.com/settings/buckets) and click the **+ Bucket** button in the top right corner.
+
+    Switch to the **GCS** tab, copy your workspace's service account email, and set it as a
+    variable — this email is used to grant the service account write access to your bucket.
+
+    <Frame>
+      ![Add Bucket Dialog with GCS Service Account Email](https://assets.mirurobotics.com/docs/v04/images/buckets/add-bucket-gcp-sa.png)
+    </Frame>
+
+    ```bash
+    SERVICE_ACCOUNT_EMAIL="<service-account-email>"
+    ```
+
+  </Step>
+
   <Step title="Define the bucket">
     Set your Google Cloud project and bucket name.
 
@@ -73,22 +91,7 @@ connect a bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
     ```
   </Step>
 
-  <Step title="Register the bucket in Miru">
-    From the **Buckets** page in the Miru dashboard, select **New bucket**, choose
-    **GCS**, and supply your bucket name. Select **Create**.
 
-    Miru provisions a dedicated uploader service account for your workspace and returns
-    its email. Copy it for the next step.
-
-    ```bash
-    SERVICE_ACCOUNT_EMAIL="<uploader-sa-email>"
-    ```
-
-    <Frame>
-      ![Miru New bucket form for the GCS provider showing the bucket name field and the provisioned service account email](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/register-bucket.png)
-    </Frame>
-    {/* TODO (screenshot): Miru dashboard, Buckets → New bucket form with provider set to GCS, highlight the bucket name field and the returned service account email. */}
-  </Step>
 
   <Step title="Grant the service account write access">
     Grant Miru's uploader service account permission to create objects on your bucket.

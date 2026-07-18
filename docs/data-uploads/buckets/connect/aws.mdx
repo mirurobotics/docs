@@ -80,17 +80,20 @@ bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
 
 <Steps>
   <Step title="Get your external ID from Miru">
-    In the Miru dashboard, copy your workspace's **external ID** and set it as a
+    In the Miru dashboard, navigate to the [Buckets page](https://app.mirurobotics.com/settings/buckets) and click the **+ Bucket** button in the top right corner.
+
+    Switch to the **S3** tab, copy your workspace's **external ID**, and set it as a
     variable — the trust policy in a later step pins to this value so that only Miru,
     acting on behalf of your workspace, can assume the role.
+
+    <Frame>
+      ![Add Bucket Dialog with AWS External ID](https://assets.mirurobotics.com/docs/v04/images/buckets/add-bucket-aws-ext-id.png)
+    </Frame>
 
     ```bash
     EXTERNAL_ID="<external-id>"
     ```
 
-    <Frame>
-      ![Miru dashboard showing the workspace external ID](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/aws/external-id.png)
-    </Frame>
   </Step>
 
   <Step title="Define the bucket">
