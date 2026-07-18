@@ -70,6 +70,7 @@
                 "group": "Releases",
                 "pages": [
                   "essentials/releases/overview",
+                  "essentials/releases/create",
                   "essentials/releases/manage"
                 ]
               },
@@ -96,7 +97,6 @@
                 ]
               },
               "cfg-mgmt/config-instances",
-              "cfg-mgmt/define-releases",
               {
                 "group": "Deploy configs",
                 "pages": [
@@ -133,8 +133,7 @@
               },
               "data-uploads/upload-collections",
               "data-uploads/upload-rules",
-              "data-uploads/uploads",
-              "data-uploads/defining-releases"
+              "data-uploads/uploads"
             ]
           },
           {
