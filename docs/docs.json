@@ -39,42 +39,12 @@
             ]
           },
           {
-            "group": "Essentials",
+            "group": "Primitives",
             "pages": [
-              {
-                "group": "Devices",
-                "pages": [
-                  "essentials/devices/overview",
-                  {
-                    "group": "Provision devices",
-                    "pages": [
-                      "essentials/devices/provision/overview",
-                      "essentials/devices/provision/dashboard",
-                      "essentials/devices/provision/provisioning-tokens",
-                      "essentials/devices/provision/provisioning-script",
-                      "essentials/devices/provision/reprovision"
-                    ]
-                  },
-                  "essentials/devices/manage"
-                ]
-              },
-              {
-                "group": "Groups",
-                "pages": [
-                  "essentials/groups/overview",
-                  "essentials/groups/manage",
-                  "essentials/groups/members"
-                ]
-              },
-              {
-                "group": "Releases",
-                "pages": [
-                  "essentials/releases/overview",
-                  "essentials/releases/create",
-                  "essentials/releases/manage"
-                ]
-              },
-              "essentials/deployments"
+              "primitives/devices",
+              "primitives/groups",
+              "primitives/releases",
+              "primitives/deployments"
             ]
           },
           {

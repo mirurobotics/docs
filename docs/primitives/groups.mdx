@@ -1,0 +1,180 @@
+---
+title: "Groups"
+---
+
+import { EditableBadge, MutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
+import { Framed } from '/snippets/components/framed.jsx';
+import { AdminBadge, GroupManagerBadge } from '/snippets/components/role-badges.jsx';
+import { ADMIN_TOOLTIP, GROUP_MANAGER_TOOLTIP } from '/snippets/components/users/roles.jsx';
+import MoveDevice from '/snippets/devices/move.mdx';
+
+<Framed 
+  background="https://assets.mirurobotics.com/docs/v04/images/groups/background.jpeg" 
+  image="https://assets.mirurobotics.com/docs/v04/images/groups/header:page.png" 
+  borderWidth={"24px 0 0 36px"} 
+  innerRadius={"8px 0 0 0"} 
+/>
+
+A **group** is a hierarchical organizational unit for devices, allowing you to organize devices into a logical tree structure.
+
+Groups can contain both devices and subgroups. Devices may be assigned to at most one group, or be unassigned to any group.
+
+## Properties
+
+<ParamField path="name" type="string">
+  <EditableBadge />
+
+  A human-readable display name for the group. Must be unique within the workspace.
+
+  Examples: `Production`, `Warehouse Floor 2`, `Europe`
+</ParamField>
+
+<ParamField path="parent" type="Group">
+  <EditableBadge /> {' '} <NullableBadge />
+
+  The parent group in the hierarchy. Set to `null` for top-level groups; set to another group's ID to nest this group as a child group.
+
+  Examples: `grp_123`, `null`
+</ParamField>
+
+<ParamField path="devices" type="[]Device">
+  <MutableBadge />
+
+  The devices assigned to this group. Computed by the server—useful for determining whether to display device-related affordances in the UI.
+</ParamField>
+
+<ParamField path="subgroups" type="[]Group">
+  <MutableBadge />
+
+  The child subgroups within this group. Computed by the server—useful for rendering expand/collapse indicators in a tree view.
+</ParamField>
+
+## Structure
+
+Groups organize devices into a tree hierarchy. A workspace can have multiple top-level groups, and each group can contain subgroups.
+
+<Tree.Folder name="Workspace" defaultOpen>
+  <Tree.Folder name="Production" defaultOpen>
+    <Tree.Folder name="North America" defaultOpen>
+      <Tree.File name="Device A" />
+      <Tree.File name="Device B" />
+    </Tree.Folder>
+    <Tree.Folder name="Europe" defaultOpen>
+      <Tree.File name="Device C" />
+    </Tree.Folder>
+  </Tree.Folder>
+  <Tree.Folder name="Staging" defaultOpen>
+    <Tree.File name="Device D" />
+  </Tree.Folder>
+  <Tree.File name="Device E (unassigned)" />
+</Tree.Folder>
+
+Devices belong to at most one group. Devices that haven't been assigned to any group remain ungrouped at the workspace level.
+
+## Create a group  <AdminBadge />  <GroupManagerBadge />
+
+Go to the [Groups page](https://app.mirurobotics.com/groups) and navigate into the group you want to create a group inside of. Click the **+ Group** button in the top right corner.
+
+<Frame>
+  ![Group Page](https://assets.mirurobotics.com/docs/v04/images/groups/page.png)
+</Frame>
+
+Fill in the fields, then click **Create**.
+
+<Frame>
+  ![Create Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/create-dialog.png)
+</Frame>
+
+## Edit a group  <AdminBadge />  <GroupManagerBadge />
+
+Navigate to the [Groups page](https://assets.mirurobotics.com/docs/v04/images/groups/page.png), click the ellipses (...) on the group you want to edit, and hit **Edit**.
+
+<Frame>
+  ![Group Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/groups/ellipses-dropdown.png)
+</Frame>
+
+Update the desired fields, then click **Save**.
+
+<Frame>
+  ![Edit Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/edit-dialog.png)
+</Frame>
+
+## Move a device  <AdminBadge />  <GroupManagerBadge />
+
+<MoveDevice />
+
+## Delete a group  <AdminBadge />  <GroupManagerBadge />
+
+A group can only be deleted if it has no subgroups and no assigned devices. If you need to delete a group that still contains devices or subgroups, first move or reassign its contents.
+
+To delete a group, click the ellipses (...) on the group you want to delete and select **Delete**.
+
+<Frame>
+  ![Group Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/groups/ellipses-dropdown.png)
+</Frame>
+
+A confirmation dialog will appear. Hit **Delete** to confirm the deletion.
+
+<Frame>
+  ![Delete Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/delete-dialog.png)
+</Frame>
+
+## Add a member  <AdminBadge />  <GroupManagerBadge />
+
+To add a member to a group, navigate to the [Groups page](https://app.mirurobotics.com/groups), click the ellipses (...) on the group you want to add a member to, and select **Members** from the dropdown. 
+
+<Frame>
+  ![Group Members Dropdown](https://assets.mirurobotics.com/docs/v04/images/groups/ellipses-dropdown.png)
+</Frame>
+
+A dialog will appear with a list of the members who can currently access the group.
+
+<Frame>
+  ![Group Members Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/member-dialog.png)
+</Frame>
+
+To add a member, input the name of the member you want to add in the search bar at the top, and select the member.
+
+<Frame>
+  ![Group Members Search](https://assets.mirurobotics.com/docs/v04/images/groups/member-dialog-search.png)
+</Frame>
+
+## Edit a member's access  <AdminBadge />  <GroupManagerBadge />
+
+To edit a member's access to a group, navigate to the [Groups page](https://app.mirurobotics.com/groups), click the ellipses (...) on the group you want to edit, and select **Members** from the dropdown. 
+
+<Frame>
+  ![Group Members Dropdown](https://assets.mirurobotics.com/docs/v04/images/groups/ellipses-dropdown.png)
+</Frame>
+
+A dialog will appear with a list of the members who can currently access the group. Find the member you want to edit, click their role, and select the desired roles from the dropdown.
+
+<Frame>
+  ![Group Members Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/member-dialog.png)
+</Frame>
+
+If the roles are not editable, that member's access is set in some ancestor group or at the workspace level. To edit the member's access at a higher level, click the **Manage access** button.
+
+<Frame>
+  ![Group Members Manage Access](https://assets.mirurobotics.com/docs/v04/images/groups/edit-member-dropdown.png)
+</Frame>
+
+A panel will appear with the member's workspace roles and all of their group roles. Use the dropdowns to edit the member's access as needed.
+
+<Frame>
+  ![Group Members Access Panel](https://assets.mirurobotics.com/docs/v04/images/groups/member-access-panel.png)
+</Frame>
+
+## Remove a member  <AdminBadge />  <GroupManagerBadge />
+
+To remove a member from a group, navigate to the [Groups page](https://app.mirurobotics.com/groups), click the ellipses (...) on the group you want to remove a member from, and select **Members** from the dropdown. 
+
+<Frame>
+  ![Group Members Dropdown](https://assets.mirurobotics.com/docs/v04/images/groups/ellipses-dropdown.png)
+</Frame>
+
+A dialog will appear with a list of the members who can currently access the group. Find the member you want to remove, click the ellipses (...) next to their name, and select **Remove access**.
+
+<Frame>
+  ![Group Members Remove Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/edit-member-dropdown.png)
+</Frame>

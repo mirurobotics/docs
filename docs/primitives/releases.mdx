@@ -1,14 +1,43 @@
 ---
-title: "Manage releases"
+title: "Releases"
 ---
 
+import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
 import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge, PublisherBadge } from '/snippets/components/role-badges.jsx';
+import ReleaseDef from '/snippets/definitions/release.mdx';
+import SemVer from '/snippets/releases/semver.mdx';
 
-<Framed background="https://assets.mirurobotics.com/docs/v04/images/releases/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/releases/header:overview.png" borderWidth="28px" />
+<Framed background="https://assets.mirurobotics.com/docs/v04/images/releases/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/releases/header:page.png" borderWidth="36px 0 0 56px" innerRadius="8px 0 0 0" />
 
-Releases are located in the [Releases page](https://app.mirurobotics.com/releases) of the dashboard.
+<ReleaseDef />
+
+## Properties
+
+<ParamField path="version" type="string">
+  <ImmutableBadge />
+
+  <SemVer />
+</ParamField>
+
+<ParamField path="config schemas" type="[] Config Schema">
+  <ImmutableBadge />
+
+  The [config schemas](/cfg-mgmt/schemas/overview#properties) that define compatible config instances for the release.
+
+  Examples: `SCH-FmoDN`, `SCH-3JcLq`, `SCH-HHDRn`
+</ParamField>
+
+
+<ParamField path="upload rules" type="[] Upload Rule">
+  <ImmutableBadge />
+
+  The [upload rules](/data-uploads/upload-rules#properties) that are part of this release.
+
+  Examples: `UPR-FmoDN`, `UPR-3JcLq`, `UPR-HHDRn`
+</ParamField>
+
 
 ## View a release
 
