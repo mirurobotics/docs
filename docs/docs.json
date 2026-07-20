@@ -188,7 +188,6 @@
             "group": "Administration",
             "pages": [
               "admin/workspace",
-              "admin/apikeys",
               {
                 "group": "Users",
                 "pages": [
@@ -198,7 +197,8 @@
                   "admin/users/access-control",
                   "admin/users/manage"
                 ]
-              }
+              },
+              "admin/apikeys"
             ]
           }
         ]
