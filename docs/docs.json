@@ -131,11 +131,11 @@
                 "pages": [
                   "developers/agent/overview",
                   "developers/agent/install",
-                  "developers/agent/filesys-access",
                   "developers/agent/versions",
                   "developers/agent/commands",
                   "developers/agent/security",
-                  "developers/agent/architecture"
+                  "developers/agent/architecture",
+                  "developers/agent/filesys-access"
                 ]
               },
               {
