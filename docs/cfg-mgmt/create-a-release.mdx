@@ -17,7 +17,7 @@ innerRadius="10px"
 outerRadius="12px"
 />
 
-The only way to create releases is via the command line. The dashboard only supports [duplicating releases](/essentials/releases/manage#duplicate-a-release).
+The only way to create releases is via the command line. The dashboard only supports [duplicating releases](/primitives/releases#duplicate-a-release).
 
 Creating releases from the CLI is a deliberate design choice--we believe a release's
 definition should be versioned in a Git repository. The CLI promotes this practice,
@@ -36,13 +36,13 @@ To create a release, the following prerequisites must be met:
 
 ## Config schemas
 
-[Config schemas](/cfg-mgmt/schemas/overview) aren't created separately from releases. Instead, the CLI creates the schemas in the same command as the release itself. Releases may contain any number of schemas, but they must contain at least one.
+[Config schemas](/cfg-mgmt/primitives/schemas/overview) aren't created separately from releases. Instead, the CLI creates the schemas in the same command as the release itself. Releases may contain any number of schemas, but they must contain at least one.
 
 Schemas may belong to multiple releases and are identified by hashing their content. Schemas with equivalent content are considered identical (even if comments, spacing, or other formatting is different).
 
 ### Define the schemas
 
-Schemas must be defined in a supported schema [language](/cfg-mgmt/schemas/languages/overview). You can find example schemas in our [getting-started repository](https://github.com/mirurobotics/getting-started).
+Schemas must be defined in a supported schema [language](/cfg-mgmt/primitives/schemas/languages/overview). You can find example schemas in our [getting-started repository](https://github.com/mirurobotics/getting-started).
 
 If you're not sure which language to use, we recommend starting with JSON Schema — it's the most widely used and easiest to get started with.
 
@@ -62,7 +62,7 @@ x-miru-config-type: "{your-config-type-slug}"
 </CodeGroup>
 
 <Tip>
-  Miru supports CUE packages as a way to split a schema's definition into multiple files. Read more in the [CUE documentation](/cfg-mgmt/schemas/languages/cue#cue-packages).
+  Miru supports CUE packages as a way to split a schema's definition into multiple files. Read more in the [CUE documentation](/cfg-mgmt/primitives/schemas/languages/cue#cue-packages).
 </Tip>
 
 ### Schema annotations

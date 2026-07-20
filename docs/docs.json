@@ -436,23 +436,23 @@
     },
     {
       "source": "/getting-started/concepts",
-      "destination": "/essentials/devices/overview"
+      "destination": "/primitives/devices"
     },
     {
       "source": "/fundamentals/:slug*",
-      "destination": "/essentials/:slug*"
+      "destination": "/primitives/:slug*"
     },
     {
       "source": "/learn/config-instances",
-      "destination": "/cfg-mgmt/config-instances"
+      "destination": "/cfg-mgmt/primitives/config-instances"
     },
     {
       "source": "/learn/config-types",
-      "destination": "/cfg-mgmt/config-types"
+      "destination": "/cfg-mgmt/primitives/config-types"
     },
     {
       "source": "/learn/deployments",
-      "destination": "/essentials/deployments"
+      "destination": "/primitives/deployments"
     },
     {
       "source": "/learn/devices/compare",
@@ -472,55 +472,55 @@
     },
     {
       "source": "/learn/devices/manage",
-      "destination": "/essentials/devices/manage"
+      "destination": "/primitives/devices"
     },
     {
       "source": "/learn/devices/overview",
-      "destination": "/essentials/devices/overview"
+      "destination": "/primitives/devices"
     },
     {
       "source": "/learn/devices/provision/dashboard",
-      "destination": "/essentials/devices/provision/dashboard"
+      "destination": "/cfg-mgmt/provision-devices/dashboard"
     },
     {
       "source": "/learn/devices/provision/overview",
-      "destination": "/essentials/devices/provision/overview"
+      "destination": "/cfg-mgmt/provision-devices/overview"
     },
     {
       "source": "/learn/devices/provision/provisioning-script",
-      "destination": "/essentials/devices/provision/provisioning-script"
+      "destination": "/cfg-mgmt/provision-devices/provisioning-script"
     },
     {
       "source": "/learn/devices/provision/provisioning-tokens",
-      "destination": "/essentials/devices/provision/provisioning-tokens"
+      "destination": "/cfg-mgmt/provision-devices/provisioning-tokens"
     },
     {
       "source": "/learn/devices/provision/reprovision",
-      "destination": "/essentials/devices/provision/reprovision"
+      "destination": "/cfg-mgmt/provision-devices/reprovision"
     },
     {
       "source": "/learn/groups/manage",
-      "destination": "/essentials/groups/manage"
+      "destination": "/primitives/groups"
     },
     {
       "source": "/learn/groups/members",
-      "destination": "/essentials/groups/members"
+      "destination": "/primitives/groups"
     },
     {
       "source": "/learn/groups/overview",
-      "destination": "/essentials/groups/overview"
+      "destination": "/primitives/groups"
     },
     {
       "source": "/learn/releases/create",
-      "destination": "/cfg-mgmt/defining-releases"
+      "destination": "/cfg-mgmt/create-a-release"
     },
     {
       "source": "/learn/releases/manage",
-      "destination": "/essentials/releases/manage"
+      "destination": "/primitives/releases"
     },
     {
       "source": "/learn/releases/overview",
-      "destination": "/essentials/releases/overview"
+      "destination": "/primitives/releases"
     },
     {
       "source": "/learn/releases/staging-area",
@@ -528,23 +528,23 @@
     },
     {
       "source": "/learn/schemas/languages/cue",
-      "destination": "/cfg-mgmt/schemas/languages/cue"
+      "destination": "/cfg-mgmt/primitives/schemas/languages/cue"
     },
     {
       "source": "/learn/schemas/languages/jsonschema",
-      "destination": "/cfg-mgmt/schemas/languages/jsonschema"
+      "destination": "/cfg-mgmt/primitives/schemas/languages/jsonschema"
     },
     {
       "source": "/learn/schemas/languages/overview",
-      "destination": "/cfg-mgmt/schemas/languages/overview"
+      "destination": "/cfg-mgmt/primitives/schemas/languages/overview"
     },
     {
       "source": "/learn/schemas/manage",
-      "destination": "/cfg-mgmt/schemas/manage"
+      "destination": "/cfg-mgmt/primitives/schemas/manage"
     },
     {
       "source": "/learn/schemas/overview",
-      "destination": "/cfg-mgmt/schemas/overview"
+      "destination": "/cfg-mgmt/primitives/schemas/overview"
     },
     {
       "source": "/docs/:slug*",

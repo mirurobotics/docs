@@ -93,7 +93,7 @@ To write to a given file, the `miru` user requires the following Unix permission
 ## Reading files to upload
 
 To upload data, the agent **reads** the files matched by an
-[upload rule](/data-uploads/upload-rules)'s `source.glob` and streams them to your
+[upload rule](/data-uploads/primitives/upload-rules)'s `source.glob` and streams them to your
 bucket. To do so, the `miru` user needs read access to those files and the directories
 along the path to them.
 
@@ -141,7 +141,7 @@ access to the source files, unless you delete them after upload (below).
 
 ### Deleting after upload
 
-If an upload rule's [`destination.delete_policy`](/data-uploads/upload-rules#destinations)
+If an upload rule's [`destination.delete_policy`](/data-uploads/primitives/upload-rules#destinations)
 is `after_upload`, the agent removes each file after a successful upload. Deleting a file
 requires **write (`w`)** access to its **parent directory** (to remove the directory
 entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case:

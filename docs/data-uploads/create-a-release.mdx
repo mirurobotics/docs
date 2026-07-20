@@ -4,6 +4,7 @@ title: "Create a release"
 
 import { Framed } from '/snippets/components/framed.jsx';
 import { OptionalBadge, RequiredBadge } from '/snippets/components/requirement-badges.jsx';
+import Annotations from '/snippets/references/cli/releases/create/schema-annotations.mdx';
 import CreateExistingSchemas from '/snippets/references/cli/releases/create/existing-schemas.mdx';
 import CLIFlags from '/snippets/references/cli/releases/create/flags.mdx';
 import CreateNewSchemas from '/snippets/references/cli/releases/create/new-schemas.mdx';
@@ -17,7 +18,7 @@ innerRadius="10px"
 outerRadius="12px"
 />
 
-The only way to create releases is via the command line. The dashboard does not support creating new releases (although you can [duplicate existing releases](/essentials/releases/manage#duplicate-a-release)).
+The only way to create releases is via the command line. The dashboard does not support creating new releases (although you can [duplicate existing releases](/primitives/releases#duplicate-a-release)).
 
 Creating releases from the CLI is a deliberate design choice. We believe a release's
 definition should be versioned in a Git repository. The CLI promotes this practice,
@@ -36,13 +37,13 @@ To create a release, the following prerequisites must be met:
 
 ## Config schemas  <RequiredBadge />
 
-[Config schemas](/cfg-mgmt/schemas/overview) aren't created separately from releases. Instead, the CLI creates the schemas in the same command as the release itself. Releases may contain any number of schemas, but they must contain at least one.
+[Config schemas](/cfg-mgmt/primitives/schemas/overview) aren't created separately from releases. Instead, the CLI creates the schemas in the same command as the release itself. Releases may contain any number of schemas, but they must contain at least one.
 
 Schemas may belong to multiple releases and are identified by hashing their content. Schemas with equivalent content are considered identical (even if comments, spacing, or other formatting is different).
 
 ### Define the schemas
 
-Schemas must be defined in a supported schema [language](/cfg-mgmt/schemas/languages/overview). You can find example schemas in our [getting-started repository](https://github.com/mirurobotics/getting-started).
+Schemas must be defined in a supported schema [language](/cfg-mgmt/primitives/schemas/languages/overview). You can find example schemas in our [getting-started repository](https://github.com/mirurobotics/getting-started).
 
 If you're not sure which language to use, we recommend starting with JSON Schema — it's the most widely used and easiest to get started with.
 
@@ -62,22 +63,22 @@ x-miru-config-type: "{your-config-type-slug}"
 </CodeGroup>
 
 <Tip>
-  Miru supports CUE packages as a way to split a schema's definition into multiple files. Read more in the [CUE documentation](/cfg-mgmt/schemas/languages/cue#cue-packages).
+  Miru supports CUE packages as a way to split a schema's definition into multiple files. Read more in the [CUE documentation](/cfg-mgmt/primitives/schemas/languages/cue#cue-packages).
 </Tip>
 
 **Schema Annotations**
 
-Schemas support [annotations](/cfg-mgmt/schemas/overview#schema-annotations), which are Miru-specific extensions that define metadata about a schema.
+Schemas support [annotations](/cfg-mgmt/primitives/schemas/overview#schema-annotations), which are Miru-specific extensions that define metadata about a schema.
 
-The [`config type`](/cfg-mgmt/schemas/overview#schema-annotations) annotation is the only required annotation--it's how Miru knows which config type the schema belongs to. 
+The [`config type`](/cfg-mgmt/primitives/schemas/overview#schema-annotations) annotation is the only required annotation--it's how Miru knows which config type the schema belongs to. 
 
-However, there are other useful annotations, such as the [`instance file path`](/cfg-mgmt/schemas/overview#schema-annotations) annotation, which defines where config instances for this schema are written to disk on your devices.
+However, there are other useful annotations, such as the [`instance file path`](/cfg-mgmt/primitives/schemas/overview#schema-annotations) annotation, which defines where config instances for this schema are written to disk on your devices.
 
 <Annotations />
 
 ## Upload rules  <OptionalBadge />
 
-Similar to schemas, [upload rules](/data-uploads/upload-rules) are created as part of a release. Unlike schemas, upload rules are optional — a release may contain any number of them, including none.
+Similar to schemas, [upload rules](/data-uploads/primitives/upload-rules) are created as part of a release. Unlike schemas, upload rules are optional — a release may contain any number of them, including none.
 
 Upload rules may belong to multiple releases and are identified by hashing their content. Upload rules with equivalent content are considered identical (even if comments, spacing, or other formatting is different).
 
@@ -98,7 +99,7 @@ destination:
   delete_policy: never
 ```
 
-Visit the [upload rules](/data-uploads/upload-rules) page for a complete reference of the upload rule fields and their usage.
+Visit the [upload rules](/data-uploads/primitives/upload-rules) page for a complete reference of the upload rule fields and their usage.
 
 <Warning>
   For upload rules to take effect, you must grant the Miru Agent the necessary file system permissions. Visit the [file system access](/developers/agent/filesys-access#reading-files-to-upload) page.

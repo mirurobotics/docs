@@ -18,7 +18,7 @@ import Annotations from '/snippets/references/cli/releases/create/schema-annotat
 <ParamField path="language" type="string">
   <ImmutableBadge />
 
-  The [schema language](/cfg-mgmt/schemas/languages/overview) used to define the schema.
+  The [schema language](/cfg-mgmt/primitives/schemas/languages/overview) used to define the schema.
 
   Allowed values: 
   - `jsonschema`
@@ -75,7 +75,7 @@ import Annotations from '/snippets/references/cli/releases/create/schema-annotat
 <ParamField path="config type" type="Config Type">
   <ImmutableBadge />
 
-  The [config type](/cfg-mgmt/config-types#properties) to which the schema belongs.
+  The [config type](/cfg-mgmt/primitives/config-types#properties) to which the schema belongs.
 
   Examples: `Mobility`, `Safety Features`, `Perception`
 </ParamField>
@@ -89,7 +89,7 @@ Miru supports:
 - [JSON Schema](https://json-schema.org/draft/2020-12) (draft 2020-12)
 - [CUE](https://cuelang.org/)
 
-For more information on schema languages, visit the [languages](/cfg-mgmt/schemas/languages/overview) section of this guide.
+For more information on schema languages, visit the [languages](/cfg-mgmt/primitives/schemas/languages/overview) section of this guide.
 
 ## File formats
 
@@ -109,7 +109,7 @@ release and never edited in place. To change what a config type accepts, you mus
 ## Git provenance
 
 Schemas are defined as files in your Git repository and created by
-[releasing them via the CLI](/cfg-mgmt/defining-releases). Each schema records the
+[releasing them via the CLI](/cfg-mgmt/create-a-release). Each schema records the
 Git commits it was released from — the commit itself and the schema file's paths
 relative to the repository root — so any schema in Miru can be traced back to the exact
 lines that defined it.
