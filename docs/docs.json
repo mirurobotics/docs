@@ -105,21 +105,22 @@
             "pages": [
               "data-uploads/overview",
               {
-                "group": "Buckets",
+                "group": "Primitives",
                 "pages": [
-                  "data-uploads/buckets/overview",
-                  {
-                    "group": "Connect buckets",
-                    "pages": [
-                      "data-uploads/buckets/connect/aws",
-                      "data-uploads/buckets/connect/gcs"
-                    ]
-                  }
+                  "data-uploads/primitives/buckets",
+                  "data-uploads/primitives/upload-collections",
+                  "data-uploads/primitives/upload-rules",
+                  "data-uploads/primitives/uploads"
                 ]
               },
-              "data-uploads/upload-collections",
-              "data-uploads/upload-rules",
-              "data-uploads/uploads"
+              {
+                "group": "Connect a bucket",
+                "pages": [
+                  "data-uploads/connect-a-bucket/aws",
+                  "data-uploads/connect-a-bucket/gcs"
+                ]
+              },
+              "data-uploads/create-a-release"
             ]
           },
           {
