@@ -13,17 +13,17 @@ write access to your bucket and trusts Miru's integration role to assume it.
 
 You create a role in your AWS account that grants write access to the bucket and trusts Miru's AWS role to assume it.
 
-Then, when a device needs to upload data to you bucket:
+<img
+  src="https://assets.mirurobotics.com/docs/v04/images/data-uploads/aws-sts-assume-role.svg"
+  alt="AWS STS assume-role exchange"
+/>
+
+When a device needs to upload data to you bucket:
 
 1. Miru assumes the role in your AWS account
 1. Miru creates a short-lived token scoped to the exact object key the device is uploading to
 1. Miru distributes the token to the device
 1. The device uploads the data to the bucket using the token
-
-<img
-  src="https://assets.mirurobotics.com/docs/v04/images/data-uploads/aws-sts-assume-role.svg"
-  alt="AWS STS assume-role exchange"
-/>
 
 Connecting your bucket to Miru is a one-time setup that uses only identifiers and
 configuration values. No access keys, passwords, or long-lived tokens change hands in

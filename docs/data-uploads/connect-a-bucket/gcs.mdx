@@ -14,17 +14,17 @@ your bucket.
 
 You grant Miru's dedicated service account write access to your bucket.
 
-Then, when a device needs to upload data to your bucket:
+<img
+  src="https://assets.mirurobotics.com/docs/v04/images/data-uploads/gcs-uploader-sa-flow.svg"
+  alt="GCS uploader service account token flow"
+/>
+
+When a device needs to upload data to your bucket:
 
 1. Miru impersonates your workspace's dedicated service account
 2. Miru creates a short-lived token scoped to the exact object key the device is uploading to
 3. Miru distributes the token to the device
 4. The device uploads the data to the bucket using the token
-
-<img
-  src="https://assets.mirurobotics.com/docs/v04/images/data-uploads/gcs-uploader-sa-flow.svg"
-  alt="GCS uploader service account token flow"
-/>
 
 Connecting your bucket to Miru is a one-time setup that grants a single dedicated
 identity access to one bucket. No service-account keys, passwords, or long-lived tokens
