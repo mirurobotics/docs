@@ -1,18 +1,3 @@
----
-title: 'Overview'
----
-
-The Miru Agent runs as the `miru` system user and needs specific file system permissions
-to operate. This section covers the agent's default permissions and how to grant it
-access in the two cases that need it:
-
-- [Configs](/developers/agent/file-permissions/configs) — the agent **writes** config
-  instances to disk when it deploys a release.
-- [Data uploads](/developers/agent/file-permissions/data-uploads) — the agent **reads**
-  files on the device to upload them.
-
-## Default permissions
-
 During installation, the `miru` system user and group are created (no login shell). The
 agent process runs as `miru:miru` under systemd.
 

@@ -1,13 +1,31 @@
 ---
-title: 'Configs'
+title: 'File system access'
 ---
+
+import DefaultPermissions from '/snippets/agent/filesys/default-perms.mdx';
+
+The Miru Agent runs as the `miru` system user and needs specific file system permissions
+to operate. This page covers the agent's default permissions and how to grant it access
+in the two cases that need it:
+
+- **[Writing config instances](#writing-config-instances)** — the agent **writes** config
+  instances to disk when it deploys a release.
+- **[Reading files to upload](#reading-files-to-upload)** — the agent **reads** files on
+  the device to upload them.
+
+Both cases share the same [testing](#testing-access) and [granting](#granting-access)
+workflow, covered at the end.
+
+## Default permissions
+
+<DefaultPermissions />
+
+## Writing config instances
 
 When the agent deploys a release, it **writes** config instances to disk. `/srv/miru` is
 the default location and works out-of-the-box — deploying to any path inside `/srv/miru`
 requires no additional configuration. To deploy to a path outside `/srv/miru`, you must
 grant the `miru` user read and write access to that path.
-
-## Custom file paths
 
 <Warning>
   You must use Miru Agent [v0.8.0](/changelog/agent#v0-8-0) or later to deploy
@@ -71,6 +89,69 @@ To write to a given file, the `miru` user requires the following Unix permission
       special permissions. Other directories, such as `/home/myapp`, will not grant
       `miru` user access by default and must be specifically configured.
     </Info>
+
+## Reading files to upload
+
+To upload data, the agent **reads** the files matched by an
+[upload rule](/data-uploads/upload-rules)'s `source.glob` and streams them to your
+bucket. To do so, the `miru` user needs read access to those files and the directories
+along the path to them.
+
+### Required permissions
+
+To read a file for upload, the `miru` user requires specific permissions to
+
+1. The file itself
+2. The directories along the path to the file
+
+Let's consider an upload rule whose `source.glob` is `/var/log/robot/*.log`, matching the
+file `/var/log/robot/app.log`. The required permissions to grant the `miru` user access
+to this file are shown in the table below.
+
+| Path | Permissions |
+|------|----------------------|
+| `/var/log/robot/app.log` | read (`r`) |
+| `/var/log/robot` | read (`r`), execute (`x`) |
+| `/var/log` | execute (`x`) |
+| `/var` | execute (`x`) |
+
+To read a given file, the `miru` user requires the following Unix permissions:
+
+1. Read (`r`) access to the *file* itself
+
+    - `r` (read) is required to read the file contents for upload.
+
+2. Read (`r`) and execute (`x`) access to the file's parent directory
+
+    - `r` (read) is required to list the directory and match files against the glob.
+    - `x` (execute/search) is required to open files within the directory.
+
+3. Execute (`x`) access to all directories along the path to the file
+
+    - `x` (execute) is required to traverse directories within the path to the file.
+
+    <Info>
+      Many directories, such as `/var/log`, are world-readable and executable by default
+      and need no special permissions. Others, such as `/home/myapp`, will not grant
+      `miru` user access by default and must be specifically configured.
+    </Info>
+
+Unlike config writes, uploads are read-only — the `miru` user does **not** need write
+access to the source files, unless you delete them after upload (below).
+
+### Deleting after upload
+
+If an upload rule's [`destination.delete_policy`](/data-uploads/upload-rules#destinations)
+is `after_upload`, the agent removes each file after a successful upload. Deleting a file
+requires **write (`w`)** access to its **parent directory** (to remove the directory
+entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case:
+
+| Path | Permissions |
+|------|----------------------|
+| `/var/log/robot/app.log` | read (`r`) |
+| `/var/log/robot` | read (`r`), write (`w`), execute (`x`) |
+| `/var/log` | execute (`x`) |
+| `/var` | execute (`x`) |
 
 ## Testing access
 
@@ -200,6 +281,12 @@ However, you may find that changing ownership or group is not possible or desira
 this case, ACLs may be a better fit. ACLs provide flexibility by allowing you to retain
 existing permissions for a given path while granting the `miru` user or group the
 required permissions.
+
+<Note>
+  The examples below grant read/write (`rw` on files, `rwx` on directories) for the
+  config-write case. For read-only upload access, substitute `r` for `rw` on files and
+  `rx` for `rwx` on directories.
+</Note>
 
 ### Standard Unix permissions
 

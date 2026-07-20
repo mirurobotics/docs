@@ -131,14 +131,7 @@
                 "pages": [
                   "developers/agent/overview",
                   "developers/agent/install",
-                  {
-                    "group": "File permissions",
-                    "pages": [
-                      "developers/agent/file-permissions/overview",
-                      "developers/agent/file-permissions/configs",
-                      "developers/agent/file-permissions/data-uploads"
-                    ]
-                  },
+                  "developers/agent/filesys-access",
                   "developers/agent/versions",
                   "developers/agent/commands",
                   "developers/agent/security",
@@ -415,7 +408,7 @@
   "redirects": [
     {
       "source": "/developers/agent/file-permissions",
-      "destination": "/developers/agent/file-permissions/overview"
+      "destination": "/developers/agent/filesys-access"
     },
     {
       "source": "/changelogs/:slug*",
