@@ -23,17 +23,13 @@ import SemVer from '/snippets/releases/semver.mdx';
 </ParamField>
 
 <ParamField path="--upload-rules" type="string">
-  A directory containing [upload rule](/data-uploads/defining-releases) YAML files to include in the release. May be specified multiple times for multiple directories. Only YAML files in the directory are picked up.
-
-  Optional — a release must always include at least one config schema, but upload rules are not required.
+  A directory containing [upload rule](data-uploads/primitives/upload-rules#file-format) YAML files to include in the release. May be specified multiple times for multiple directories. Only YAML files in the directory are picked up.
 
   Examples: `./upload-rules/`
 </ParamField>
 
 <ParamField path="--upload-rule" type="string">
-  The path to an [upload rule](/data-uploads/defining-releases) YAML file to include in the release. May be specified multiple times to include multiple rules.
-
-  Optional — a release must always include at least one config schema, but upload rules are not required.
+  The path to an [upload rule](data-uploads/primitives/upload-rules#file-format) YAML file to include in the release. May be specified multiple times to include multiple rules.
 
   Examples: `./upload-rules/robot-logs.yaml`
 </ParamField>
