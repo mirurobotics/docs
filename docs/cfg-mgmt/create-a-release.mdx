@@ -3,8 +3,8 @@ title: "Create a release"
 ---
 
 import { Framed } from '/snippets/components/framed.jsx';
-import { OptionalBadge, RequiredBadge } from '/snippets/components/requirement-badges.jsx';
 import CreateExistingSchemas from '/snippets/references/cli/releases/create/existing-schemas.mdx';
+import Annotations from '/snippets/references/cli/releases/create/schema-annotations.mdx';
 import CLIFlags from '/snippets/references/cli/releases/create/flags.mdx';
 import CreateNewSchemas from '/snippets/references/cli/releases/create/new-schemas.mdx';
 import CLIUsage from '/snippets/references/cli/releases/create/usage.mdx';
@@ -17,15 +17,15 @@ innerRadius="10px"
 outerRadius="12px"
 />
 
-The only way to create releases is via the command line. The dashboard does not support creating new releases (although you can [duplicate existing releases](/essentials/releases/manage#duplicate-a-release)).
+The only way to create releases is via the command line. The dashboard only supports [duplicating releases](/essentials/releases/manage#duplicate-a-release).
 
-Creating releases from the CLI is a deliberate design choice. We believe a release's
+Creating releases from the CLI is a deliberate design choice--we believe a release's
 definition should be versioned in a Git repository. The CLI promotes this practice,
 simplifying the release process and encouraging better software development habits.
 
-The CLI is used to programmatically create releases in a [CI pipeline](/developers/ci/overview), ensuring releases are automatically created when code is pushed to a Git repository.
+### Continuous Integration
 
-If you just want a concise overview of the CLI command and its flags, visit the [CLI Reference](/references/cli/release-create). For a comprehensive guide, continue reading below.
+The CLI can be used to programmatically create releases in a [CI pipeline](/developers/ci/overview), ensuring releases are automatically created when code is pushed to a Git repository. Visit the [CI/CD](/developers/ci/overview) page for more information.
 
 ## Prerequisites
 
@@ -34,7 +34,7 @@ To create a release, the following prerequisites must be met:
 1. CLI installed - [install](/developers/cli/install) the Miru CLI on your development machine and authenticate using the [login](/developers/cli/login) command
 1. Local Git repository - the release's definitions must be committed to a local Git repository
 
-## Config schemas  <RequiredBadge />
+## Config schemas
 
 [Config schemas](/cfg-mgmt/schemas/overview) aren't created separately from releases. Instead, the CLI creates the schemas in the same command as the release itself. Releases may contain any number of schemas, but they must contain at least one.
 
@@ -65,46 +65,15 @@ x-miru-config-type: "{your-config-type-slug}"
   Miru supports CUE packages as a way to split a schema's definition into multiple files. Read more in the [CUE documentation](/cfg-mgmt/schemas/languages/cue#cue-packages).
 </Tip>
 
-**Schema Annotations**
+### Schema annotations
 
-Schemas support [annotations](/cfg-mgmt/schemas/overview#schema-annotations), which are Miru-specific extensions that define metadata about a schema.
+Schemas support annotations--Miru-specific extensions that define metadata about a schema. 
 
-The [`config type`](/cfg-mgmt/schemas/overview#schema-annotations) annotation is the only required annotation--it's how Miru knows which config type the schema belongs to. 
-
-However, there are other useful annotations, such as the [`instance file path`](/cfg-mgmt/schemas/overview#schema-annotations) annotation, which defines where config instances for this schema are written to disk on your devices.
+The `config type` annotation is the only required annotation--it's how Miru knows which config type the schema belongs to. However, there are other useful annotations, such as the `instance file path` annotation, which defines where config instances for this schema are written to disk on your devices.
 
 <Annotations />
 
-## Upload rules  <OptionalBadge />
-
-Similar to schemas, [upload rules](/data-uploads/upload-rules) are created as part of a release. Unlike schemas, upload rules are optional — a release may contain any number of them, including none.
-
-Upload rules may belong to multiple releases and are identified by hashing their content. Upload rules with equivalent content are considered identical (even if comments, spacing, or other formatting is different).
-
-### Define the upload rules
-
-Each rule is defined as a single YAML file in your Git repository. You can find example rules in our [getting-started repository](https://github.com/mirurobotics/getting-started).
-
-```yaml robot-logs.yaml
-collection_slug: robot-logs
-
-source:
-  glob: /var/log/robot/*.log
-  stability_window_secs: 60
-
-destination:
-  bucket: my-uploads-bucket
-  path: logs/{device_id}/{upload_id}/{file_name}
-  delete_policy: never
-```
-
-Visit the [upload rules](/data-uploads/upload-rules) page for a complete reference of the upload rule fields and their usage.
-
-<Warning>
-  For upload rules to take effect, you must grant the Miru Agent the necessary file system permissions. Visit the [file system access](/developers/agent/filesys-access#reading-files-to-upload) page.
-</Warning>
-
-## Git commit  <RequiredBadge />
+## Git commit
 
 When creating a release, the CLI captures the following Git metadata from the *local* Git repository where the CLI is run:
 
