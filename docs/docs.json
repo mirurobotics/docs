@@ -50,23 +50,39 @@
           {
             "group": "Config Management",
             "pages": [
-              "cfg-mgmt/config-types",
               {
-                "group": "Config schemas",
+                "group": "Primitives",
                 "pages": [
-                  "cfg-mgmt/schemas/overview",
+                  "cfg-mgmt/primitives/config-types",
                   {
-                    "group": "Languages",
+                    "group": "Config schemas",
                     "pages": [
-                      "cfg-mgmt/schemas/languages/overview",
-                      "cfg-mgmt/schemas/languages/jsonschema",
-                      "cfg-mgmt/schemas/languages/cue"
+                      "cfg-mgmt/primitives/schemas/overview",
+                      {
+                        "group": "Languages",
+                        "pages": [
+                          "cfg-mgmt/primitives/schemas/languages/overview",
+                          "cfg-mgmt/primitives/schemas/languages/jsonschema",
+                          "cfg-mgmt/primitives/schemas/languages/cue"
+                        ]
+                      },
+                      "cfg-mgmt/primitives/schemas/manage"
                     ]
                   },
-                  "cfg-mgmt/schemas/manage"
+                  "cfg-mgmt/primitives/config-instances"
                 ]
               },
-              "cfg-mgmt/config-instances",
+              {
+                "group": "Provision devices",
+                "pages": [
+                  "cfg-mgmt/provision-devices/overview",
+                  "cfg-mgmt/provision-devices/dashboard",
+                  "cfg-mgmt/provision-devices/provisioning-tokens",
+                  "cfg-mgmt/provision-devices/provisioning-script",
+                  "cfg-mgmt/provision-devices/reprovision"
+                ]
+              },
+              "cfg-mgmt/create-a-release",
               {
                 "group": "Deploy configs",
                 "pages": [
