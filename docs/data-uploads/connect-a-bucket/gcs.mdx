@@ -85,12 +85,15 @@ connect a bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
     Create the bucket if it doesn't yet exist.
 
     ```bash
+    LOCATION="<location>"
+    ```
+
+    ```bash
     gcloud storage buckets create "gs://${BUCKET_NAME}" \
       --project="${PROJECT_ID}" \
-      --location="<location>"
+      --location="${LOCATION}"
     ```
   </Step>
-
 
 
   <Step title="Grant the service account write access">
