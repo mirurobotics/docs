@@ -10,7 +10,7 @@ description: "Changelog and migration steps for the Miru Agent"
 
 Miru Agent `v0.10.0` introduces **data uploads**. The agent can now upload files from your devices directly to your own cloud storage bucket: when an [upload rule](/data-uploads/primitives/upload-rules) matches files on a device, the agent streams them straight to your AWS S3 or GCS bucket—your data never passes through Miru.
 
-Reading files for upload may require granting the `miru` user [read access](/developers/agent/filesys-access#read-only) to the source paths. To learn more, visit the [data uploads](/data-uploads/overview) documentation.
+Reading files for upload may require granting the `miru` user [read access](/developers/agent/filesys-access#data-uploads) to the source paths. To learn more, visit the [data uploads](/data-uploads/overview) documentation.
 
 ## Features
 
@@ -71,7 +71,7 @@ To learn more, visit the [provisioning tokens](/cfg-mgmt/provision-devices/provi
 
 Miru Agent `v0.8.0` allows config instances to be written to paths outside of the `/srv/miru/config_instances/` directory—any valid file system path is now supported. Configs deployed to paths outside of the `/srv/miru` directory require additional file system permissions to be granted to the `miru` user.
 
-To learn more, visit the [file system access](/developers/agent/filesys-access#read-and-write) documentation.
+To learn more, visit the [file system access](/developers/agent/filesys-access#configs) documentation.
 
 ## Breaking changes
 
