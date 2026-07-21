@@ -216,10 +216,7 @@ The final line is `FINAL RESULT: PASS` or `FINAL RESULT: FAIL`.
 
 ### Example outputs
 
-The examples below show the default `write` (Configs) mode. In `read-delete` and
-`read-only` mode the write requirements drop per the mapping above — the file Write cell
-becomes `-` in both, and the parent Write cell also becomes `-` in `read-only` — so a `-`
-in those cells is expected and does not count against the result.
+The examples below show the default `write` (Configs) mode. 
 
 <Tabs>
 
@@ -307,42 +304,73 @@ this case, ACLs may be a better fit. ACLs provide flexibility by allowing you to
 existing permissions for a given path while granting the `miru` user or group the
 required permissions.
 
-<Note>
-  The examples below grant read/write (`rw` on files, `rwx` on directories) for the
-  config-write case. For read-only upload access, substitute `r` for `rw` on files and
-  `rx` for `rwx` on directories.
-</Note>
-
 ### Standard Unix permissions
 
-For standard Unix permissions, there are two approaches we recommend:
+For standard Unix permissions, there are three approaches, in order of preference:
 
-1. Grant the `miru` group the appropriate permissions
-2. Transfer ownership to the `miru` user
+1. Add `miru` to a group that already has access
+2. Grant the `miru` group the appropriate permissions
+3. Transfer ownership to the `miru` user
 
-To keep things simple, we generally recommend granting the `miru` group the appropriate
-permissions instead of transferring ownership to the `miru` user.
+When the target files already belong to a group with the access you need — common for
+upload sources produced by another application — adding `miru` to that group is the least
+invasive option. 
+
+We recommend starting there. Otherwise, grant the `miru` group access directly.
+
+#### Add miru to an existing group
+
+Add the `miru` user to a group that already has the required access, so it inherits that
+group's permissions without touching the path:
+
+```bash
+sudo usermod -aG <group> miru
+sudo systemctl restart miru
+```
+
+#### Set the group or owner
+
+If no group already grants the access you need, set the path's group to `miru`
+(recommended) or transfer ownership to `miru`.
 
 **Files**
 
 <Tabs>
   <Tab title="Group access">
-    ```bash
-    sudo chgrp miru /path/to/file.json
-    sudo chmod g+rw /path/to/file.json
+    <CodeGroup>
+
+    ```bash read-only
+    path="/path/to/file.json"
+    sudo chgrp miru $path
+    sudo chmod g+r $path
     ```
 
-    - `chgrp miru` sets the file's group to `miru`
-    - `chmod g+rw` gives the group read and write access
+    ```bash read-write
+    path="/path/to/file.json"
+    sudo chgrp miru $path
+    sudo chmod g+rw $path
+    ```
+
+    </CodeGroup>
   </Tab>
+
   <Tab title="Transfer ownership">
-    ```bash
-    sudo chown miru /path/to/file.json
-    sudo chmod u+rw /path/to/file.json
+
+    <CodeGroup>
+
+    ```bash read-only
+    path="/path/to/file.json"
+    sudo chown miru $path
+    sudo chmod u+r $path
     ```
 
-    - `chown miru` sets `miru` as the file owner user (group unchanged)
-    - `chmod u+rw` gives the owner (`miru`) read and write access
+    ```bash read-write
+    path="/path/to/file.json"
+    sudo chown miru $path
+    sudo chmod u+rw $path
+    ```
+
+    </CodeGroup>
   </Tab>
 </Tabs>
 
@@ -350,22 +378,38 @@ permissions instead of transferring ownership to the `miru` user.
 
 <Tabs>
   <Tab title="Group access">
-    ```bash
-    sudo chgrp miru /path/to/dir
-    sudo chmod g+rwx /path/to/dir
+    <CodeGroup>
+
+    ```bash read-only
+    path="/path/to/dir"
+    sudo chgrp miru $path
+    sudo chmod g+rx $path
     ```
 
-    - `chgrp miru` sets the directory group to `miru`
-    - `chmod g+rwx` gives the group read, write, and execute access
+    ```bash read-write
+    path="/path/to/dir"
+    sudo chgrp miru $path
+    sudo chmod g+rwx $path
+    ```
+
+    </CodeGroup>
   </Tab>
   <Tab title="Transfer ownership">
-    ```bash
-    sudo chown miru /path/to/dir
-    sudo chmod u+rwx /path/to/dir
+    <CodeGroup>
+
+    ```bash read-only
+    path="/path/to/dir"
+    sudo chown miru $path
+    sudo chmod u+rx $path
     ```
 
-    - `chown miru` sets `miru` as the owner user for the directory and its contents
-    - `chmod u+rwx` gives the owner (`miru`) read, write, and execute access
+    ```bash read-write
+    path="/path/to/dir"
+    sudo chown miru $path
+    sudo chmod u+rwx $path
+    ```
+
+    </CodeGroup>
   </Tab>
 </Tabs>
 
@@ -384,14 +428,31 @@ sudo apt install acl
 **Files**
 
 Grant the `miru` user read and write access to a file.
-```bash
+
+<CodeGroup>
+
+```bash read-only
+sudo setfacl -m u:miru:r /path/to/file.json
+```
+
+```bash read-write
 sudo setfacl -m u:miru:rw /path/to/file.json
 ```
+
+</CodeGroup>
 
 **Directories**
 
 Grant the `miru` user read/write/execute access to a directory.
 
-```bash
+<CodeGroup>
+
+```bash read-only
+sudo setfacl -m u:miru:rx /path/to/dir
+```
+
+```bash read-write
 sudo setfacl -m u:miru:rwx /path/to/dir
 ```
+
+</CodeGroup>
