@@ -1,22 +1,21 @@
 ---
 title: "Create"
 ---
-import CuePackages from "/snippets/references/cli/releases/create/cue-packages.mdx";
+
 import PushExistingSchemas from "/snippets/references/cli/releases/create/existing-schemas.mdx";
 import Flags from "/snippets/references/cli/releases/create/flags.mdx";
 import PushNewSchemas from "/snippets/references/cli/releases/create/new-schemas.mdx";
-import Annotations from "/snippets/references/cli/releases/create/schema-annotations.mdx";
 import Scopes from "/snippets/references/cli/releases/create/scopes.mdx";
 import Usage from "/snippets/references/cli/releases/create/usage.mdx";
 
 Create a release along with its associated git commit, config schemas, upload rules in Miru. 
 
-For a more detailed guide on creating releases, visit the [release creation](/cfg-mgmt/create-a-release) guide. To include upload rules, see the [upload rules](/data-uploads/create-a-release) guide.
+For a more detailed guide on creating releases, visit the [release creation](/cfg-mgmt/create-a-release) guide. To include upload rules, see the [release upload rules](/data-uploads/release-upload-rules) guide.
 
 ### Requirements
 
 - Schemas and upload rules must be committed to a local Git repository
-- Schemas must be annotated with their config types (see [annotations](#schema-annotations))
+- Schemas must be annotated with their config types (see [annotations](/cfg-mgmt/primitives/schemas/overview#schema-annotations))
 - Git repository must have a remote URL (e.g. GitHub) configured
 - At least one config schema is provided (upload rules are optional) 
 
@@ -31,16 +30,6 @@ For a more detailed guide on creating releases, visit the [release creation](/cf
 **Flags**
 
 <Flags />
-
-
-
-### Schema annotations
-
-<Annotations />
-
-### CUE packages
-
-<CuePackages />
 
 ### Examples
 

@@ -11,7 +11,7 @@ import UploadRuleDef from '/snippets/definitions/upload-rule.mdx';
 A rule has two parts — a `source` (what to collect on the device) and a `destination`
 (where it goes in your bucket) — and belongs to an upload collection that gives its data
 stream a stable identity. Rules are created by defining them as rule files and
-[releasing them via the CLI](/data-uploads/create-a-release).
+[releasing them via the CLI](/data-uploads/release-upload-rules).
 
 ## Properties
 
@@ -66,7 +66,7 @@ destination:
 Rule files reference the rule's collection by its `collection_slug` and the bucket by
 name (`destination.bucket`). 
 
-See [defining releases](/data-uploads/create-a-release) for more information about a particular field.
+See [defining releases](/data-uploads/release-upload-rules) for more information about a particular field.
 
 ## Sources
 
@@ -144,14 +144,14 @@ what is collected, you must create a new rule, release it, and deploy it to your
 ## Git provenance
 
 Rules are defined as YAML files in your Git repository and created by
-[releasing them via the CLI](/data-uploads/create-a-release). Each rule records the
+[releasing them via the CLI](/data-uploads/release-upload-rules). Each rule records the
 Git commits it was released from — the commit itself and the rule file's path relative
 to the repository root — so any rule in Miru can be traced back to the exact lines of
 YAML that defined it. 
 
 ## Create an upload rule  <PublisherBadge />
 
-Upload rules must be created as part of a [release](/primitives/releases). Visit the [define releases](/data-uploads/create-a-release) page to learn how to create upload rules and releases.
+Upload rules must be created as part of a [release](/primitives/releases). Visit the [define releases](/data-uploads/release-upload-rules) page to learn how to create upload rules and releases.
 
 ## View an upload rule 
 

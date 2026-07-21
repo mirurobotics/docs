@@ -1,0 +1,67 @@
+---
+title: "Release upload rules"
+---
+
+import { Framed } from '/snippets/components/framed.jsx';
+
+<Framed 
+background="https://assets.mirurobotics.com/docs/v04/images/releases/background.jpeg" 
+image="https://assets.mirurobotics.com/docs/v04/images/releases/header:release-create.png" 
+borderWidth="28px"
+innerRadius="10px"
+outerRadius="12px"
+/>
+
+Upload rules are an optional part of a release. They define which files on your devices get uploaded to your bucket. This page covers defining upload rules and including them when creating a release.
+
+A release must contain at least one config schema and may contain any number of upload rules, including none. For the full release-creation workflow — config schemas, Git metadata, and the CLI command — see the [Create a release](/cfg-mgmt/create-a-release) guide.
+
+## Prerequisites
+
+Upload rules write files to a bucket, so a connected bucket is required. Connect one before creating a release with upload rules:
+
+- [Connect an AWS bucket](/data-uploads/connect-a-bucket/aws)
+- [Connect a GCS bucket](/data-uploads/connect-a-bucket/gcs)
+
+See the [buckets](/data-uploads/primitives/buckets) primitive for more detail. The generic CLI and Git prerequisites are covered in the [Create a release](/cfg-mgmt/create-a-release) guide.
+
+## Define the upload rules
+
+Each rule is defined as a single YAML file in your Git repository. You can find example rules in our [getting-started repository](https://github.com/mirurobotics/getting-started).
+
+```yaml robot-logs.yaml
+collection_slug: robot-logs
+
+source:
+  glob: /var/log/robot/*.log
+  stability_window_secs: 60
+
+destination:
+  bucket: my-uploads-bucket
+  path: logs/{device_id}/{upload_id}/{file_name}
+  delete_policy: never
+```
+
+Like schemas, upload rules are identified by hashing their content, so rules with equivalent content are deduplicated even if their comments or formatting differ.
+
+Visit the [upload rules](/data-uploads/primitives/upload-rules) page for a complete reference of the upload rule fields and their usage.
+
+<Warning>
+  For upload rules to take effect, you must grant the Miru Agent the necessary file system permissions. Visit the [file system access](/developers/agent/filesys-access#reading-files-to-upload) page.
+</Warning>
+
+## Add upload rules to a release
+
+Upload rules ride along with `miru release create` — the same command that creates the release and its schemas. Include them with either flag (both may be repeated):
+
+- `--upload-rule <file>` — a single upload rule YAML file
+- `--upload-rules <dir>` — a directory of upload rule YAML files
+
+```bash
+$ miru release create \
+  --version v1.0.0 \
+  --schemas ./schemas/ \
+  --upload-rule ./upload-rules/robot-logs.yaml
+```
+
+See the [CLI reference](/references/cli/release-create) for the full flag list.
