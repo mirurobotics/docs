@@ -18,9 +18,9 @@ After this change, the product changelog page opens with a "July 20, 2026" entry
 
 ## Progress
 
-- [ ] Insert the `<Update label="July 20, 2026">` block into `docs/changelog/product.mdx`.
-- [ ] Run `pnpm run lint` and `pnpm run test:lint` locally; fix any violations (add words to `cspell.json` only if flagged).
-- [ ] Commit from the docs repo root: `docs: add data uploads product changelog entry`.
+- [x] Insert the `<Update label="July 20, 2026">` block into `docs/changelog/product.mdx`.
+- [x] Run `pnpm run lint` and `pnpm run test:lint` locally; fix any violations (add words to `cspell.json` only if flagged). Both passed on the first run; no `cspell.json` changes needed.
+- [x] Commit from the docs repo root: `docs: add data uploads product changelog entry`.
 - [ ] Push via the preflight workflow; preflight reports `CLEAN` (CI green on the pushed branch head).
 
 ## Surprises & Discoveries

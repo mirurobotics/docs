@@ -11,6 +11,106 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 <div className="changelog-page">
 
+<Update label="July 20, 2026">
+    ## Data Uploads
+
+    Devices can now upload files **directly to your own cloud storage**.
+    Define an upload rule — what to collect, when it's finished, and where
+    it goes — and the Miru Agent detects matching files on the device and
+    streams them straight to your AWS S3 or Google Cloud Storage bucket.
+    Your data never passes through Miru.
+
+    [Data uploads documentation »](/data-uploads/overview)
+
+    ### Upload rules
+
+    Upload rules are YAML files versioned in Git alongside your config
+    schemas. Each rule pairs a source with a destination:
+
+    - **Source** — a glob pattern for the files to collect, plus a
+      stability window so a file is only uploaded once it has finished
+      being written
+    - **Destination** — the bucket, an object path template with variables
+      like `{device_id}`, `{upload_id}`, and `{file_name}`, and a delete
+      policy for the source file after upload
+
+    Every rule belongs to an **upload collection**, created automatically
+    from the rule's `collection_slug`, which groups related uploads
+    together.
+
+    [Define upload rules »](/data-uploads/define-upload-rules)
+
+    ### Connect a bucket
+
+    Uploads land in a bucket you connect to your workspace — AWS S3 and
+    Google Cloud Storage are supported. For each upload, the Miru control
+    plane issues short-lived credentials scoped to the exact object key
+    the file will be written to, and the agent uploads directly to your
+    bucket. A device only ever receives credentials for its own uploads,
+    so devices are strictly isolated from each other's data.
+
+    - [Connect an AWS bucket »](/data-uploads/connect-a-bucket/aws)
+    - [Connect a GCS bucket »](/data-uploads/connect-a-bucket/gcs)
+
+    ### Ship upload rules with releases
+
+    Upload rules are part of a release. `miru release create` now accepts
+    `--upload-rule` (a single rule file) and `--upload-rules` (a directory
+    of rule files), so the same command that versions your config schemas
+    also versions your upload rules.
+
+    To support data uploads, we've released:
+
+    - [Miru Agent v0.10.0](/changelog/agent#v0-10-0) — detects files
+      matching upload rules and uploads them to your bucket. Reading
+      source files may require granting the `miru` user
+      [read access](/developers/agent/filesys-access#data-uploads)
+    - [Miru CLI v0.10.2](/changelog/cli#v0-10-2) — adds the upload rule
+      flags to `miru release create`
+
+    <Separator />
+
+    <Dropdown title="Improvements">
+        <DropdownItem>
+            **API key source notice:** The CLI now prints a notice when it
+            reads `MIRU_API_KEY` from the environment, making it obvious
+            which credentials a scripted run is using.
+        </DropdownItem>
+        <DropdownItem>
+            **Platform-aware upgrade command:** When a new CLI version is
+            available, the update notification now shows the upgrade
+            command matching how the CLI was installed.
+        </DropdownItem>
+        <DropdownItem>
+            **CLI SBOM:** Every CLI release now publishes a software bill
+            of materials (SBOM).
+        </DropdownItem>
+        <DropdownItem>
+            **Immediate SSE heartbeat:** The agent sends a heartbeat as
+            soon as a Server-Sent Events connection opens, so on-device
+            applications can immediately tell the stream is healthy.
+        </DropdownItem>
+    </Dropdown>
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+        <DropdownItem>
+            **MQTT credential redaction:** The agent now redacts the MQTT
+            password in its logs.
+        </DropdownItem>
+        <DropdownItem>
+            **Deployment retry state:** A deployment's dirty flag is
+            preserved when the agent resets retry state on startup.
+        </DropdownItem>
+        <DropdownItem>
+            **Device key permissions:** Device RSA keys are created with
+            `0600`/`0640` permissions from the start, removing a `chmod`
+            race window.
+        </DropdownItem>
+    </Dropdown>
+</Update>
+
 <Update label="June 23, 2026">
     ## Access Control
 
