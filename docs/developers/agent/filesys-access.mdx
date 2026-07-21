@@ -159,6 +159,17 @@ To help you navigate the necessary permissions, we've provided an automated scri
 reports any gaps in the permissions for the `miru` user to access a given file or
 directory.
 
+The check runs in one of three modes, matching the two cases above. They differ only in
+the write (`w`) requirements — read and execute requirements are the same in every mode:
+
+- `--mode write` (default) — **[Configs](#configs)**: deploying config instances.
+  Requires `r,w` on the file and `r,w,x` on the parent directory.
+- `--mode read-delete` — **[Data uploads](#deleting-after-upload)** with
+  `delete_policy: after_upload`. Requires `r` on the file and `r,w,x` on the parent
+  (deleting needs write on the parent, not the file).
+- `--mode read-only` — **[Data uploads](#data-uploads)** without delete. Requires `r` on
+  the file and `r,x` on the parent directory.
+
 ### Run the script
 
 First, download the script to your current working directory using `curl`.
@@ -177,9 +188,18 @@ less ./check-miru-access.sh
   You can also view the script on [GitHub](https://github.com/mirurobotics/docs/blob/main/pub/scripts/agent/check-miru-access.sh).
 </Note>
 
-Then run the script with the path you want to test.
+Then run the script with the path you want to test, selecting the mode for your case.
+The default mode is `write` (the config case), so it can be omitted there.
+
 ```bash
+# Configs (default, write mode)
 bash ./check-miru-access.sh /path/to/config-instance.yaml
+
+# Data uploads (read-only)
+bash ./check-miru-access.sh --mode read-only /var/log/robot/app.log
+
+# Data uploads that delete after upload (read-delete)
+bash ./check-miru-access.sh --mode read-delete /var/log/robot/app.log
 ```
 
 ### Understand the output
@@ -195,6 +215,11 @@ permissions.
 The final line is `FINAL RESULT: PASS` or `FINAL RESULT: FAIL`.
 
 ### Example outputs
+
+The examples below show the default `write` (Configs) mode. In `read-delete` and
+`read-only` mode the write requirements drop per the mapping above — the file Write cell
+becomes `-` in both, and the parent Write cell also becomes `-` in `read-only` — so a `-`
+in those cells is expected and does not count against the result.
 
 <Tabs>
 

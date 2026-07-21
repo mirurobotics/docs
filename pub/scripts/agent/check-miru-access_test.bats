@@ -40,6 +40,18 @@ run_check() {
 	[[ "$output" == *"unknown option"* ]]
 }
 
+@test "--mode without value prints error and exits 2" {
+	run bash "$SCRIPT" --mode
+	[ "$status" -eq 2 ]
+	[[ "$output" == *"--mode requires a value"* ]]
+}
+
+@test "invalid --mode prints error and exits 2" {
+	run bash "$SCRIPT" --mode bogus /tmp
+	[ "$status" -eq 2 ]
+	[[ "$output" == *"invalid mode"* ]]
+}
+
 @test "-h prints usage and exits 0" {
 	run bash "$SCRIPT" -h
 	[ "$status" -eq 0 ]
@@ -187,6 +199,62 @@ run_check() {
 	[ "$status" -eq 1 ]
 	[[ "$output" == *"FINAL RESULT: FAIL"* ]]
 	[[ "$output" == *"NO"* ]]
+}
+
+# ---------------------------------------------------------------------------
+# Modes: write (default) / read-delete / read-only
+# ---------------------------------------------------------------------------
+
+# Extract the Write cell (3rd data column) of a given target-type row.
+# The table is pipe-delimited: | type | read | write | exec | path
+write_cell_of() {
+	echo "$output" | awk -F'|' -v t="$1" '
+		$2 ~ t { gsub(/ /, "", $4); print $4; exit }'
+}
+
+@test "read-only mode passes on readable file whose parent lacks write" {
+	local d="$TMPDIR/ro_parent"
+	mkdir -p "$d"
+	local f="$d/data.log"
+	touch "$f"
+	chmod 444 "$f"
+	chmod 555 "$d"  # r,x but NOT w for the owner
+
+	# Default (write) mode FAILs: the parent needs write, which is absent.
+	run_check "$f"
+	[ "$status" -eq 1 ]
+	[[ "$output" == *"FINAL RESULT: FAIL"* ]]
+
+	# read-only mode PASSes: only r on file, r,x on parent are required.
+	run_check --mode read-only "$f"
+	[ "$status" -eq 0 ]
+	[[ "$output" == *"FINAL RESULT: PASS"* ]]
+	# Write is not required on the file or parent → both cells are "-".
+	[ "$(write_cell_of file)" = "-" ]
+	[ "$(write_cell_of parent)" = "-" ]
+
+	chmod 755 "$d"  # restore so bats can clean up the temp dir
+}
+
+@test "read-delete mode passes on non-writable file whose parent is writable" {
+	local d="$TMPDIR/rd_parent"
+	mkdir -p "$d"          # default 755 → r,w,x for owner
+	local f="$d/data.log"
+	touch "$f"
+	chmod 444 "$f"         # readable, NOT writable
+
+	# Default (write) mode FAILs: the file needs write, which is absent.
+	run_check "$f"
+	[ "$status" -eq 1 ]
+	[[ "$output" == *"FINAL RESULT: FAIL"* ]]
+
+	# read-delete mode PASSes: file needs r only; parent needs r,w,x.
+	run_check --mode read-delete "$f"
+	[ "$status" -eq 0 ]
+	[[ "$output" == *"FINAL RESULT: PASS"* ]]
+	# Write is not required on the file, but IS required (and present) on parent.
+	[ "$(write_cell_of file)" = "-" ]
+	[ "$(write_cell_of parent)" = "OK" ]
 }
 
 # ---------------------------------------------------------------------------
