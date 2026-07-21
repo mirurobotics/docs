@@ -6,6 +6,19 @@ description: "Changelog and migration steps for the Miru CLI"
 
 import { Dropdown } from '/snippets/components/api-dropdown.jsx';
 
+# v0.10.2
+
+*July 20, 2026*
+
+CLI `v0.10.2` adds support for including [upload rules](/data-uploads/primitives/upload-rules) in a release, letting you define data uploads alongside your config schemas.
+
+## Features
+
+- `miru release create` now accepts `--upload-rule` and `--upload-rules` flags to include upload rules (and their upload collections) in a release
+- Release creation output lists each upload rule as `collection-name · digest (status)`
+
+---
+
 # v0.10.1
 
 *May 17, 2026*

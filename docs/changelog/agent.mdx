@@ -4,6 +4,32 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.10.0
+
+*July 20, 2026*
+
+Miru Agent `v0.10.0` introduces **data uploads**. The agent can now upload files from your devices directly to your own cloud storage bucket: when an [upload rule](/data-uploads/primitives/upload-rules) matches files on a device, the agent streams them straight to your AWS S3 or GCS bucket—your data never passes through Miru.
+
+Reading files for upload may require granting the `miru` user [read access](/developers/agent/filesys-access#reading-files-to-upload) to the source paths. To learn more, visit the [data uploads](/data-uploads/overview) documentation.
+
+## Features
+
+- Added data uploads: the agent scans for files matching an upload rule's `source.glob` and uploads them to your configured AWS S3 or GCS bucket
+- Upload rules can delete source files after a successful upload when their `delete_policy` is set to `after_upload`
+- The upload queue is persisted to disk, so pending uploads survive agent restarts
+- Uploads are retried and requeued on transient failures, and dropped immediately on terminal (`4xx`) backend rejections
+- Uploaded objects are stamped with backend-vended metadata
+- Added scan and upload tracing logs for runtime observability
+
+## Fixes
+
+- Redact the MQTT password in logs to prevent credential leakage
+- Fixed an errant upload rule ID being set from the upload collection ID
+- Preserve a deployment's dirty flag when resetting retry state on startup
+- Create device RSA keys with `0600`/`0640` permissions without a `chmod` race window
+
+---
+
 # v0.9.0
 
 *May 12, 2026*
