@@ -1,0 +1,199 @@
+---
+title: "Devices"
+---
+
+import { ONLINE_TOOLTIP, OFFLINE_TOOLTIP } from '/snippets/components/devices/statuses.jsx';
+import { MutableBadge, EditableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
+import { Framed } from '/snippets/components/framed.jsx';
+import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+import { AdminBadge, ProvisionerBadge, ViewerBadge } from '/snippets/components/role-badges.jsx';
+import DeviceDef from '/snippets/definitions/device.mdx';
+import MoveDevice from '/snippets/devices/move.mdx';
+
+<Framed 
+  background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg" 
+  image="https://assets.mirurobotics.com/docs/v04/images/devices/header:list.png" 
+  borderWidth={"24px 0 0 36px"} 
+  innerRadius={"8px 0 0 0"} 
+/>
+
+<DeviceDef />
+
+Configurations are deployed to devices via the Miru Agent, a lightweight `systemd` service that runs on your devices, handling the deployment lifecycle of configurations. Visit the [Miru Agent](/developers/agent/overview) documentation for more information.
+
+## Properties
+
+<ParamField path="name" type="string">
+  <EditableBadge />
+
+  A human-readable display name that can contain most characters, such as spaces, special characters, and punctuation. Must contain between 1 and 48 characters.
+
+  Examples: `Robot 11`, `ArcticBlaze`, `Warehouse Rover`
+</ParamField>
+
+<ParamField path="status" type="enum">
+  <MutableBadge />
+
+  The [status](#status) of the device.
+
+  Allowed values: 
+  - `inactive`
+  - `activating`
+  - `online`
+  - `offline`
+
+</ParamField>
+
+<ParamField path="last_connected_at" type="datetime">
+  <MutableBadge /> {' '} <NullableBadge />
+
+  The timestamp of when the device last connected to Miru's servers.
+
+  Examples: `2026-05-25T12:00:00Z`
+</ParamField>
+
+<ParamField path="last_disconnected_at" type="datetime">
+  <MutableBadge /> {' '} <NullableBadge />
+
+  The timestamp of when the device last disconnected from Miru's servers.
+
+  Examples: `2026-05-25T12:00:00Z`
+</ParamField>
+
+<ParamField path="agent version" type="string">
+  <MutableBadge /> {' '} <NullableBadge />
+
+  The version of the Miru Agent running on the device.
+
+  The agent version exists only if the device has a status of `online` or `offline`. If the device is `inactive` or `activating`, the agent version is `null`.
+
+  Examples: `v0.6.0`
+</ParamField>
+
+<ParamField path="current release" type="Release">
+  <MutableBadge /> {' '} <NullableBadge />
+
+  The [release](/primitives/releases#properties) to which the device's current deployment belongs.
+
+  If the device is `inactive` or `activating`, the current release id is `null`. If the device is `online` or `offline`, the current release may still be `null` if the device has no deployed config instances.
+
+  Examples: `rls_123`
+</ParamField>
+
+<ParamField path="group" type="Group">
+  <EditableBadge /> {' '} <NullableBadge />
+
+  The [group](/primitives/groups#properties) to which the device belongs. If the device's group is not set, the group id is `null`.
+
+  Examples: `grp_123`
+</ParamField>
+
+## Status
+
+Devices leverage several states to track their registration and connectivity with the Miru control plane.
+
+| Status       | Description                                                 |
+| ------------ | ----------------------------------------------------------- |
+| `inactive`   | The Miru Agent has not yet been installed and authenticated |
+| `activating` | The Miru Agent is registering itself with Miru's servers    |
+| `online`     | Device is currently connected to Miru's servers             |
+| `offline`    | Device has lost connection to Miru's servers                |
+
+<img src="https://assets.mirurobotics.com/docs/v04/images/devices/status-lifecycle.light.svg" alt="Device status lifecycle" className="block dark:hidden" />
+<img src="https://assets.mirurobotics.com/docs/v04/images/devices/status-lifecycle.dark.svg" alt="Device status lifecycle" className="hidden dark:block" />
+
+Devices begin in the `inactive` state. During the Miru Agent install process, devices briefly enter the `activating` state before transitioning to `online`.
+
+Once the Miru Agent has been provisioned on a device, the device remains `online` or `offline` for the remainder of its existence—devices don't transition back to `inactive` or `activating`.
+
+The only exception to this is when a device is [reprovisioned](/cfg-mgmt/provision-devices/reprovision). During reprovisioning, devices briefly enter the `activating` state before transitioning back to `online`.
+
+To view a device's status, hover over its name on the Devices page.
+
+<Frame>
+  ![Device Status Hover](https://assets.mirurobotics.com/docs/v04/images/devices/status-hover.png)
+</Frame>
+
+## View a device
+
+To view a device in Miru, navigate to the [Devices page](https://app.mirurobotics.com/devices), click into the device you want to view, and switch to the **Overview** tab at the top.
+
+**Metadata**
+
+At the top of the page, you'll find the device's metadata, including its name, status, agent version, and more.
+
+<Frame>
+  ![Device Overview Metadata](https://assets.mirurobotics.com/docs/v04/images/devices/overview-metadata.png)
+</Frame>
+
+**Audit trail**
+
+At the bottom of the page, you'll find a complete audit trail of deployments made to the device.
+
+<Frame>
+  ![Device Overview Audit Trail](https://assets.mirurobotics.com/docs/v04/images/devices/overview-audit-trail.png)
+</Frame>
+
+
+## Provision a device  <ProvisionerBadge />
+
+To provision a device, visit the [device provisioning](/cfg-mgmt/provision-devices/overview) .
+
+
+## Edit a device  <ProvisionerBadge />
+
+**Dashboard**
+
+Navigate to the [Devices page](https://app.mirurobotics.com/devices), click the ellipses (...) on the device you want to edit, and hit **Edit**.
+
+<Frame>
+  ![Device Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/devices/ellipses-dropdown.png)
+</Frame>
+
+Update the desired fields, then click **Save**.
+
+<Frame>
+  ![Edit Device Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/edit-dialog.png)
+</Frame>
+
+**Platform API**
+
+To edit a device programmatically, use the <PlatformApiLink endpoint="devices/update">update device endpoint »</PlatformApiLink>
+
+## Ping a device  <ViewerBadge />
+
+Pinging a device sends a real-time request to verify whether it is online. Ping requests wait up to 5 seconds for a response from the device before timing out.
+
+<Tooltip tip={ONLINE_TOOLTIP.tip} cta={ONLINE_TOOLTIP.cta} href={ONLINE_TOOLTIP.href}>Online</Tooltip> devices should return a success message similar to the one below.
+
+<Frame>
+  ![Ping Success](https://assets.mirurobotics.com/docs/v04/images/devices/ping-success.png)
+</Frame>
+
+On the other hand, <Tooltip tip={OFFLINE_TOOLTIP.tip} cta={OFFLINE_TOOLTIP.cta} href={OFFLINE_TOOLTIP.href}>offline</Tooltip> devices should return a timeout message similar to the one below.
+
+<Frame>
+  ![Ping Timeout](https://assets.mirurobotics.com/docs/v04/images/devices/ping-timeout.png)
+</Frame>
+
+## Move a device  <AdminBadge />
+
+<MoveDevice />
+
+## Delete a device  <ProvisionerBadge />
+
+Deleting a device immediately invalidates its authentication session and removes all deployment and configuration history. This action is irreversible. Please proceed with caution.
+
+**Dashboard**
+
+To delete a device, click the ellipses (...) on the device you want to delete and hit **Delete**.
+
+<Frame>
+  ![Device Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/devices/ellipses-dropdown.png)
+</Frame>
+
+A confirmation dialog will appear—click **Delete** to confirm.
+
+<Frame>
+  ![Delete Device Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/delete-dialog.png)
+</Frame>

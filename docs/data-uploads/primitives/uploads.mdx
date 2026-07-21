@@ -1,0 +1,145 @@
+---
+title: "Uploads"
+---
+
+import { ImmutableBadge, MutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
+import UploadDef from '/snippets/definitions/upload.mdx';
+
+<UploadDef />
+
+Once an [upload rule](/data-uploads/primitives/upload-rules) is deployed to a device, the Miru Agent
+handles the rest: detecting when a matching file is finished, uploading it to your
+bucket, and recording it in the ledger with the properties below.
+
+## Properties
+
+<ParamField path="source" type="Source">
+  <ImmutableBadge />
+
+  The source file collected from the device. See [Sources](#sources).
+</ParamField>
+
+<ParamField path="destination" type="Destination">
+  <ImmutableBadge />
+
+  Where the collected file was uploaded. See [Destinations](#destinations).
+</ParamField>
+
+<ParamField path="digest" type="string">
+  <ImmutableBadge />
+
+  The digest of the uploaded file. Used to deduplicate uploads, so each file is
+  uploaded exactly once, and to verify integrity.
+
+  Example: `sha256:1234567890`
+</ParamField>
+
+<ParamField path="size" type="integer">
+  <ImmutableBadge />
+
+  The size of the uploaded file, in bytes.
+</ParamField>
+
+<ParamField path="status" type="enum">
+  <MutableBadge />
+
+  The [status](#status) of the upload.
+
+  Allowed values:
+  - `pending`
+  - `uploaded`
+</ParamField>
+
+<ParamField path="uploaded_at" type="datetime">
+  <MutableBadge /> <NullableBadge />
+
+  Timestamp of when the upload was durably confirmed. Null until the upload completes.
+</ParamField>
+
+<ParamField path="device" type="Device">
+  <ImmutableBadge />
+
+  The [device](/primitives/devices) that produced the upload.
+</ParamField>
+
+<ParamField path="upload rule" type="Upload Rule">
+  <ImmutableBadge />
+
+  The [upload rule](/data-uploads/primitives/upload-rules) that produced the upload.
+</ParamField>
+
+<ParamField path="deployment" type="Deployment">
+  <ImmutableBadge />
+
+  The [deployment](/primitives/deployments) that was active on the device when the
+  upload was produced.
+</ParamField>
+
+Uploads also carry the standard `created_at`, `updated_at`, and `workspace_id`
+bookkeeping fields.
+
+## Sources
+
+An upload's `source` identifies the file collected from the device and when it was
+last modified.
+
+<ParamField path="file_path" type="string">
+  <ImmutableBadge />
+
+  Absolute path of the file on the device. Its basename renders the `{file_name}`
+  variable in the [destination path template](/data-uploads/primitives/upload-rules#destinations).
+
+  Example: `/var/log/robot/robot.log`
+</ParamField>
+
+<ParamField path="mtime" type="datetime">
+  <ImmutableBadge />
+
+  The file's `mtime` timestamp as reported by the operating system.
+</ParamField>
+
+<ParamField path="first_observed_at" type="datetime">
+  <ImmutableBadge />
+
+  The timestamp of when the file was first observed by the Miru Agent for this upload.
+</ParamField>
+
+<ParamField path="last_observed_at" type="datetime">
+  <ImmutableBadge />
+
+  The timestamp of when the file was last observed by the Miru Agent for this upload.
+</ParamField>
+
+## Destinations
+
+An upload's `destination` identifies the bucket and object key where the file was
+written.
+
+<ParamField path="bucket" type="Bucket">
+  <ImmutableBadge />
+
+  The registered [bucket](/data-uploads/primitives/buckets) the file was uploaded to.
+</ParamField>
+
+<ParamField path="object_key" type="string">
+  <ImmutableBadge />
+
+  The object path the file was written to in the destination bucket. Rendered from the
+  rule's path template, it carries the device's verified ID.
+
+  Example: `logs/dvc_123/upl_123/robot.log`
+</ParamField>
+
+## Status
+
+An upload's status tracks whether the device has confirmed that the file was durably
+written to the destination bucket.
+
+| Status | Description |
+| --- | --- |
+| `pending` | Miru has authorized the upload and issued credentials, but the device has not yet completed the upload. |
+| `uploaded` | The device has confirmed that the file was durably written to its destination bucket. |
+
+Uploads begin in the `pending` state. A device may retry or resume the transfer while
+the upload remains pending. After the device confirms the durable write, the upload
+transitions to `uploaded`, which is its terminal state.

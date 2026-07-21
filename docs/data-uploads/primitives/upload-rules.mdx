@@ -1,0 +1,117 @@
+---
+title: "Upload rules"
+---
+
+import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+import { PublisherBadge } from '/snippets/components/role-badges.jsx';
+import UploadRuleDef from '/snippets/definitions/upload-rule.mdx';
+import Destinations from '/snippets/upload-rules/destinations.mdx';
+import Sources from '/snippets/upload-rules/sources.mdx';
+
+<UploadRuleDef />
+
+A rule has two parts — a `source` (what to collect on the device) and a `destination`
+(where it goes in your bucket) — and belongs to an upload collection that gives its data
+stream a stable identity. Rules are created by defining them as rule files and
+[releasing them via the CLI](/data-uploads/define-upload-rules).
+
+## Properties
+
+<ParamField path="digest" type="string">
+  <ImmutableBadge />
+
+  A hash of the rule's resolved definition — its collection, source, and destination.
+  Upload rules are deduplicated by digest within their collection: pushing a rule
+  identical to an existing one returns the existing rule instead of a duplicate.
+
+  Example: `sha256:1234567890`
+</ParamField>
+
+<ParamField path="source" type="Source">
+  <ImmutableBadge />
+
+  What files to upload from the device. See [Sources](#sources). 
+</ParamField>
+
+<ParamField path="destination" type="Destination">
+  <ImmutableBadge />
+
+  Where uploaded files are uploaded to. See [Destinations](#destinations).
+</ParamField>
+
+<ParamField path="upload collection" type="Upload Collection">
+  <ImmutableBadge />
+
+  The [upload collection](/data-uploads/primitives/upload-collections#properties) to which the
+  rule belongs.
+
+  Examples: `Robot Logs`, `Crash Reports`, `Camera Footage`
+</ParamField>
+
+## File format
+
+Each rule is defined as a single YAML file in your Git repository:
+
+```yaml
+collection_slug: robot-logs  # collection this rule belongs to             
+
+source:
+  glob: "/var/log/robot/*.log"          
+  stability_window_secs: 60             
+
+destination:
+  bucket: my-uploads-bucket             
+  path: "logs/{device_id}/{upload_id}/{file_name}"  
+  delete_policy: never  # never | after_upload
+```
+
+Rule files reference the rule's collection by its `collection_slug` and the bucket by
+name (`destination.bucket`). 
+
+See [sources](#sources) and [destinations](#destinations) for details on each field.
+
+## Sources
+
+<Sources />
+
+## Destinations
+
+<Destinations />
+
+## Immutability
+
+Upload rules are **immutable**. A rule is created once, shipped to devices as part of
+a [release](/primitives/releases), and never edited in place. To change
+what is collected, you must create a new rule, release it, and deploy it to your devices. 
+
+## Git provenance
+
+Rules are defined as YAML files in your Git repository and created by
+[releasing them via the CLI](/data-uploads/define-upload-rules). Each rule records the
+Git commits it was released from — the commit itself and the rule file's path relative
+to the repository root — so any rule in Miru can be traced back to the exact lines of
+YAML that defined it. 
+
+## Create an upload rule  <PublisherBadge />
+
+Upload rules must be created as part of a [release](/primitives/releases). Visit the [define releases](/data-uploads/define-upload-rules) page to learn how to create upload rules and releases.
+
+## View an upload rule 
+
+To view an upload rule in Miru, navigate to the [Releases page](https://app.mirurobotics.com/releases), and click into the release that contains the upload rule you want to view.
+
+<Frame>
+  ![Releases Page](https://assets.mirurobotics.com/docs/v04/images/releases/page.png)
+</Frame>
+
+At the bottom of the page under the **Overview** tab, you will find a list of the release's upload rules.
+
+<Frame>
+  ![Release Upload Rules List](https://assets.mirurobotics.com/docs/v04/images/releases/upload-rule-list.png)
+</Frame>
+
+To see more details about an upload rule, simply click on the dropdown arrow next to the upload rule.
+
+<Frame>
+  ![Release Upload Rule Details](https://assets.mirurobotics.com/docs/v04/images/releases/upload-rule-details.png)
+</Frame>

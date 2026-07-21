@@ -1,0 +1,44 @@
+---
+title: "Device history"
+---
+
+import { Framed } from '/snippets/components/framed.jsx';
+
+<Framed background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/devices/deployments/header:page.png" borderWidth={"24px 30px 0 30px"} innerRadius={"12px 12px 0 0"} outerRadius="14px" />
+
+Each device has its own deployment history, accessible by clicking the device on the [Devices page](https://app.mirurobotics.com/devices) and selecting the **Deployments** tab.
+
+The deployment history page lists all deployments that have been deployed to the device, regardless of release. However, staged deployments and deployments that never reached the device are not included in the deployment history.
+
+## View a deployment
+
+To view a deployment, select it from the list.
+
+A panel will open on the right of the page displaying the deployment's details.
+
+<Frame>
+  ![Deployed Panel](https://assets.mirurobotics.com/docs/v04/images/deployments/deployed-panel.png)
+</Frame>
+
+## View a config instance
+
+To view the details of any config instances in the deployment, click into the config instance in the **Configurations** section of the deployment panel (opened in the previous section).
+
+<Frame>
+  ![Deployed Panel Configurations](https://assets.mirurobotics.com/docs/v04/images/deployments/deployed-panel:configurations.png)
+</Frame>
+
+The content tab shows the config instance's parameters , while the metadata tab contains audit information—the author, creation date, description, etc.
+
+<Tabs>
+  <Tab title="Content">
+    <Frame>
+      ![Config Instance Content](https://assets.mirurobotics.com/docs/v04/images/config-instances/panel-content:deployed.png)
+    </Frame>
+  </Tab>
+  <Tab title="Metadata">
+    <Frame>
+      ![Config Instance Metadata](https://assets.mirurobotics.com/docs/v04/images/config-instances/panel-metadata:deployed.png)
+    </Frame>
+  </Tab>
+</Tabs>

@@ -1,4 +1,5 @@
 <Tabs>
+
   <Tab title="Schema Directory">
     Use the `--schemas` flag to specify a directory containing the schemas to include in the release.
 
@@ -8,6 +9,7 @@
       --schemas {/path/to/schemas/directory/}
     ```
   </Tab>
+
   <Tab title="Schema Files">
     Use the `--schema` flag to specify schema files to include in the release.
 
@@ -18,4 +20,17 @@
       --schema {path/to/schema2.yaml}
     ```
   </Tab>
+
+  <Tab title="Upload Rules">
+    Use the `--upload-rule` flag to include [upload rule](/data-uploads/define-upload-rules) files in the release, or `--upload-rules` for a directory of rule files. Upload rules ride along with the release's config schemas.
+
+    ```bash
+    miru release create \
+      --version {version} \
+      --schemas {/path/to/schemas/directory/} \
+      --upload-rule {path/to/rule1.yaml} \
+      --upload-rules {/path/to/upload/rules/directory/}
+    ```
+  </Tab>
+
 </Tabs>

@@ -1,0 +1,97 @@
+---
+title: "Buckets"
+---
+
+import { ImmutableBadge, MutableBadge } from '/snippets/components/field-badges.jsx';
+import { PublisherBadge } from '/snippets/components/role-badges.jsx';
+import BucketDef from '/snippets/definitions/bucket.mdx';
+
+<BucketDef />
+
+## Properties
+
+<ParamField path="name" type="string">
+  <ImmutableBadge />
+
+  The name of the bucket in your cloud storage account that uploads are written to. Bucket names must be unique within a Miru workspace. 
+
+  Example: `robot-logs-bucket`
+</ParamField>
+
+<ParamField path="provider" type="enum">
+  <ImmutableBadge />
+
+  The cloud storage provider backing the bucket.
+
+  Allowed values:
+  - `gcs`
+  - `aws`
+</ParamField>
+
+<ParamField path="config" type="Bucket Config">
+  <MutableBadge />
+
+  Provider-specific configuration, discriminated by `provider`. For `gcs`, see
+  [GCS](/data-uploads/connect-a-bucket/gcs); for `aws`, see [AWS](/data-uploads/connect-a-bucket/aws).
+</ParamField>
+
+## View a bucket
+
+To view a bucket, navigate to the [Buckets page](https://app.mirurobotics.com/settings/buckets).
+
+<Frame>
+  ![Bucket Page](https://assets.mirurobotics.com/docs/v04/images/buckets/page.png)
+</Frame>
+
+## Connect a bucket  <PublisherBadge />
+
+To connect a bucket, visit the [Connect buckets](/data-uploads/primitives/buckets#connect-a-bucket) page.
+
+## Edit a bucket  <PublisherBadge />
+
+Editing a bucket allows you to update a bucket's authentication configuration. However, it does not allow you to change the bucket's name. To upload to a new bucket, you must create a new bucket connection.
+
+Navigate to the [Buckets page](https://app.mirurobotics.com/settings/buckets), click the ellipsis (…) next to the bucket you want to edit, and select **Edit**.
+
+<Frame>
+  ![Bucket Ellipsis Dropdown](https://assets.mirurobotics.com/docs/v04/images/buckets/ellipsis-dropdown.png)
+</Frame>
+
+Update the desired fields, then click **Save**.
+
+<Frame>
+  ![Bucket Edited](https://assets.mirurobotics.com/docs/v04/images/buckets/edit-dialog.png)
+</Frame>
+
+## Delete a bucket  <PublisherBadge />
+
+Deleting a bucket is only possible if there are no upload rules associated with the bucket. Otherwise, you must archive the bucket instead.
+
+Navigate to the [Buckets page](https://app.mirurobotics.com/settings/buckets), click the ellipsis (…) next to the bucket you want to delete, and select **Delete**.
+
+<Frame>
+  ![Bucket Ellipsis Dropdown](https://assets.mirurobotics.com/docs/v04/images/buckets/ellipsis-dropdown.png)
+</Frame>
+
+Click **Delete** to confirm.
+
+<Frame>
+  ![Bucket Deleted](https://assets.mirurobotics.com/docs/v04/images/buckets/delete-dialog.png)
+</Frame>
+
+## Archive a bucket  <PublisherBadge />
+
+Archiving a bucket prevents any data uploads from being written to the bucket. However, it does not delete the bucket itself, and can be unarchived at any time.
+
+Navigate to the [Buckets page](https://app.mirurobotics.com/settings/buckets), click the ellipsis (…) next to the bucket you want to archive, and select **Archive**.
+
+<Frame>
+  ![Bucket Ellipsis Dropdown](https://assets.mirurobotics.com/docs/v04/images/buckets/ellipsis-dropdown.png)
+</Frame>
+
+Click **Archive** to confirm.
+
+<Frame>
+  ![Bucket Archived](https://assets.mirurobotics.com/docs/v04/images/buckets/archive-dialog.png)
+</Frame>
+

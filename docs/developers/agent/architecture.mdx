@@ -67,7 +67,7 @@ As a final fallback, the agent performs an initial sync cycle on startup. If enc
 
 ## Deployments
 
-Miru takes a declarative approach to deployments. Each deployment has a [target state](/learn/deployments#target-status) set by the control plane (what should happen) and an [activity state](/learn/deployments#activity-status) tracked by the agent (what has happened).
+Miru takes a declarative approach to deployments. Each deployment has a [target state](/primitives/deployments#target-status) set by the control plane (what should happen) and an [activity state](/primitives/deployments#activity-status) tracked by the agent (what has happened).
 
 During each sync, the agent compares these two states and determines the appropriate action to transition a deployment from its current state to its target state.
 

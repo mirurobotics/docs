@@ -1,0 +1,82 @@
+---
+title: "CUE"
+---
+
+import AgentYamlSupport from '/snippets/agent/yaml-support.mdx';
+import { Framed } from '/snippets/components/framed.jsx';
+import CuePackages from '/snippets/references/cli/releases/create/cue-packages.mdx';
+
+<Framed
+    image="https://assets.mirurobotics.com/docs/v04/images/schema-langs/cue/website.png" 
+    link="https://cuelang.org/" 
+    borderWidth={"0px"} 
+/>
+
+[CUE](https://cuelang.org/) (Configure, Unify, Execute) is another well-regarded schema language, useful for defining valid fields, types, and values for a config.
+
+CUE was developed at Google by Marcel van Lohuizen, one of the original creators of Go. The original motivation stemmed from Google's internal struggles in managing complex, large-scale configurations for infrastructure and applications. JSON and YAML were too weak for expressing constraints, logic, or composition, so CUE set out to solve that.
+
+Instead of building and managing external tools to validate, patch, or generate configs, CUE itself is a fully programmable config engine. This means CUE wholly encapsulates the configuration data, the schema, and the logic (how to derive those config values).
+
+## Example
+
+Below is an example CUE schema:
+
+```cue CUE expandable
+@miru(config_type="communication")
+
+control_loop_rate_hz: number & >=1 & <=1000 | *50
+watchdog_timeout_ms: number & >=100 & <=5000 | *500
+
+network: {
+	max_latency_ms: number & >=10 & <=1000 | *100
+	connection_timeout_ms: number & >=100 & <=10000 | *2000
+	reconnect_attempts: number & >=1 & <=10 | *3
+	reconnect_interval_ms: number & >=100 & <=5000 | *1000
+	heartbeat_interval_ms: number & >=50 & <=1000 | *250
+}
+
+logging: {
+	enable_packet_logging: bool | *true
+	log_level: "debug" | "info" | "warn" | "error" | *"info"
+	max_log_size_mb: number & >=1 & <=1024 | *100
+	retain_logs_days: number & >=1 & <=90 | *30
+}
+
+error_handling: {
+	max_consecutive_failures: number & >=1 & <=20 | *5
+	failure_timeout_ms: number & >=100 & <=30000 | *5000
+	enable_auto_recovery: bool | *true
+}
+```
+
+Although many of CUE's capabilities are omitted in this example, you'll find some of the most commonly used features, including:
+
+- type specification - `number`, `string`, `bool`, etc.
+- numeric constraints- `>=`, `<=`, `==`, `!=`, `=~`, `!~`, etc.
+- default values - `| *value`
+- enumerations - `| "value1" | "value2" | "value3"`
+- intersection of constraints - `&`
+
+As you can see, CUE inlines constraints directly with type definitions, making schemas significantly more concise than JSON Schema. For more information on the supported features of CUE, check out the [CUE tour](https://cuelang.org/docs/tour/) on the official CUE website.
+
+## CUE version
+
+Miru fully supports CUE and stays up to date with the latest CUE features and syntax. Currently, Miru uses CUE API [`v0.14.2`](https://github.com/cue-lang/cue/releases/tag/v0.14.2).
+
+## File formats
+
+Unlike JSON Schema, CUE can only be written in the CUE file format and must have the `.cue` extension:
+
+- **CUE** (`.cue`)
+
+Similar to JSON Schema, CUE schemas can validate config instances in formats other than CUE. The following formats are supported:
+
+- **JSON** (`.json`)
+- **YAML** (`.yaml`, `.yml`)
+
+<AgentYamlSupport />
+
+## CUE packages
+
+<CuePackages />

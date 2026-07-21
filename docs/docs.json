@@ -24,9 +24,9 @@
         "product": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Welcome",
             "pages": [
-              "getting-started/intro",
+              "getting-started/welcome",
               {
                 "group": "Quick start",
                 "pages": [
@@ -35,69 +35,92 @@
                   "getting-started/quick-start/provision-device",
                   "getting-started/quick-start/deploy-configs"
                 ]
-              },
-              "getting-started/concepts"
+              }
             ]
           },
           {
-            "group": "Learn",
+            "group": "Primitives",
             "pages": [
-              "learn/config-instances",
+              "primitives/devices",
+              "primitives/groups",
+              "primitives/releases",
+              "primitives/deployments"
+            ]
+          },
+          {
+            "group": "Config Management",
+            "pages": [
               {
-                "group": "Config schemas",
+                "group": "Primitives",
                 "pages": [
-                  "learn/schemas/overview",
+                  "cfg-mgmt/primitives/config-types",
                   {
-                    "group": "Languages",
+                    "group": "Config schemas",
                     "pages": [
-                      "learn/schemas/languages/overview",
-                      "learn/schemas/languages/jsonschema",
-                      "learn/schemas/languages/cue"
+                      "cfg-mgmt/primitives/schemas/overview",
+                      {
+                        "group": "Languages",
+                        "pages": [
+                          "cfg-mgmt/primitives/schemas/languages/overview",
+                          "cfg-mgmt/primitives/schemas/languages/jsonschema",
+                          "cfg-mgmt/primitives/schemas/languages/cue"
+                        ]
+                      },
+                      "cfg-mgmt/primitives/schemas/manage"
                     ]
                   },
-                  "learn/schemas/manage"
-                ]
-              },
-              "learn/config-types",
-              "learn/deployments",
-              {
-                "group": "Devices",
-                "pages": [
-                  "learn/devices/overview",
-                  {
-                    "group": "Provision devices",
-                    "pages": [
-                      "learn/devices/provision/overview",
-                      "learn/devices/provision/dashboard",
-                      "learn/devices/provision/provisioning-tokens",
-                      "learn/devices/provision/provisioning-script",
-                      "learn/devices/provision/reprovision"
-                    ]
-                  },
-                  "learn/devices/manage",
-                  "learn/devices/initial-deployment",
-                  "learn/devices/config-editor",
-                  "learn/devices/compare",
-                  "learn/devices/deployment-history"
+                  "cfg-mgmt/primitives/config-instances"
                 ]
               },
               {
-                "group": "Groups",
+                "group": "Provision devices",
                 "pages": [
-                  "learn/groups/overview",
-                  "learn/groups/manage",
-                  "learn/groups/members"
+                  "cfg-mgmt/provision-devices/overview",
+                  "cfg-mgmt/provision-devices/dashboard",
+                  "cfg-mgmt/provision-devices/provisioning-tokens",
+                  "cfg-mgmt/provision-devices/provisioning-script",
+                  "cfg-mgmt/provision-devices/reprovision"
+                ]
+              },
+              "cfg-mgmt/create-a-release",
+              {
+                "group": "Deploy configs",
+                "pages": [
+                  "cfg-mgmt/deploy/initial-deployment",
+                  "cfg-mgmt/deploy/config-editor",
+                  "cfg-mgmt/deploy/staging-area"
                 ]
               },
               {
-                "group": "Releases",
+                "group": "Audit configs",
                 "pages": [
-                  "learn/releases/overview",
-                  "learn/releases/create",
-                  "learn/releases/manage",
-                  "learn/releases/staging-area"
+                  "cfg-mgmt/audit/device-history",
+                  "cfg-mgmt/audit/compare-devices"
                 ]
               }
+            ]
+          },
+          {
+            "group": "Data Uploads",
+            "pages": [
+              "data-uploads/overview",
+              {
+                "group": "Primitives",
+                "pages": [
+                  "data-uploads/primitives/buckets",
+                  "data-uploads/primitives/upload-collections",
+                  "data-uploads/primitives/upload-rules",
+                  "data-uploads/primitives/uploads"
+                ]
+              },
+              {
+                "group": "Connect a bucket",
+                "pages": [
+                  "data-uploads/connect-a-bucket/aws",
+                  "data-uploads/connect-a-bucket/gcs"
+                ]
+              },
+              "data-uploads/define-upload-rules"
             ]
           },
           {
@@ -108,11 +131,11 @@
                 "pages": [
                   "developers/agent/overview",
                   "developers/agent/install",
-                  "developers/agent/file-permissions",
                   "developers/agent/versions",
                   "developers/agent/commands",
                   "developers/agent/security",
-                  "developers/agent/architecture"
+                  "developers/agent/architecture",
+                  "developers/agent/filesys-access"
                 ]
               },
               {
@@ -165,7 +188,6 @@
             "group": "Administration",
             "pages": [
               "admin/workspace",
-              "admin/apikeys",
               {
                 "group": "Users",
                 "pages": [
@@ -175,7 +197,8 @@
                   "admin/users/access-control",
                   "admin/users/manage"
                 ]
-              }
+              },
+              "admin/apikeys"
             ]
           }
         ]
@@ -384,6 +407,10 @@
   },
   "redirects": [
     {
+      "source": "/developers/agent/file-permissions",
+      "destination": "/developers/agent/filesys-access"
+    },
+    {
       "source": "/changelogs/:slug*",
       "destination": "/changelog/:slug*"
     },
@@ -402,6 +429,122 @@
     {
       "source": "/docs/references/cli/install",
       "destination": "/developers/cli/install"
+    },
+    {
+      "source": "/getting-started/intro",
+      "destination": "/getting-started/welcome"
+    },
+    {
+      "source": "/getting-started/concepts",
+      "destination": "/primitives/devices"
+    },
+    {
+      "source": "/fundamentals/:slug*",
+      "destination": "/primitives/:slug*"
+    },
+    {
+      "source": "/learn/config-instances",
+      "destination": "/cfg-mgmt/primitives/config-instances"
+    },
+    {
+      "source": "/learn/config-types",
+      "destination": "/cfg-mgmt/primitives/config-types"
+    },
+    {
+      "source": "/learn/deployments",
+      "destination": "/primitives/deployments"
+    },
+    {
+      "source": "/learn/devices/compare",
+      "destination": "/cfg-mgmt/audit/compare-devices"
+    },
+    {
+      "source": "/learn/devices/config-editor",
+      "destination": "/cfg-mgmt/deploy/config-editor"
+    },
+    {
+      "source": "/learn/devices/deployment-history",
+      "destination": "/cfg-mgmt/audit/device-history"
+    },
+    {
+      "source": "/learn/devices/initial-deployment",
+      "destination": "/cfg-mgmt/deploy/initial-deployment"
+    },
+    {
+      "source": "/learn/devices/manage",
+      "destination": "/primitives/devices"
+    },
+    {
+      "source": "/learn/devices/overview",
+      "destination": "/primitives/devices"
+    },
+    {
+      "source": "/learn/devices/provision/dashboard",
+      "destination": "/cfg-mgmt/provision-devices/dashboard"
+    },
+    {
+      "source": "/learn/devices/provision/overview",
+      "destination": "/cfg-mgmt/provision-devices/overview"
+    },
+    {
+      "source": "/learn/devices/provision/provisioning-script",
+      "destination": "/cfg-mgmt/provision-devices/provisioning-script"
+    },
+    {
+      "source": "/learn/devices/provision/provisioning-tokens",
+      "destination": "/cfg-mgmt/provision-devices/provisioning-tokens"
+    },
+    {
+      "source": "/learn/devices/provision/reprovision",
+      "destination": "/cfg-mgmt/provision-devices/reprovision"
+    },
+    {
+      "source": "/learn/groups/manage",
+      "destination": "/primitives/groups"
+    },
+    {
+      "source": "/learn/groups/members",
+      "destination": "/primitives/groups"
+    },
+    {
+      "source": "/learn/groups/overview",
+      "destination": "/primitives/groups"
+    },
+    {
+      "source": "/learn/releases/create",
+      "destination": "/cfg-mgmt/create-a-release"
+    },
+    {
+      "source": "/learn/releases/manage",
+      "destination": "/primitives/releases"
+    },
+    {
+      "source": "/learn/releases/overview",
+      "destination": "/primitives/releases"
+    },
+    {
+      "source": "/learn/releases/staging-area",
+      "destination": "/cfg-mgmt/deploy/staging-area"
+    },
+    {
+      "source": "/learn/schemas/languages/cue",
+      "destination": "/cfg-mgmt/primitives/schemas/languages/cue"
+    },
+    {
+      "source": "/learn/schemas/languages/jsonschema",
+      "destination": "/cfg-mgmt/primitives/schemas/languages/jsonschema"
+    },
+    {
+      "source": "/learn/schemas/languages/overview",
+      "destination": "/cfg-mgmt/primitives/schemas/languages/overview"
+    },
+    {
+      "source": "/learn/schemas/manage",
+      "destination": "/cfg-mgmt/primitives/schemas/manage"
+    },
+    {
+      "source": "/learn/schemas/overview",
+      "destination": "/cfg-mgmt/primitives/schemas/overview"
     },
     {
       "source": "/docs/:slug*",

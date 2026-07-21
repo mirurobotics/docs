@@ -1,0 +1,95 @@
+---
+title: "Releases"
+---
+
+import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+import { Framed } from '/snippets/components/framed.jsx';
+import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+import { AdminBadge, PublisherBadge } from '/snippets/components/role-badges.jsx';
+import ReleaseDef from '/snippets/definitions/release.mdx';
+import SemVer from '/snippets/releases/semver.mdx';
+
+<Framed background="https://assets.mirurobotics.com/docs/v04/images/releases/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/releases/header:page.png" borderWidth="36px 0 0 56px" innerRadius="8px 0 0 0" />
+
+<ReleaseDef />
+
+## Properties
+
+<ParamField path="version" type="string">
+  <ImmutableBadge />
+
+  <SemVer />
+</ParamField>
+
+<ParamField path="config schemas" type="[] Config Schema">
+  <ImmutableBadge />
+
+  The [config schemas](/cfg-mgmt/primitives/schemas/overview#properties) that define compatible config instances for the release.
+
+  Examples: `SCH-FmoDN`, `SCH-3JcLq`, `SCH-HHDRn`
+</ParamField>
+
+
+<ParamField path="upload rules" type="[] Upload Rule">
+  <ImmutableBadge />
+
+  The [upload rules](/data-uploads/primitives/upload-rules#properties) that are part of this release.
+
+  Examples: `UPR-FmoDN`, `UPR-3JcLq`, `UPR-HHDRn`
+</ParamField>
+
+## View a release
+
+**Dashboard**
+
+To view a release and its schemas, click into the release from the releases page and switch to the **Overview** tab at the top.
+
+<Frame>
+  ![Release Overview](https://assets.mirurobotics.com/docs/v04/images/releases/overview.png)
+</Frame>
+
+**Platform API**
+
+To retrieve a release programmatically, use the <PlatformApiLink endpoint="releases/get">get release endpoint »</PlatformApiLink>
+
+## Create a release  <PublisherBadge />
+
+To create a release, visit the config management [create a release](/cfg-mgmt/create-a-release) guide. 
+
+If you want to add [upload rules](/data-uploads/primitives/upload-rules) to your release, visit the data uploads [create a release](/data-uploads/define-upload-rules) guide.
+
+## Duplicate a release  <PublisherBadge />
+
+Duplicating a release creates a new release with the same config schemas and git information as the original. 
+
+Of course, since releases require a unique version, the duplicated release must have a *different version* from the original release.
+
+Duplicating a release does not duplicate the release's deployments—only the release, its schemas, and git information are duplicated.
+
+To duplicate a release, click the ellipses (...) on the release you want to duplicate and select **Duplicate**.
+
+<Frame>
+  ![Release Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/releases/ellipses-dropdown.png)
+</Frame>
+
+A dialog will appear—input the new version name and hit **Create**.
+
+<Frame>
+  ![Duplicate Release Dialog](https://assets.mirurobotics.com/docs/v04/images/releases/duplicate-dialog.png)
+</Frame>
+
+## Delete a release  <AdminBadge />
+
+Deleting a release is only possible if no deployments have been delivered to any device with that release. Otherwise, the release cannot be deleted.
+
+To delete a release, click the ellipses (...) on the release you want to delete and hit **Delete**.
+
+<Frame>
+  ![Release Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/releases/ellipses-dropdown.png)
+</Frame>
+
+A confirmation dialog will appear. Hit **Delete** to confirm the deletion.
+
+<Frame>
+  ![Delete Release Dialog](https://assets.mirurobotics.com/docs/v04/images/releases/delete-dialog.png)
+</Frame>

@@ -1,0 +1,43 @@
+---
+title: "Upload collections"
+---
+
+import { ImmutableBadge, EditableBadge } from '/snippets/components/field-badges.jsx';
+import { PublisherBadge } from '/snippets/components/role-badges.jsx';
+import UploadCollectionDef from '/snippets/definitions/upload-collection.mdx';
+
+<UploadCollectionDef />
+
+## Properties
+
+<ParamField path="name" type="string">
+  <EditableBadge />
+
+  A human-readable display name that can contain most characters, such as spaces,
+  special characters, and punctuation.
+
+  Examples: `Robot Logs`, `Crash Reports`, `Camera Footage`
+</ParamField>
+
+<ParamField path="slug" type="string">
+  <ImmutableBadge />
+
+  A unique, code-friendly identifier for an upload collection.
+
+  Slugs are immutable and must satisfy the following constraints:
+
+  - Contains only lowercase letters, digits, and hyphens (`-`)
+  - Start and end with a lowercase letter or digit
+  - Contain between 1 and 48 characters
+
+  Slugs are primarily used in code to reference upload collections in a human-readable
+  format. For instance, upload rules are annotated with their collection's `slug` to
+  associate them with their proper upload collection.
+
+  Examples: `robot-logs`, `crash-reports`, `camera-footage`
+</ParamField>
+
+## Create an upload collection  <PublisherBadge />
+
+Upload collections are created automatically when you create an upload rule. Visit the [define releases](/data-uploads/define-upload-rules) page to learn how to create upload collections and upload rules.
+

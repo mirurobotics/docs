@@ -1,0 +1,103 @@
+---
+title: "Welcome"
+---
+
+Welcome! Miru is a configuration management solution for robotics teams. We provide tools for engineers to define, deploy, and manage application configurations for their robots.
+
+Continue reading to learn more or get started using the links below.
+
+<Columns cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/getting-started/quick-start/overview">
+    Define and deploy your first configuration.
+  </Card>
+  <Card title="Essentials" icon="book-open" href="/primitives/devices">
+    Gain an understanding of Miru's core concepts.
+  </Card>
+</Columns>
+
+## Introduction
+
+As you scale your fleet of robots, configuration complexity scales with it!
+
+Each robot diverges from the fleet's baseline configuration:
+
+- Hardware upgrades introduce new parameters
+- Customer environments require site-specific tuning
+- Feature flags evolve independently of application code
+
+What starts as a handful of shared config files becomes dozens (or hundreds) of subtly different parameters across the fleet. 
+
+Furthermore, the task of managing configs is spread across the team. Software engineers update configs to support new software versions. Then, once released, support and field engineers make one-off edits to tune and troubleshoot robots running at customer sites. 
+
+With varying levels of technical ability, teams require different tools and abstractions to manage configs. Miru eliminates this complexity by providing teams with tools to manage, version, and deploy configs to fleets of robots.
+
+## What makes config management so difficult?
+
+### Tedious and error-prone workflows
+
+In the early stages, robot configurations are managed manually. Engineers SSH into robots, edit text files directly, copy configurations between devices, and eyeball diffs to understand what changed. This is problematic for several reasons:
+
+- Typos and other simple mistakes lead to unnecessary downtime and slow fixes
+- SSH requires an open inbound port, increasing the surface area for security breaches
+- Teams must hire software-savvy Deployment Engineers, despite a preferred background in Mechanical or Electrical Engineering
+
+### Difficult versioning
+
+Compared to software releases, versioning configs is more complex. 
+
+Every robot maintains its own configuration for each software release. As releases are rolled out, each device must be patched with the new release's configurations while carrying over any device-specific parameters from previous releases. 
+
+With hundreds of devices and dozens of releases, there is no longer a clear answer to basic questions such as:
+
+- What configuration was this robot running last week?
+- Which changes were applied fleet-wide versus locally?
+- What state do we return to when something breaks?
+
+### Lack of auditability
+
+The history of configurations is scattered across developer terminals, Slack messages, and the heads of field engineers. As the fleet grows, teams lose track of:
+
+- Who made a change?
+- When it was made?
+- Why was it made?
+- What exactly changed?
+
+This is a nightmare at scale: debugging time is 10x’d, and customer trust erodes, all because teams don’t have the data to reason about their configs.
+
+### Ad-hoc overrides
+
+Robotics configs are inherently heterogeneous. Each robot uses a different combination of model versions, end-effectors, customer settings, etc., that cause variations between configs. 
+
+Without structured overrides, teams copy and modify entire configurations for each robot. There is no way to express fleet-level intent, apply scoped rules, or reuse configuration safely.
+
+As these exceptions accumulate, divergences across the fleet ossify, making it impossible for teams to define a “source of truth”.
+
+## How does Miru help?
+
+### Approachable GUI
+
+Miru replaces messy config edits in the terminal with an easy-to-use interface for users of all levels of technical ability. Engineers and operators alike can safely and quickly deploy config updates in Miru’s cloud software. 
+
+### Validation before deployment
+
+Every configuration change in Miru is validated before it can affect a robot.
+
+Config schemas enforce structure and constraints on configurations. Invalid configurations are rejected early, before they cause fleet-wide failures.
+
+### Built-in audit trail
+
+Miru records every configuration change automatically.
+
+Each update is attributed to an author, timestamped, diffable, and annotated with context. Teams can trace changes over time and understand how a robot arrived at its current state.
+
+### Programmatic integration and automation
+
+Miru is a developer-first tool; all configuration management is accessible programmatically. 
+
+Miru’s APIs, Git integration, and SDKs allow teams to integrate configuration management into existing CI/CD pipelines, automation systems, and internal tools.
+
+## Where to start?
+
+Miru is a purpose-built solution for managing the complexities of application configurations in robotics. We prioritize the reliability, security, and developer experience.
+
+To begin using Miru, continue to the [getting-started](/getting-started/quick-start/overview) guide where you'll deploy your first configuration.

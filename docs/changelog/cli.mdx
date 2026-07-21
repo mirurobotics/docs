@@ -6,6 +6,21 @@ description: "Changelog and migration steps for the Miru CLI"
 
 import { Dropdown } from '/snippets/components/api-dropdown.jsx';
 
+# v0.10.2
+
+*July 20, 2026*
+
+CLI `v0.10.2` adds support for including [upload rules](/data-uploads/primitives/upload-rules) in a release, letting you define data uploads alongside your config schemas.
+
+## Features
+
+- `miru release create` now accepts `--upload-rule` and `--upload-rules` flags to include upload rules (and their upload collections) in a release
+- Emit API key source notice when `MIRU_API_KEY` is set in the environment
+- Show platform-aware upgrade command when notifying users of a new CLI version
+- Publish a SBOM for CLI releases
+
+---
+
 # v0.10.1
 
 *May 17, 2026*
@@ -157,7 +172,7 @@ miru schema push schema.json \
 
 ## CUE support
 
-`v0.7.0` is the first CLI release with [CUE](/learn/schemas/languages/overview) support. You can now push CUE-based schemas directly and use CUE alongside existing JSON Schema workflows.
+`v0.7.0` is the first CLI release with [CUE](/cfg-mgmt/primitives/schemas/languages/overview) support. You can now push CUE-based schemas directly and use CUE alongside existing JSON Schema workflows.
 
 ## Schema push improvements
 
