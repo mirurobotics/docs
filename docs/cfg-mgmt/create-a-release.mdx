@@ -4,9 +4,9 @@ title: "Create a release"
 
 import { Framed } from '/snippets/components/framed.jsx';
 import CreateExistingSchemas from '/snippets/references/cli/releases/create/existing-schemas.mdx';
-import Annotations from '/snippets/references/cli/releases/create/schema-annotations.mdx';
 import CLIFlags from '/snippets/references/cli/releases/create/flags.mdx';
 import CreateNewSchemas from '/snippets/references/cli/releases/create/new-schemas.mdx';
+import Annotations from '/snippets/references/cli/releases/create/schema-annotations.mdx';
 import CLIUsage from '/snippets/references/cli/releases/create/usage.mdx';
 
 <Framed 
@@ -19,11 +19,11 @@ outerRadius="12px"
 
 The only way to create releases is via the command line. The dashboard only supports [duplicating releases](/primitives/releases#duplicate-a-release).
 
-Creating releases from the CLI is a deliberate design choice--we believe a release's
+Creating releases from the CLI is a deliberate design choice—we believe a release's
 definition should be versioned in a Git repository. The CLI promotes this practice,
 simplifying the release process and encouraging better software development habits.
 
-### Continuous Integration
+### Continuous integration
 
 The CLI can be used to programmatically create releases in a [CI pipeline](/developers/ci/overview), ensuring releases are automatically created when code is pushed to a Git repository. Visit the [CI/CD](/developers/ci/overview) page for more information.
 
@@ -67,9 +67,9 @@ x-miru-config-type: "{your-config-type-slug}"
 
 ### Schema annotations
 
-Schemas support annotations--Miru-specific extensions that define metadata about a schema. 
+Schemas support annotations—Miru-specific extensions that define metadata about a schema. 
 
-The `config type` annotation is the only required annotation--it's how Miru knows which config type the schema belongs to. However, there are other useful annotations, such as the `instance file path` annotation, which defines where config instances for this schema are written to disk on your devices.
+The `config type` annotation is the only required annotation—it's how Miru knows which config type the schema belongs to. However, there are other useful annotations, such as the `instance file path` annotation, which defines where config instances for this schema are written to disk on your devices.
 
 <Annotations />
 
