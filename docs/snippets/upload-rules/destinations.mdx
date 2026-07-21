@@ -1,0 +1,42 @@
+A rule's `destination` declares where which registered [bucket](/data-uploads/primitives/buckets) to write to, and the object path within it. 
+
+<ParamField path="bucket" type="string">
+  Name of the registered bucket this rule uploads to.
+
+  Example: `my-uploads-bucket`
+</ParamField>
+
+<ParamField 
+  path="path"
+  type="string"
+  default="{device_id}/{year}-{month}-{day}/{upload_id}/{file_name}"
+>
+  The template which defines the object path to which the uploaded file is written.
+
+  The following variables are supported, which are filled in when each upload's
+  object key is rendered:
+
+  | Variable | Example | Description |
+  | --- | --- | --- |
+  | `{upload_id}` | `upl_123` | The upload's ID. |
+  | `{device_id}` | `dvc_123` | The uploading device's ID. |
+  | `{device_name}` | `my-robot` | The device's name. |
+  | `{file_name}` | `robot.log` | The source file's basename. |
+  | `{year}` | `2026` | The upload's creation year (e.g. `2026`). |
+  | `{month}` | `01` | The upload's creation month. |
+  | `{day}` | `01` | The upload's creation day. |
+  | `{hour}` | `00` | The upload's creation hour. |
+  | `{minute}` | `00` | The upload's creation minute. |
+
+  <Warning>
+    Templates must contain the `{upload_id}` variable.
+  </Warning>
+</ParamField>
+
+<ParamField path="delete_policy" type="enum" default="never">
+  When the device deletes the local source file after collecting it.
+
+  - `never` *(default)* — keep the local file in place; you manage local retention
+    yourself.
+  - `after_upload` — delete the local file once the upload is durably confirmed.
+</ParamField>

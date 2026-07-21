@@ -4,6 +4,8 @@ title: "Upload rules"
 
 import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
 import { PublisherBadge } from '/snippets/components/role-badges.jsx';
+import Sources from '/snippets/upload-rules/sources.mdx';
+import Destinations from '/snippets/upload-rules/destinations.mdx';
 import UploadRuleDef from '/snippets/definitions/upload-rule.mdx';
 
 <UploadRuleDef />
@@ -66,74 +68,15 @@ destination:
 Rule files reference the rule's collection by its `collection_slug` and the bucket by
 name (`destination.bucket`). 
 
-See [defining releases](/data-uploads/release-upload-rules) for more information about a particular field.
+See [sources](#sources) and [destinations](#destinations) for details on each field.
 
 ## Sources
 
-A rule's `source` declares what to collect on the device: which files to match, and
-when a matching file is considered finished and eligible for upload.
-
-<ParamField path="glob" type="string" required>
-  An absolute glob pattern that selects the files to upload.
-
-  Must satisfy the following criteria:
-  - Absolute — it starts with `/`
-  - At most 1024 bytes, with no control characters
-  - No `..` segments, and no empty segments (`//` or a trailing `/`)
-
-  Example: `/var/log/robot/*.log`
-</ParamField>
-
-<ParamField path="stability_window_secs" type="integer" default="60">
-  How long, in seconds, a matching file's size and modification time must stay
-  unchanged (quiescent) before it is considered stable and eligible for upload.
-  See [completion detection](/data-uploads/primitives/uploads).
-</ParamField>
+<Sources />
 
 ## Destinations
 
-A rule's `destination` declares where which registered [bucket](/data-uploads/primitives/buckets) to write to, and the object path within it. 
-
-<ParamField path="bucket" type="string">
-  Name of the registered bucket this rule uploads to.
-
-  Example: `my-uploads-bucket`
-</ParamField>
-
-<ParamField 
-  path="path"
-  type="string"
-  default="{device_id}/{year}-{month}-{day}/{upload_id}/{file_name}"
->
-  The template which defines the object path to which the uploaded file is written.
-
-  The following variables are supported, which are filled in when each upload's
-  object key is rendered:
-
-  | Variable | Example | Description |
-  | --- | --- | --- |
-  | `{upload_id}` | `upl_123` | The upload's ID. |
-  | `{device_id}` | `dvc_123` | The uploading device's ID. |
-  | `{device_name}` | `my-robot` | The device's name. |
-  | `{file_name}` | `robot.log` | The source file's basename. |
-  | `{year}` | `2026` | The upload's creation year (e.g. `2026`). |
-  | `{month}` | `01` | The upload's creation month. |
-  | `{day}` | `01` | The upload's creation day. |
-  | `{hour}` | `00` | The upload's creation hour. |
-  | `{minute}` | `00` | The upload's creation minute. |
-
-  <Warning>
-    Templates must contain the `{upload_id}` variable.
-  </Warning>
-</ParamField>
-
-<ParamField path="delete_policy" type="enum" default="never">
-  When the device deletes the local source file after collecting it.
-
-  - `never` *(default)* — keep the local file in place; you manage local retention
-    yourself.
-  - `after_upload` — delete the local file once the upload is durably confirmed.
-</ParamField>
+<Destinations />
 
 ## Immutability
 
