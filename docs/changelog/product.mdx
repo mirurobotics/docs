@@ -11,6 +11,55 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 <div className="changelog-page">
 
+<Update label="July 20, 2026">
+    ## Data Uploads
+
+    **Data Uploads** allows devices to upload files directly to a cloud storage bucket you own. First, define an [upload rule](/data-uploads/primitives/upload-rules), which specifies what files to collect and where to store them in your bucket. Then, the Miru Agent detects matching files on your devices and streams them straight to your bucket.
+
+    [Data Uploads »](/data-uploads/overview)
+
+    ### Upload rules
+
+    Upload rules are YAML files that define a source (the files to collect) and a destination (the bucket and object path):
+
+    <Framed
+        image="https://assets.mirurobotics.com/docs/changelog/26-07-23/upload-rule.png"
+        background="https://assets.mirurobotics.com/docs/changelog/26-07-23/background.jpg"
+        innerRadius="8px"
+    />
+
+    Upload rules live in Git alongside your config schemas, and are bundled into a release. The upload rules for a release go into effect anytime a deployment for that release is deployed to a device.
+
+    [Define upload rules »](/data-uploads/define-upload-rules)
+
+    ### Connect a bucket
+
+    Miru supports AWS S3 and Google Cloud Storage (GCS) with support for more buckets coming soon. Devices receive short-lived credentials scoped to the exact object key for its own uploads, ensuring strict isolation of data between devices.
+
+    <Framed
+        image="https://assets.mirurobotics.com/docs/changelog/26-07-23/bucket-page.png"
+        background="https://assets.mirurobotics.com/docs/changelog/26-07-23/background.jpg"
+        innerRadius="8px"
+    />
+
+    [Connect a bucket »](/data-uploads/connect-a-bucket)
+
+    ### Shipping upload rules
+
+    To use upload rules, you'll need to upgrade the Miru Agent and CLI to the following versions (or later):
+
+    - [Miru Agent v0.10.0](/changelog/agent#v0-10-0) — detects files matching upload rules and uploads them to your bucket. Reading source files may require granting the `miru` user [read access](/developers/agent/filesys-access#data-uploads)
+    - [Miru CLI v0.10.2](/changelog/cli#v0-10-2) — adds the upload rule flags to `miru release create`
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+        <DropdownItem>
+            **Incorrect Device Status:** Fixed an issue where the device status was incorrectly shown as "offline" when the device was actually online.
+        </DropdownItem>
+    </Dropdown>
+</Update>
+
 <Update label="June 23, 2026">
     ## Access Control
 
