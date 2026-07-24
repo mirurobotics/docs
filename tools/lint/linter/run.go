@@ -7,6 +7,7 @@ import (
 	"github.com/mirurobotics/docs/tools/lint/linter/analysis"
 	"github.com/mirurobotics/docs/tools/lint/linter/componentstyle"
 	"github.com/mirurobotics/docs/tools/lint/linter/headingcase"
+	"github.com/mirurobotics/docs/tools/lint/linter/imagedomain"
 	"github.com/mirurobotics/docs/tools/lint/linter/importblock"
 	"github.com/mirurobotics/docs/tools/lint/linter/importresolves"
 	"github.com/mirurobotics/docs/tools/lint/linter/importsorted"
@@ -34,6 +35,7 @@ const (
 	RuleComponentStyle Rule = "component-style"
 	RuleMDXStyle       Rule = "mdx-style"
 	RuleImportBlock    Rule = "import-block"
+	RuleImageDomain    Rule = "image-domain"
 	RuleRedirects      Rule = "redirects"
 )
 
@@ -44,7 +46,7 @@ func AllRules() []Rule {
 		RuleHeadingCase,
 		RuleImportResolves, RuleImportUsed, RuleImportSorted,
 		RuleComponentStyle, RuleMDXStyle, RuleImportBlock,
-		RuleRedirects,
+		RuleImageDomain, RuleRedirects,
 	}
 }
 
@@ -87,6 +89,9 @@ func ruleCheckers() []ruleEntry {
 		}},
 		{RuleImportBlock, func(in checkInput) []analysis.Violation {
 			return importblock.Check(in.path, in.lines)
+		}},
+		{RuleImageDomain, func(in checkInput) []analysis.Violation {
+			return imagedomain.Check(in.path, in.lines)
 		}},
 	}
 }
