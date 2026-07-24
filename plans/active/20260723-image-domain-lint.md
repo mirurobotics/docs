@@ -22,7 +22,7 @@ whenever an MDX file references a non-CDN image, and passes on the current corpu
 
 - [x] M1: implement `tools/lint/linter/imagedomain/` package, register the rule in `tools/lint/linter/run.go`, add `.covgate`; commit.
 - [x] M2: unit tests (`imagedomain_test.go` + `run_test.go` case) passing with coverage at or above the gate; commit.
-- [ ] M3: `tests/lint-fixtures/bad-image-domain/` fixture, `tests/test-lint.sh` wiring, pass-path additions to the `good/` fixture; commit.
+- [x] M3: `tests/lint-fixtures/bad-image-domain/` fixture, `tests/test-lint.sh` wiring, pass-path additions to the `good/` fixture; commit.
 - [ ] M4: corpus verification sweep, full `./scripts/lint.sh` green; commit (only if the sweep changed files).
 - [ ] Validation: push branch, all CI jobs green, preflight reports CLEAN.
 
