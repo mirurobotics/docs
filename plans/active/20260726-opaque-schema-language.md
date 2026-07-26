@@ -20,15 +20,19 @@ Observable outcome: on `pnpm dev`, `/cfg-mgmt/primitives/schemas/languages/opaqu
 
 ## Progress
 
-- [ ] M1: new page `docs/cfg-mgmt/primitives/schemas/languages/opaque.mdx`; nav entry in `docs/docs.json`. Commit.
-- [ ] M2: languages overview bullet list; schemas overview (`language` ParamField, "Schema languages" section, instance-filepath prose). Commit.
-- [ ] M3: shared snippets — `snippets/schemas/formats.mdx` table, `snippets/references/cli/releases/create/schema-annotations.mdx` Opaque tabs, `snippets/schema-langs/support.mdx` one-liner. Commit.
-- [ ] M4: full lint sweep (`pnpm run lint`, `pnpm run test:lint`), cspell allowlist additions if needed, `pnpm dev` render check. Commit if anything changed.
+- [x] M1: new page `docs/cfg-mgmt/primitives/schemas/languages/opaque.mdx`; nav entry in `docs/docs.json`. Commit `5082478`.
+- [x] M2: languages overview bullet list; schemas overview (`language` ParamField, "Schema languages" section, instance-filepath prose). Commit `2b5e076`.
+- [x] M3: shared snippets — `snippets/schemas/formats.mdx` table, `snippets/references/cli/releases/create/schema-annotations.mdx` Opaque tabs, `snippets/schema-langs/support.mdx` one-liner. Commit `04668c2`.
+- [x] M4: full lint sweep (`pnpm run lint`, `pnpm run test:lint`) green; **no cspell additions needed**; `pnpm dev` render check passed. No content changes, so no M4 commit.
 - [ ] Validation: push branch, preflight reports CLEAN (CI green on the pushed branch head), PR leaves draft.
 
 ## Surprises & Discoveries
 
-Add entries as work proceeds.
+- **CSpell needed no additions.** `nginx` and `passthrough` were both anticipated as allowlist candidates. `nginx` passes as-is (it appears only inside the inline code span `/srv/miru/nginx.conf`, and CSpell already tolerates it); the word "passthrough" was avoided entirely by writing the Validation section in plain prose. `cspell.json` is unmodified.
+- **A fourth two-language claim exists, outside the planned sweep:** `docs/snippets/definitions/config-schema-examples.mdx:1` — "Below are some example schema definitions in the JSON Schema and CUE schema languages." This is **not** a claim about which languages Miru supports; it is a caption describing the two `<CodeGroup>` tabs immediately beneath it, both of which are real, constraint-bearing schemas. Adding an Opaque tab there would be off-topic (the snippet's point is what a constraining schema looks like). Left untouched deliberately; recording it so a future reader does not mistake it for a missed sweep target.
+- The two other surviving `JSON Schema and CUE` greps are intentional: `opaque.mdx` itself contrasts against them when explaining the file-extension rule, and `schemas/overview.mdx` uses it to caption the two empty-schema examples (opaque has no "empty" form, so it does not belong there).
+- **`<AgentYamlSupport />` placement.** Both other language pages put it directly after `## File formats`, but `cue.mdx` still has a later section (`## CUE packages`). The plan calls for it as the page's final line, so it sits after `## Instance file paths` here. Reads fine — the instance-file-paths section discusses YAML paths, so the Agent YAML note is still in context.
+- `pnpm dev` **was** run and driven non-interactively (backgrounded `mint dev`, HTTP-probed each page). All five pages return 200 with no MDX compile error, the new page renders all five headings and both `<CodeGroup>` tabs, and the nav link to `/cfg-mgmt/primitives/schemas/languages/opaque` is present.
 
 ## Decision Log
 
