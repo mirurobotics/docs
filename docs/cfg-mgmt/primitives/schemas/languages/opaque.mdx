@@ -1,0 +1,97 @@
+---
+title: "Opaque"
+---
+
+import AgentYamlSupport from '/snippets/agent/yaml-support.mdx';
+
+An opaque schema is a metadata-only schema: it attaches annotations to a config type without describing or constraining the config's contents.
+
+Not every config can be validated. A vendor's text format, an XML document, a tool's own `.conf` file — none of them are something Miru can meaningfully check. Those configs still deserve versioning, releases, rollout, and an audit trail, and an opaque schema is how you bring them into Miru. The name comes from Kubernetes secrets, where `type: Opaque` means the contents are arbitrary and are never inspected.
+
+## Example
+
+Below is an example opaque schema, written in both supported formats:
+
+<CodeGroup>
+
+```yaml YAML
+language: opaque
+config_type: motion-control
+instance_filepath: /srv/miru/configs/motion-control.xml
+instance_format: xml
+```
+
+
+```json JSON
+{
+  "language": "opaque",
+  "config_type": "motion-control",
+  "instance_filepath": "/srv/miru/configs/motion-control.xml",
+  "instance_format": "xml"
+}
+```
+
+</CodeGroup>
+
+Only `config_type` is required, so the smallest possible opaque schema is a single line: `config_type: motion-control`.
+
+## Schema document
+
+An opaque schema is a single JSON or YAML mapping at the root, with the following keys:
+
+| Key                 | Required | Description                                                              |
+| ------------------- | -------- | ------------------------------------------------------------------------ |
+| `config_type`       | Yes      | The [config type slug](/cfg-mgmt/primitives/config-types#param-slug) the schema belongs to. |
+| `instance_filepath` | No       | The absolute path where config instances are written on the device.       |
+| `instance_format`   | No       | The format of the config instance: `json`, `yaml`, or `xml`.              |
+| `language`          | No       | Must be `opaque` when present.                                            |
+
+A few rules are worth calling out:
+
+- Unknown keys are rejected, including `x-miru-` prefixed ones.
+- Every value must be a string.
+- Each schema holds exactly one document. Multi-document YAML is not accepted.
+
+## Validation
+
+An opaque schema validates the *schema document*, and it does so once, when the schema is created. It never validates a config instance. Instance contents are never parsed, decoded, or inspected, and any bytes you upload are accepted as-is.
+
+That tradeoff is worth stating plainly. You keep versioning, releases, rollout, and Git provenance for a config Miru cannot understand. You give up content safety: a typo in an opaque config reaches the device.
+
+Two things are still enforced:
+
+- A declared `instance_format` is honored. A config instance's format must match the format its schema declares.
+- Instance file paths must still be absolute.
+
+And one thing an opaque schema cannot do: because it defines no values, it supplies no defaults, unlike `default:` in JSON Schema or `| *value` in CUE.
+
+If your config really is JSON or YAML and you simply haven't written the constraints yet, an [empty schema](/cfg-mgmt/primitives/schemas/overview#empty-schemas) is the better starting point. Opaque schemas are for content Miru cannot validate at all.
+
+## File formats
+
+Opaque schemas themselves are always written as JSON or YAML. Unlike the other languages, CUE is not accepted here:
+
+- **JSON** (`.json`)
+- **YAML** (`.yaml`, `.yml`)
+
+Opaque schemas accept the widest set of config instance formats of any Miru schema language:
+
+- **JSON**
+- **YAML**
+- **XML**
+
+## Instance file paths
+
+Because an opaque schema imposes no structure on instance content, its instance file may carry any extension. JSON Schema and CUE instances are limited to `.json`, `.yaml`, and `.yml`; an opaque instance is not. The path must still be absolute.
+
+Examples:
+
+- `/srv/miru/nginx.conf`
+- `/srv/miru/configs/motion-control.xml`
+- `/srv/miru/settings.txt`
+
+<Warning>
+  The Miru Agent ships with out-of-the-box access to `/srv/miru`. To deploy configs to a custom directory, please visit the [File system access](/developers/agent/filesys-access#configs) page.
+</Warning>
+
+<AgentYamlSupport />
