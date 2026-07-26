@@ -12,6 +12,11 @@
   @miru(config_type="{config-type-slug}")
   ```
 
+  
+  ```yaml Opaque
+  config_type: "{config-type-slug}"
+  ```
+
   </CodeGroup>
 
   If the provided config type slug does not yet exist, it is automatically created. To edit a config type after creation, visit the [config types documentation](/cfg-mgmt/primitives/config-types#edit-a-config-type).
@@ -26,7 +31,7 @@
     The Miru Agent ships with out-of-the-box access to `/srv/miru`. To deploy configs to a custom directory, please visit the [File system access](/developers/agent/filesys-access#configs) page.
   </Warning>
 
-  Instance file paths control the type of file that config instances are deployed as. Currently, JSON (`.json`) and YAML (`.yaml`, `.yml`) are supported.
+  Instance file paths control the type of file that config instances are deployed as. Currently, JSON (`.json`) and YAML (`.yaml`, `.yml`) are supported. [Opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas may use any file extension, since their instance content is not validated.
 
   This annotation is optional and defaults to `/srv/miru/configs/{config-type-slug}.json`.
 
@@ -39,6 +44,11 @@
   
   ```cue CUE
   @miru(instance_filepath="/srv/miru/configs/{config-type-slug}.json")
+  ```
+
+  
+  ```yaml Opaque
+  instance_filepath: "/srv/miru/configs/{config-type-slug}.json"
   ```
 
   </CodeGroup>
