@@ -32,6 +32,12 @@ Observable outcome: on `pnpm dev`, `/cfg-mgmt/primitives/schemas/languages/opaqu
 - **A fourth two-language claim exists, outside the planned sweep:** `docs/snippets/definitions/config-schema-examples.mdx:1` — "Below are some example schema definitions in the JSON Schema and CUE schema languages." This is **not** a claim about which languages Miru supports; it is a caption describing the two `<CodeGroup>` tabs immediately beneath it, both of which are real, constraint-bearing schemas. Adding an Opaque tab there would be off-topic (the snippet's point is what a constraining schema looks like). Left untouched deliberately; recording it so a future reader does not mistake it for a missed sweep target.
 - The two other surviving `JSON Schema and CUE` greps are intentional: `opaque.mdx` itself contrasts against them when explaining the file-extension rule, and `schemas/overview.mdx` uses it to caption the two empty-schema examples (opaque has no "empty" form, so it does not belong there).
 - **`<AgentYamlSupport />` placement.** Both other language pages put it directly after `## File formats`, but `cue.mdx` still has a later section (`## CUE packages`). The plan calls for it as the page's final line, so it sits after `## Instance file paths` here. Reads fine — the instance-file-paths section discusses YAML paths, so the Agent YAML note is still in context.
+- **The `audit` CI job is red, and it is not this PR's fault.** `changes`, `lint`, and `shell-tests` all pass, and `lint-custom-linter` / `test-custom-linter` correctly report `skipping` (confirming `tools/lint/**` was untouched, as the acceptance criteria require). `audit` fails on 4 advisories in transitive dev dependencies: `postcss` and `tar` (via `mint`), `brace-expansion` (via `eslint`), plus one more high. Evidence that it is pre-existing:
+  - `git diff main...HEAD --name-only` contains **no** `package.json` and **no** `pnpm-lock.yaml` — the dependency graph is byte-identical to `main`.
+  - `scripts/audit.sh` is just `pnpm audit --ignore-registry-errors`, so its result is a function of the (unchanged) lockfile and the *current date* against the live advisory database.
+  - Running `./scripts/audit.sh` in a pristine detached worktree of `main` reproduces the **same 4 vulnerabilities**. `main` last went green on 2026-07-24; these advisories were published since.
+  - Fixing it means editing `package.json` (`auditConfig.ignoreCves` or dependency overrides) and/or the lockfile. That is outside this plan's declared file set, and suppressing CVEs is a security-policy call that should not be smuggled into a docs-only PR. Left for a separate dependency-maintenance change; the PR stays draft.
+
 - `pnpm dev` **was** run and driven non-interactively (backgrounded `mint dev`, HTTP-probed each page). All five pages return 200 with no MDX compile error, the new page renders all five headings and both `<CodeGroup>` tabs, and the nav link to `/cfg-mgmt/primitives/schemas/languages/opaque` is present.
 
 ## Decision Log
@@ -47,7 +53,11 @@ Observable outcome: on `pnpm dev`, `/cfg-mgmt/primitives/schemas/languages/opaqu
 
 ## Outcomes & Retrospective
 
-Fill in on completion.
+All four milestones landed as specified; the content plan needed no revision during execution. `pnpm run lint`, `pnpm run test:lint`, and the `pnpm dev` render check are green locally, and `cspell.json` required no additions.
+
+Draft PR: [#138](https://github.com/mirurobotics/docs/pull/138).
+
+CI status: `changes`, `lint`, `shell-tests` pass; `lint-custom-linter` and `test-custom-linter` correctly skip. `audit` fails on a pre-existing, repo-wide dependency-advisory problem reproduced on a pristine `main` worktree (see Surprises & Discoveries) — no file in this PR's diff touches the dependency graph. The plan's "CI green on the pushed branch head" gate is therefore **not** satisfied, so the PR remains in draft pending a separate dependency-maintenance change.
 
 ## Context and Orientation
 
