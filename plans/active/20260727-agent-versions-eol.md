@@ -32,6 +32,7 @@ Use timestamps when you complete steps.
 
 - The full lint suite ran locally without issue, including `mint openapi-check` (anticipated as potentially network-restricted). All six OpenAPI specs validated. `pnpm run test:lint` is silent on success — exit code 0 is the pass signal.
 - `scripts/lint.sh` scopes all checks to the `docs/` content root, so `plans/` files are never linted; plan-file-only commits cannot fail the CI lint job.
+- (2026-07-27 21:36 UTC) The first CI run on the branch head (a243e18) failed its `audit` job: `pnpm audit` flagged 3 newly published advisories in transitive deps unrelated to the docs diff (postcss GHSA-r28c-9q8g-f849, brace-expansion GHSA-mh99-v99m-4gvg, tar GHSA-r292-9mhp-454m). Main's last run on the same base commit was green on Jul 24 — the advisories landed in between. Fixed by bumping the corresponding `pnpm.overrides` in `package.json` (see Decision Log).
 
 ## Decision Log
 
@@ -47,8 +48,9 @@ Use timestamps when you complete steps.
 - Decision: no prose changes on either page, and no changes to `docs/changelog/agent.mdx`, `docs/developers/platform-api/versioning.mdx`, or `docs/developers/platform-api/sdks.mdx`.
   Rationale: the support-policy prose is generic (it defines the three levels, names no versions). The agent changelog is release notes with no support-status statements. The platform API pages describe platform API/SDK versioning, not agent support status (`2025-10-21.zion` is already End of life there; the SDK table's `v0.1.x - v0.6.x` range is Python SDK versions, not agent versions). Mentions of `v0.6.0` in `docs/primitives/devices.mdx` and `docs/cfg-mgmt/provision-devices/provisioning-script.mdx` are example values, not status statements.
   Date/Author: 2026-07-27 / plan author.
-
-## Outcomes & Retrospective
+- Decision: expand scope to bump three `pnpm.overrides` security ranges in `package.json` (postcss `>=8.5.10`→`>=8.5.18`, brace-expansion `>=5.0.7`→`>=5.0.8`, tar `>=7.5.19`→`>=7.5.21`) plus the resulting `pnpm-lock.yaml` update.
+  Rationale: CI's `audit` job fails the branch on any actionable `pnpm audit` advisory, and three new advisories were published after main's last green run. Not part of the docs change, but required for CI green; the `pnpm.overrides` block exists for exactly this (precedent: commit d7663aa "chore(deps): clear pnpm audit advisories (#135)"). Committed separately as `chore(deps)` to keep the docs change atomic. `./scripts/audit.sh` and `pnpm run lint` verified locally after the bump.
+  Date/Author: 2026-07-27 / implement agent.
 
 (Fill in on completion: commit SHA, lint/preflight results, deferred follow-ups.)
 
