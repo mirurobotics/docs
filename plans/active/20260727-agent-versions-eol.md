@@ -20,17 +20,18 @@ No EOL dates are invented or changed; both affected tables already carry 2026-06
 
 ## Progress
 
-- [ ] Edit `docs/developers/agent/versions.mdx`: `v0.6.x` and `v0.5.x` rows `<DeprecatedBadge />` → `<EndOfLifeBadge />`; drop `DeprecatedBadge` from the import.
-- [ ] Edit `docs/developers/device-api/versions.mdx`: `v0.1.0` row `<DeprecatedBadge />` → `<EndOfLifeBadge />`; swap `DeprecatedBadge` for `EndOfLifeBadge` in the import.
-- [ ] Run `pnpm run test:lint` and `pnpm run lint` (→ `./scripts/lint.sh`) from the repo root; both pass.
-- [ ] Commit: `docs: mark agent versions below v0.7.0 as end of life`.
+- [x] Edit `docs/developers/agent/versions.mdx`: `v0.6.x` and `v0.5.x` rows `<DeprecatedBadge />` → `<EndOfLifeBadge />`; drop `DeprecatedBadge` from the import. (2026-07-27 20:19 UTC)
+- [x] Edit `docs/developers/device-api/versions.mdx`: `v0.1.0` row `<DeprecatedBadge />` → `<EndOfLifeBadge />`; swap `DeprecatedBadge` for `EndOfLifeBadge` in the import. (2026-07-27 20:19 UTC)
+- [x] Run `pnpm run test:lint` and `pnpm run lint` (→ `./scripts/lint.sh`) from the repo root; both pass. (2026-07-27 20:19 UTC — both exit 0; lint ends "All documentation lint checks passed.")
+- [x] Commit: `docs: mark agent versions below v0.7.0 as end of life`. (2026-07-27 20:20 UTC — content edits and this plan update in one commit)
 - [ ] Push via the preflight workflow; preflight reports `CLEAN` (CI green on the pushed branch head).
 
 Use timestamps when you complete steps.
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds.)
+- The full lint suite ran locally without issue, including `mint openapi-check` (anticipated as potentially network-restricted). All six OpenAPI specs validated. `pnpm run test:lint` is silent on success — exit code 0 is the pass signal.
+- `scripts/lint.sh` scopes all checks to the `docs/` content root, so `plans/` files are never linted; plan-file-only commits cannot fail the CI lint job.
 
 ## Decision Log
 
