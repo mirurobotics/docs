@@ -134,10 +134,21 @@ At the bottom of the page, you'll find a complete audit trail of deployments mad
   ![Device Overview Audit Trail](https://assets.mirurobotics.com/docs/v04/images/devices/overview-audit-trail.png)
 </Frame>
 
+**Platform API**
+
+To retrieve a device programmatically, use the <PlatformApiLink endpoint="devices/get">get device endpoint »</PlatformApiLink>
+
+To list devices programmatically, use the <PlatformApiLink endpoint="devices/list">list devices endpoint »</PlatformApiLink>
 
 ## Provision a device  <ProvisionerBadge />
 
 To provision a device, visit the [device provisioning](/cfg-mgmt/provision-devices/overview) .
+
+**Platform API**
+
+To create a device programmatically, use the <PlatformApiLink endpoint="devices/create">create device endpoint »</PlatformApiLink>
+
+To provision devices programmatically, use [provisioning tokens](/cfg-mgmt/provision-devices/provisioning-tokens), which are created with the <PlatformApiLink endpoint="provisioning-tokens/create">create provisioning token endpoint »</PlatformApiLink>
 
 
 ## Edit a device  <ProvisionerBadge />
@@ -175,6 +186,10 @@ On the other hand, <Tooltip tip={OFFLINE_TOOLTIP.tip} cta={OFFLINE_TOOLTIP.cta} 
 <Frame>
   ![Ping Timeout](https://assets.mirurobotics.com/docs/v04/images/devices/ping-timeout.png)
 </Frame>
+
+**Platform API**
+
+To ping a device programmatically, use the <PlatformApiLink endpoint="devices/ping">ping device endpoint »</PlatformApiLink>
 
 ## Move a device  <AdminBadge />
 

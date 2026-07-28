@@ -2,6 +2,8 @@
 title: "Authentication"
 ---
 
+import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+
 The Miru Platform API uses API keys to authenticate requests. You can view and manage your API keys in the [Miru Dashboard](https://app.mirurobotics.com/settings/secrets).
 
 For more information on creating and managing API keys, see the [API keys](/admin/apikeys) section of the documentation.
@@ -16,5 +18,7 @@ curl --request GET \
 ```
 
 All requests must be made over HTTPS. Any requests over plain HTTP or without authentication will fail.
+
+To verify your credentials and check which principal your API key authenticates as, use the <PlatformApiLink endpoint="principals/self">self endpoint »</PlatformApiLink>
 
 For details on which scopes to assign your API keys, see [Authorization](/developers/platform-api/authz).
