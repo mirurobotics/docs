@@ -172,12 +172,13 @@ All edits are additive prose blocks plus one link conversion; no state outside t
 
 ## Progress
 
-- [ ] Milestone 1: Add link blocks to the nine pages; verify slug coverage; commit.
-- [ ] Milestone 2: Lint passes locally; 8 live-slug spot checks return 200; preflight CLEAN on the pushed branch head.
+- [x] Milestone 1: Add link blocks to the nine pages; verify slug coverage; commit. Landed as `cd164fd` (9 files, insertions only except the one-line provisioning-tokens conversion). Coverage grep returns exactly the 30 slugs from the inventory table.
+- [ ] Milestone 2: Lint passes locally (done, exit 0) and 8 live-slug spot checks return 200 (done); preflight CLEAN on the pushed branch head still pending — branch not yet pushed.
 
 ## Surprises & Discoveries
 
-(Add entries as you go.)
+- `PlatformApiLink` was already in use beyond the exemplar pages: `docs/developers/platform-api/query-params/*.mdx` and `docs/developers/agent/versions.mdx` link several of the same slugs (some with `#anchor` suffixes, e.g. `devices/list#query-parameters`). Repo-wide coverage greps therefore count some slugs more than once; the acceptance grep in Concrete Steps step 4 (`sort -u` on the bare slug) still yields exactly 30.
+- Local `main` is behind `origin/main`; `git diff main` includes upstream commits (#125, #140) already merged into the branch's history. Verification of "no-link pages absent from the diff" must look at the work commits (`cd164fd`, `f50c42f`), which touch only the nine pages plus this plan.
 
 ## Decision Log
 
@@ -203,4 +204,13 @@ All edits are additive prose blocks plus one link conversion; no state outside t
 
 ## Outcomes & Retrospective
 
-(Populate after implementation.)
+Implementation landed in `cd164fd` and passed the verification pass with no fixes needed:
+
+- All 30 inventory slugs appear via `<PlatformApiLink endpoint="...">` on their mapped page and section; slugs cross-checked against the tag names and summaries in `docs/references/platform-api/2026-05-06.yaml` (including the irregular ones: `config-instances/download-content`, `principals/self`, `deployments/drifts`, `git-commits/*`).
+- Block style matches the exemplar: `**Platform API**` label, one sentence per endpoint, link text ending in ` »`, no trailing period. Two plan-specified exceptions: `authn.mdx` uses a bare sentence (the page is itself Platform API docs) and `provisioning-tokens.mdx` keeps its inline "Platform API" link text through the component.
+- Each touched page imports `platform-api-link.jsx` exactly once; no hardcoded `/references/platform-api/2026-05-06/endpoints/...` URLs remain in prose pages.
+- New internal anchors resolve: `#view-a-deployment` and `#stage-a-deployment` (staging-area.mdx headings) and `#view-a-config-instance` (device-history.mdx heading); `/cfg-mgmt/deploy/config-editor` exists.
+- No-link pages (`groups.mdx`, `deployments.mdx`, device delete/move, release duplicate/delete, config type delete) carry no blocks and are absent from the work commits.
+- `pnpm install --frozen-lockfile && ./scripts/lint.sh` exits 0; all 8 live spot-check URLs return HTTP 200.
+
+Remaining: push the branch and drive preflight to CLEAN (acceptance criterion 6).
