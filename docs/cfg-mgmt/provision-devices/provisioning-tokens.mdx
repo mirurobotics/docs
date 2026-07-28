@@ -5,6 +5,7 @@ title: "Provisioning tokens"
 import AptInstall from '/snippets/agent/install/apt.mdx';
 import Verify from '/snippets/agent/install/verify.mdx';
 import { Framed } from '/snippets/components/framed.jsx';
+import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
 import CmdBreakdown from '/snippets/devices/provision/provision-cmd-breakdown.mdx';
 
 <Framed 
@@ -35,7 +36,7 @@ The recommended method is via `apt` (shown below). However, you can also manuall
 
 ## Create a provisioning token
 
-Provisioning tokens are created via the [Platform API](/references/platform-api/2026-05-06/endpoints/provisioning-tokens/create) endpoint using [API keys](/admin/apikeys).
+Provisioning tokens are created via the <PlatformApiLink endpoint="provisioning-tokens/create">Platform API</PlatformApiLink> endpoint using [API keys](/admin/apikeys).
 
 **Create the API key**
 
