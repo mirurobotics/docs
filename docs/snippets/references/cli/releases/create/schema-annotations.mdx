@@ -30,7 +30,7 @@
   JSON Schema and CUE schemas have no schema language annotation. Their language is inferred from the schema file itself, so a `.cue` file is read as CUE, and a `.json` or `.yaml` file is read as JSON Schema unless it declares itself opaque.
 
   ```yaml Opaque
-  schema_language: "opaque"
+  language: "opaque"
   ```
 
   Because an opaque schema is written as JSON or YAML — the same formats as a JSON Schema — this annotation is what distinguishes the two.
