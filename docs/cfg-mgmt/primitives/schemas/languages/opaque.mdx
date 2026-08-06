@@ -1,0 +1,52 @@
+---
+title: "Opaque"
+---
+
+import AgentYamlSupport from '/snippets/agent/yaml-support.mdx';
+
+An opaque schema is a metadata-only schema that regards all config instances as valid.
+
+Opaque schemas are useful for config formats which do not have a supported schema language. At the time of writing, this includes:
+
+- XML configuration files
+- Plain text configuration files (`.conf`, `.txt`, etc.)
+
+## Example
+
+Below are examples of opaque schemas:
+
+<CodeGroup>
+
+```yaml XML
+language: opaque
+config_type: motion-control
+instance_filepath: /srv/miru/configs/motion-control.xml
+instance_format: xml
+```
+
+```yaml Plain Text
+language: opaque
+config_type: motion-control
+instance_filepath: /srv/miru/configs/motion-control.conf
+instance_format: text
+```
+
+</CodeGroup>
+
+Consult the [schema annotations](/cfg-mgmt/primitives/schemas/overview#schema-annotations) documentation to learn more about what the individual fields mean and how to use them.
+
+## File formats
+
+Opaque schemas themselves are written as JSON or YAML. Unlike the other languages, CUE is not accepted here:
+
+- **JSON** (`.json`)
+- **YAML** (`.yaml`, `.yml`)
+
+Opaque schemas accept the widest set of config instance formats of any Miru schema language:
+
+- **JSON**
+- **YAML**
+- **XML**
+- **Text**
+
+<AgentYamlSupport />
