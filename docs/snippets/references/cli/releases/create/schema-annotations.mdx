@@ -25,29 +25,15 @@
 </ParamField>
 
 <ParamField path="schema language">
-  The schema language declares the language that the schema is written in.
+  The schema language declares the language that a schema is written in. This annotation applies to [Opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas only, and is required for them.
 
-  This annotation is optional for JSON Schema and CUE schemas, but is required for Opaque schemas.
+  JSON Schema and CUE schemas have no schema language annotation. Their language is inferred from the schema file itself, so a `.cue` file is read as CUE, and a `.json` or `.yaml` file is read as JSON Schema unless it declares itself opaque.
 
-  <CodeGroup>
-
-  ```yaml JSON Schema
-  x-miru-schema-language: "json-schema"
-  ```
-
-  
-  ```cue CUE
-  @miru(schema_language="cue")
-  ```
-
-  
   ```yaml Opaque
   schema_language: "opaque"
   ```
 
-  </CodeGroup>
-
-  Examples: `json-schema`, `cue`, `opaque`
+  Because an opaque schema is written as JSON or YAML — the same formats as a JSON Schema — this annotation is what distinguishes the two.
 </ParamField>
 
 <ParamField path="instance file path">
