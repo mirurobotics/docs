@@ -11,6 +11,155 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 <div className="changelog-page">
 
+<Update label="August 6, 2026">
+    ## Live Schema Validation
+
+    The editor now validates your draft against its schema **as you type**, so
+    a config that won't pass validation is caught before you hit deploy. This feature works
+    for JSON and YAML config instances defined by a JSON Schema or CUE schema.
+
+    - **Inline errors:** The invalid value gets a red underline, and hovering over it
+      shows the error message
+    - **Errors navigation:** A new section at the top of the right panel lists every
+      error in the draft and clicking a row jumps straight to that line in the editor
+    - **Deploy is blocked:** Deploy and Stage buttons are disabled until the draft is clean
+
+    <LazyVideo
+        alt="Screen recording of live schema validation in the config editor"
+        className="rounded-xl"
+        aspectRatio="3840 / 2260"
+        src="https://assets.mirurobotics.com/docs/changelog/26-08-06/schema-validation.mp4"
+    />
+
+    ## XML and Text Support
+
+    The editor now supports **XML** and **plain text**. The text format covers anything
+    Miru doesn't natively support, like TOML, INI, or a bare `.conf` file.
+
+    - **Syntax highlighting:** XML has syntax highlighting, but plain text does not
+    - **Line diffs:** XML and text diff line by line rather than by structure, with
+      only the changed tokens highlighted. Changes are counted in lines, like `+12 −4`
+
+    <Framed
+        image="https://assets.mirurobotics.com/docs/changelog/26-08-06/xml-support.png"
+        borderWidth="0px"
+        innerRadius="8px"
+    />
+
+    ## Fleet Dashboard
+
+    The new **Dashboard** page provides a high-level view of your fleet's status and activity.
+
+    - **Fleet:** Scope to your whole workspace or to any group and its subgroups, then
+      break it down by status, group, or agent version. Your scope and breakdown live
+      in the URL, so any view is shareable
+    - **Releases:** Your latest release over a rollout bar splitting the fleet into
+      devices on it, staged for it, behind it, or with no release at all — plus a
+      table of every other release still running somewhere
+    - **Deployments:** A live feed of deployments across your fleet, filterable by
+      status, device, or release
+
+    <LazyVideo
+        alt="Screen recording of the fleet dashboard"
+        className="aspect-video rounded-xl"
+        src="https://assets.mirurobotics.com/docs/changelog/26-08-06/fleet-dashboard.mp4"
+    />
+
+    <Separator />
+
+    <Dropdown title="Improvements">
+        <DropdownItem>
+            **Device descriptions:** Devices now have a free-text description. Set
+            it when you create or edit a device, or edit it inline on the device
+            overview. The devices list shows it beside the device name.
+        </DropdownItem>
+        <DropdownItem>
+            **Clickable rows in the draft panel:** Every error and change row in
+            the editor's right panel is now clickable. Clicking one opens that
+            config — reopening its tab if you closed it — and puts your cursor on
+            the exact value the row names. Rows address themselves in full
+            (`Mobility › kinematics › wheel_radius`), with the untruncated address
+            on hover.
+        </DropdownItem>
+        <DropdownItem>
+            **Config nav panel and closable tabs:** A collapsible, resizable panel
+            on the left of the editor lists every config in the deployment, with a
+            file-type icon, status markers, error counts, and search. Tabs are now
+            closable — via the hover chip, middle click, or **Delete** — and the
+            panel is how you get them back. Closing a tab never changes what gets
+            deployed, and the panel's width and your closed tabs are remembered the
+            next time you open that editor.
+        </DropdownItem>
+        <DropdownItem>
+            **Diff counts in the nav panel:** Each config row shows how much it
+            changed — while you're drafting, and when you're viewing a historical
+            deployment — so you can see which files a deployment touched without
+            opening them.
+        </DropdownItem>
+        <DropdownItem>
+            **Device overview:** The overview was redesigned around a right-hand
+            rail with **Status** and **Properties** cards covering connection
+            recency, group, release, and agent version. Activity entries are now
+            collapsible with expand-all and collapse-all, and each entry shows its
+            change counts inline.
+        </DropdownItem>
+        <DropdownItem>
+            **Deploy and stage summaries:** The deploy dialog's file summary now
+            lists only the files that actually changed, and the same summary was
+            added to the stage dialog.
+        </DropdownItem>
+        <DropdownItem>
+            **Re-staging a release:** The stage device picker now lets you select
+            devices already running the release being staged, so a re-stage goes
+            through and the editor opens for those devices.
+        </DropdownItem>
+        <DropdownItem>
+            **Full file names in tabs:** Editor tabs no longer truncate file names
+            at a fixed width.
+        </DropdownItem>
+        <DropdownItem>
+            **Safer diff rendering:** Deleted lines now render as real lines in the
+            diff rather than overlays, and the editor verifies its own alignment
+            before decorating anything — if a diff can't be rendered correctly, it
+            falls back to the plain file instead of highlighting the wrong bytes.
+            Collapsed regions can now be expanded with the keyboard.
+        </DropdownItem>
+        <DropdownItem>
+            **Sidebar polish:** Smoother collapse and settings transitions, and
+            leaving settings returns you to the page you came from.
+        </DropdownItem>
+    </Dropdown>
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+        <DropdownItem>
+            **Truncated diff values:** The inline `old → new` widget capped each
+            side at 50 characters, making long string changes impossible to
+            inspect. Both sides now render in full.
+        </DropdownItem>
+        <DropdownItem>
+            **YAML anchor change counts:** An edit inside a `<<`-merged anchor was
+            counted once per consumer of that anchor — 13 changes where there were
+            really 4. It's now counted once, at the edit site.
+        </DropdownItem>
+        <DropdownItem>
+            **Empty YAML containers:** A YAML array or map that was empty on one
+            side and expanded on the other rendered no diff at all. Both directions
+            now render as a single navigable change.
+        </DropdownItem>
+        <DropdownItem>
+            **Unchanged files in the deploy summary:** The deploy dialog listed
+            every file in the draft, labeling untouched ones `UNCHANGED`, which
+            contradicted its own "N files modified" header.
+        </DropdownItem>
+        <DropdownItem>
+            **Read-only editor controls:** The base and head deployment selectors
+            appeared outside diff mode, where they did nothing.
+        </DropdownItem>
+    </Dropdown>
+</Update>
+
 <Update label="July 20, 2026">
     ## Data Uploads
 
