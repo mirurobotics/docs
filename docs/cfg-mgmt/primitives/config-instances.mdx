@@ -6,6 +6,7 @@ import AgentYamlSupport from '/snippets/agent/yaml-support.mdx';
 import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
 import ConfigInstanceDef from '/snippets/definitions/config-instance.mdx';
+import SchemaFormats from '/snippets/schemas/formats.mdx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v04/images/config-instances/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/config-instances/header:panel.png" borderWidth="28px 56px 0 0" innerRadius="0 8px 0 0" />
 
@@ -15,7 +16,7 @@ import ConfigInstanceDef from '/snippets/definitions/config-instance.mdx';
 <ParamField path="content" type="object">
   <ImmutableBadge />
 
-  The configuration values that are deployed to the device as a JSON or YAML file.
+  The configuration values that are deployed to the device as a file, written in the config schema's instance format.
 </ParamField>
 
 <ParamField path="file path" type="string">
@@ -36,8 +37,16 @@ import ConfigInstanceDef from '/snippets/definitions/config-instance.mdx';
 
 ## File formats
 
-Currently, config instances support JSON and YAML. However, support for more formats, including XML, is coming soon!
+The formats a config instance may use are determined by the schema language of its [config schema](/cfg-mgmt/primitives/schemas/overview).
 
-Config instances support JSON and YAML. The Miru Agent parses both formats at deploy time and exposes the resulting data to on-device applications in the same way, so you can pick whichever format fits your workflow.
+<SchemaFormats />
+
+In practice, JSON Schema and CUE schemas accept JSON and YAML, while [opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas additionally accept XML and plain text, since they do not validate instance content.
+
+<Note>
+  The instance format is normally inferred from the instance file path's extension. Plain text has no recognized extension, so a text config instance must declare `instance_format: text` in its opaque schema — otherwise schema creation fails.
+</Note>
+
+At deploy time, the Miru Agent writes the config instance to its instance file path exactly as authored, byte for byte. On-device applications read and parse the file themselves.
 
 <AgentYamlSupport />
