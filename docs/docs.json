@@ -63,7 +63,8 @@
                         "pages": [
                           "cfg-mgmt/primitives/schemas/languages/overview",
                           "cfg-mgmt/primitives/schemas/languages/jsonschema",
-                          "cfg-mgmt/primitives/schemas/languages/cue"
+                          "cfg-mgmt/primitives/schemas/languages/cue",
+                          "cfg-mgmt/primitives/schemas/languages/opaque"
                         ]
                       },
                       "cfg-mgmt/primitives/schemas/manage"

@@ -27,16 +27,19 @@ collect_files() {
   fi
 }
 
+# Snippets are collected separately below so they lint last. The filter uses
+# an if-test, and this comment sits outside the process substitution, because
+# bash 3.2 on macOS counts every closing paren inside a substitution as the
+# one that ends it.
 mdx_targets=()
 while IFS= read -r -d '' file; do
   mdx_targets+=("${file}")
 done < <(
   collect_files "${content_root}" "*.mdx" |
     while IFS= read -r -d '' file; do
-      case "${file}" in
-        "${content_root}/snippets/"*) ;;
-        *) printf '%s\0' "${file}" ;;
-      esac
+      if [[ "${file}" != "${content_root}/snippets/"* ]]; then
+        printf '%s\0' "${file}"
+      fi
     done
 )
 while IFS= read -r -d '' file; do
