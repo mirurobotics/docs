@@ -41,12 +41,5 @@ The formats a config instance may use are determined by the schema language of i
 
 <SchemaFormats />
 
-In practice, JSON Schema and CUE schemas accept JSON and YAML, while [opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas additionally accept XML and plain text, since they do not validate instance content.
-
-<Note>
-  The instance format is normally inferred from the instance file path's extension. Plain text has no recognized extension, so a text config instance must declare `instance_format: text` in its opaque schema — otherwise schema creation fails.
-</Note>
-
-At deploy time, the Miru Agent writes the config instance to its instance file path exactly as authored, byte for byte. On-device applications read and parse the file themselves.
 
 <AgentYamlSupport />
