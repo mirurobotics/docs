@@ -24,14 +24,38 @@
   Examples: `mobility`, `communication`, `perception`
 </ParamField>
 
+<ParamField path="schema language">
+  The schema language declares the language that the schema is written in.
+
+  This annotation is optional for JSON Schema and CUE schemas, but is required for Opaque schemas.
+
+  <CodeGroup>
+
+  ```yaml JSON Schema
+  x-miru-schema-language: "json-schema"
+  ```
+
+  
+  ```cue CUE
+  @miru(schema_language="cue")
+  ```
+
+  
+  ```yaml Opaque
+  schema_language: "opaque"
+  ```
+
+  </CodeGroup>
+
+  Examples: `json-schema`, `cue`, `opaque`
+</ParamField>
+
 <ParamField path="instance file path">
   The instance file path is the absolute file system path where config instances for this schema are written on the device.
 
   <Warning>
     The Miru Agent ships with out-of-the-box access to `/srv/miru`. To deploy configs to a custom directory, please visit the [File system access](/developers/agent/filesys-access#configs) page.
   </Warning>
-
-  Instance file paths control the type of file that config instances are deployed as. Currently, JSON (`.json`) and YAML (`.yaml`, `.yml`) are supported. [Opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas may use any file extension, since their instance content is not validated.
 
   This annotation is optional and defaults to `/srv/miru/configs/{config-type-slug}.json`.
 
