@@ -1,29 +1,27 @@
 ---
 title: "Create"
 ---
-import CuePackages from "/snippets/references/cli/releases/create/cue-packages.mdx";
+
 import PushExistingSchemas from "/snippets/references/cli/releases/create/existing-schemas.mdx";
 import Flags from "/snippets/references/cli/releases/create/flags.mdx";
 import PushNewSchemas from "/snippets/references/cli/releases/create/new-schemas.mdx";
-import Annotations from "/snippets/references/cli/releases/create/schema-annotations.mdx";
 import Scopes from "/snippets/references/cli/releases/create/scopes.mdx";
 import Usage from "/snippets/references/cli/releases/create/usage.mdx";
 
-Create a release along with its associated git commit and schemas in Miru. 
+Create a release along with its associated git commit, config schemas, upload rules in Miru. 
 
-Both the git commit and the schemas associated with the release are created idempotently. If the git commit does not yet exist in Miru, it is created. If it already exists, it is not recreated and no error is returned.
-
-Similarly, if the provided schemas do not yet exist in Miru, they are created. If they already exist, they are not recreated and no error is returned.
-
-Git commits are identified by their SHA while schemas are identified by their content. Schemas with equivalent content are considered identical in Miru (even if the comments, spacing, or other formatting is different).
-
-For a more detailed guide on creating releases, visit the [create releases](/learn/releases/create) documentation.
+For a more detailed guide on creating releases, visit the [release creation](/cfg-mgmt/create-a-release) guide. To include upload rules, see the [release upload rules](/data-uploads/define-upload-rules) guide.
 
 ### Requirements
 
-- The release's config schemas must be committed to a local Git repository
-- The schemas must be annotated with their config types (see [annotations](#schema-annotations) below)
-- The Git repository must have a remote URL (GitHub, GitLab, Bitbucket, etc.) configured
+- Schemas and upload rules must be committed to a local Git repository
+- Schemas must be annotated with their config types (see [annotations](/cfg-mgmt/primitives/schemas/overview#schema-annotations))
+- Git repository must have a remote URL (e.g. GitHub) configured
+- At least one config schema is provided (upload rules are optional) 
+
+### API key scopes
+
+<Scopes />
 
 ### Usage
 
@@ -32,18 +30,6 @@ For a more detailed guide on creating releases, visit the [create releases](/lea
 **Flags**
 
 <Flags />
-
-### API key scopes
-
-<Scopes />
-
-### Schema annotations
-
-<Annotations />
-
-### CUE packages
-
-<CuePackages />
 
 ### Examples
 

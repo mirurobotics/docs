@@ -1,0 +1,120 @@
+---
+title: "Google Cloud Storage"
+---
+
+import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+import { PublisherBadge } from '/snippets/components/role-badges.jsx';
+
+A Google Cloud Storage (GCS) bucket is connected by granting a **Miru-managed service
+account** write access — there are no service-account keys. Miru provisions a
+dedicated service account for your workspace, and you grant it object-create access on
+your bucket.
+
+## How it works
+
+You grant Miru's dedicated service account write access to your bucket.
+
+<img
+  src="https://assets.mirurobotics.com/docs/v04/images/data-uploads/gcs-uploader-sa-flow.svg"
+  alt="GCS uploader service account token flow"
+/>
+
+When a device needs to upload data to your bucket:
+
+1. Miru impersonates your workspace's dedicated service account
+2. Miru creates a short-lived token scoped to the exact object key the device is uploading to
+3. Miru distributes the token to the device
+4. The device uploads the data to the bucket using the token
+
+Connecting your bucket to Miru is a one-time setup that grants a single dedicated
+identity access to one bucket. No service-account keys, passwords, or long-lived tokens
+change hands in either direction.
+
+### Miru provides you
+
+<ParamField path="service_account_email">
+  The dedicated uploader service account Miru provisions for your workspace when you
+  register the bucket. You grant this account object-create access on your bucket. Shown
+  in the Miru dashboard at registration.
+
+  Example: `wsp_1234567890@miru-uploads.iam.gserviceaccount.com`
+</ParamField>
+
+### You provide Miru
+
+<ParamField path="bucket_name">
+  <ImmutableBadge />
+
+  The name of your GCS bucket to connect to Miru.
+
+  Example: `my-upload-bucket`
+</ParamField>
+
+## Connect a bucket
+
+Follow the steps below to connect a bucket to Miru using the Google Cloud CLI. To
+connect a bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
+
+<Steps>
+
+  <Step title="Get the service account email">
+
+    In the Miru dashboard, navigate to the [Buckets page](https://app.mirurobotics.com/settings/buckets) and click the **+ Bucket** button in the top right corner.
+
+    Switch to the **GCS** tab, copy your workspace's service account email, and set it as a
+    variable — this email is used to grant the service account write access to your bucket.
+
+    <Frame>
+      ![Add Bucket Dialog with GCS Service Account Email](https://assets.mirurobotics.com/docs/v04/images/buckets/add-bucket-gcp-sa.png)
+    </Frame>
+
+    ```bash
+    SERVICE_ACCOUNT_EMAIL="<service-account-email>"
+    ```
+
+  </Step>
+
+  <Step title="Define the bucket">
+    Set your Google Cloud project and bucket name.
+
+    ```bash
+    PROJECT_ID="<project-id>"
+    BUCKET_NAME="<bucket-name>"
+    ```
+
+    Create the bucket if it doesn't yet exist.
+
+    ```bash
+    LOCATION="<location>"
+    ```
+
+    ```bash
+    gcloud storage buckets create "gs://${BUCKET_NAME}" \
+      --project="${PROJECT_ID}" \
+      --location="${LOCATION}"
+    ```
+  </Step>
+
+
+  <Step title="Grant the service account write access">
+    Grant Miru's uploader service account permission to create objects on your bucket.
+
+    ```bash
+    gcloud storage buckets add-iam-policy-binding "gs://${BUCKET_NAME}" \
+      --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
+      --role="roles/storage.objectCreator"
+    ```
+
+    <Note>
+      [Verification](/data-uploads/primitives/buckets) writes a zero-byte
+      probe object under `.miru/probe/` as this service account to confirm the grant.
+    </Note>
+  </Step>
+
+  <Step title="Register the bucket in Miru">
+
+    From the **Buckets** page in the Miru dashboard, select **New bucket**, choose
+    **GCS**, and supply your bucket name. Select **Create**.
+
+  </Step>
+</Steps>

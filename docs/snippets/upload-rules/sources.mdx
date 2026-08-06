@@ -1,0 +1,23 @@
+A rule's `source` declares what to collect on the device: which files to match, and
+when a matching file is considered finished and eligible for upload.
+
+<ParamField path="glob" type="string" required>
+  An absolute glob pattern that selects the files to upload.
+
+  Must satisfy the following criteria:
+  - Absolute — it starts with `/`
+  - At most 1024 bytes, with no control characters
+  - No `..` segments, and no empty segments (`//` or a trailing `/`)
+
+  <Warning>
+    You must grant the Miru Agent read access to the files you want to upload. Visit the [file system access](/developers/agent/filesys-access#data-uploads) section for more details.
+  </Warning>
+
+  Example: `/var/log/robot/*.log`
+</ParamField>
+
+<ParamField path="stability_window_secs" type="integer" default="60">
+  How long, in seconds, a matching file's size and modification time must stay
+  unchanged (quiescent) before it is considered stable and eligible for upload.
+  See [completion detection](/data-uploads/primitives/uploads).
+</ParamField>

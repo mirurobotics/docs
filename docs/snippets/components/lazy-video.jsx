@@ -1,4 +1,4 @@
-export const LazyVideo = ({ src, alt, className }) => {
+export const LazyVideo = ({ src, alt, className, aspectRatio }) => {
     const ref = React.useRef(null);
 
     React.useEffect(() => {
@@ -29,7 +29,8 @@ export const LazyVideo = ({ src, alt, className }) => {
             preload="none"
             playsInline
             alt={alt}
-            className={className}
+            className={["w-full", className].filter(Boolean).join(" ")}
+            style={aspectRatio ? { aspectRatio } : undefined}
             src={src}
         />
     );

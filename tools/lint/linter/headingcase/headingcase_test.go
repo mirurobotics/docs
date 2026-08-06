@@ -88,6 +88,18 @@ func TestCheck_Headings(t *testing.T) {
 			content:   "## <Tooltip />\n",
 			wantCount: 0,
 		},
+		{
+			name:      "clean mdx comment mask",
+			content:   "## Verify a bucket  {/* TODO: confirm role */}\n",
+			wantCount: 0,
+		},
+		{
+			name:      "bad heading with trailing mdx comment",
+			content:   "## Verify A Bucket  {/* TODO: confirm */}\n",
+			wantCount: 1,
+			wantLine:  1,
+			wantCol:   4,
+		},
 	}
 
 	for _, tc := range tests {

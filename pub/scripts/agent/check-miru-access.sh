@@ -11,24 +11,37 @@ fi
 
 usage() {
 	cat <<'EOF'
-Usage: check-miru-access.sh [--user <name>] <path>
+Usage: check-miru-access.sh [--user <name>] [--mode <mode>] <path>
 
 Checks whether a user (default: `miru`) can access a target file or directory.
 
+The check runs in one of three modes, differing only in the write (`w`)
+requirements (read and execute requirements are the same in all modes):
+
+  write       (default) Configs — the agent writes config instances.
+                Requires r,w on the file and r,w,x on the parent directory.
+  read-delete  Data uploads with delete_policy: after_upload. Requires r on
+                the file and r,w,x on the parent (delete needs write on the
+                parent, not the file).
+  read-only    Data uploads without delete. Requires r on the file and r,x on
+                the parent directory.
+
 For file targets, it checks:
-  - r,w on the file
-  - r,w,x on the file's parent directory
+  - r (+w in write mode) on the file
+  - r,x (+w in write/read-delete modes) on the file's parent directory
   - x on the grandparent directory and above
 
 If the file target does not exist yet, it skips file permission checks and
 checks parent/ancestor directory permissions required to create it.
 
 For directory targets, it checks:
-  - r,w,x on the directory
+  - r,x (+w in write/read-delete modes) on the directory
   - x on parent directories above it
 
 Options:
   -u, --user <name>  User to test as (default: miru)
+  -m, --mode <mode>  Permission profile: write (default), read-delete, or
+                     read-only
   -h, --help         Show this help text
 EOF
 }
@@ -39,6 +52,7 @@ sanitize_path() {
 }
 
 target_user="miru"
+mode="write"
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
@@ -49,6 +63,16 @@ while [[ $# -gt 0 ]]; do
 				exit 2
 			fi
 			target_user="$2"
+			shift
+			shift
+			;;
+		-m|--mode)
+			if [[ $# -lt 2 ]]; then
+				echo "error: --mode requires a value" >&2
+				usage
+				exit 2
+			fi
+			mode="$2"
 			shift
 			shift
 			;;
@@ -76,6 +100,31 @@ if [[ $# -ne 1 ]]; then
 	usage
 	exit 2
 fi
+
+# Validate mode and derive the write requirement flags. Read and execute
+# requirements are constant across modes; only write differs:
+#   file_need_w   1 only in write mode (agent rewrites config files).
+#   dir_need_w    1 in write and read-delete modes (create/replace or delete
+#                 a directory entry both need write on the directory).
+case "$mode" in
+	write)
+		file_need_w=1
+		dir_need_w=1
+		;;
+	read-delete)
+		file_need_w=0
+		dir_need_w=1
+		;;
+	read-only)
+		file_need_w=0
+		dir_need_w=0
+		;;
+	*)
+		echo "error: invalid mode: $mode (expected write, read-delete, or read-only)" >&2
+		usage
+		exit 2
+		;;
+esac
 
 # Validate target_user: must match Unix username pattern, refuse root (finding 3).
 if [[ ! "$target_user" =~ ^[a-z_][a-z0-9_-]*$ ]]; then
@@ -148,7 +197,7 @@ else
 		export _CHECK_ACCESS_REEXEC=1
 		exec sudo -u "$target_user" \
 			--preserve-env=_CHECK_ACCESS_REEXEC \
-			bash -s -- --user "$target_user" "$target_path" <&"$_tmpfd"
+			bash -s -- --user "$target_user" --mode "$mode" "$target_path" <&"$_tmpfd"
 	fi
 fi
 
@@ -213,15 +262,15 @@ last_printed_dir=""
 if [ -f "$path" ]; then
 	missing_target_file=0
 	print_header
-	print_row "file" "$path" 1 1 0
+	print_row "file" "$path" 1 "$file_need_w" 0
 	parent="$(dirname "$path")"
-	print_row "parent" "$parent" 1 1 1
+	print_row "parent" "$parent" 1 "$dir_need_w" 1
 	last_printed_dir="$parent"
 	dir="$(dirname "$parent")"
 elif [ -d "$path" ]; then
 	missing_target_file=0
 	print_header
-	print_row "directory" "$path" 1 1 1
+	print_row "directory" "$path" 1 "$dir_need_w" 1
 	last_printed_dir="$path"
 	dir="$(dirname "$path")"
 elif [ ! -e "$path" ]; then
@@ -237,7 +286,7 @@ elif [ ! -e "$path" ]; then
 		parent_dir_uncertain=1
 	fi
 	print_header
-	print_row "parent" "$parent" 1 1 1
+	print_row "parent" "$parent" 1 "$dir_need_w" 1
 	last_printed_dir="$parent"
 	dir="$(dirname "$parent")"
 else

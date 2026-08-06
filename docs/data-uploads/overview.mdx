@@ -1,0 +1,94 @@
+---
+title: "Overview"
+---
+
+Data uploads move data *off* your devices and into *your* cloud storage.
+
+You define a small set of [**upload rules**](/data-uploads/primitives/upload-rules) — what to
+collect, when it is considered finished, and where it goes. The
+[Miru Agent](/developers/agent/overview) detects matching files, waits for each file
+to finish being written to, and uploads it directly to your bucket.
+
+## How it works
+
+<img
+  src="https://assets.mirurobotics.com/docs/v04/images/data-uploads/data-upload-flow.svg"
+  alt="Upload flow: a device requests an upload from the Miru control plane, receives short-lived downscoped credentials for a single object key carrying its own device ID, and uploads the file directly to your cloud storage with the native cloud SDK. Your data never passes through Miru."
+/>
+
+1. The Miru Agent detects a new file to upload
+2. The Agent registers a new [upload](/data-uploads/primitives/uploads) with the Miru control plane.
+3. Using credentials setup in the [bucket connection](/data-uploads/primitives/buckets#connect-a-bucket), the control plane issues a short-lived token valid only for the exact storage object key the file will be uploaded to.
+4. The Agent uploads the file **directly to your bucket**.
+
+Your data moves straight from the device to your storage — only the upload request and
+the credential exchange touch Miru. 
+
+## File detection
+
+The Agent uploads a file once it is confident the file has finished being written to.
+Completion is determined by **quiescence**: a file whose size and modification time have
+held steady for the rule's [`stability_window_secs`](/data-uploads/primitives/upload-rules#sources)
+is considered finished and eligible for upload. 
+
+While this works for any file type, it is a heuristic for detecting when a file is
+finished being written to. For deterministic completion detection, write to a file location that does not match the rule's glob and rename on completion. This ensures the Miru Agent only ever sees finished files — zero false positives.
+
+
+## Device data isolation
+
+Devices' uploads are strictly isolated from each other. Isolation rests on a single requirement on the [destination
+path](/data-uploads/primitives/upload-rules): it must include the `{upload_id}` variable somewhere in the template. 
+
+Since devices receive credentials scoped to an **exact object key** for each upload, and a given upload ID is authorized to its device, devices never receive credentials which grant any access to another device's data.
+
+## Object metadata
+
+Each uploaded object is stamped with the upload's provenance as cloud object metadata
+(S3 `x-amz-meta-*` / GCS `x-goog-meta-*`), so every file is self-describing in your
+bucket and can be correlated back to exactly what produced it without parsing the
+path.
+
+The metadata is a generic map of string keys to string values. The keys currently
+stamped are listed below, but the set may evolve. The map stays within the cloud
+provider's object-metadata size limits (roughly 2 KB on S3, 8 KB on GCS). 
+
+<ParamField path="device_id" type="string">
+  <ImmutableBadge />
+
+  The ID of the device that uploaded the file.
+
+  Example: `dvc_123`
+</ParamField>
+
+<ParamField path="deployment_id" type="string">
+  <ImmutableBadge />
+
+  The ID of the deployment that was running when the file was detected.
+
+  Example: `dpl_123`
+</ParamField>
+
+<ParamField path="release_id" type="string">
+  <ImmutableBadge />
+
+  The ID of the release that was running when the file was detected.
+
+  Example: `rls_1234567890`
+</ParamField>
+
+<ParamField path="release_version" type="string">
+  <ImmutableBadge />
+
+  The [version](/primitives/releases#param-version) field of the release that was running when the file was detected.
+
+  Example: `v1.0.0`
+</ParamField>
+
+<ParamField path="mtime" type="string">
+  <ImmutableBadge />
+
+  The file's `mtime` timestamp as reported by the operating system.
+
+  Example: `2021-01-01T00:00:00Z`
+</ParamField>

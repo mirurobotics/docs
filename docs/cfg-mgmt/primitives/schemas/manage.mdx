@@ -1,0 +1,44 @@
+---
+title: "Manage schemas"
+---
+
+import { Framed } from '/snippets/components/framed.jsx';
+import { PublisherBadge } from '/snippets/components/role-badges.jsx';
+
+<Framed background="https://assets.mirurobotics.com/docs/v04/images/config-schemas/background.png" image="https://assets.mirurobotics.com/docs/v04/images/config-schemas/header:metadata.png" borderWidth={"24px 48px 0 0"} innerRadius={"0 8px 0 0"} />
+
+## Create a schema  <PublisherBadge />
+
+Schemas must be created as part of a release. Visit the [define releases](/cfg-mgmt/create-a-release) page to learn how to create a release along with its schemas.
+
+## View a schema
+
+To view a schema in Miru, navigate to the [Releases page](https://app.mirurobotics.com/releases), and click into the release that contains the schema you want to view.
+
+<Frame>
+  ![Releases Page](https://assets.mirurobotics.com/docs/v04/images/releases/page.png)
+</Frame>
+
+At the bottom of the page under the **Overview** tab, you will find a list of the release's schemas.
+
+<Frame>
+  ![Release Config Schemas List](https://assets.mirurobotics.com/docs/v04/images/releases/schema-list.png)
+</Frame>
+
+Click into a schema to open its details, which contains the following tabs:
+
+- **Content**: the schema's uploaded file contents
+- **Metadata**: the schema's metadata and commit history
+
+<Tabs>
+  <Tab title="Content">
+    <Frame>
+      ![Config Schema Content Panel](https://assets.mirurobotics.com/docs/v04/images/config-schemas/panel-content.png)
+    </Frame>
+  </Tab>
+  <Tab title="Metadata">
+    <Frame>
+      ![Config Schema Metadata Panel](https://assets.mirurobotics.com/docs/v04/images/config-schemas/panel-metadata.png)
+    </Frame>
+  </Tab>
+</Tabs>

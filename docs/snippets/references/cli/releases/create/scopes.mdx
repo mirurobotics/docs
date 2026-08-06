@@ -1,4 +1,11 @@
 If creating a release from a [CI pipeline](/developers/ci/overview), the following API key scopes are required:
-  - `config_schemas:manage`
+
   - `git_commits:manage`
+  - `config_types:manage`
+  - `config_schemas:manage`
   - `releases:manage`
+
+  If creating a release with upload rules, the following API key scopes are also required:
+
+  - `upload_collections:manage`
+  - `upload_rules:manage`

@@ -1,8 +1,9 @@
 Config schemas support the following file formats:
 
-| Language    | Schema Formats | Instance Formats |
-| ----------- | -------------- | ---------------- |
-| JSON Schema | JSON, YAML     | JSON, YAML       |
-| CUE         | CUE            | JSON, YAML       |
+| Language    | Schema Formats | Instance Formats      |
+| ----------- | -------------- | --------------------- |
+| JSON Schema | JSON, YAML     | JSON, YAML            |
+| CUE         | CUE            | JSON, YAML            |
+| Opaque      | JSON, YAML     | JSON, YAML, XML, Text |
 
 Note that a _schema's_ format does not need to match the format of the _config instance_ it validates. For example, a YAML-formatted JSON Schema can validate a JSON-formatted config instance.

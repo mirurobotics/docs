@@ -66,6 +66,28 @@ func TestProcessFile(t *testing.T) {
 		}
 	})
 
+	t.Run("image-domain rule violation", func(t *testing.T) {
+		dir := t.TempDir()
+		path := filepath.Join(dir, "test.mdx")
+		content := "# Title\n\n![diagram](/images/x.png)\n"
+		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		vs, err := ProcessFile(path, dir)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		found := false
+		for _, v := range vs {
+			if v.Line == 3 && strings.HasPrefix(v.Message, "image-domain:") {
+				found = true
+			}
+		}
+		if !found {
+			t.Errorf("expected image-domain violation on line 3, got %v", vs)
+		}
+	})
+
 	t.Run("file rule violation", func(t *testing.T) {
 		dir := t.TempDir()
 		path := filepath.Join(dir, "test.mdx")

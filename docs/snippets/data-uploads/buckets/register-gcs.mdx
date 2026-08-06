@@ -1,0 +1,18 @@
+<Step title="Register the bucket in Miru">
+  From the **Buckets** page in the Miru dashboard, select **New bucket**, choose
+  **GCS**, and supply:
+
+  - `name` — the name of the GCS bucket
+  - `project_id` — your GCP project ID
+  - `wip_provider` — the Workload Identity Pool provider resource name
+  - `service_account_email` — the uploader service account's email
+
+  Select **Create** to register the bucket.
+
+  {/* TODO (product): confirm the exact form of the Miru-provided identity values shown at registration (AWS account ID and assumed-role ARN) and where the dashboard displays them. */}
+
+  <Frame>
+    ![Miru New bucket form for the GCS provider with the four fields](https://assets.mirurobotics.com/docs/v04/images/data-uploads/buckets/gcs/register-bucket.png)
+  </Frame>
+  {/* TODO (screenshot): Miru dashboard, Buckets → New bucket form with provider set to GCS, highlight the name, project_id, wip_provider, and service_account_email fields. */}
+</Step>

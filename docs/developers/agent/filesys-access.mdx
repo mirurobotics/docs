@@ -1,0 +1,458 @@
+---
+title: 'File system access'
+---
+
+import DefaultPermissions from '/snippets/agent/filesys/default-perms.mdx';
+
+The Miru Agent runs as the `miru` system user and needs specific file system permissions
+in the two cases where it touches files on your devices:
+
+- **[Configs](#configs)** — the agent **writes** config instances to disk when it deploys
+  a release.
+- **[Data uploads](#data-uploads)** — the agent **reads** files on the device to upload
+  them to your bucket.
+
+This page covers the agent's default permissions, how to grant it access, and how to
+check the permissions are correctly set.
+
+## Default permissions
+
+<DefaultPermissions />
+
+## Configs
+
+When the agent deploys a release, it **writes** config instances to disk. `/srv/miru` is
+the default location and works out-of-the-box — deploying to any path inside `/srv/miru`
+requires no additional configuration. To deploy to a path outside `/srv/miru`, you must
+grant the `miru` user read and write access to that path.
+
+<Warning>
+  You must use Miru Agent [v0.8.0](/changelog/agent#v0-8-0) or later to deploy
+  configurations to a path that does not begin with `/srv/miru/config_instances/`.
+</Warning>
+
+The Miru Agent supports writing config instances to arbitrary file system paths. Some
+examples include:
+
+- `/etc/myapp/configs/mobility.json`
+- `/home/myapp/configs/communication.yaml`
+- `/var/lib/myapp/configs/safety.yaml`
+
+However, to do so, you must grant the `miru` user access to the specified target path.
+Otherwise, the Miru Agent will receive a permission denied error from the operating
+system when attempting to write to these file paths.
+
+### Required permissions
+
+To write to a given file, the `miru` user requires specific permissions to
+
+1. The file itself
+2. The directories along the path to the file
+
+Let's consider the file `/var/lib/myapp/configs/planning.yaml` as an example. The
+required read and write permissions to grant the `miru` user access to this file are
+shown in the table below.
+
+| Path | Permissions |
+|------|----------------------|
+| `/var/lib/myapp/configs/planning.yaml` | read (`r`), write (`w`) |
+| `/var/lib/myapp/configs` | read (`r`), write (`w`), execute (`x`) |
+| `/var/lib/myapp` | execute (`x`) |
+| `/var/lib` | execute (`x`) |
+| `/var` | execute (`x`) |
+
+To write to a given file, the `miru` user requires the following Unix permissions:
+
+1. Read (`r`) and write (`w`) access to the *file* itself
+
+    - `r` (read) is required to read the file contents.
+    - `w` (write) is required to write the file contents.
+
+    <Note>
+      If the file does not yet exist, you can ignore this permission. The agent will
+      create it with the appropriate permissions.
+    </Note>
+
+2. Read (`r`), write (`w`), and execute (`x`) access to the file's parent directory
+    - `r` (read) is required to scan files within the directory.
+    - `w` (write) is required to create/replace directory entries (e.g., temp file +
+      rename for atomic writes).
+    - `x` (execute/search) is required to access files within the directory.
+
+3. Execute (`x`) access to all directories along the path to the file
+
+    - `x` (execute) is required to access directories within the path to the file.
+
+    <Info>
+      Many directories, such as `/var/lib`, are world-readable by default and need no
+      special permissions. Other directories, such as `/home/myapp`, will not grant
+      `miru` user access by default and must be specifically configured.
+    </Info>
+
+## Data uploads
+
+To upload data, the agent **reads** the files matched by an
+[upload rule](/data-uploads/primitives/upload-rules)'s `source.glob` and streams them to
+your bucket. The `miru` user needs read access to the files themselves, read and execute
+on the directory that contains them (to list and match the glob), and execute access to
+traverse the remaining directories along the path.
+
+### Required permissions
+
+To read a file for upload, the `miru` user requires specific permissions to
+
+1. The file itself
+2. The directories along the path to the file
+
+Let's consider an upload rule whose `source.glob` is `/var/log/robot/*.log`, matching the
+file `/var/log/robot/app.log`. The required permissions to grant the `miru` user access
+to this file are shown in the table below.
+
+| Path | Permissions |
+|------|----------------------|
+| `/var/log/robot/app.log` | read (`r`) |
+| `/var/log/robot` | read (`r`), execute (`x`) |
+| `/var/log` | execute (`x`) |
+| `/var` | execute (`x`) |
+
+To read a given file, the `miru` user requires the following Unix permissions:
+
+1. Read (`r`) access to the *file* itself
+
+    - `r` (read) is required to read the file contents for upload.
+
+2. Read (`r`) and execute (`x`) access to the file's parent directory
+
+    - `r` (read) is required to list the directory and match files against the glob.
+    - `x` (execute/search) is required to open files within the directory.
+
+3. Execute (`x`) access to all directories along the path to the file
+
+    - `x` (execute) is required to traverse directories within the path to the file.
+
+    <Info>
+      Many directories, such as `/var/log`, are world-readable and executable by default
+      and need no special permissions. Others, such as `/home/myapp`, will not grant
+      `miru` user access by default and must be specifically configured.
+    </Info>
+
+Uploads are read-only — the `miru` user does **not** need write access to the source
+files, unless you delete them after upload, covered next.
+
+### Deleting after upload
+
+If an upload rule's [`destination.delete_policy`](/data-uploads/primitives/upload-rules#destinations)
+is `after_upload`, the agent removes each file after a successful upload. Deleting a file
+requires **write (`w`)** access to its **parent directory** (to remove the directory
+entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case:
+
+| Path | Permissions |
+|------|----------------------|
+| `/var/log/robot/app.log` | read (`r`) |
+| `/var/log/robot` | read (`r`), write (`w`), execute (`x`) |
+| `/var/log` | execute (`x`) |
+| `/var` | execute (`x`) |
+
+## Testing access
+
+To help you navigate the necessary permissions, we've provided an automated script that
+reports any gaps in the permissions for the `miru` user to access a given file or
+directory.
+
+The check runs in one of three modes, matching the two cases above. They differ only in
+the write (`w`) requirements — read and execute requirements are the same in every mode:
+
+- `--mode write` (default) — **[Configs](#configs)**: deploying config instances.
+  Requires `r,w` on the file and `r,w,x` on the parent directory.
+- `--mode read-delete` — **[Data uploads](#deleting-after-upload)** with
+  `delete_policy: after_upload`. Requires `r` on the file and `r,w,x` on the parent
+  (deleting needs write on the parent, not the file).
+- `--mode read-only` — **[Data uploads](#data-uploads)** without delete. Requires `r` on
+  the file and `r,x` on the parent directory.
+
+### Run the script
+
+First, download the script to your current working directory using `curl`.
+
+```bash
+curl -fsSL -o ./check-miru-access.sh \
+  https://raw.githubusercontent.com/mirurobotics/docs/main/pub/scripts/agent/check-miru-access.sh
+```
+
+Verify the script's contents with `less`.
+```bash
+less ./check-miru-access.sh
+```
+
+<Note>
+  You can also view the script on [GitHub](https://github.com/mirurobotics/docs/blob/main/pub/scripts/agent/check-miru-access.sh).
+</Note>
+
+Then run the script with the path you want to test, selecting the mode for your case.
+The default mode is `write` (the config case), so it can be omitted there.
+
+```bash
+# Configs (default, write mode)
+bash ./check-miru-access.sh /path/to/config-instance.yaml
+
+# Data uploads (read-only)
+bash ./check-miru-access.sh --mode read-only /var/log/robot/app.log
+
+# Data uploads that delete after upload (read-delete)
+bash ./check-miru-access.sh --mode read-delete /var/log/robot/app.log
+```
+
+### Understand the output
+
+The script outputs a table of the permissions required to access the target path. Each
+row shows a path unit (`file`, `directory`, `parent`, `ancestor`) and required
+permissions.
+
+- `-` means that permission is not required for that path unit
+- `OK` means the required permission is present
+- `NO` means the required permission is missing
+
+The final line is `FINAL RESULT: PASS` or `FINAL RESULT: FAIL`.
+
+### Example outputs
+
+The examples below show the default `write` (Configs) mode. 
+
+<Tabs>
+
+  <Tab title="Existing File">
+    To test an existing file, run the script with the file path as an argument.
+
+    ```bash
+    $ ./check-miru-access.sh /var/lib/myapp/configs/mobility.yaml
+
+    Permission checks for: /var/lib/myapp/configs/mobility.yaml
+
+    | Target Type | Read | Write | Execute | Path
+    | ----------- | ---- | ----- | ------- | ----
+    | file        | OK   | OK    | -       | /var/lib/myapp/configs/mobility.yaml
+    | parent      | OK   | OK    | OK      | /var/lib/myapp/configs
+    | ancestor    | -    | -     | OK      | /var/lib/myapp
+    | ancestor    | -    | -     | OK      | /var/lib
+    | ancestor    | -    | -     | OK      | /var
+    | ancestor    | -    | -     | OK      | /
+
+    FINAL RESULT: PASS
+    ```
+  </Tab>
+
+  <Tab title="File doesn't exist">
+    If the input file does not exist yet, the script will skip the file checks and only
+    check the parent/ancestor directory permissions required to create it.
+
+    As long as the directory has the required permissions, the Miru Agent will create the
+    file inside the directory with the appropriate permissions.
+
+    ```bash
+    $ ./check-miru-access.sh /var/lib/myapp/configs/mobility.json
+
+    Permission checks for: /var/lib/myapp/configs/mobility.json
+    Note: target file is not visible to this user (missing or not traversable); skipping file checks.
+
+    | Target Type | Read | Write | Execute | Path
+    | ----------- | ---- | ----- | ------- | ----
+    | parent      | OK   | OK    | OK      | /var/lib/myapp/configs
+    | ancestor    | -    | -     | OK      | /var/lib/myapp
+    | ancestor    | -    | -     | OK      | /var/lib
+    | ancestor    | -    | -     | OK      | /var
+    | ancestor    | -    | -     | OK      | /
+
+    FINAL RESULT: PASS
+    ```
+  </Tab>
+
+  <Tab title="Directory">
+    Testing a directory checks that the `miru` user has the required permissions to
+    create files in the directory.
+
+    ```bash
+    $ ./check-miru-access.sh /var/lib/myapp/configs
+    Permission checks for: /var/lib/myapp/configs
+
+    | Target Type | Read | Write | Execute | Path
+    | ----------- | ---- | ----- | ------- | ----
+    | directory   | OK   | OK    | OK      | /var/lib/myapp/configs
+    | ancestor    | -    | -     | OK      | /var/lib/myapp
+    | ancestor    | -    | -     | OK      | /var/lib
+    | ancestor    | -    | -     | OK      | /var
+    | ancestor    | -    | -     | OK      | /
+
+    FINAL RESULT: PASS
+    ```
+  </Tab>
+
+</Tabs>
+
+## Granting access
+
+Once you've determined the necessary permissions, you need to grant them to the `miru`
+user. There are two common methods for granting the `miru` user access to a given path:
+
+1. Standard Unix permissions - basic owner/group/other mode bits on a file or directory
+2. ACLs - per-user or per-group access rules beyond mode bits
+
+Since standard Unix permissions are the most familiar, you'll likely find them simpler
+to work with. We recommend starting here.
+
+However, you may find that changing ownership or group is not possible or desirable. In
+this case, ACLs may be a better fit. ACLs provide flexibility by allowing you to retain
+existing permissions for a given path while granting the `miru` user or group the
+required permissions.
+
+### Standard Unix permissions
+
+For standard Unix permissions, there are three approaches, in order of preference:
+
+1. Add `miru` to a group that already has access
+2. Grant the `miru` group the appropriate permissions
+3. Transfer ownership to the `miru` user
+
+When the target files already belong to a group with the access you need — common for
+upload sources produced by another application — adding `miru` to that group is the least
+invasive option. 
+
+We recommend starting there. Otherwise, grant the `miru` group access directly.
+
+#### Add miru to an existing group
+
+Add the `miru` user to a group that already has the required access, so it inherits that
+group's permissions without touching the path:
+
+```bash
+sudo usermod -aG <group> miru
+sudo systemctl restart miru
+```
+
+#### Set the group or owner
+
+If no group already grants the access you need, set the path's group to `miru`
+(recommended) or transfer ownership to `miru`.
+
+**Files**
+
+<Tabs>
+  <Tab title="Group access">
+    <CodeGroup>
+
+    ```bash read-only
+    path="/path/to/file.json"
+    sudo chgrp miru $path
+    sudo chmod g+r $path
+    ```
+
+    ```bash read-write
+    path="/path/to/file.json"
+    sudo chgrp miru $path
+    sudo chmod g+rw $path
+    ```
+
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="Transfer ownership">
+
+    <CodeGroup>
+
+    ```bash read-only
+    path="/path/to/file.json"
+    sudo chown miru $path
+    sudo chmod u+r $path
+    ```
+
+    ```bash read-write
+    path="/path/to/file.json"
+    sudo chown miru $path
+    sudo chmod u+rw $path
+    ```
+
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+**Directories**
+
+<Tabs>
+  <Tab title="Group access">
+    <CodeGroup>
+
+    ```bash read-only
+    path="/path/to/dir"
+    sudo chgrp miru $path
+    sudo chmod g+rx $path
+    ```
+
+    ```bash read-write
+    path="/path/to/dir"
+    sudo chgrp miru $path
+    sudo chmod g+rwx $path
+    ```
+
+    </CodeGroup>
+  </Tab>
+  <Tab title="Transfer ownership">
+    <CodeGroup>
+
+    ```bash read-only
+    path="/path/to/dir"
+    sudo chown miru $path
+    sudo chmod u+rx $path
+    ```
+
+    ```bash read-write
+    path="/path/to/dir"
+    sudo chown miru $path
+    sudo chmod u+rwx $path
+    ```
+
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+### ACLs
+
+When you cannot change the ownership or the group of a path (e.g., a directory shared
+between multiple services), use POSIX Access Control Lists (ACLs) for fine-grained
+permission control.
+
+ACLs require the `acl` package. If `setfacl` is not available, install it with:
+
+```bash
+sudo apt install acl
+```
+
+**Files**
+
+Grant the `miru` user read and write access to a file.
+
+<CodeGroup>
+
+```bash read-only
+sudo setfacl -m u:miru:r /path/to/file.json
+```
+
+```bash read-write
+sudo setfacl -m u:miru:rw /path/to/file.json
+```
+
+</CodeGroup>
+
+**Directories**
+
+Grant the `miru` user read/write/execute access to a directory.
+
+<CodeGroup>
+
+```bash read-only
+sudo setfacl -m u:miru:rx /path/to/dir
+```
+
+```bash read-write
+sudo setfacl -m u:miru:rwx /path/to/dir
+```
+
+</CodeGroup>
