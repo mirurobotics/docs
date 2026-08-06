@@ -43,7 +43,7 @@ An opaque schema is a single JSON or YAML mapping at the root, with the followin
 | ------------------- | -------- | ------------------------------------------------------------------------ |
 | `config_type`       | Yes      | The [config type slug](/cfg-mgmt/primitives/config-types#param-slug) the schema belongs to. |
 | `instance_filepath` | No       | The absolute path where config instances are written on the device.       |
-| `instance_format`   | No       | The format of the config instance: `json`, `yaml`, or `xml`.              |
+| `instance_format`   | No       | The format of the config instance: `json`, `yaml`, `xml`, or `text`.      |
 | `language`          | No       | Must be `opaque` when present.                                            |
 
 A few rules are worth calling out:
@@ -79,6 +79,7 @@ Opaque schemas accept the widest set of config instance formats of any Miru sche
 - **JSON**
 - **YAML**
 - **XML**
+- **Text**
 
 ## Instance file paths
 

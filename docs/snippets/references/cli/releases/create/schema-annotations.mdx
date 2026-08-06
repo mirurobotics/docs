@@ -61,3 +61,31 @@
 
 
 </ParamField>
+
+<ParamField path="instance format">
+  The instance format declares the format that config instances for this schema are deployed as on the device.
+
+  JSON Schema and CUE schemas accept `json` and `yaml`. [Opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas accept a wider set — `json`, `yaml`, `xml`, and `text` — since their instance content is not validated.
+
+  This annotation is optional and is inferred from the instance file path's extension. Under the default instance file path of `/srv/miru/configs/{config-type-slug}.json`, the instance format therefore defaults to `json`.
+
+  <CodeGroup>
+
+  ```yaml JSON Schema
+  x-miru-instance-format: "yaml"
+  ```
+
+  
+  ```cue CUE
+  @miru(instance_format="yaml")
+  ```
+
+  
+  ```yaml Opaque
+  instance_format: "xml"
+  ```
+
+  </CodeGroup>
+
+  Examples: `json`, `yaml`, `xml`, `text`
+</ParamField>

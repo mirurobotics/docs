@@ -73,6 +73,18 @@ import SchemaFormats from '/snippets/schemas/formats.mdx';
   <AgentYamlSupport />
 </ParamField>
 
+<ParamField path="instance format" type="string">
+  <ImmutableBadge />
+
+  The format that config instances (for this schema) are deployed as on the device.
+
+  JSON Schema and CUE schemas accept `json` and `yaml`. [Opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas accept `json`, `yaml`, `xml`, and `text`, since their instance content is not validated.
+
+  The instance format is inferred from the instance file path's extension, so it defaults to `json` under the default instance file path.
+
+  Examples: `json`, `yaml`, `xml`, `text`
+</ParamField>
+
 <ParamField path="config type" type="Config Type">
   <ImmutableBadge />
 

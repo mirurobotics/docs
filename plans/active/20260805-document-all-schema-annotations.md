@@ -22,22 +22,28 @@ After this change, a reader on any of the three pages sees all three annotations
 
 ## Progress
 
-- [ ] Milestone 1 — Revert the uncommitted `formats.mdx` edit to clear the dirty tree; no commit.
-- [ ] Milestone 2 — Confirm the accepted-value list against the backend doc comment; record it in the Decision Log.
-- [ ] Milestone 3 — Add the instance-format annotation to the snippet, align `opaque.mdx` and `overview.mdx`, add cspell words if needed; commit.
-- [ ] Milestone 4 — Render check, preflight plus bats, force-push, verify CI on PR #138 (all green except the pre-existing `audit`).
+- [x] Milestone 1 — Revert the uncommitted `formats.mdx` edit to clear the dirty tree; no commit.
+- [x] Milestone 2 — Confirm the accepted-value list against the backend doc comment; record it in the Decision Log.
+- [x] Milestone 3 — Add the instance-format annotation to the snippet, align `opaque.mdx` and `overview.mdx`, add cspell words if needed; commit.
+- [x] Milestone 4 — Render check, preflight plus bats, force-push, verify CI on PR #138 (all green except the pre-existing `audit`).
 
 ## Surprises & Discoveries
 
-Add entries as work proceeds.
+- 2026-08-05 — `node_modules/` was absent, so the first `pnpm run lint` aborted at `== ESLint (MDX) ==` with `Command "eslint" not found`. `pnpm install --frozen-lockfile` fixed it; not a content problem.
+- 2026-08-05 — cspell required no new words. `text`, `xml`, and `yaml` are all covered by built-in dictionaries, and `jsonc` never entered the content because the backend narrows it away.
+- 2026-08-05 — `./scripts/preflight.sh` aborted at `=== Audit ===` exactly as the plan predicted, on pre-existing advisories in transitive dev dependencies: `fast-uri` via `mint` (GHSA-7p8r-x3mc-p8w7) and `brace-expansion` via `eslint` (GHSA-rgw5-rvv9-x895), reported as "3 vulnerabilities found / Severity: 3 high (1 ignored)". A pristine `main` worktree produces the byte-identical advisory set, confirming this is not a regression from this diff, which touches no `package.json` and no `pnpm-lock.yaml`. `bats pub/scripts/agent/check-miru-access_test.bats` was run separately and passed all 30 tests.
 
 ## Decision Log
 
-Add entries as work proceeds.
+- 2026-08-05 — **Accepted instance-format values confirmed against the backend.** `repos/backend/internal/configs/domain/config_instances/formats.go:9-22` still carries the doc comment "SupportedFormats is narrower than the set of instance formats core accepts: jsonc is deliberately excluded for every language. Only opaque schemas admit xml and text, since they impose no structure on the instance content," and `SupportedFormats` still returns `{Json, Yaml, Xml, Text}` for `OpaqueLang` and `{Json, Yaml}` otherwise. Documented values are therefore `json`, `yaml` for JSON Schema and CUE; `json`, `yaml`, `xml`, `text` for Opaque; `jsonc` is documented nowhere.
+- 2026-08-05 — The CLI/`core`-vs-backend `jsonc` divergence is noted as a possible follow-up for the backend owner. Filing it was explicitly out of scope for this plan and was not done.
+- 2026-08-05 — No headings were added anywhere, so no `heading-case` allowlist entry and no `tools/lint/**` edit were needed (`git diff --stat main...HEAD -- tools/lint` prints nothing, as required).
 
 ## Outcomes & Retrospective
 
-Fill in at completion.
+All four milestones landed as written; no deviation from the plan of work was needed. Four docs files changed: the shared annotation snippet gained a third `<ParamField path="instance format">` with the JSON Schema / CUE / Opaque `<CodeGroup>`, `opaque.mdx` gained `text` in both its key table and its instance-format bullet list, `formats.mdx`'s Opaque row became `JSON, YAML, XML, Text`, and `overview.mdx`'s `## Properties` section gained a sibling `instance format` field. The load-bearing two-trailing-space separator lines survived: `cat -A … | grep -c '^  \$'` prints `6`, up from `4`. `grep -rn jsonc docs/ --include='*.mdx'` prints nothing.
+
+The plan's foresight about the two silent hazards paid off. Pre-identifying the trailing-space convention meant the new `<CodeGroup>` was written to match rather than discovered broken later, and pre-identifying the `audit` failure as pre-existing meant it was recognized and proven rather than debugged.
 
 ## Context and Orientation
 
