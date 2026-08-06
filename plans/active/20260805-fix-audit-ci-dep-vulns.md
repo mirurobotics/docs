@@ -21,20 +21,30 @@ After this change, `./scripts/audit.sh` exits 0 with no actionable advisories, a
 
 ## Progress
 
-- [ ] Milestone 1: Bump override floors, regenerate lockfile, verify audit passes locally, commit.
-- [ ] Milestone 2: Run the repo's local checks (frozen-lockfile install, lint smoke tests, doc lint), then validate CI is green via preflight.
+- [x] Milestone 1: Bump override floors, regenerate lockfile, verify audit passes locally, commit. (Superseded mid-flight: the identical fix landed on `main` via PR #145 before this branch was pushed — see Surprises & Discoveries.)
+- [x] Milestone 2: Run the repo's local checks (frozen-lockfile install, lint smoke tests, doc lint), then validate CI is green via preflight.
 
 ## Surprises & Discoveries
 
-(Add entries as you go.)
+- **The fix landed on `main` independently while this branch was in flight.** PR #145 (commit `18861fe`, "chore(deps): raise audit override floors and fix lint.sh on macOS bash 3.2") merged the byte-identical `package.json` override bumps (`fast-uri >=3.1.5 <4`, `brace-expansion >=5.0.9`) and the matching `pnpm-lock.yaml` re-resolution. This branch's local fix commit was confirmed byte-identical (`git diff origin/main HEAD -- package.json pnpm-lock.yaml` was empty) and was dropped automatically on rebase ("patch contents already upstream").
+- PR #145 also fixed a latent macOS bash 3.2 parse failure in `scripts/lint.sh` that was out of scope here.
 
 ## Decision Log
 
-(Add entries as you go.)
+- **Rebase and drop, rather than re-apply.** After `origin/main` picked up PR #145, the branch was rebased onto `main` and the now-redundant fix commit dropped. Re-creating an empty or duplicate dependency commit would add noise with no content. The branch now carries only this plan document.
+- The `ignoreCves` list was not touched, per the plan's constraint.
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+The end goal — `audit` CI job green with no actionable advisories — is achieved on `main` (via PR #145) and re-verified on this branch after rebase:
+
+- `pnpm install --frozen-lockfile` — exit 0.
+- `./scripts/audit.sh` — exit 0; output `1 vulnerabilities found / Severity: 1 high (1 ignored)`, matching the expected transcript. No fast-uri or brace-expansion tables.
+- `pnpm-lock.yaml` resolves `fast-uri@3.1.5` and `brace-expansion@5.0.9`; no `fast-uri@3.1.4` / `brace-expansion@5.0.8` pins remain.
+- `pnpm run test:lint` — exit 0.
+- `./scripts/lint.sh` — exit 0, "All documentation lint checks passed."
+
+Retrospective: the diagnosis and fix in this plan were correct (identical to what shipped in #145), but the change raced with an independent fix. Lesson: for small, urgent CI-red fixes, check `origin/main` for concurrent fixes immediately before pushing.
 
 ## Context and Orientation
 
