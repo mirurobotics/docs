@@ -21,23 +21,30 @@ After this change, the config-instances page states the real, per-schema-languag
 
 ## Progress
 
-- [ ] Milestone 1 — re-verify ground truth against `backend/` and `core/`; record findings in the Decision Log.
-- [ ] Milestone 2 — rewrite the `## File formats` section and the `content` property of `docs/cfg-mgmt/primitives/config-instances.mdx`; commit.
-- [ ] Milestone 3 — broaden `docs/snippets/definitions/config-instance.mdx`; commit.
-- [ ] Milestone 4 — run the full audit greps and `./scripts/preflight.sh`; fix anything it flags; commit.
-- [ ] Milestone 5 — push, open a draft PR, wait for CI green, then mark the PR ready.
+- [x] Milestone 1 — re-verify ground truth against `backend/` and `core/`; record findings in the Decision Log.
+- [x] Milestone 2 — rewrite the `## File formats` section and the `content` property of `docs/cfg-mgmt/primitives/config-instances.mdx`; commit.
+- [x] Milestone 3 — broaden `docs/snippets/definitions/config-instance.mdx`; commit.
+- [x] Milestone 4 — run the full audit greps and `./scripts/preflight.sh`; fix anything it flags; commit.
+- [x] Milestone 5 — push, open a draft PR, wait for CI green. (PR left in draft; the orchestrator marks it ready.)
 
 ## Surprises & Discoveries
 
-(Add entries as you go.)
+- 2026-08-05 — `./scripts/lint.sh` failed initially with `Command "eslint" not found`; the checkout had no `node_modules`. `pnpm install --frozen-lockfile` fixed it. Not a code issue.
+- 2026-08-05 — No `cspell.json` change was needed: XML, JSONC and the new prose introduced no unknown words.
+- 2026-08-05 — Milestone 4 produced no file changes, so it had no commit of its own, as the plan anticipated.
+- 2026-08-05 — `./scripts/audit.sh` reports 1 high vulnerability that is already ignored; preflight still exits 0. Pre-existing, unrelated to this change.
 
 ## Decision Log
 
-(Add entries as you go. Milestone 1 requires an entry.)
+- 2026-08-05 — **Ground truth re-verified; unchanged from planning.** `backend/internal/configs/domain/config_instances/formats.go:12-22` — `SupportedFormats` returns `{Json, Yaml, Xml, Text}` for `schemas.OpaqueLang` and `{Json, Yaml}` otherwise; the file's own comment states `jsonc` is deliberately excluded for every language. `core/pkg/schemas/format.go:77-81` — the union enum is `json, yaml, jsonc, xml, text`; `InstFormatFromFileType` (`:97-111`) has cases for JSON, YAML, JSONC and XML only, no `Text` case, and `FileExt()` (`:154-155`) returns `NewNoInstFormatFileExt` for `InstFormatText`. So text genuinely cannot be inferred from a file extension and must be declared. No adjustment to the plan's documented format lists was required.
+- 2026-08-05 — Reused `/snippets/schemas/formats.mdx` on the config-instances page rather than restating the table, as planned. Import placed last in the import block, which satisfies `import-sorted` (case-insensitive ascending by path).
+- 2026-08-05 — Remaining `JSON or YAML` occurrences in `docs/` were reviewed and left alone: `schemas/languages/opaque.mdx:40` and `snippets/references/cli/releases/create/schema-annotations.mdx:36` describe *schema* file formats (correctly JSON/YAML only), `schemas/languages/cue.mdx:17` is prose about CUE's history, and `changelog/product.mdx:19` is a historical record.
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+Two prose files changed, exactly as scoped: `docs/cfg-mgmt/primitives/config-instances.mdx` (content property reworded to be format-agnostic, `## File formats` rewritten around the shared `<SchemaFormats />` table, `<Note>` added for the `instance_format: text` inference caveat, deploy-time behavior corrected to "writes byte for byte") and `docs/snippets/definitions/config-instance.mdx` (one sentence broadened). `./scripts/preflight.sh` exits 0 and every audit grep returns the expected result. No `cspell.json` or lint-tool changes were needed.
+
+Two follow-ups remain open and are deliberately not addressed here: the backend platform API spec's `InstanceFormat` enum (`json|yaml|jsonc`, missing `xml`/`text` and wrongly including `jsonc`), which must be fixed upstream in `backend/api/specs/platform/` before the vendored copies in `docs/references/platform-api/` can be regenerated; and the YAML-support minimum agent version discrepancy between `docs/snippets/agent/yaml-support.mdx` (v0.7.0) and `docs/changelog/agent.mdx:96-100` (v0.7.1).
 
 ## Context and Orientation
 
