@@ -1,0 +1,145 @@
+---
+title: "File rules"
+---
+
+import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+import { PublisherBadge } from '/snippets/components/role-badges.jsx';
+import FileRuleDef from '/snippets/definitions/file-rule.mdx';
+import Retention from '/snippets/file-rules/retention.mdx';
+import Sources from '/snippets/file-rules/sources.mdx';
+import Upload from '/snippets/file-rules/upload.mdx';
+
+<FileRuleDef />
+
+Every rule has a `source` — the files on the device it manages. Beyond that, `upload`
+(where matching files go) and `retention` (how long the device keeps them) are
+independent optional halves: a rule with only `upload` collects data and leaves the local
+copies alone, a rule with only `retention` reclaims disk without sending anything, and a
+rule with both uploads a file and then reclaims its space. A rule with neither does
+nothing useful. Rules are created by defining them as rule files and
+[releasing them via the CLI](/data-uploads/define-file-rules).
+
+## Properties
+
+<ParamField path="name" type="string" required>
+  <ImmutableBadge />
+
+  A human-readable name for the rule. It is **not** unique within a workspace, and it
+  participates in the rule's digest — renaming a rule mints a new rule rather than
+  renaming the existing one.
+
+  Examples: `Robot Logs`, `Crash Reports`, `Camera Footage`
+</ParamField>
+
+<ParamField path="digest" type="string">
+  <ImmutableBadge />
+
+  A hash of the rule's resolved definition — its name, source, upload, and retention.
+  File rules are deduplicated by digest within a workspace: pushing a rule identical to
+  an existing one returns the existing rule instead of a duplicate.
+
+  Example: `sha256:1234567890`
+</ParamField>
+
+<ParamField path="source" type="Source" required>
+  <ImmutableBadge />
+
+  Which files on the device the rule manages. See [Sources](#sources).
+</ParamField>
+
+<ParamField path="upload" type="Upload">
+  <ImmutableBadge />
+
+  Where matching files are uploaded, including the
+  [upload collection](/data-uploads/primitives/upload-collections) the resulting uploads
+  are grouped into. Absent when the rule only manages local retention. See
+  [Uploads](#uploads).
+</ParamField>
+
+<ParamField path="retention" type="Retention">
+  <ImmutableBadge />
+
+  How long the device keeps the local copies of matching files. Absent when the device
+  keeps them indefinitely — Miru never deletes them. See [Retention](#retention).
+</ParamField>
+
+## File format
+
+Each rule is defined as a single YAML file in your Git repository:
+
+```yaml
+name: Robot Logs                       # required
+
+source:
+  glob: "/var/log/robot/*.log"         # required
+  stability_window_secs: 60            # optional, defaults to 60
+
+upload:                                # optional
+  collection_slug: robot-logs          # required inside upload
+  bucket: my-uploads-bucket            # required inside upload
+  path: "logs/{device_id}/{upload_id}/{file_name}"  # optional
+
+retention:                             # optional
+  ttl_secs: 604800                     # required inside retention
+  require_upload: true                 # set exactly when upload is present
+```
+
+Rule files reference the rule's upload collection by its slug
+(`upload.collection_slug`) and the bucket by name (`upload.bucket`), while the API object
+returns their ids and names (`upload.upload_collection_id`, `upload.bucket_id`).
+
+See [sources](#sources), [uploads](#uploads), and [retention](#retention) for details on
+each field, and [define file rules](/data-uploads/define-file-rules) for how to release
+them.
+
+## Sources
+
+<Sources />
+
+## Uploads
+
+<Upload />
+
+## Retention
+
+<Retention />
+
+## Immutability
+
+File rules are **immutable**. A rule is created once, shipped to devices as part of
+a [release](/primitives/releases), and never edited in place. To change
+what is managed, you must create a new rule, release it, and deploy it to your devices.
+
+Because `name` is part of the rule's digest, even renaming a rule mints a new rule.
+
+## Git provenance
+
+Rules are defined as YAML files in your Git repository and created by
+[releasing them via the CLI](/data-uploads/define-file-rules). Each rule records the
+Git commits it was released from — the commit itself and the rule file's path relative
+to the repository root — so any rule in Miru can be traced back to the exact lines of
+YAML that defined it. 
+
+## Create a file rule  <PublisherBadge />
+
+File rules must be created as part of a [release](/primitives/releases). Visit the [define releases](/data-uploads/define-file-rules) page to learn how to create file rules and releases.
+
+## View a file rule 
+
+To view a file rule in Miru, navigate to the [Releases page](https://app.mirurobotics.com/releases), and click into the release that contains the file rule you want to view.
+
+<Frame>
+  ![Releases Page](https://assets.mirurobotics.com/docs/v04/images/releases/page.png)
+</Frame>
+
+At the bottom of the page under the **Overview** tab, you will find a list of the release's file rules.
+
+<Frame>
+  ![Release File Rules List](https://assets.mirurobotics.com/docs/v04/images/releases/upload-rule-list.png)
+</Frame>
+
+To see more details about a file rule, simply click on the dropdown arrow next to the file rule.
+
+<Frame>
+  ![Release File Rule Details](https://assets.mirurobotics.com/docs/v04/images/releases/upload-rule-details.png)
+</Frame>

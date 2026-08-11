@@ -31,7 +31,7 @@ Observable outcome: `grep -rin 'upload rule\|upload-rule\|upload_rule' docs/` re
 
 ## Progress
 
-- [ ] Milestone 0 — Orientation and baseline (branch, install, baseline lint/audit, re-verify upstream facts)
+- [x] Milestone 0 — Orientation and baseline (branch, install, baseline lint/audit, re-verify upstream facts) — 2026-08-11, no commit (read-only)
 - [ ] Milestone 1 — The file-rule primitive page, snippets, and definition snippet
 - [ ] Milestone 2 — The authoring guide (`define-file-rules`) and nav + redirects
 - [ ] Milestone 3 — Inbound repoints across data-uploads, developers, primitives, cfg-mgmt, admin
@@ -41,7 +41,17 @@ Observable outcome: `grep -rin 'upload rule\|upload-rule\|upload_rule' docs/` re
 
 ## Surprises & Discoveries
 
-- (fill in as work proceeds)
+- **M0 (2026-08-11): `audit.sh` is GREEN locally, contrary to the known pre-existing-red condition.**
+  `./scripts/audit.sh` exits 0 with `No known vulnerabilities found`. The `pnpm.auditConfig.ignoreCves` list in `package.json` now carries 8 CVEs, which evidently covers the advisories that previously made the job red. So `./scripts/preflight.sh` can run end to end; the by-hand fallback stage list in Concrete Steps M0.3 is not needed. Baseline `./scripts/lint.sh` and `pnpm run validate` also exit 0.
+
+- **M0 (2026-08-11): every upstream fact in the Context section re-verified unchanged.** No Context edits were needed.
+  - `repos/openapi` HEAD for `apis/configs/components/schemas/file-rule.yaml` is still `651db31` (`refactor(file-rule)!: make retention optional and drop the policy concept (#234)`), the same commit the plan was written against. Re-read both `schemas/file-rule.yaml` and `requests/file-rule.yaml`: `name`/`digest`/`source`/optional `upload`/optional `retention`, `retention.ttl_secs` required inside the block, `require_upload` present exactly when `upload` is, 9-attempt abandon, workspace-scoped digest dedup, and the guarantee-vs-enforcement two-phase wording all match the plan verbatim.
+  - `repos/cli-private`: `internal/domain/filerules/spec.go` HEAD is still `8ba7471`; the YAML shape (`name`, `source.{glob,stability_window_secs}`, `upload.{collection_slug,bucket,path}`, `retention.{ttl_secs,require_upload}`) matches the plan's Context YAML field for field. `internal/commands/release/flags.go` registers `file-rule` and `file-rules` with no aliases.
+  - `repos/agent` HEAD is still `2b24b4f`; `agent/src/models/file_rule.rs:76` still reads `impl From<backend_client::BaseUploadRule> for FileRule`, and the workspace version is still `0.10.0`. D3's premise holds, so the D3 **fallback** applies (see Decision Log addendum).
+  - Inventory baseline: `grep -rn "upload rule\|Upload rule\|Upload Rule\|upload-rule\|upload_rule\|uploadRule" docs/ | wc -l` → **87** hits across the exact 21 files the plan's inventory lists — no files added or dropped.
+
+- **M0 (2026-08-11): the D1 gate is NOT satisfied and will not be during this task.**
+  `git tag --contains 8ba7471` → `v0.11.0-beta.1` only; `git tag --list 'v0.11.0'` → empty. There is no **stable** `v0.11.0` tag. Per D1 the PR therefore stays in **draft**. The CLI reference is still updated (Milestone 4) as D1 directs — the alternative D1 explicitly forbids is softening the docs to straddle both flag sets.
 
 ## Decision Log
 
@@ -56,6 +66,8 @@ Observable outcome: `grep -rin 'upload rule\|upload-rule\|upload_rule' docs/` re
   `repos/agent` `main` (`2b24b4f`) restructured its *internal* model into `FileRule`/`FileRuleRetention` (`agent/src/models/file_rule.rs`) but still deserializes the **old** wire object (`impl From<backend_client::BaseUploadRule> for FileRule`, mapping `delete_policy: after_upload` → `retention { require_upload: true, ttl_secs: 0 }`). The only deletion path is `agent/src/upload/executor.rs::delete_source_file`, which fires **only** for the exact value `require_upload: true, ttl_secs: 0`. Workspace version is still `0.10.0` (`Cargo.toml:13`) and no agent release ships file rules yet.
   Therefore: document `retention.require_upload` and `retention.ttl_secs` as the platform contract (they are real, accepted, and stored), state the two-phase model in the API's own terms, and add a `<Note>` that local deletion is performed by the Miru Agent. Do **not** write "the device deletes the file `ttl_secs` after it becomes eligible" as shipped behavior for `ttl_secs > 0`, and do **not** describe retention-only (no `upload` block) rules as enforced on-device.
   **Open Question (must be resolved before `gh pr ready`):** the Miru Agent version that enforces general `ttl_secs` and retention-only rules. If it is known, name it in the `<Note>` with a `/changelog/agent#v-x-y-z` link, matching how `product.mdx` gates uploads on Agent v0.10.0. **If it is not known, take the fallback**: keep the `<Note>` version-free ("Local deletion is performed by the Miru Agent; deleting a file requires write access to its parent directory — see file system access") and say nothing about timing. The fallback is a complete, shippable state; do not block on the answer.
+
+- **D3-resolution (2026-08-11): the fallback is taken.** Re-verification at M0 confirmed `repos/agent` still deserializes `BaseUploadRule` and is still at workspace version `0.10.0`, so no shipped Miru Agent version enforces general `ttl_secs` or retention-only rules. The Open Question ("which agent version?") therefore has **no answer to give**, and the plan's own sanctioned fallback applies: the retention `<Note>` is version-free, names no timing, and says only that local deletion is performed by the Miru Agent and requires write access to the parent directory, linking `/developers/agent/filesys-access#data-uploads`. Per D3 this is "a complete, shippable state".
 
 - **D4: The section stays `/data-uploads/**` and the nav group stays "Data Uploads".**
   Only two page slugs change (below). Renaming the whole section would touch every page under it, need a wildcard redirect, and re-open a product-naming question the platform has not asked for — `upload collections`, `uploads`, and `buckets` all keep their names upstream (the openapi rename plan explicitly left them alone; the CLI PR body says "Upload *collections* are untouched").

@@ -1,6 +1,12 @@
-A rule's `destination` declares where which registered [bucket](/data-uploads/primitives/buckets) to write to, and the object path within it. 
+A rule's optional `upload` block declares which registered [bucket](/data-uploads/primitives/buckets) matching files are written to, and the object path within it. Omit it for a rule that only manages local retention.
 
-<ParamField path="bucket" type="string">
+<ParamField path="collection_slug" type="string" required>
+  Slug of the [upload collection](/data-uploads/primitives/upload-collections) the resulting uploads are grouped into.
+
+  Example: `robot-logs`
+</ParamField>
+
+<ParamField path="bucket" type="string" required>
   Name of the registered bucket this rule uploads to.
 
   Example: `my-uploads-bucket`
@@ -31,12 +37,4 @@ A rule's `destination` declares where which registered [bucket](/data-uploads/pr
   <Warning>
     Templates must contain the `{upload_id}` variable.
   </Warning>
-</ParamField>
-
-<ParamField path="delete_policy" type="enum" default="never">
-  When the device deletes the local source file after collecting it.
-
-  - `never` *(default)* — keep the local file in place; you manage local retention
-    yourself.
-  - `after_upload` — delete the local file once the upload is durably confirmed.
 </ParamField>
