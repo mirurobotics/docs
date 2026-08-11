@@ -40,6 +40,10 @@ To create a release, the following prerequisites must be met:
 
 Schemas may belong to multiple releases and are identified by hashing their content. Schemas with equivalent content are considered identical (even if comments, spacing, or other formatting is different).
 
+For [instance slots](/cfg-mgmt/primitives/schemas/overview#param-instance-slots), the hash covers each slot's key, file path, and required flag — but not its name or description. A schema whose only change is a slot's name or description is therefore identical to the schema you already have, and the change is not applied.
+
+No two slots anywhere in a release may share a file path, since the config instances of a single deployment would otherwise compete for the same file on the device.
+
 ### Define the schemas
 
 Schemas must be defined in a supported schema [language](/cfg-mgmt/primitives/schemas/languages/overview). You can find example schemas in our [getting-started repository](https://github.com/mirurobotics/getting-started).
@@ -69,7 +73,7 @@ x-miru-config-type: "{your-config-type-slug}"
 
 Schemas support annotations—Miru-specific extensions that define metadata about a schema. 
 
-The `config type` annotation is the only required annotation—it's how Miru knows which config type the schema belongs to. However, there are other useful annotations, such as the `instance file path` annotation, which defines where config instances for this schema are written to disk on your devices.
+The `config type` annotation is the only required annotation—it's how Miru knows which config type the schema belongs to. However, there are other useful annotations, such as the `instance file path` annotation, which defines where config instances for this schema are written to disk on your devices, and the `instance slots` annotation, which lets one schema write several files by declaring a destination for each.
 
 <Annotations />
 

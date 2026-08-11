@@ -12,3 +12,6 @@ Deployments have a variety of constraints designed to simplify configuration upd
 1. **Deployments are one-time use**
 
    Once removed from a device, a new deployment must be created to restore a device's previous configurations.
+1. **Deployments hold at most one config instance per schema slot**
+
+   A deployment contains no more than one config instance for each [instance slot](/cfg-mgmt/primitives/schemas/overview#param-instance-slots) of each of its release's schemas, and must contain an instance for every slot marked as required.

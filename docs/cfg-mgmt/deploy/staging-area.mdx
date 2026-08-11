@@ -108,7 +108,9 @@ A panel will open on the right of the page displaying the deployment's details.
 </Frame>
 
 To view the details of any config instances in the deployment, click into the config
-instance in the **Configurations** section of the panel.
+instance in the **Configurations** section of the panel. The deployment holds one config
+instance per [instance slot](/cfg-mgmt/primitives/schemas/overview#param-instance-slots) of each of its schemas, so a schema with several slots
+appears here as several config instances.
 
 <Frame>
   ![Staged Deployment Configurations](https://assets.mirurobotics.com/docs/v04/images/deployments/staged-panel:configurations.png)
