@@ -6,15 +6,22 @@ description: "Changelog and migration steps for the Miru CLI"
 
 import { Dropdown } from '/snippets/components/api-dropdown.jsx';
 
-{/* TODO: before gh pr ready — confirm the v0.10.4 tag exists in cli-private and replace *Unreleased* with the release date */}
 
-# v0.10.4
+# v0.11.0
 
 *Unreleased*
 
 ## Features
 
-- Add support for the instance slots schema annotation, letting one config schema write config instances to several file paths
+- Add support for the [instance slots](/cfg-mgmt/primitives/schemas/overview#instance-slots) schema annotation, letting one config schema write config instances to several file paths
+
+## Improvements
+
+- Add more context to schema push failure messages
+
+## Fixes
+
+- Fix a bug where the CLI would occasionally identify a pushed schema as new when it already existed
 
 ---
 
