@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "cd docs && mint dev",
     "lint": "./scripts/lint.sh",
+    "validate": "cd docs && mint validate",
     "test:lint": "./tests/test-lint.sh"
   },
   "devDependencies": {

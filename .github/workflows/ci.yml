@@ -53,6 +53,9 @@ jobs:
       - name: Run documentation lint
         run: ./scripts/lint.sh
 
+      - name: Validate documentation build
+        run: pnpm run validate
+
   audit:
     runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
@@ -102,6 +105,7 @@ jobs:
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: tools/lint/go.mod
+          cache-dependency-path: tools/lint/go.sum
 
       - name: Run Go lint on tools/lint
         env:
@@ -121,6 +125,7 @@ jobs:
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: tools/lint/go.mod
+          cache-dependency-path: tools/lint/go.sum
 
       - name: Run coverage gate for tools/lint
         run: ./tools/lint/scripts/covgate.sh
