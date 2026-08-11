@@ -24,7 +24,19 @@ import SchemaFormats from '/snippets/schemas/formats.mdx';
 
   The absolute file system path where the config instance is written on the device.
 
+  The file path comes from the [instance slot](/cfg-mgmt/primitives/schemas/overview#param-instance-slots) the instance is bound to; it is not set on the instance itself.
+
   Examples: `/srv/miru/configs/v1/motion-control.json`, `/srv/miru/configs/safety.yaml`
+</ParamField>
+
+<ParamField path="slot key" type="string">
+  <ImmutableBadge />
+
+  The key of the [instance slot](/cfg-mgmt/primitives/schemas/overview#param-instance-slots) on the config schema that this instance fills.
+
+  Every config instance is bound to exactly one slot, and takes that slot's file path as its own. A schema that declares no slots has a single slot with the key `default`.
+
+  Examples: `default`, `left-arm`, `right-arm`
 </ParamField>
 
 <ParamField path="config schema" type="Config Schema">

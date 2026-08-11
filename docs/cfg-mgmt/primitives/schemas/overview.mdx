@@ -62,13 +62,50 @@ import SchemaFormats from '/snippets/schemas/formats.mdx';
 <ParamField path="instance file path" type="string">
   <ImmutableBadge />
 
-  The instance file path is the absolute file system path where config instances (for this schema) are written on the device.
+  The absolute file system path of the schema's single [instance slot](#param-instance-slots) — where config instances (for this schema) are written on the device.
 
   The default instance file path is `/srv/miru/configs/{config-type-slug}.json`.
+
+  A schema that writes to more than one destination declares [instance slots](#param-instance-slots) instead, and has one file path per slot.
 
   Examples: `/srv/miru/configs/v1/mobility.json`, `/srv/miru/configs/safety.yaml`
 
   <AgentYamlSupport />
+</ParamField>
+
+<ParamField path="instance slots" type="InstanceSlot[]">
+  <ImmutableBadge />
+
+  The instance slots are the distinct file system destinations this schema writes to. Every schema has at least one. A schema with several slots writes several config instances — one per slot — from a single definition, which is how one `motion-control` schema serves four identical motor controllers.
+
+  All of a schema's slots share that schema's validation and differ only in where the file is written. Two files that need different validation belong to two config types, not to two slots of one schema.
+
+  Each slot has the following fields:
+
+  | Field | Type | Required | Description |
+  | --- | --- | --- | --- |
+  | `key` | string | yes | An immutable, code-friendly identifier for the slot, unique within the schema. |
+  | `name` | string | yes | A human-readable display name for the slot. |
+  | `filepath` | string | yes | The absolute file system path where this slot's config instance is written on the device. |
+  | `required` | boolean | yes | Whether every deployment of a release containing this schema must include a config instance for this slot. |
+  | `description` | string | no | An optional explanation of what the slot is for. |
+
+  Slot fields must satisfy the following constraints:
+
+  - `key` contains only lowercase letters, digits, hyphens (`-`), and underscores (`_`), starts with a lowercase letter or digit, and contains at most 128 characters
+  - `name` contains between 1 and 48 characters; any markup is stripped
+  - `filepath` contains between 1 and 128 characters and no `..` segments
+  - `description` contains at most 512 characters; any markup is stripped, and a description consisting only of markup is discarded
+
+  These constraints are applied by Miru when the release is created, not by the CLI when it reads your schema files.
+
+  Slot keys must be unique within a schema. Slot file paths must be unique within a schema and across every schema in the release, so no two config instances in a release ever compete for the same file.
+
+  A slot's `required` flag is fleet-wide: marking a slot required means every deployment of a release containing this schema must include an instance for it, on every device. Miru does not support requiring a slot on some devices but not others.
+
+  A [config instance](/cfg-mgmt/primitives/config-instances) is bound to exactly one slot, identified by that slot's [key](/cfg-mgmt/primitives/config-instances#param-slot-key).
+
+  If a schema declares no slots, it has a single slot with the key `default`, the name `Default`, the schema's instance file path, and `required` set to true.
 </ParamField>
 
 <ParamField path="instance format" type="string">
@@ -78,7 +115,7 @@ import SchemaFormats from '/snippets/schemas/formats.mdx';
 
   JSON Schema and CUE schemas accept `json` and `yaml`. [Opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas accept `json`, `yaml`, `xml`, and `text`, since their instance content is not validated.
 
-  The instance format is inferred from the instance file path's extension, so it defaults to `json` under the default instance file path.
+  When a schema does not declare an instance format, the format is inferred from the extension of its first slot's file path, and every one of its slot file paths must imply that same format. It therefore defaults to `json` under the default instance file path. A schema that declares an instance format explicitly is not subject to that matching requirement, and its slot file paths' extensions are never compared.
 
   Examples: `json`, `yaml`, `xml`, `text`
 </ParamField>
