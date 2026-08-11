@@ -60,26 +60,6 @@ Although many of CUE's capabilities are omitted in this example, you'll find som
 
 As you can see, CUE inlines constraints directly with type definitions, making schemas significantly more concise than JSON Schema. For more information on the supported features of CUE, check out the [CUE tour](https://cuelang.org/docs/tour/) on the official CUE website.
 
-## Instance slots
-
-A CUE schema declares [instance slots](/cfg-mgmt/primitives/schemas/overview#param-instance-slots) with the `@miru_instance_slot` attribute. Unlike the other schema annotations, this is not an argument to `@miru` — it is an attribute in its own right, written alongside `@miru`, once per slot:
-
-```cue CUE
-@miru(config_type="motion-control")
-@miru_instance_slot(key="left-arm", name="Left Arm", filepath="/srv/miru/configs/v1/left-arm.json", required=true, description="Config for the left arm controller")
-@miru_instance_slot(key="right-arm", name="Right Arm", filepath="/srv/miru/configs/v1/right-arm.json", required=false)
-
-name: string
-```
-
-A few things are worth knowing when writing these attributes:
-
-- Slots are ordered by the order the attributes appear in the file. This matters because when the schema does not declare an instance format, the format is inferred from the first slot's file path.
-- Only attributes on the file's top-level declarations are read. A `@miru_instance_slot` attached to a field is silently ignored.
-- CUE attribute values are always strings, so `required` may be written either bare as `required=true` or quoted as `required="true"`. Both are accepted.
-- Every slot must differ from every other. CUE collapses two byte-identical `@miru_instance_slot` lines into one before Miru ever sees them, and Miru rejects slots that repeat a key or a file path.
-- An empty attribute value is rejected, so `description=""` is an error in CUE even though an empty description is accepted in JSON Schema and Opaque. To leave a slot without a description, omit the argument.
-
 ## CUE version
 
 Miru fully supports CUE and stays up to date with the latest CUE features and syntax. Currently, Miru uses CUE API [`v0.14.2`](https://github.com/cue-lang/cue/releases/tag/v0.14.2).

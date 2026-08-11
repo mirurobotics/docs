@@ -35,28 +35,6 @@ instance_format: text
 
 Consult the [schema annotations](/cfg-mgmt/primitives/schemas/overview#schema-annotations) documentation to learn more about what the individual fields mean and how to use them.
 
-## Instance slots
-
-An opaque schema declares [instance slots](/cfg-mgmt/primitives/schemas/overview#param-instance-slots) with the top-level `instance_slots` key, a list of slot objects. Each slot is a separate file the schema writes on the device:
-
-```yaml Opaque
-language: opaque
-config_type: motion-control
-instance_slots:
-  - key: left-arm
-    name: Left Arm
-    filepath: /srv/miru/configs/v1/left-arm.xml
-    required: true
-    description: Config for the left arm controller
-  - key: right-arm
-    name: Right Arm
-    filepath: /srv/miru/configs/v1/right-arm.xml
-    required: false
-instance_format: xml
-```
-
-Declare `instance_slots` or `instance_filepath`, but never both — declaring both is an error. Omitting both gives the schema a single default slot. If `instance_slots` is present it must list at least one slot, so omit the key entirely rather than writing an empty list.
-
 ## File formats
 
 Opaque schemas themselves are written as JSON or YAML. Unlike the other languages, CUE is not accepted here:

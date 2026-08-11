@@ -59,63 +59,24 @@ import SchemaFormats from '/snippets/schemas/formats.mdx';
   Examples: `sha256:45YeoJJ2btBnAKQztAEXEjHsqyyQfC1z1Mw3LLM4xMUy`
 </ParamField>
 
-<ParamField path="instance file path" type="string">
-  <ImmutableBadge />
-
-  The absolute file system path of the schema's single [instance slot](#param-instance-slots) — where config instances (for this schema) are written on the device.
-
-  The default instance file path is `/srv/miru/configs/{config-type-slug}.json`, or `/srv/miru/configs/{config-type-slug}.yaml` when the schema itself is written in YAML.
-
-  A schema that writes to more than one destination declares [instance slots](#param-instance-slots) instead, and has one file path per slot.
-
-  Examples: `/srv/miru/configs/v1/mobility.json`, `/srv/miru/configs/safety.yaml`
-
-  <AgentYamlSupport />
-</ParamField>
-
 <ParamField path="instance slots" type="InstanceSlot[]">
   <ImmutableBadge />
 
-  The instance slots are the distinct file system destinations this schema writes to. Every schema has at least one. A schema with several slots writes several config instances — one per slot — from a single definition, which is how one `motion-control` schema serves four identical motor controllers.
-
-  All of a schema's slots share that schema's validation and differ only in where the file is written. Two files that need different validation belong to two config types, not to two slots of one schema.
-
-  Each slot has the following fields:
-
-  | Field | Type | Required | Description |
-  | --- | --- | --- | --- |
-  | `key` | string | yes | An immutable, code-friendly identifier for the slot, unique within the schema. |
-  | `name` | string | yes | A human-readable display name for the slot. |
-  | `filepath` | string | yes | The absolute file system path where this slot's config instance is written on the device. |
-  | `required` | boolean | yes | Whether every deployment of a release containing this schema must include a config instance for this slot. |
-  | `description` | string | no | An optional explanation of what the slot is for. |
-
-  Slot fields must satisfy the following constraints:
-
-  - `key` contains only lowercase letters, digits, hyphens (`-`), and underscores (`_`), starts with a lowercase letter or digit, and contains at most 128 characters
-  - `name` contains between 1 and 48 bytes after markup is stripped; non-ASCII characters count as more than one byte
-  - `filepath` contains between 1 and 128 bytes and no `..` anywhere in the path, and on a JSON Schema or CUE schema ends in `.json`, `.yaml`, or `.yml` — [opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas accept any extension
-  - `description` contains at most 512 bytes after markup is stripped, and a description consisting only of markup is discarded
-
-  These constraints are applied by Miru when the release is created, not by the CLI when it reads your schema files.
-
-  Slot keys must be unique within a schema. Slot file paths must be unique within a schema and across every schema in the release, so no two config instances in a release ever compete for the same file.
-
-  A slot's `required` flag is fleet-wide: marking a slot required means every deployment of a release containing this schema must include an instance for it, on every device. Miru does not support requiring a slot on some devices but not others.
-
-  A [config instance](/cfg-mgmt/primitives/config-instances) is bound to exactly one slot, identified by that slot's [key](/cfg-mgmt/primitives/config-instances#param-slot-key).
-
-  If a schema declares no slots, it has a single slot with the key `default`, the name `Default`, the schema's instance file path, and `required` set to true.
+  The valid file system destinations that config instances for this schema are written to. 
+  
+  Typically a schema defines only a single required slot. However, schemas may define several instance slots when the same validation applies to several different config instances in a release. 
+  
+  See [Instance slots](#instance-slots) for fields, constraints, and default behavior.
 </ParamField>
 
 <ParamField path="instance format" type="string">
   <ImmutableBadge />
 
-  The format that config instances (for this schema) are deployed as on the device.
+  The file format that config instances (for this schema) are deployed as on the device.
 
-  JSON Schema and CUE schemas accept `json` and `yaml`. [Opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas accept `json`, `yaml`, `xml`, and `text`, since their instance content is not validated.
+  Consult the [file formats](/cfg-mgmt/primitives/schemas/overview#file-formats) section below for the supported formats for each schema language.
 
-  When a schema does not declare an instance format, the format is inferred from the extension of its first slot's file path, and every one of its slot file paths must imply that same format. It therefore defaults to `json` under the default instance file path, or to `yaml` when the schema is written in YAML and takes the YAML default path. A schema that declares an instance format explicitly is not subject to that matching requirement, though on a JSON Schema or CUE schema every slot file path must still end in `.json`, `.yaml`, or `.yml`. Opaque schemas are exempt, so their slot file paths may carry any extension.
+
 
   Examples: `json`, `yaml`, `xml`, `text`
 </ParamField>
@@ -143,6 +104,132 @@ For more information on schema languages, visit the [languages](/cfg-mgmt/primit
 ## File formats
 
 <SchemaFormats />
+
+## Instance slots
+
+An instance slot defines one or more valid config instances that are valid for a given schema. Instance slots are defined as an [annotation](#schema-annotations) within the schema itself. 
+
+**Multiple slots**
+
+Instance slots are primarily used to define a schema that serves multiple config instances with the same validation.
+
+<CodeGroup>
+
+```yaml JSON Schema
+x-miru-config-type: "Motor Controller"
+x-miru-instance-slots:
+  - key: "motor-controller-1"
+    name: "Motor Controller 1"
+    filepath: "/srv/miru/configs/motor-controller-1.json"
+    required: true
+  - key: "motor-controller-2"
+    name: "Motor Controller 2"
+    filepath: "/srv/miru/configs/motor-controller-2.json"
+    required: true
+  - key: "motor-controller-3"
+    name: "Motor Controller 3"
+    filepath: "/srv/miru/configs/motor-controller-3.json"
+    required: true
+[...schema content...]
+```
+
+```cue CUE
+@miru(config_type="Motor Controller")
+@miru_instance_slot(
+  name="Motor Controller 1",
+  key="motor-controller-1",
+  filepath="/srv/miru/configs/motor-controller-1.json",
+  required=true
+)
+@miru_instance_slot(
+  name="Motor Controller 2",
+  key="motor-controller-2",
+  filepath="/srv/miru/configs/motor-controller-2.json",
+  required=true,
+)
+@miru_instance_slot(
+  name="Motor Controller 3",
+  key="motor-controller-3",
+  filepath="/srv/miru/configs/motor-controller-3.json",
+  required=true,
+)
+
+[...schema content...]
+```
+
+```YAML Opaque
+config_type: "Motor Controller"
+instance_slots:
+  - key: "motor-controller-1"
+    name: "Motor Controller 1"
+    filepath: "/srv/miru/configs/motor-controller-1.json"
+    required: true
+  - key: "motor-controller-2"
+    name: "Motor Controller 2"
+    filepath: "/srv/miru/configs/motor-controller-2.json"
+    required: true
+  - key: "motor-controller-3"
+    name: "Motor Controller 3"
+    filepath: "/srv/miru/configs/motor-controller-3.json"
+    required: true
+[...schema content...]
+```
+
+</CodeGroup>
+
+A schema with multiple slots allows multiple config instances to be written to different destinations.  This structure allows a `motor-controller` schema to serve four identical motor controllers.
+
+All instance slots share the exact same validation. So two files that need different validation belong to two config types, not to two slots of one schema.
+
+**Slot fields**
+
+Each instance slot is defined by the following fields:
+
+<ParamField path="key" type="string" required>
+  <ImmutableBadge />
+
+  An immutable, code-friendly identifier for the slot. 
+  
+  Slot keys must be unique within a schema. Two slots cannot have the same key.
+
+  Examples: `motor-controller-1`, `motor-controller-2`, `motor-controller-3`
+</ParamField>
+
+<ParamField path="name" type="string" required>
+  <ImmutableBadge />
+
+  A human-readable display name for the slot.
+
+  Examples: `Motor Controller 1`, `Motor Controller 2`, `Motor Controller 3`
+</ParamField>
+
+<ParamField path="filepath" type="string" required>
+  <ImmutableBadge />
+
+  The absolute file system path where this slot's config instance is written on the device.
+
+  Slot file paths must be unique within a schema. Two slots cannot have the same file path.
+
+  Examples: `/srv/miru/configs/motor-controller-1.json`, `/srv/miru/configs/motor-controller-2.json`, `/srv/miru/configs/motor-controller-3.json`
+</ParamField>
+
+<ParamField path="required" type="boolean" required>
+  <ImmutableBadge />
+
+  Whether a deployment must include a config instance for this slot or not.
+
+  If `true`, a deployment must include a config instance for this slot. If `false`, a deployment may optionally include a config instance for this slot.
+
+  Examples: `true`, `false`
+</ParamField>
+
+<ParamField path="description" type="string">
+  <ImmutableBadge />
+
+  An optional explanation of what the slot is for.
+
+  Examples: `The first motor controller`, `The second motor controller`, `The third motor controller`
+</ParamField>
 
 ## Schema annotations
 

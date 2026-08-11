@@ -40,10 +40,6 @@ To create a release, the following prerequisites must be met:
 
 Schemas may belong to multiple releases and are identified by hashing their content. Schemas with equivalent content are considered identical (even if comments, spacing, or other formatting is different).
 
-A schema's [instance slots](/cfg-mgmt/primitives/schemas/overview#param-instance-slots) are declared in the schema file itself, so editing any part of a slot — including its name or description — changes the schema's content and produces a new schema.
-
-No two slots anywhere in a release may share a file path, since the config instances of a single deployment would otherwise compete for the same file on the device.
-
 ### Define the schemas
 
 Schemas must be defined in a supported schema [language](/cfg-mgmt/primitives/schemas/languages/overview). You can find example schemas in our [getting-started repository](https://github.com/mirurobotics/getting-started).
