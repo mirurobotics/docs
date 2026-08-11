@@ -15,7 +15,7 @@ For a more detailed guide on creating releases, visit the [release creation](/cf
 ### Requirements
 
 - Schemas and upload rules must be committed to a local Git repository
-- Schemas must be annotated with their config types (see [annotations](/cfg-mgmt/primitives/schemas/overview#schema-annotations))
+- Schemas must be annotated with their config types (see [annotations](/cfg-mgmt/primitives/schemas/overview#schema-annotations)). A schema that writes more than one file must declare [instance slots](/cfg-mgmt/primitives/schemas/overview#param-instance-slots), one per destination
 - Git repository must have a remote URL (e.g. GitHub) configured
 - At least one config schema is provided (upload rules are optional) 
 
