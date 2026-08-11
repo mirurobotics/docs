@@ -40,7 +40,7 @@ Nothing in the CLI's command surface changes, so no new commands or flags are do
 - [ ] Milestone 0 — Orientation and baseline (branch, install, baseline preflight, verify merge status of the CUE and CLI work).
 - [ ] Milestone 1 — Extend the shared schema-annotations snippet with the `instance slots` annotation.
 - [ ] Milestone 2 — Add the `instance slots` and `slot key` properties, and correct the singular-file prose on the schema and config-instance primitives pages.
-- [ ] Milestone 3 — Add slot examples and caveats to the three schema-language pages and the CUE packages snippet.
+- [ ] Milestone 3 — Add slot examples and caveats to the three schema-language pages (CUE packages snippet optional — see Plan of Work).
 - [ ] Milestone 4 — Fix downstream drift: release creation, quick start, deploy pages, deployment constraints.
 - [ ] Milestone 5 — CLI reference cross-link and a new CLI changelog entry.
 - [ ] Milestone 6 — Validation, render check, push, PR, CI green, leave draft.
@@ -90,14 +90,16 @@ A slot has five fields, identical across the API and all three schema languages:
 | Field | Type | Required | Meaning |
 |---|---|---|---|
 | `key` | string | yes | Immutable, code-friendly identifier, unique within the schema. Lowercase letters, digits, hyphens, and underscores; must start with a lowercase letter or digit; at most 128 characters. |
-| `name` | string | yes | Human-readable display name. |
-| `filepath` | string | yes | Absolute path on the device. Unique within the schema **and** across every schema in the release. |
+| `name` | string | yes | Human-readable display name. HTML is stripped; 1-48 bytes after stripping. |
+| `filepath` | string | yes | Absolute path on the device. 1-128 bytes, no `..` segments, no null bytes. Unique within the schema **and** across every schema in the release. |
 | `required` | boolean | yes | Whether every deployment of a release containing this schema must include an instance for this slot. |
-| `description` | string | no | Free text. |
+| `description` | string | no | At most 512 characters. Markup is stripped; a description consisting only of markup is silently discarded as absent. |
 
 `required` is **mandatory on every surface**. Some plan documents in `repos/core` and `repos/cli-private` still describe it as optional-defaulting-to-true; those are stale and the code requires it. Do not document a default.
 
 **The `key` character rules are enforced by the platform, not by the CLI.** `core` deliberately does not enforce the pattern client side. On `core` `origin/main` the merged JSON Schema and Opaque surfaces require only that `key` be present and non-empty, and each pins that with a test named "instance slot key vocabulary is not enforced client side" (`pkg/schemas/jsonschema/annotations_test.go:453`, `pkg/schemas/opaque/compile_test.go:534`). The commit that recorded the decision — `0600dd0`, "refactor(schemas): stop enforcing the slot key pattern client side" — sits on `core`'s **unmerged** `origin/feat/instance-slots-annotation`, not on `origin/main`; do not go looking for it on `main`. `^[a-z0-9][a-z0-9_-]*$` and the 128-character limit live in `repos/openapi` (`apis/configs/components/schemas/config-schema.yaml:91`) and `repos/backend` (`internal/configs/ugc/config_schemas.go:168`), and are applied when the release is created server side. Document the rules as constraints on a valid slot key — do **not** imply that `miru release create` rejects a bad key locally, and do not describe them as parse-time or annotation-time validation.
+
+**The `name`, `filepath`, and `description` limits are server-enforced too, and must be published.** All four fields are sanitized server side before creation by `CleanInstSlot` (`repos/backend` `origin/main` `internal/configs/ugc/config_schemas.go:113-163`): `name` via `ugc.SanitizeName` (HTML stripped, 1-48 bytes — `repos/core` `origin/main` `pkg/ugc/user.go:9,23`), `filepath` via `ugc.SanitizeFilepath` (1-128 bytes, no `..` segments, no null bytes — `repos/core` `origin/main` `pkg/ugc/files.go:24,30`), and `description` via `cleanSlotDesc` (markup stripped, at most 512 characters — `config_schemas.go:173`; a description consisting only of markup is silently discarded as absent). Like the `key` pattern, these are applied by the platform when the release is created, not by the CLI at parse time, so write them in the same voice as the `key` constraints. The 128-byte `filepath` cap is the one authors will actually hit, on long absolute device paths, so it must reach the published page. The repo's precedent for stating such a limit is `config-types.mdx:29-33` ("between 1 and 48 characters").
 
 If a schema declares no slots, the server synthesizes one: `key: default`, `name: Default`, `filepath: /srv/miru/configs/{config-type-slug}.{json|yaml}`, `required: true` (`.yaml` when the schema's file format is YAML, otherwise `.json`).
 
@@ -221,7 +223,7 @@ Then update the neighboring blocks so they stay true:
 
 File: `repos/docs/docs/cfg-mgmt/primitives/schemas/overview.mdx`.
 
-The `## Properties` section (line 16) mirrors the annotation snippet; the prior plan established that when the snippet gains an annotation, this section must gain the matching property. Insert a new `<ParamField path="instance slots" type="InstanceSlot[]">` after the `instance file path` block (ends line 72) and before `instance format` (line 74). Open it with `<ImmutableBadge />` like every sibling. Document the five slot fields as a small Markdown table, using the `slug` block in `docs/cfg-mgmt/primitives/config-types.mdx:29-33` as the model **for formatting only** (a lead-in sentence plus a bulleted constraint list). Do not copy its framing: `slug` is validated client side, `key` is not — see "The `key` character rules are enforced by the platform" in Context and Orientation. State the uniqueness rules and that `required` is fleet-wide.
+The `## Properties` section (line 16) mirrors the annotation snippet; the prior plan established that when the snippet gains an annotation, this section must gain the matching property. Insert a new `<ParamField path="instance slots" type="InstanceSlot[]">` after the `instance file path` block (ends line 72) and before `instance format` (line 74). Open it with `<ImmutableBadge />` like every sibling. Document the five slot fields as a small Markdown table, and put the `key` constraints in a bulleted list beneath that table, modelled on the bulleted constraint list in the `slug` block at `docs/cfg-mgmt/primitives/config-types.mdx:29-33`. That list is the model **for formatting only** — do not copy its framing: `slug` is validated client side, `key` is not — see "The `key` character rules are enforced by the platform" in Context and Orientation. The in-repo precedent for a Markdown table inside a `<ParamField>` is `docs/snippets/upload-rules/destinations.mdx`. Publish the server-enforced limits on `name`, `filepath`, and `description` alongside the `key` constraints, exactly as given in the slot field table in Context and Orientation — the 128-byte `filepath` cap especially, since authors hit it on long absolute device paths. State the uniqueness rules and that `required` is fleet-wide.
 
 Also on this page:
 
