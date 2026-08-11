@@ -10,9 +10,17 @@ This ExecPlan is a living document. The sections Progress, Surprises & Discoveri
 | `repos/core/` | read-only | Source of truth for the schema-annotation syntax and parse-time errors. |
 | `repos/cli-private/` | read-only | Confirms the CLI gains no new commands, flags, or output. |
 | `repos/openapi/` | read-only | Source of truth for the slot object fields and API behavior. |
-| `repos/backend/` | read-only | Source of truth for server-side slot rules (uniqueness, cardinality, digest). |
+| `repos/backend/` | read-only | Source of truth for server-side slot rules (uniqueness, cardinality, digest, and the slot `key` character pattern). Also holds `origin/refactor/config-schema-instance-slots-frontend`. |
+| `repos/frontend/` | read-only | Dashboard UI. As of 2026-08-10 it contains **no** instance-slot code and no slots branch. |
 
 This plan lives in `repos/docs/plans/` because every file that changes is in `repos/docs`. No code changes are made in any other repository.
+
+**Where the frontend slots branch lives.** Three edits in this plan are gated on dashboard behaviour. The branch named for that work is `origin/refactor/config-schema-instance-slots-frontend` and it lives in **`repos/backend`**, not `repos/frontend`. Confirm and inspect it read-only with:
+
+    cd /home/ben/miru/workbench2/repos/backend && git fetch origin
+    git ls-tree -r --name-only origin/refactor/config-schema-instance-slots-frontend | grep -i slot
+
+Be aware of what that branch is and is not: it contains the frontend-facing **v08 API models** (for example `internal/servers/frontend/v08/models/model_instance_slot.go`), not dashboard markup. It can tell you that the API exposes slots; it **cannot** tell you what label the dashboard renders. `repos/frontend` `origin/main` has no slot code at all — `grep -rli instanceSlot` returns nothing. Therefore any edit in this plan that depends on a visible dashboard string is verifiable **only** against a running dashboard. If you do not have one, take the documented skip path; that is the expected outcome, not a failure.
 
 ## Purpose / Big Picture
 
@@ -47,24 +55,15 @@ Add timestamps (`YYYY-MM-DD HH:MMZ`) as steps complete. Split any partially fini
 
 Entries below were made during authoring on 2026-08-10 by Ben Smidt. Add new dated entries as work proceeds.
 
-- **2026-08-10 — Document CUE `@miru_slot` with the same confidence as the other two languages; gate the *ship*, not the *prose*.** The JSON Schema and Opaque annotations are merged to `core` `main` (`f1be215` #151, `9d9845d` #150). The CUE annotation is on the unmerged branch `origin/feat/instance-slots-cue` (#152), and the CLI wiring is on the unmerged branch `origin/feat/instance-slots-annotation`, blocked on a tagged `core` release. Three options were considered:
-  1. Ship JSON Schema and Opaque tabs only, add CUE later. Rejected: every `<CodeGroup>` in `docs/snippets/references/cli/releases/create/schema-annotations.mdx` has exactly three symmetric tabs, and a two-tab block reads as "CUE cannot do this", which is false.
-  2. Ship all three with a "coming soon" note on the CUE tab. Rejected: the repo has a documented distaste for "coming soon" phrasing, and the note would need a follow-up PR to remove.
-  3. **Chosen:** write all three tabs as plain, unqualified documentation, and control exposure at ship time. Merging `docs` to `main` does **not** publish — `repos/docs` publishes only through the manual `promote.yml` workflow — so `main` can legitimately be ahead of the released CLI. The PR is kept in **draft** until core#152 and the cli-private wiring are merged and a CLI version containing them is tagged; the changelog entry in Milestone 5 is pinned to that exact version. The PR body must state this dependency explicitly so a reviewer does not merge and promote early.
-- **2026-08-10 — Do not document machine-readable error codes or verbatim error messages.** `repos/docs` has no precedent anywhere for documenting error codes such as `invalid_instance_slots` or `conflicting_instance_target` (only HTTP status tables in `docs/developers/device-api/events.mdx` and a status-enum table in `docs/primitives/deployments.mdx`). House style states the *rule* in prose — for example `cue-packages.mdx`'s "Annotating multiple files or no files will result in an error." This plan follows that style: every rule from the grounding brief is stated as a constraint the author must satisfy, and no error identifier appears in the docs.
+- **2026-08-10 — Write all three language tabs as plain documentation; gate the *ship*, not the *prose*.** JSON Schema and Opaque slots are merged to `core` `main` (`f1be215` #151, `9d9845d` #150); CUE is on unmerged `origin/feat/instance-slots-cue` (#152) and the CLI wiring on unmerged `origin/feat/instance-slots-annotation`. A two-tab `<CodeGroup>` would read as "CUE cannot do this" (false), and "coming soon" phrasing is against house style, so exposure is controlled by keeping the PR in **draft** until #152 and the CLI wiring are merged and tagged (see "Publishing is not automatic" in Context and Orientation). The Milestone 5 changelog entry is pinned to that exact version, and the PR body must state the dependency.
+- **2026-08-10 — State rules in prose; document no error codes or verbatim error messages.** `repos/docs` has no precedent for error identifiers such as `invalid_instance_slots`; see the house-style note in Context and Orientation.
 - **2026-08-10 — No new page; extend existing pages.** A slot is a property of a config schema, not a new primitive. Adding a page would require editing `docs/docs.json` navigation and re-running the redirects lint rule for no reader benefit. The two prior comparable plans (`plans/active/20260805-document-all-schema-annotations.md`, `plans/completed/20260805-config-instance-file-formats.md`) both extended existing pages. `docs/docs.json` is therefore **not** touched by this plan.
-- **2026-08-10 — Leave the opaque `language:` vs `schema_language:` spelling alone.** `core` `main` renamed the key (`1756cc2` #134) and kept `language` as `DeprecatedSchemaLangKey` in `repos/core/pkg/schemas/opaque/compile.go:18`, so both spellings still parse. The docs currently show `language:` in three places (`docs/snippets/references/cli/releases/create/schema-annotations.mdx:33`, `docs/cfg-mgmt/primitives/schemas/languages/opaque.mdx:21` and `:28`). Changing that is independent drift with its own release-timing question and would enlarge this PR's review surface. It is recorded as an open follow-up in Outcomes & Retrospective, not fixed here. New opaque slot examples in this plan therefore do **not** restate the language key at all.
+- **2026-08-10 — Leave the opaque `language:` vs `schema_language:` spelling alone.** `core` `main` renamed the key (`1756cc2` #134) and kept `language` as `DeprecatedSchemaLangKey` in `repos/core/pkg/schemas/opaque/compile.go:18`, so both spellings still parse. The docs currently show `language:` in three places (`docs/snippets/references/cli/releases/create/schema-annotations.mdx:33`, `docs/cfg-mgmt/primitives/schemas/languages/opaque.mdx:21` and `:28`). Changing that is independent drift with its own release-timing question and would enlarge this PR's review surface. It is recorded under Known drift in Context and Orientation, not fixed here. New opaque slot examples in this plan therefore do **not** restate the language key at all.
 - **2026-08-10 — `instance file path` is not deprecated.** It is removed from the *new API contract*, but it remains a current, supported *annotation*: the single-slot shorthand. Docs must present it that way. Never write "deprecated" next to it.
 
 ## Outcomes & Retrospective
 
 (Summarize at completion or major milestones.)
-
-Open follow-ups noticed during authoring, to be carried forward, not fixed here:
-
-- The opaque `language:` → `schema_language:` rename is not reflected in the docs (see Decision Log).
-- `docs/cfg-mgmt/create-a-release.mdx:20` contains what looks like a broken link, `[duplicating releases](/primitives/releases#duplicate-a-release)`. The redirects lint rule does not check inline links. Out of scope.
-- `docs/snippets/agent/yaml-support.mdx` says Agent **v0.7.0** while `docs/changelog/agent.mdx` says v0.7.1. Pre-existing, carried over from `plans/completed/20260805-config-instance-file-formats.md`.
 
 ## Context and Orientation
 
@@ -74,7 +73,9 @@ Open follow-ups noticed during authoring, to be carried forward, not fixed here:
 
 There is no `CLAUDE.md`, `AGENTS.md`, or written style guide in this repo. Conventions are enforced entirely by tooling (see Validation and Acceptance) and by imitation of neighboring files.
 
-Publishing is **not** automatic. Merging to `main` does not put anything on the public site; a human runs the manual `promote.yml` GitHub Actions workflow to promote `main` → staging → uat → production.
+Publishing is **not** automatic. Merging to `main` does not put anything on the public site; a human runs the manual `promote.yml` GitHub Actions workflow to promote `main` → staging → uat → production. Because of this, `main` may legitimately be ahead of the released CLI: merging a docs PR never exposes unreleased behaviour to readers.
+
+**House style: no error codes.** State the *rule* in prose, never a machine-readable error identifier or a verbatim error message. The only precedents in this repo are HTTP status tables in `docs/developers/device-api/events.mdx` and a status-enum table in `docs/primitives/deployments.mdx`. Follow `cue-packages.mdx`'s model: "Annotating multiple files or no files will result in an error."
 
 ### What an instance slot is
 
@@ -95,6 +96,8 @@ A slot has five fields, identical across the API and all three schema languages:
 | `description` | string | no | Free text. |
 
 `required` is **mandatory on every surface**. Some plan documents in `repos/core` and `repos/cli-private` still describe it as optional-defaulting-to-true; those are stale and the code requires it. Do not document a default.
+
+**The `key` character rules are enforced by the platform, not by the CLI.** `core` deliberately stopped enforcing the pattern client side (`0600dd0`); the parser now requires only that `key` be non-empty. `^[a-z0-9][a-z0-9_-]*$` and the 128-character limit live in `repos/openapi` (`apis/configs/components/schemas/config-schema.yaml:91`) and `repos/backend` (`internal/configs/ugc/config_schemas.go:168`), and are applied when the release is created server side. Document the rules as constraints on a valid slot key — do **not** imply that `miru release create` rejects a bad key locally, and do not describe them as parse-time or annotation-time validation.
 
 If a schema declares no slots, the server synthesizes one: `key: default`, `name: Default`, `filepath: /srv/miru/configs/{config-type-slug}.{json|yaml}`, `required: true` (`.yaml` when the schema's file format is YAML, otherwise `.json`).
 
@@ -165,6 +168,11 @@ CUE-specific facts worth documenting: a `@miru_slot` attached to a *field* rathe
 - **The Miru Agent.** The agent does not model slots at all. It writes each config instance to its own absolute file path — which is the bound slot's file path — so multi-slot deployments land correctly with no agent change.
 - **The published Platform API.** Version `2026-05-06` does **not** expose slots; the platform hard cut has not landed. Do not describe slots as a Platform API feature.
 
+### Known drift, deliberately not fixed here
+
+- The opaque `language:` → `schema_language:` rename (`core` `1756cc2` #134) is not reflected in the docs. Both spellings still parse (`DeprecatedSchemaLangKey`), and the docs show `language:` at `docs/snippets/references/cli/releases/create/schema-annotations.mdx:33` and `docs/cfg-mgmt/primitives/schemas/languages/opaque.mdx:21` and `:28`. Fixing it has its own release-timing question and would enlarge this PR. New opaque slot examples in this plan therefore do not restate the language key at all.
+- `docs/snippets/agent/yaml-support.mdx` says Agent **v0.7.0** while `docs/changelog/agent.mdx` says v0.7.1. Pre-existing, carried over from `plans/completed/20260805-config-instance-file-formats.md`.
+
 ### Files that must not be touched
 
 - `repos/docs/docs/references/platform-api/*.yaml` and everything under `repos/docs/docs/references/device-api/` — these are vendored from Stainless and hand edits are overwritten.
@@ -213,7 +221,7 @@ Then update the neighboring blocks so they stay true:
 
 File: `repos/docs/docs/cfg-mgmt/primitives/schemas/overview.mdx`.
 
-The `## Properties` section (line 16) mirrors the annotation snippet; the prior plan established that when the snippet gains an annotation, this section must gain the matching property. Insert a new `<ParamField path="instance slots" type="InstanceSlot[]">` after the `instance file path` block (ends line 72) and before `instance format` (line 74). Open it with `<ImmutableBadge />` like every sibling. Document the five slot fields as a small Markdown table, using the `slug` block in `docs/cfg-mgmt/primitives/config-types.mdx:29-33` as the model for expressing `key`'s character constraints. State the uniqueness rules and that `required` is fleet-wide.
+The `## Properties` section (line 16) mirrors the annotation snippet; the prior plan established that when the snippet gains an annotation, this section must gain the matching property. Insert a new `<ParamField path="instance slots" type="InstanceSlot[]">` after the `instance file path` block (ends line 72) and before `instance format` (line 74). Open it with `<ImmutableBadge />` like every sibling. Document the five slot fields as a small Markdown table, using the `slug` block in `docs/cfg-mgmt/primitives/config-types.mdx:29-33` as the model **for formatting only** (a lead-in sentence plus a bulleted constraint list). Do not copy its framing: `slug` is validated client side, `key` is not — see "The `key` character rules are enforced by the platform" in Context and Orientation. State the uniqueness rules and that `required` is fleet-wide.
 
 Also on this page:
 
@@ -227,7 +235,7 @@ Add a `<ParamField path="slot key" type="string">` with `<ImmutableBadge />` to 
 
 File: `repos/docs/docs/cfg-mgmt/primitives/config-types.mdx`. Review only. The imported definition `docs/snippets/definitions/config-type.mdx` says each config type has one versioned schema its instances adhere to — still true under slots. Change nothing unless a concrete falsehood is found; record the review in Progress.
 
-File: `repos/docs/docs/cfg-mgmt/primitives/schemas/manage.mdx`. Under `## View a schema` (line 14), the `Metadata` tab lists what the dashboard shows for a schema. If the frontend v08 branch renders a slots list there, add one sentence naming it. **Verify against the running dashboard or the frontend branch before writing** — do not describe UI you have not seen. If unverifiable, skip this file and note it in Surprises & Discoveries.
+File: `repos/docs/docs/cfg-mgmt/primitives/schemas/manage.mdx`. Under `## View a schema` (line 14), the `Metadata` tab lists what the dashboard shows for a schema. If the dashboard renders a slots list there (see "Where the frontend slots branch lives" in Scope — the branch is in `repos/backend` and shows only API models, so this needs a running dashboard), add one sentence naming it. **Verify against the running dashboard or the frontend branch before writing** — do not describe UI you have not seen. If unverifiable, skip this file and note it in Surprises & Discoveries.
 
 ### Milestone 3 — schema-language pages
 
@@ -235,7 +243,7 @@ File: `repos/docs/docs/cfg-mgmt/primitives/schemas/languages/jsonschema.mdx`. Th
 
 File: `repos/docs/docs/cfg-mgmt/primitives/schemas/languages/opaque.mdx`. Same shape: an `## Instance slots` section after `## Example` (which ends around line 36, just before `## File formats` at line 38) showing the `instance_slots` YAML block. Do **not** touch the `language: opaque` lines (Decision Log).
 
-File: `repos/docs/docs/cfg-mgmt/primitives/schemas/languages/cue.mdx`. This is the language with the most surface area, because `@miru_slot` is a repeated declaration attribute rather than an argument to `@miru`. Add an `## Instance slots` section after the feature bullet list (line 53) and before `## CUE version` (line 63). It must cover: the attribute is separate from `@miru`, not a parameter of it; one attribute per slot; source order is preserved; an attribute placed on a field is ignored; `required` may be written bare or quoted; and two identical `@miru_slot` lines collapse into one, so slots must differ.
+File: `repos/docs/docs/cfg-mgmt/primitives/schemas/languages/cue.mdx`. This is the language with the most surface area, because `@miru_slot` is a repeated declaration attribute rather than an argument to `@miru`. Add an `## Instance slots` section after the feature bullet list (line 53) and before `## CUE version` (line 63). It must cover: the attribute is separate from `@miru`, not a parameter of it; one attribute per slot; source order is preserved; an attribute placed on a field is ignored; `required` may be written bare or quoted; two identical `@miru_slot` lines collapse into one, so slots must differ; and an empty `description=""` is **rejected** in CUE although it is accepted in JSON Schema and Opaque (CUE rejects any empty attribute value generically). That last item is the only cross-language asymmetry in this feature and must not be dropped.
 
 File: `repos/docs/docs/snippets/references/cli/releases/create/cue-packages.mdx`. Its closing sentence — "To annotate a CUE package, annotate **exactly one file** in the package. Annotating multiple files or no files will result in an error." — now needs a clause: all of the package's `@miru_slot` attributes must live on that same annotated file. This snippet is imported only by `cue.mdx`.
 
@@ -255,9 +263,9 @@ File: `repos/docs/docs/snippets/definitions/deployment-constraints.mdx`. Importe
 
 File: `repos/docs/docs/cfg-mgmt/deploy/initial-deployment.mdx`, lines 46-48 and 67. "it automatically fills with default values from your release's config schemas" and "For a first deployment, every file is listed as added." Add one clause noting that a schema with several slots contributes one file per slot.
 
-File: `repos/docs/docs/cfg-mgmt/deploy/staging-area.mdx`, around line 110 ("To view the details of any config instances in the deployment, click into the config instance in the **Configurations** section"). Add that the list has one entry per schema slot. Verify the wording against the dashboard before writing; if unverifiable, keep the edit to the schema-agnostic statement and note it.
+File: `repos/docs/docs/cfg-mgmt/deploy/staging-area.mdx`, around line 110 ("To view the details of any config instances in the deployment, click into the config instance in the **Configurations** section"). Add that the list has one entry per schema slot. Verify the wording against a running dashboard before writing (not against the backend branch — see Scope); if unverifiable, keep the edit to the schema-agnostic statement and note it.
 
-File: `repos/docs/docs/cfg-mgmt/deploy/config-editor.mdx`, lines 50-54 and 157-164. This page already speaks in terms of *files*, not schemas, so it mostly fits without contradiction. **Do not guess what label the editor tab shows for a slot** (slot `name` versus file name). Either verify against the frontend `refactor/config-schema-instance-slots-frontend` branch or the running dashboard and write the verified label, or make no change and record the open question in Surprises & Discoveries. Guessing here is worse than silence.
+File: `repos/docs/docs/cfg-mgmt/deploy/config-editor.mdx`, lines 50-54 and 157-164. This page already speaks in terms of *files*, not schemas, so it mostly fits without contradiction. **Do not guess what label the editor tab shows for a slot** (slot `name` versus file name). Either verify against a running dashboard and write the verified label — `repos/backend` `origin/refactor/config-schema-instance-slots-frontend` carries API models only and cannot answer this — or make no change and record the open question in Surprises & Discoveries. Guessing here is worse than silence.
 
 ### Milestone 5 — CLI reference and changelog
 
@@ -287,6 +295,8 @@ If the release turns out to include a breaking change, the `v0.10.0` entry in th
 
 All commands run from `/home/ben/miru/workbench2/repos/docs` unless stated otherwise.
 
+Every `./scripts/lint.sh` invocation below must print the four banners `== MDX Prose ==`, `== ESLint (MDX) ==`, `== CSpell ==`, `== OpenAPI ==` and end with the exact line `All documentation lint checks passed.` Anything else is a failure; do not commit.
+
 ### Milestone 0 — baseline
 
     cd /home/ben/miru/workbench2/repos/docs
@@ -302,17 +312,19 @@ Install dependencies. Skipping this produces a confusing `Command "eslint" not f
 
     pnpm install --frozen-lockfile
 
-Establish the audit baseline **before making any edit**, because `scripts/preflight.sh` uses `set -euo pipefail` and a failing audit aborts the run before the later stages:
+Establish the audit baseline **before making any edit**, because `scripts/preflight.sh` uses `set -euo pipefail` and a failing audit aborts the run before the later stages. There is no gitignored scratch directory in this repo, so use a temporary one and keep both outputs on disk — the draft-exit gate in Validation and Acceptance diffs them.
 
-    ./scripts/audit.sh; echo "exit=$?"
+    AUDIT_DIR="$(mktemp -d)"; echo "AUDIT_DIR=$AUDIT_DIR"   # record this path in Surprises & Discoveries
+    ./scripts/audit.sh > "$AUDIT_DIR/audit-branch.txt" 2>&1; echo "exit=$?"
 
 As of 2026-08-10 this exits **1** with `3 vulnerabilities found / Severity: 3 high (1 ignored)` — transitive `js-yaml` advisories (GHSA-5p4m-2wfm-xmqj) reached only through the `mint` dev dependency. This is **pre-existing and unrelated to documentation content**. Confirm pre-existence rather than assuming it:
 
-    git worktree add /tmp/docs-main-baseline main
-    cd /tmp/docs-main-baseline && pnpm install --frozen-lockfile && ./scripts/audit.sh; echo "exit=$?"
-    cd /home/ben/miru/workbench2/repos/docs && git worktree remove /tmp/docs-main-baseline
+    git worktree add "$AUDIT_DIR/docs-main" main
+    (cd "$AUDIT_DIR/docs-main" && pnpm install --frozen-lockfile && ./scripts/audit.sh > "$AUDIT_DIR/audit-main.txt" 2>&1; echo "exit=$?")
+    git worktree remove "$AUDIT_DIR/docs-main"
+    diff "$AUDIT_DIR/audit-main.txt" "$AUDIT_DIR/audit-branch.txt" && echo "IDENTICAL"
 
-Record the exact advisory list and exit code in Surprises & Discoveries. If a *new* advisory appears that is not in the baseline, that is a regression and must be resolved.
+`$AUDIT_DIR` does not survive a new shell — write the literal path into Surprises & Discoveries along with both exit codes and the advisory list. If `diff` prints anything, a *new* advisory has appeared; that is a regression and must be resolved, not documented.
 
 Confirm the release dependencies:
 
@@ -337,8 +349,6 @@ Expected output:
 If it prints `6` or `7`, the trailing-space separator lines in the new `<CodeGroup>` were lost. Fix by copying an existing block again rather than retyping.
 
     ./scripts/lint.sh
-
-Expect the four banners `== MDX Prose ==`, `== ESLint (MDX) ==`, `== CSpell ==`, `== OpenAPI ==` and a final `All documentation lint checks passed.`
 
 Commit:
 
@@ -437,13 +447,13 @@ Note: `gh pr edit` fails in this org because of the Projects-classic deprecation
 
 ## Validation and Acceptance
 
-**Preflight must report CLEAN before this task is reported complete and before the PR leaves draft.** CLEAN means CI is green on the pushed branch head — a local-only pass is not sufficient, and a green run on an older commit is not sufficient. Confirm with `gh pr checks --watch` against the head SHA you actually pushed.
+**Preflight must report CLEAN before this task is reported complete and before the PR leaves draft.** CLEAN means, on the head SHA you actually pushed: the `changes`, `lint`, and `shell-tests` CI jobs are green, **and** the `audit` job is either green or red with an advisory set identical to the pristine-`main` baseline captured in Milestone 0 — that is, `diff "$AUDIT_DIR/audit-main.txt" "$AUDIT_DIR/audit-branch.txt"` prints nothing. A local-only pass is not sufficient, and a green run on an older commit is not sufficient. Confirm the job states with `gh pr checks --watch` against the head SHA you actually pushed. This is the only definition of CLEAN in this plan.
 
 A docs-only PR that does not touch `tools/lint/**` runs exactly four CI jobs: `changes`, `lint`, `audit`, and `shell-tests`. The two custom-linter jobs are gated off.
 
 ### Known pre-existing failure — do not mistake this for a regression
 
-`scripts/audit.sh` runs `pnpm audit --ignore-registry-errors`. As of 2026-08-10 it exits **1** on transitive `js-yaml` advisories (`GHSA-5p4m-2wfm-xmqj`) reachable only through the `mint` dev dependency, reporting `3 vulnerabilities found / Severity: 3 high (1 ignored)`. These advisories were published after the last green CI run on `main` (`6d99108`, green 2026-08-06), so the `audit` job is expected to be red on this branch for reasons that have nothing to do with documentation content. Because `preflight.sh` uses `set -euo pipefail`, this also means `./scripts/preflight.sh` aborts at `=== Audit ===` and never reaches `=== Shell Script Tests ===`.
+`scripts/audit.sh` runs `pnpm audit --ignore-registry-errors`. As of 2026-08-10 it exits **1** on transitive `js-yaml` advisories (`GHSA-5p4m-2wfm-xmqj`) reachable only through the `mint` dev dependency, reporting `3 vulnerabilities found / Severity: 3 high (1 ignored)`. These advisories were published after the last green CI run on `main` (`6d99108`, green 2026-08-06), so a red `audit` job on this branch may have nothing to do with documentation content — whether that is acceptable is decided solely by the CLEAN definition above (an advisory set identical to the Milestone 0 baseline). Because `preflight.sh` uses `set -euo pipefail`, this also means `./scripts/preflight.sh` aborts at `=== Audit ===` and never reaches `=== Shell Script Tests ===`.
 
 Handling:
 
@@ -472,20 +482,18 @@ Each of these is checkable by a human:
 8. `grep -rn "coming soon" docs --include='*.mdx'` finds no new occurrence introduced by this change.
 9. `grep -rni "multi-instance mode\|is_dynamic\|deprecated" docs/cfg-mgmt --include='*.mdx'` finds no new occurrence — slots are not a mode, and `instance file path` is not deprecated.
 10. `grep -rn "invalid_instance_slots\|conflicting_instance_target\|instance_slot_" docs --include='*.mdx'` finds nothing — error codes are deliberately not documented.
-11. `gh pr checks` reports `lint`, `shell-tests`, and `changes` passing on the pushed head SHA, with `audit` either passing or failing solely for the documented pre-existing advisories.
+11. CLEAN as defined at the top of this section holds on the pushed head SHA.
 12. The CLI changelog entry's version heading matches a real tag in `repos/cli-private`.
 
-### Content correctness checks
+Items 13-19 are confirmed by reading the diff, without opening any other repository:
 
-A reviewer reading the diff should be able to confirm, without opening any other repository:
-
-- `required` is documented as a mandatory slot field with no default.
-- `required: true` is described as fleet-wide, not per-device.
-- The instance-file-path / instance-slots mutual exclusion is stated, and neither is described as winning.
-- Omitting the slots key is described as the way to get the default slot; an empty list is described as invalid.
-- The digest caveat (name/description-only changes are silently ignored) appears on `create-a-release.mdx`.
-- Slots appear nowhere as a Platform API feature.
-- The CUE section says `@miru_slot` sits alongside `@miru` and is not one of its arguments.
+13. `required` is documented as a mandatory slot field with no default.
+14. `required: true` is described as fleet-wide, not per-device.
+15. The instance-file-path / instance-slots mutual exclusion is stated, and neither is described as winning.
+16. Omitting the slots key is described as the way to get the default slot; an empty list is described as invalid.
+17. The digest caveat (name/description-only changes are silently ignored) appears on `create-a-release.mdx`.
+18. Slots appear nowhere as a Platform API feature.
+19. The CUE section says `@miru_slot` sits alongside `@miru` and is not one of its arguments, and states that `description=""` is rejected in CUE but accepted in JSON Schema and Opaque.
 
 ## Idempotence and Recovery
 
@@ -493,7 +501,7 @@ Every step is a file edit or a read-only command, so the whole plan is safe to r
 
 - `pnpm install --frozen-lockfile`, `./scripts/lint.sh`, `./scripts/audit.sh`, `pnpm run test:lint`, and `bats ...` are read-only and repeatable.
 - `pnpm dev` starts a local server on port 3000; stop it with Ctrl-C. It writes nothing to the repository.
-- The `git worktree add /tmp/docs-main-baseline main` baseline check must be undone with `git worktree remove /tmp/docs-main-baseline`. If that fails because the directory is dirty, use `git worktree remove --force /tmp/docs-main-baseline`, then `git worktree prune`.
+- The Milestone 0 baseline check creates a `mktemp -d` directory and a worktree inside it; undo with `git worktree remove "$AUDIT_DIR/docs-main"`. If that fails because the directory is dirty, use `git worktree remove --force "$AUDIT_DIR/docs-main"`, then `git worktree prune`. Delete `$AUDIT_DIR` only after the PR is out of draft — the gate needs the saved outputs.
 - To undo a single milestone: `git revert <sha>` for that milestone's commit, or `git reset --hard HEAD~1` if it has not been pushed.
 - To restart from scratch: `git checkout main && git branch -D docs/instance-slots` and begin at Milestone 0. Nothing outside this repository is modified, so there is no external state to clean up.
 
