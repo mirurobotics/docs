@@ -69,7 +69,7 @@ x-miru-config-type: "{your-config-type-slug}"
 
 Schemas support annotations—Miru-specific extensions that define metadata about a schema. 
 
-The `config type` annotation is the only required annotation—it's how Miru knows which config type the schema belongs to. However, there are other useful annotations, such as the `instance file path` annotation, which defines where config instances for this schema are written to disk on your devices.
+The `config type` annotation is the only required annotation—it's how Miru knows which config type the schema belongs to. However, there are other useful annotations, such as the `instance file path` annotation, which defines where config instances for this schema are written to disk on your devices, and the `instance slots` annotation, which lets one schema write several files by declaring a destination for each.
 
 <Annotations />
 
