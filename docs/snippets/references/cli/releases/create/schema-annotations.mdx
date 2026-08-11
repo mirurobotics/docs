@@ -43,7 +43,7 @@
     The Miru Agent ships with out-of-the-box access to `/srv/miru`. To deploy configs to a custom directory, please visit the [File system access](/developers/agent/filesys-access#configs) page.
   </Warning>
 
-  This annotation declares the schema's single instance slot. It is optional and defaults to `/srv/miru/configs/{config-type-slug}.json`. To write more than one file from one schema, declare [instance slots](#param-instance-slots) instead.
+  This annotation declares the schema's single instance slot. It is optional and defaults to `/srv/miru/configs/{config-type-slug}.json`, or to `/srv/miru/configs/{config-type-slug}.yaml` when the schema is written in YAML. To write more than one file from one schema, declare [instance slots](#param-instance-slots) instead.
 
   <CodeGroup>
 
@@ -126,7 +126,7 @@
 
   JSON Schema and CUE schemas accept `json` and `yaml`. [Opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas accept a wider set — `json`, `yaml`, `xml`, and `text` — since their instance content is not validated.
 
-  This annotation is optional. When it is omitted, the format is inferred from the extension of the schema's first slot file path, and every slot file path must then imply that same format. Under the default instance file path of `/srv/miru/configs/{config-type-slug}.json`, the instance format therefore defaults to `json`. Declaring this annotation removes the matching requirement: the slot file paths' extensions are no longer compared.
+  This annotation is optional. When it is omitted, the format is inferred from the extension of the schema's first slot file path, and every slot file path must then imply that same format. Under the default instance file path the instance format therefore defaults to `json`, or to `yaml` when the schema is written in YAML and takes the YAML default path. Declaring this annotation removes the matching requirement: the slot file paths' extensions are no longer compared.
 
   <CodeGroup>
 

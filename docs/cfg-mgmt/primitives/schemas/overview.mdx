@@ -64,7 +64,7 @@ import SchemaFormats from '/snippets/schemas/formats.mdx';
 
   The absolute file system path of the schema's single [instance slot](#param-instance-slots) — where config instances (for this schema) are written on the device.
 
-  The default instance file path is `/srv/miru/configs/{config-type-slug}.json`.
+  The default instance file path is `/srv/miru/configs/{config-type-slug}.json`, or `/srv/miru/configs/{config-type-slug}.yaml` when the schema itself is written in YAML.
 
   A schema that writes to more than one destination declares [instance slots](#param-instance-slots) instead, and has one file path per slot.
 
@@ -93,9 +93,9 @@ import SchemaFormats from '/snippets/schemas/formats.mdx';
   Slot fields must satisfy the following constraints:
 
   - `key` contains only lowercase letters, digits, hyphens (`-`), and underscores (`_`), starts with a lowercase letter or digit, and contains at most 128 characters
-  - `name` contains between 1 and 48 characters; any markup is stripped
-  - `filepath` contains between 1 and 128 characters and no `..` segments
-  - `description` contains at most 512 characters; any markup is stripped, and a description consisting only of markup is discarded
+  - `name` contains between 1 and 48 bytes after markup is stripped; non-ASCII characters count as more than one byte
+  - `filepath` contains between 1 and 128 bytes and no `..` segments
+  - `description` contains at most 512 bytes after markup is stripped, and a description consisting only of markup is discarded
 
   These constraints are applied by Miru when the release is created, not by the CLI when it reads your schema files.
 
@@ -115,7 +115,7 @@ import SchemaFormats from '/snippets/schemas/formats.mdx';
 
   JSON Schema and CUE schemas accept `json` and `yaml`. [Opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas accept `json`, `yaml`, `xml`, and `text`, since their instance content is not validated.
 
-  When a schema does not declare an instance format, the format is inferred from the extension of its first slot's file path, and every one of its slot file paths must imply that same format. It therefore defaults to `json` under the default instance file path. A schema that declares an instance format explicitly is not subject to that matching requirement, and its slot file paths' extensions are never compared.
+  When a schema does not declare an instance format, the format is inferred from the extension of its first slot's file path, and every one of its slot file paths must imply that same format. It therefore defaults to `json` under the default instance file path, or to `yaml` when the schema is written in YAML and takes the YAML default path. A schema that declares an instance format explicitly is not subject to that matching requirement, and its slot file paths' extensions are never compared.
 
   Examples: `json`, `yaml`, `xml`, `text`
 </ParamField>

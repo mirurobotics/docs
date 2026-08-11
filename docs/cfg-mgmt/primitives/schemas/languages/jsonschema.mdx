@@ -167,7 +167,7 @@ x-miru-instance-slots:
 type: object
 ```
 
-Every slot on the schema is validated against that same schema. Declare `x-miru-instance-slots` or `x-miru-instance-filepath`, but never both — declaring both is an error. Omitting both gives the schema a single default slot.
+Every slot on the schema is validated against that same schema. Declare `x-miru-instance-slots` or `x-miru-instance-filepath`, but never both — declaring both is an error. Omitting both gives the schema a single default slot. If `x-miru-instance-slots` is present it must list at least one slot, so omit the keyword entirely rather than writing an empty array.
 
 ## Supported drafts
 
