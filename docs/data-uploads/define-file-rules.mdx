@@ -1,0 +1,87 @@
+---
+title: "Define file rules"
+---
+
+import Retention from '/snippets/file-rules/retention.mdx';
+import Sources from '/snippets/file-rules/sources.mdx';
+import Upload from '/snippets/file-rules/upload.mdx';
+
+File rules are an optional part of a release. They define which files on your devices Miru manages — where they are uploaded, how long they are kept, or both. This page covers defining file rules and including them when creating a release.
+
+While a release must contain at least one config schema, it may contain any number of file rules, including none. For the full release-creation workflow — config schemas, Git metadata, and the CLI command — see the [Create a release](/cfg-mgmt/create-a-release) guide.
+
+## Prerequisites
+
+A rule that uploads writes files to a bucket, so a connected bucket is required for it. Connect one before creating a release with rules that upload:
+
+- [Connect an AWS bucket](/data-uploads/connect-a-bucket/aws)
+- [Connect a GCS bucket](/data-uploads/connect-a-bucket/gcs)
+
+A retention-only rule — one with no `upload` block — does not upload anything, so it needs no bucket.
+
+The generic prerequisites are covered in the [Create a release](/cfg-mgmt/create-a-release) guide.
+
+## Define the file rules
+
+File rules are defined as YAML files in your Git repository. Below is an example rule that uploads all log files from the `/var/log/robot` directory to the `my-uploads-bucket` bucket, and then deletes each local copy a week after its upload is confirmed.
+
+```yaml robot-logs.yaml
+name: Robot Logs
+
+source:
+  glob: /var/log/robot/*.log
+  stability_window_secs: 60
+
+upload:
+  collection_slug: robot-logs
+  bucket: my-uploads-bucket
+  path: logs/{device_id}/{upload_id}/{file_name}
+
+retention:
+  ttl_secs: 604800
+  require_upload: true
+```
+
+Both `upload` and `retention` are optional and independent. A rule with only `retention` uploads nothing and simply reclaims disk on the device:
+
+```yaml scratch-cleanup.yaml
+name: Scratch Cleanup
+
+source:
+  glob: /var/tmp/robot/*.bin
+
+retention:
+  ttl_secs: 3600
+```
+
+Like schemas, file rules are identified by hashing their content, so rules with equivalent content are deduplicated even if their comments or formatting differ. The rule's `name` is part of that content, so changing a name produces a new rule.
+
+Rule `name`s must be unique across the rule files included in a single `miru release create`.
+
+### Source
+
+<Sources />
+
+### Upload
+
+<Upload />
+
+### Retention
+
+<Retention />
+
+## Add file rules to a release
+
+File rules ride along with `miru release create` — the same command that creates the release and its schemas. Include them with either flag (both may be repeated):
+
+- `--file-rule <file>` — a single file rule YAML file
+- `--file-rules <dir>` — a directory of file rule YAML files
+
+```bash
+$ miru release create \
+  --version v1.0.0 \
+  --schemas ./schemas/ \
+  --file-rule ./file-rules/robot-logs.yaml
+```
+
+See the [CLI reference](/references/cli/release-create) for the full flag list.

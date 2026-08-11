@@ -110,7 +110,7 @@
                 "pages": [
                   "data-uploads/primitives/buckets",
                   "data-uploads/primitives/upload-collections",
-                  "data-uploads/primitives/upload-rules",
+                  "data-uploads/primitives/file-rules",
                   "data-uploads/primitives/uploads"
                 ]
               },
@@ -121,7 +121,7 @@
                   "data-uploads/connect-a-bucket/gcs"
                 ]
               },
-              "data-uploads/define-upload-rules"
+              "data-uploads/define-file-rules"
             ]
           },
           {
@@ -407,6 +407,14 @@
     "twitter:image": "/favicon-black.svg"
   },
   "redirects": [
+    {
+      "source": "/data-uploads/primitives/upload-rules",
+      "destination": "/data-uploads/primitives/file-rules"
+    },
+    {
+      "source": "/data-uploads/define-upload-rules",
+      "destination": "/data-uploads/define-file-rules"
+    },
     {
       "source": "/developers/agent/file-permissions",
       "destination": "/developers/agent/filesys-access"

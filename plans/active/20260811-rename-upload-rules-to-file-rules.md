@@ -32,7 +32,7 @@ Observable outcome: `grep -rin 'upload rule\|upload-rule\|upload_rule' docs/` re
 ## Progress
 
 - [x] Milestone 0 — Orientation and baseline (branch, install, baseline lint/audit, re-verify upstream facts) — 2026-08-11, no commit (read-only)
-- [ ] Milestone 1 — The file-rule primitive page, snippets, and definition snippet
+- [x] Milestone 1 — The file-rule primitive page, snippets, and definition snippet — 2026-08-11, `a9c3be0`
 - [ ] Milestone 2 — The authoring guide (`define-file-rules`) and nav + redirects
 - [ ] Milestone 3 — Inbound repoints across data-uploads, developers, primitives, cfg-mgmt, admin
 - [ ] Milestone 4 — CLI reference (flags, usage, scopes) and the unreleased CLI changelog entry
@@ -49,6 +49,13 @@ Observable outcome: `grep -rin 'upload rule\|upload-rule\|upload_rule' docs/` re
   - `repos/cli-private`: `internal/domain/filerules/spec.go` HEAD is still `8ba7471`; the YAML shape (`name`, `source.{glob,stability_window_secs}`, `upload.{collection_slug,bucket,path}`, `retention.{ttl_secs,require_upload}`) matches the plan's Context YAML field for field. `internal/commands/release/flags.go` registers `file-rule` and `file-rules` with no aliases.
   - `repos/agent` HEAD is still `2b24b4f`; `agent/src/models/file_rule.rs:76` still reads `impl From<backend_client::BaseUploadRule> for FileRule`, and the workspace version is still `0.10.0`. D3's premise holds, so the D3 **fallback** applies (see Decision Log addendum).
   - Inventory baseline: `grep -rn "upload rule\|Upload rule\|Upload Rule\|upload-rule\|upload_rule\|uploadRule" docs/ | wc -l` → **87** hits across the exact 21 files the plan's inventory lists — no files added or dropped.
+
+- **M1 (2026-08-11): the `importresolves` breakage came from Milestone 2's page, not Milestone 3's.**
+  Concrete Steps M1.5 anticipated folding "steps 1–3 of Milestone 3" into the M1 commit to avoid committing red. In fact the only importer of the renamed snippets was `docs/data-uploads/define-upload-rules.mdx` (a Milestone 2 file); no Milestone 3 file imports them. Rather than merge M1 and M2 into one commit and lose the two commit messages the plan specifies, the M1 commit carries a **minimal three-line repoint** of that page's import block (`/snippets/upload-rules/{sources,destinations}.mdx` → `/snippets/file-rules/{sources,upload}.mdx`, identifier `Destinations` → `Upload`). The page's rename, rewrite, and the `Retention` import stay in Milestone 2. `./scripts/lint.sh` is green at `a9c3be0`.
+  Note `pnpm run validate` is *not* run at M1: `docs/docs.json` still names the now-deleted `data-uploads/primitives/upload-rules` nav path, which Milestone 2 fixes. This is the M1/M2 coupling the Idempotence section already calls out.
+
+- **M1 (2026-08-11): the retention snippet's cross-references are absolute, not `#sources`/`#uploads`.**
+  `snippets/file-rules/retention.mdx` is rendered on two pages whose heading levels and slugs differ (`## Sources` on the primitive page, `### Source` on the authoring guide), so bare fragment links would resolve on one page and 404 on the other. Both links are written as `/data-uploads/primitives/file-rules#sources` and `#uploads` in full.
 
 - **M0 (2026-08-11): the D1 gate is NOT satisfied and will not be during this task.**
   `git tag --contains 8ba7471` → `v0.11.0-beta.1` only; `git tag --list 'v0.11.0'` → empty. There is no **stable** `v0.11.0` tag. Per D1 the PR therefore stays in **draft**. The CLI reference is still updated (Milestone 4) as D1 directs — the alternative D1 explicitly forbids is softening the docs to straddle both flag sets.
