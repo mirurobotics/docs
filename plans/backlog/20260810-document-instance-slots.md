@@ -55,7 +55,7 @@ Add timestamps (`YYYY-MM-DD HH:MMZ`) as steps complete. Split any partially fini
 
 Entries below were made during authoring on 2026-08-10 by Ben Smidt. Add new dated entries as work proceeds.
 
-- **2026-08-10 — Write all three language tabs as plain documentation; gate the *ship*, not the *prose*.** JSON Schema and Opaque slots are merged to `core` `main` (`f1be215` #151, `9d9845d` #150); CUE is on unmerged `origin/feat/instance-slots-cue` (#152) and the CLI wiring on unmerged `origin/feat/instance-slots-annotation`. A two-tab `<CodeGroup>` would read as "CUE cannot do this" (false), and "coming soon" phrasing is against house style, so exposure is controlled by keeping the PR in **draft** until #152 and the CLI wiring are merged and tagged (see "Publishing is not automatic" in Context and Orientation). The Milestone 5 changelog entry is pinned to that exact version, and the PR body must state the dependency.
+- **2026-08-10 — Write all three language tabs as plain documentation; gate the *ship*, not the *prose*.** JSON Schema and Opaque slots are merged to `core` `main` (`f1be215` #151, `9d9845d` #150); CUE is on `core`'s unmerged `origin/feat/instance-slots-cue` (#152) and the CLI wiring on **`cli-private`**'s unmerged `origin/feat/instance-slots-annotation` (head `cc4a01b`). Beware: `core` has a *different* branch of the same name (head `0600dd0`) — finding it there does not mean the CLI wiring has landed. A two-tab `<CodeGroup>` would read as "CUE cannot do this" (false), and "coming soon" phrasing is against house style, so exposure is controlled by keeping the PR in **draft** until #152 and the CLI wiring are merged and tagged (see "Publishing is not automatic" in Context and Orientation). The Milestone 5 changelog entry is pinned to that exact version, and the PR body must state the dependency.
 - **2026-08-10 — State rules in prose; document no error codes or verbatim error messages.** `repos/docs` has no precedent for error identifiers such as `invalid_instance_slots`; see the house-style note in Context and Orientation.
 - **2026-08-10 — No new page; extend existing pages.** A slot is a property of a config schema, not a new primitive. Adding a page would require editing `docs/docs.json` navigation and re-running the redirects lint rule for no reader benefit. The two prior comparable plans (`plans/active/20260805-document-all-schema-annotations.md`, `plans/completed/20260805-config-instance-file-formats.md`) both extended existing pages. `docs/docs.json` is therefore **not** touched by this plan.
 - **2026-08-10 — Leave the opaque `language:` vs `schema_language:` spelling alone.** `core` `main` renamed the key (`1756cc2` #134) and kept `language` as `DeprecatedSchemaLangKey` in `repos/core/pkg/schemas/opaque/compile.go:18`, so both spellings still parse. The docs currently show `language:` in three places (`docs/snippets/references/cli/releases/create/schema-annotations.mdx:33`, `docs/cfg-mgmt/primitives/schemas/languages/opaque.mdx:21` and `:28`). Changing that is independent drift with its own release-timing question and would enlarge this PR's review surface. It is recorded under Known drift in Context and Orientation, not fixed here. New opaque slot examples in this plan therefore do **not** restate the language key at all.
@@ -97,7 +97,7 @@ A slot has five fields, identical across the API and all three schema languages:
 
 `required` is **mandatory on every surface**. Some plan documents in `repos/core` and `repos/cli-private` still describe it as optional-defaulting-to-true; those are stale and the code requires it. Do not document a default.
 
-**The `key` character rules are enforced by the platform, not by the CLI.** `core` deliberately stopped enforcing the pattern client side (`0600dd0`); the parser now requires only that `key` be non-empty. `^[a-z0-9][a-z0-9_-]*$` and the 128-character limit live in `repos/openapi` (`apis/configs/components/schemas/config-schema.yaml:91`) and `repos/backend` (`internal/configs/ugc/config_schemas.go:168`), and are applied when the release is created server side. Document the rules as constraints on a valid slot key — do **not** imply that `miru release create` rejects a bad key locally, and do not describe them as parse-time or annotation-time validation.
+**The `key` character rules are enforced by the platform, not by the CLI.** `core` deliberately does not enforce the pattern client side. On `core` `origin/main` the merged JSON Schema and Opaque surfaces require only that `key` be present and non-empty, and each pins that with a test named "instance slot key vocabulary is not enforced client side" (`pkg/schemas/jsonschema/annotations_test.go:453`, `pkg/schemas/opaque/compile_test.go:534`). The commit that recorded the decision — `0600dd0`, "refactor(schemas): stop enforcing the slot key pattern client side" — sits on `core`'s **unmerged** `origin/feat/instance-slots-annotation`, not on `origin/main`; do not go looking for it on `main`. `^[a-z0-9][a-z0-9_-]*$` and the 128-character limit live in `repos/openapi` (`apis/configs/components/schemas/config-schema.yaml:91`) and `repos/backend` (`internal/configs/ugc/config_schemas.go:168`), and are applied when the release is created server side. Document the rules as constraints on a valid slot key — do **not** imply that `miru release create` rejects a bad key locally, and do not describe them as parse-time or annotation-time validation.
 
 If a schema declares no slots, the server synthesizes one: `key: default`, `name: Default`, `filepath: /srv/miru/configs/{config-type-slug}.{json|yaml}`, `required: true` (`.yaml` when the schema's file format is YAML, otherwise `.json`).
 
@@ -107,7 +107,7 @@ If a schema declares no slots, the server synthesizes one: `key: default`, `name
 2. Declaring an `instance file path` alone is exactly equivalent to one slot: `key: default`, `name: Default`, that file path, `required: true`.
 3. If the slots key is present it must list at least one slot. To use the default slot, **omit the key** rather than writing an empty list.
 4. Slot keys must be unique within a schema. Slot file paths must be unique within a schema and across every schema in a release.
-5. All of a schema's slot file paths must imply the same instance format. An explicit `instance format` annotation wins; otherwise the format is inferred from the **first** slot's file path. Mixing `.json` and `.yaml` slot paths without an explicit `instance format` is an error.
+5. A schema has exactly one instance format. If the schema declares `instance format`, that wins and the slot file paths' extensions are never compared. If it does not, the format is inferred from the **first** slot's file path, and every slot file path must then imply that same format — mixing `.json` and `.yaml` slot paths without an explicit `instance format` is an error. (`repos/backend` `origin/main` `internal/configs/services/config_schemas/create.go`: `resolveInstFormat` returns on the explicit format before it ever calls `verifyMatchingSlotFileTypes`, which is its only caller. `core` does not check this on any surface, so the error is raised server side when the release is created.) Never state the same-format rule unconditionally.
 6. `required: true` is **fleet-wide** — it means every deployment of a release containing this schema, on any device. It is not a per-device rule. Per-device cardinality is deliberately not supported.
 7. A deployment may contain **at most one** config instance per (schema, slot) pair, and **must** contain an instance for every slot marked `required: true`.
 8. A schema's digest — which is how Miru deduplicates schemas — covers only each slot's `key`, `filepath`, and `required`. A push that changes only a slot's `name` or `description` deduplicates onto the existing schema and the change is silently ignored. Authors must know this.
@@ -160,7 +160,7 @@ CUE — a repeated **declaration** attribute `@miru_slot(...)`, one per slot, ap
         name: string
     }
 
-CUE-specific facts worth documenting: a `@miru_slot` attached to a *field* rather than to the file's top-level declarations is silently ignored; both `required=true` and `required="true"` are accepted because CUE attribute values are always strings; two byte-identical `@miru_slot` lines are deduplicated by CUE itself before Miru sees them, so slots must differ; and an empty `description=""` is rejected in CUE although it is accepted in JSON Schema and Opaque. Because a CUE *package* must be annotated on exactly one file, all of a package's `@miru_slot` attributes must live on that same annotated file.
+CUE-specific facts worth documenting: a `@miru_slot` attached to a *field* rather than to the file's top-level declarations is silently ignored; both `required=true` and `required="true"` are accepted because CUE attribute values are always strings; two byte-identical `@miru_slot` lines are deduplicated by CUE itself before Miru sees them, so slots must differ; and an empty `description=""` is rejected in CUE although it is accepted in JSON Schema and Opaque. In a multi-file CUE package, `@miru_slot` attributes are collected from **every** file in the package — they do not have to sit on the file that carries `@miru`. (`CompilePackage` in `core` `pkg/schemas/cue/compile.go` unifies all documents, and `GetInstanceSlots` in `pkg/schemas/cue/attributes.go` reads declaration attributes off that unified value; verified empirically against `cuelang.org/go v0.17.1`.) Slot order is source order **within** a file; across the files of a package the order follows CUE's own file ordering, not the order the files are passed to the CLI. Because the instance format is inferred from the *first* slot's file path, a package that spreads slots across files should either keep every `@miru_slot` in one file or declare `instance format` explicitly. Do **not** write that all of a package's slots must live on the `@miru`-annotated file — no such rule exists.
 
 ### What does **not** change
 
@@ -210,12 +210,12 @@ Add a fifth `<ParamField path="instance slots">` block **after** the `instance f
 2. A `<Warning>` stating that a schema may declare an instance file path **or** instance slots, never both, and that declaring both is an error. (Precedent: the existing `<Warning>` in the `instance file path` block.)
 3. One sentence: this annotation is optional; omitting it is equivalent to a single slot at the instance file path, and the instance file path annotation is the shorthand for the single-slot case.
 4. A `<CodeGroup>` with three tabs in the established order and tab titles — `` ```yaml JSON Schema ``, `` ```cue CUE ``, `` ```yaml Opaque `` — copied structurally from the `instance file path` block so the two-space separator lines survive. Use the `motion-control` two-slot example from Context and Orientation, trimmed to what fits a reference block.
-5. A closing line noting that slot file paths must be unique across every schema in the release and must all imply the same instance format.
+5. A closing line noting that slot file paths must be unique across every schema in the release, and that unless the schema declares an `instance format`, every slot file path must imply the same format.
 
 Then update the neighboring blocks so they stay true:
 
 - `instance file path` (line 46): "This annotation is optional and defaults to `/srv/miru/configs/{config-type-slug}.json`." — add that it declares the schema's single slot, and cross-link to `#param-instance-slots` for the multi-destination case.
-- `instance format` (line 80): "inferred from the instance file path's extension" — change to say it is inferred from the schema's first slot file path, and that all slot file paths must imply the same format.
+- `instance format` (line 80): "inferred from the instance file path's extension" — change to say that when this annotation is omitted the format is inferred from the schema's first slot file path, and that inference requires every slot file path to imply the same format. Do not say slot paths must always match: declaring `instance format` removes that requirement.
 
 ### Milestone 2 — primitives properties
 
@@ -226,7 +226,7 @@ The `## Properties` section (line 16) mirrors the annotation snippet; the prior 
 Also on this page:
 
 - `instance file path` (lines 65-69): rewrite from "the absolute file system path where config instances are written" to make clear it is the file path of the schema's single slot, and point to the slots property when there is more than one.
-- `instance format` (line 81): "inferred from the instance file path's extension" → inferred from the first slot's file path, with the same-format constraint.
+- `instance format` (line 81): "inferred from the instance file path's extension" → when omitted, inferred from the first slot's file path; the same-format constraint across slot file paths applies only in that omitted case.
 - `## Immutability` (line 116) needs no change, but add the digest caveat where it belongs — see Milestone 4, `create-a-release.mdx`.
 
 File: `repos/docs/docs/cfg-mgmt/primitives/config-instances.mdx`.
@@ -235,7 +235,7 @@ Add a `<ParamField path="slot key" type="string">` with `<ImmutableBadge />` to 
 
 File: `repos/docs/docs/cfg-mgmt/primitives/config-types.mdx`. Review only. The imported definition `docs/snippets/definitions/config-type.mdx` says each config type has one versioned schema its instances adhere to — still true under slots. Change nothing unless a concrete falsehood is found; record the review in Progress.
 
-File: `repos/docs/docs/cfg-mgmt/primitives/schemas/manage.mdx`. Under `## View a schema` (line 14), the `Metadata` tab lists what the dashboard shows for a schema. If the dashboard renders a slots list there (see "Where the frontend slots branch lives" in Scope — the branch is in `repos/backend` and shows only API models, so this needs a running dashboard), add one sentence naming it. **Verify against the running dashboard or the frontend branch before writing** — do not describe UI you have not seen. If unverifiable, skip this file and note it in Surprises & Discoveries.
+File: `repos/docs/docs/cfg-mgmt/primitives/schemas/manage.mdx`. Under `## View a schema` (line 14), the `Metadata` tab lists what the dashboard shows for a schema. If the dashboard renders a slots list there (see "Where the frontend slots branch lives" in Scope — the branch is in `repos/backend` and shows only API models, so this needs a running dashboard), add one sentence naming it. **Verify against a running dashboard before writing** — do not describe UI you have not seen. If unverifiable, skip this file and note it in Surprises & Discoveries.
 
 ### Milestone 3 — schema-language pages
 
@@ -243,9 +243,9 @@ File: `repos/docs/docs/cfg-mgmt/primitives/schemas/languages/jsonschema.mdx`. Th
 
 File: `repos/docs/docs/cfg-mgmt/primitives/schemas/languages/opaque.mdx`. Same shape: an `## Instance slots` section after `## Example` (which ends around line 36, just before `## File formats` at line 38) showing the `instance_slots` YAML block. Do **not** touch the `language: opaque` lines (Decision Log).
 
-File: `repos/docs/docs/cfg-mgmt/primitives/schemas/languages/cue.mdx`. This is the language with the most surface area, because `@miru_slot` is a repeated declaration attribute rather than an argument to `@miru`. Add an `## Instance slots` section after the feature bullet list (line 53) and before `## CUE version` (line 63). It must cover: the attribute is separate from `@miru`, not a parameter of it; one attribute per slot; source order is preserved; an attribute placed on a field is ignored; `required` may be written bare or quoted; two identical `@miru_slot` lines collapse into one, so slots must differ; and an empty `description=""` is **rejected** in CUE although it is accepted in JSON Schema and Opaque (CUE rejects any empty attribute value generically). That last item is the only cross-language asymmetry in this feature and must not be dropped.
+File: `repos/docs/docs/cfg-mgmt/primitives/schemas/languages/cue.mdx`. This is the language with the most surface area, because `@miru_slot` is a repeated declaration attribute rather than an argument to `@miru`. Add an `## Instance slots` section at the end of `## Example` — after the paragraph beginning "As you can see, CUE inlines constraints directly with type definitions" — and before `## CUE version`. Do not insert it at the "Although many of CUE's capabilities are omitted" lead-in; that would split `## Example` in half. It must cover: the attribute is separate from `@miru`, not a parameter of it; one attribute per slot; source order is preserved; an attribute placed on a field is ignored; `required` may be written bare or quoted; two identical `@miru_slot` lines collapse into one, so slots must differ; and an empty `description=""` is **rejected** in CUE although it is accepted in JSON Schema and Opaque (CUE rejects any empty attribute value generically). That last item is the only cross-language asymmetry in this feature and must not be dropped.
 
-File: `repos/docs/docs/snippets/references/cli/releases/create/cue-packages.mdx`. Its closing sentence — "To annotate a CUE package, annotate **exactly one file** in the package. Annotating multiple files or no files will result in an error." — now needs a clause: all of the package's `@miru_slot` attributes must live on that same annotated file. This snippet is imported only by `cue.mdx`.
+File: `repos/docs/docs/snippets/references/cli/releases/create/cue-packages.mdx`. **No required change.** Its closing sentence — "To annotate a CUE package, annotate **exactly one file** in the package. Annotating multiple files or no files will result in an error." — is about the `@miru` attribute and stays true. It must **not** gain a clause requiring `@miru_slot` attributes to sit on that same file: Miru collects `@miru_slot` from every file in the package (see "Annotation syntax, per language"). If anything is added here, it may only be a recommendation, never a rule — for example: "`@miru_slot` attributes may be declared on any file in the package. Keep them in one file so their order is predictable, since the instance format is inferred from the first slot's file path." Adding that sentence is optional; if it is skipped, record the decision in Progress. This snippet is imported only by `cue.mdx`.
 
 File: `repos/docs/docs/cfg-mgmt/primitives/schemas/languages/overview.mdx` (16 lines, no headings). No change. Adding a heading here to house a slots comparison would be the only heading on the page and adds nothing the per-language sections do not. Record the decision not to touch it.
 
@@ -312,7 +312,7 @@ Install dependencies. Skipping this produces a confusing `Command "eslint" not f
 
     pnpm install --frozen-lockfile
 
-Establish the audit baseline **before making any edit**, because `scripts/preflight.sh` uses `set -euo pipefail` and a failing audit aborts the run before the later stages. There is no gitignored scratch directory in this repo, so use a temporary one and keep both outputs on disk — the draft-exit gate in Validation and Acceptance diffs them.
+Establish the audit baseline **before making any edit**, because `scripts/preflight.sh` uses `set -euo pipefail` and a failing audit aborts the run before the later stages. There is no gitignored scratch directory in this repo, so use a temporary one and keep both outputs on disk. These two snapshots are a starting reference, not the draft-exit gate itself: the gate in Validation and Acceptance re-captures both sides at the head you are shipping and diffs those.
 
     AUDIT_DIR="$(mktemp -d)"; echo "AUDIT_DIR=$AUDIT_DIR"   # record this path in Surprises & Discoveries
     ./scripts/audit.sh > "$AUDIT_DIR/audit-branch.txt" 2>&1; echo "exit=$?"
@@ -329,8 +329,11 @@ As of 2026-08-10 this exits **1** with `3 vulnerabilities found / Severity: 3 hi
 Confirm the release dependencies:
 
     cd /home/ben/miru/workbench2/repos/core && git fetch origin && git log --oneline -1 origin/main
-    git branch -r | grep instance-slots
-    cd /home/ben/miru/workbench2/repos/cli-private && git fetch --tags && git tag --sort=-v:refname | head -5
+    git branch -r | grep instance-slots       # core: expect feat/instance-slots-cue and feat/instance-slots-annotation
+    cd /home/ben/miru/workbench2/repos/cli-private && git fetch --tags origin
+    git branch -r | grep instance-slots       # the CLI wiring branch lives HERE, not in core
+    git log --oneline -1 origin/feat/instance-slots-annotation
+    git tag --sort=-v:refname | head -5
 
 As of 2026-08-10: `core` `origin/main` head is `f1be215` (#151, opaque slots) with #150 (JSON Schema slots) beneath it; `origin/feat/instance-slots-cue` (#152) is **unmerged**; `cli-private` pins `github.com/mirurobotics/core v0.9.1` in `go.mod` and its newest tag is `v0.10.4-beta.2`. Re-check these; if #152 and the CLI wiring have landed since, note it and the draft gate in Milestone 6 becomes trivially satisfiable.
 
@@ -365,7 +368,7 @@ Edit `docs/cfg-mgmt/primitives/schemas/overview.mdx` and `docs/cfg-mgmt/primitiv
 
 ### Milestone 3 — schema-language pages
 
-Edit the three language pages and `docs/snippets/references/cli/releases/create/cue-packages.mdx`.
+Edit the three language pages, and optionally `docs/snippets/references/cli/releases/create/cue-packages.mdx` (see Plan of Work — that snippet may legitimately end up unchanged; drop it from the `git add` below if untouched).
 
 New headings introduced here are `## Instance slots` on three pages — all sentence case, all pass `heading-case`. Confirm no heading uses `YAML` or `XML`, which are not allowlisted.
 
@@ -447,13 +450,23 @@ Note: `gh pr edit` fails in this org because of the Projects-classic deprecation
 
 ## Validation and Acceptance
 
-**Preflight must report CLEAN before this task is reported complete and before the PR leaves draft.** CLEAN means, on the head SHA you actually pushed: the `changes`, `lint`, and `shell-tests` CI jobs are green, **and** the `audit` job is either green or red with an advisory set identical to the pristine-`main` baseline captured in Milestone 0 — that is, `diff "$AUDIT_DIR/audit-main.txt" "$AUDIT_DIR/audit-branch.txt"` prints nothing. A local-only pass is not sufficient, and a green run on an older commit is not sufficient. Confirm the job states with `gh pr checks --watch` against the head SHA you actually pushed. This is the only definition of CLEAN in this plan.
+**Preflight must report CLEAN before this task is reported complete and before the PR leaves draft.** CLEAN means, on the head SHA you actually pushed: the `changes`, `lint`, and `shell-tests` CI jobs are green, **and** the `audit` job is either green or red with an advisory set identical to pristine `main` **measured at the same moment as the head you are shipping**. The Milestone 0 pair is a starting reference only: both snapshots are taken before any edit and before the push, so diffing them proves nothing about the pushed head, and the advisory set drifts while the PR waits in draft for the CLI release. Immediately before `gh pr ready`, re-capture both sides and compare:
+
+    cd /home/ben/miru/workbench2/repos/docs
+    git checkout docs/instance-slots && git pull --ff-only   # be on the pushed head
+    ./scripts/audit.sh > "$AUDIT_DIR/audit-head.txt" 2>&1; echo "exit=$?"
+    git worktree add "$AUDIT_DIR/docs-main-recheck" main
+    (cd "$AUDIT_DIR/docs-main-recheck" && pnpm install --frozen-lockfile && ./scripts/audit.sh > "$AUDIT_DIR/audit-main-recheck.txt" 2>&1; echo "exit=$?")
+    git worktree remove "$AUDIT_DIR/docs-main-recheck"
+    diff "$AUDIT_DIR/audit-main-recheck.txt" "$AUDIT_DIR/audit-head.txt" && echo "IDENTICAL"
+
+`diff` must print nothing. If it does, an advisory exists on this branch that pristine `main` does not have; resolve it rather than documenting it. A local-only pass is not sufficient, and a green run on an older commit is not sufficient. Confirm the job states with `gh pr checks --watch` against the head SHA you actually pushed. This is the only definition of CLEAN in this plan.
 
 A docs-only PR that does not touch `tools/lint/**` runs exactly four CI jobs: `changes`, `lint`, `audit`, and `shell-tests`. The two custom-linter jobs are gated off.
 
 ### Known pre-existing failure — do not mistake this for a regression
 
-`scripts/audit.sh` runs `pnpm audit --ignore-registry-errors`. As of 2026-08-10 it exits **1** on transitive `js-yaml` advisories (`GHSA-5p4m-2wfm-xmqj`) reachable only through the `mint` dev dependency, reporting `3 vulnerabilities found / Severity: 3 high (1 ignored)`. These advisories were published after the last green CI run on `main` (`6d99108`, green 2026-08-06), so a red `audit` job on this branch may have nothing to do with documentation content — whether that is acceptable is decided solely by the CLEAN definition above (an advisory set identical to the Milestone 0 baseline). Because `preflight.sh` uses `set -euo pipefail`, this also means `./scripts/preflight.sh` aborts at `=== Audit ===` and never reaches `=== Shell Script Tests ===`.
+`scripts/audit.sh` runs `pnpm audit --ignore-registry-errors`. As of 2026-08-10 it exits **1** on transitive `js-yaml` advisories (`GHSA-5p4m-2wfm-xmqj`) reachable only through the `mint` dev dependency, reporting `3 vulnerabilities found / Severity: 3 high (1 ignored)`. These advisories were published after the last green CI run on `main` (`6d99108`, green 2026-08-06), so a red `audit` job on this branch may have nothing to do with documentation content — whether that is acceptable is decided solely by the CLEAN definition above (an advisory set identical to pristine `main` re-measured at the head you are shipping, not the Milestone 0 snapshot). Because `preflight.sh` uses `set -euo pipefail`, this also means `./scripts/preflight.sh` aborts at `=== Audit ===` and never reaches `=== Shell Script Tests ===`.
 
 Handling:
 
@@ -482,7 +495,7 @@ Each of these is checkable by a human:
 8. `grep -rn "coming soon" docs --include='*.mdx'` finds no new occurrence introduced by this change.
 9. `grep -rni "multi-instance mode\|is_dynamic\|deprecated" docs/cfg-mgmt --include='*.mdx'` finds no new occurrence — slots are not a mode, and `instance file path` is not deprecated.
 10. `grep -rn "invalid_instance_slots\|conflicting_instance_target\|instance_slot_" docs --include='*.mdx'` finds nothing — error codes are deliberately not documented.
-11. CLEAN as defined at the top of this section holds on the pushed head SHA.
+11. CLEAN as defined at the top of this section holds on the pushed head SHA, including the draft-exit re-capture (`diff "$AUDIT_DIR/audit-main-recheck.txt" "$AUDIT_DIR/audit-head.txt"` prints nothing).
 12. The CLI changelog entry's version heading matches a real tag in `repos/cli-private`.
 
 Items 13-19 are confirmed by reading the diff, without opening any other repository:
@@ -501,7 +514,7 @@ Every step is a file edit or a read-only command, so the whole plan is safe to r
 
 - `pnpm install --frozen-lockfile`, `./scripts/lint.sh`, `./scripts/audit.sh`, `pnpm run test:lint`, and `bats ...` are read-only and repeatable.
 - `pnpm dev` starts a local server on port 3000; stop it with Ctrl-C. It writes nothing to the repository.
-- The Milestone 0 baseline check creates a `mktemp -d` directory and a worktree inside it; undo with `git worktree remove "$AUDIT_DIR/docs-main"`. If that fails because the directory is dirty, use `git worktree remove --force "$AUDIT_DIR/docs-main"`, then `git worktree prune`. Delete `$AUDIT_DIR` only after the PR is out of draft — the gate needs the saved outputs.
+- The Milestone 0 baseline check creates a `mktemp -d` directory and a worktree inside it; undo with `git worktree remove "$AUDIT_DIR/docs-main"` (and `git worktree remove "$AUDIT_DIR/docs-main-recheck"` for the draft-exit re-capture). If that fails because the directory is dirty, use `git worktree remove --force "$AUDIT_DIR/docs-main"`, then `git worktree prune`. Delete `$AUDIT_DIR` only after the PR is out of draft — the gate needs the saved outputs.
 - To undo a single milestone: `git revert <sha>` for that milestone's commit, or `git reset --hard HEAD~1` if it has not been pushed.
 - To restart from scratch: `git checkout main && git branch -D docs/instance-slots` and begin at Milestone 0. Nothing outside this repository is modified, so there is no external state to clean up.
 
