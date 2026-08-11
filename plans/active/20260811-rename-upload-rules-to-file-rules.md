@@ -33,7 +33,7 @@ Observable outcome: `grep -rin 'upload rule\|upload-rule\|upload_rule' docs/` re
 
 - [x] Milestone 0 — Orientation and baseline (branch, install, baseline lint/audit, re-verify upstream facts) — 2026-08-11, no commit (read-only)
 - [x] Milestone 1 — The file-rule primitive page, snippets, and definition snippet — 2026-08-11, `a9c3be0`
-- [ ] Milestone 2 — The authoring guide (`define-file-rules`) and nav + redirects
+- [x] Milestone 2 — The authoring guide (`define-file-rules`) and nav + redirects — 2026-08-11, `b5c5ed0`
 - [ ] Milestone 3 — Inbound repoints across data-uploads, developers, primitives, cfg-mgmt, admin
 - [ ] Milestone 4 — CLI reference (flags, usage, scopes) and the unreleased CLI changelog entry
 - [ ] Milestone 5 — Changelog link targets (hrefs only, prose untouched)
@@ -56,6 +56,12 @@ Observable outcome: `grep -rin 'upload rule\|upload-rule\|upload_rule' docs/` re
 
 - **M1 (2026-08-11): the retention snippet's cross-references are absolute, not `#sources`/`#uploads`.**
   `snippets/file-rules/retention.mdx` is rendered on two pages whose heading levels and slugs differ (`## Sources` on the primitive page, `### Source` on the authoring guide), so bare fragment links would resolve on one page and 404 on the other. Both links are written as `/data-uploads/primitives/file-rules#sources` and `#uploads` in full.
+
+- **M3 (2026-08-11): `docs/data-uploads/primitives/uploads.mdx:25`'s `#destinations` is a same-page anchor and was deliberately left alone.**
+  The plan's Milestone 3 instruction to rewrite `#destinations` → `#uploads` applies only to links *into the file rule page*. `uploads.mdx:25` (`Where the collected file was uploaded. See [Destinations](#destinations).`) targets `uploads.mdx`'s own `## Destinations` heading (line 113), which describes where an **upload** landed, not a rule's `upload` block. Renaming it would break a valid anchor. Only `uploads.mdx:90` was repointed, to `/data-uploads/primitives/file-rules#uploads`. The Validation check-4 grep for `#destinations` therefore legitimately keeps one hit.
+
+- **M3 (2026-08-11): `### Deleting after upload` was renamed to `### Deleting local files`, which forced a second edit the plan did not list.**
+  The plan said to rewrite the section's trigger but did not say whether to rename the heading. Keeping "Deleting after upload" would have contradicted the section's own new content, since a retention-only rule deletes without any upload. The heading is now `### Deleting local files` (`heading-case` clean). That changes the anchor `#deleting-after-upload` → `#deleting-local-files`, and `filesys-access.mdx:167` was the one inbound link — it is same-page, in the `--mode read-delete` bullet, and was updated in the same edit along with its `delete_policy: after_upload` phrasing, which became "with a `retention` block".
 
 - **M0 (2026-08-11): the D1 gate is NOT satisfied and will not be during this task.**
   `git tag --contains 8ba7471` → `v0.11.0-beta.1` only; `git tag --list 'v0.11.0'` → empty. There is no **stable** `v0.11.0` tag. Per D1 the PR therefore stays in **draft**. The CLI reference is still updated (Milestone 4) as D1 directs — the alternative D1 explicitly forbids is softening the docs to straddle both flag sets.

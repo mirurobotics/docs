@@ -92,7 +92,7 @@ To write to a given file, the `miru` user requires the following Unix permission
 ## Data uploads
 
 To upload data, the agent **reads** the files matched by an
-[upload rule](/data-uploads/primitives/upload-rules)'s `source.glob` and streams them to
+[file rule](/data-uploads/primitives/file-rules)'s `source.glob` and streams them to
 your bucket. The `miru` user needs read access to the files themselves, read and execute
 on the directory that contains them (to list and match the glob), and execute access to
 traverse the remaining directories along the path.
@@ -104,7 +104,7 @@ To read a file for upload, the `miru` user requires specific permissions to
 1. The file itself
 2. The directories along the path to the file
 
-Let's consider an upload rule whose `source.glob` is `/var/log/robot/*.log`, matching the
+Let's consider a file rule whose `source.glob` is `/var/log/robot/*.log`, matching the
 file `/var/log/robot/app.log`. The required permissions to grant the `miru` user access
 to this file are shown in the table below.
 
@@ -137,12 +137,12 @@ To read a given file, the `miru` user requires the following Unix permissions:
     </Info>
 
 Uploads are read-only — the `miru` user does **not** need write access to the source
-files, unless you delete them after upload, covered next.
+files, unless the rule also deletes them, covered next.
 
-### Deleting after upload
+### Deleting local files
 
-If an upload rule's [`destination.delete_policy`](/data-uploads/primitives/upload-rules#destinations)
-is `after_upload`, the agent removes each file after a successful upload. Deleting a file
+If a file rule has a [`retention`](/data-uploads/primitives/file-rules#retention) block,
+the agent removes each matching file once its retention guarantee ends. Deleting a file
 requires **write (`w`)** access to its **parent directory** (to remove the directory
 entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case:
 
@@ -164,8 +164,8 @@ the write (`w`) requirements — read and execute requirements are the same in e
 
 - `--mode write` (default) — **[Configs](#configs)**: deploying config instances.
   Requires `r,w` on the file and `r,w,x` on the parent directory.
-- `--mode read-delete` — **[Data uploads](#deleting-after-upload)** with
-  `delete_policy: after_upload`. Requires `r` on the file and `r,w,x` on the parent
+- `--mode read-delete` — **[Data uploads](#deleting-local-files)** with a `retention`
+  block. Requires `r` on the file and `r,w,x` on the parent
   (deleting needs write on the parent, not the file).
 - `--mode read-only` — **[Data uploads](#data-uploads)** without delete. Requires `r` on
   the file and `r,x` on the parent directory.

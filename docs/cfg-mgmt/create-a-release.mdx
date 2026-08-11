@@ -97,13 +97,13 @@ If your Git repository is hosted on a different provider, please reach out to [s
 
 ### Requirements
 
-To be able to capture Git metadata, the provided config schemas and upload rules must meet the following requirements when creating a release via the CLI:
+To be able to capture Git metadata, the provided config schemas and file rules must meet the following requirements when creating a release via the CLI:
 
 - Must be defined in a local Git repository
 - The Git repository must have a remote URL (e.g., GitHub, GitLab, Bitbucket).
-- The schemas and upload rules' latest changes must be committed to the Git repository before pushing to Miru (cannot be dirty or unstaged)
+- The schemas and file rules' latest changes must be committed to the Git repository before pushing to Miru (cannot be dirty or unstaged)
 
-Git metadata is not optional. If a schema or upload rule does not meet these requirements, the CLI will return an error and fail to create the release.
+Git metadata is not optional. If a schema or file rule does not meet these requirements, the CLI will return an error and fail to create the release.
 
 ## CLI command
 

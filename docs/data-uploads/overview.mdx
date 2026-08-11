@@ -4,8 +4,8 @@ title: "Overview"
 
 Data uploads move data *off* your devices and into *your* cloud storage.
 
-You define a small set of [**upload rules**](/data-uploads/primitives/upload-rules) — what to
-collect, when it is considered finished, and where it goes. The
+You define a small set of [**file rules**](/data-uploads/primitives/file-rules) — what to
+collect, when it is considered finished, and, for the rules that upload, where it goes. The
 [Miru Agent](/developers/agent/overview) detects matching files, waits for each file
 to finish being written to, and uploads it directly to your bucket.
 
@@ -28,7 +28,7 @@ the credential exchange touch Miru.
 
 The Agent uploads a file once it is confident the file has finished being written to.
 Completion is determined by **quiescence**: a file whose size and modification time have
-held steady for the rule's [`stability_window_secs`](/data-uploads/primitives/upload-rules#sources)
+held steady for the rule's [`stability_window_secs`](/data-uploads/primitives/file-rules#sources)
 is considered finished and eligible for upload. 
 
 While this works for any file type, it is a heuristic for detecting when a file is
@@ -38,7 +38,7 @@ finished being written to. For deterministic completion detection, write to a fi
 ## Device data isolation
 
 Devices' uploads are strictly isolated from each other. Isolation rests on a single requirement on the [destination
-path](/data-uploads/primitives/upload-rules): it must include the `{upload_id}` variable somewhere in the template. 
+path](/data-uploads/primitives/file-rules): it must include the `{upload_id}` variable somewhere in the template. 
 
 Since devices receive credentials scoped to an **exact object key** for each upload, and a given upload ID is authorized to its device, devices never receive credentials which grant any access to another device's data.
 
