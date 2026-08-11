@@ -33,7 +33,7 @@ The `miru release create` upload rule flags have been renamed. There are no depr
 
 <Dropdown title="Rule file format">
 
-The rule file YAML has been restructured. `name` is new and required, `collection_slug` moves under the new optional `upload` block, `destination` is replaced by `upload`, `delete_policy` is removed in favor of the new optional `retention` block, and `path` must now contain `{upload_id}`:
+The rule file YAML has been restructured. `name` is new and required, `collection_slug` moves under the new optional `upload` block, `destination` is replaced by `upload`, and `delete_policy` is removed in favor of the new optional `retention` block.
 
 ```diff
 + name: Robot Logs
@@ -57,7 +57,7 @@ The rule file YAML has been restructured. `name` is new and required, `collectio
 +   require_upload: true
 ```
 
-Both `upload` and `retention` are optional. Omit `upload` for a rule that only reclaims local disk; omit `retention` and the device keeps matching files indefinitely. `ttl_secs` is required inside `retention`, and `require_upload` must be set exactly when the rule has an `upload` block.
+Both `upload` and `retention` are optional. Omit `upload` for a rule that only reclaims local disk; omit `retention` and the device retains files on disk indefinitely after uploading. `ttl_secs` is required inside `retention`, and `require_upload` must be set exactly when the rule has an `upload` block.
 
 </Dropdown>
 

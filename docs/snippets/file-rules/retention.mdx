@@ -1,15 +1,9 @@
-A rule's optional `retention` block governs deletion of the local copies of matching
-files. When it is absent, the device keeps matching files indefinitely — Miru never
-deletes them. When it is present, the rule deletes each matching file once its retention
-guarantee ends.
+A rule's `retention` block governs deletion of the local copies of matching files. When
+absent, the device retains matching files indefinitely (Miru never deletes them). When present, the rule deletes each matching file once its retention guarantee ends.
 
-Retention operates in two phases. The retention **guarantee** ends once a matching file
-goes quiescent — its size and modification time have stayed unchanged for
-[`source.stability_window_secs`](/data-uploads/primitives/file-rules#sources) — and, when `require_upload` is `true`, once
-its upload has been durably confirmed. The file is then **eligible for deletion**, and
-you may no longer rely on it being present. `ttl_secs` schedules the **enforcement** that
-follows: how long the file lives on after the guarantee ends. It defers the deletion, not
-the end of the guarantee.
+The retention block doesn't go into effect until a file is considered stable. That is, its size and modification time have stayed unchanged for [`source.stability_window_secs`](/data-uploads/primitives/file-rules#sources). 
+
+Once a file is considered stable, the Miru Agent will delete it after [`ttl_secs`](/data-uploads/primitives/file-rules#retention) seconds. The only exception is if the file still needs to be uploaded, in which case the file is retained until upload is confirmed regardless of whether the `ttl_secs` has elapsed or not.
 
 <ParamField path="require_upload" type="boolean">
   Whether a file must have its upload durably confirmed before it may be deleted. Set it

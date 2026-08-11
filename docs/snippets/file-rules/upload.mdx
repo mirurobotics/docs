@@ -1,4 +1,6 @@
-A rule's optional `upload` block declares which registered [bucket](/data-uploads/primitives/buckets) matching files are written to, and the object path within it. Omit it for a rule that only manages local retention.
+A rule's `upload` block declares which registered [bucket](/data-uploads/primitives/buckets) matching files are written to, and the object path within it. 
+
+Upload rules are optional. If omitted, the rule only manages local retention.
 
 <ParamField path="collection_slug" type="string" required>
   Slug of the [upload collection](/data-uploads/primitives/upload-collections) the resulting uploads are grouped into.
