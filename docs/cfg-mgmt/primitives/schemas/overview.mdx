@@ -94,7 +94,7 @@ import SchemaFormats from '/snippets/schemas/formats.mdx';
 
   - `key` contains only lowercase letters, digits, hyphens (`-`), and underscores (`_`), starts with a lowercase letter or digit, and contains at most 128 characters
   - `name` contains between 1 and 48 bytes after markup is stripped; non-ASCII characters count as more than one byte
-  - `filepath` contains between 1 and 128 bytes and no `..` segments
+  - `filepath` contains between 1 and 128 bytes and no `..` anywhere in the path
   - `description` contains at most 512 bytes after markup is stripped, and a description consisting only of markup is discarded
 
   These constraints are applied by Miru when the release is created, not by the CLI when it reads your schema files.
