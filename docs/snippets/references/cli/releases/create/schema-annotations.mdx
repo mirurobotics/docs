@@ -43,7 +43,7 @@
     The Miru Agent ships with out-of-the-box access to `/srv/miru`. To deploy configs to a custom directory, please visit the [File system access](/developers/agent/filesys-access#configs) page.
   </Warning>
 
-  This annotation is optional and defaults to `/srv/miru/configs/{config-type-slug}.json`.
+  This annotation declares the schema's single instance slot. It is optional and defaults to `/srv/miru/configs/{config-type-slug}.json`. To write more than one file from one schema, declare [instance slots](#param-instance-slots) instead.
 
   <CodeGroup>
 
@@ -72,12 +72,61 @@
 
 </ParamField>
 
+<ParamField path="instance slots">
+  An instance slot is a distinct file system destination for this schema. Declare several slots to write several config instances from a single schema — one per slot — instead of maintaining a near-identical config type for each destination. Each slot has a `key`, a `name`, a `filepath`, a `required` flag, and an optional `description`.
+
+  <Warning>
+    A schema may declare an instance file path or instance slots, but never both. Declaring both is an error.
+  </Warning>
+
+  This annotation is optional. Omitting it is equivalent to declaring a single slot at the instance file path, which is the shorthand for the single-slot case.
+
+  <CodeGroup>
+
+  ```yaml JSON Schema
+  x-miru-instance-slots:
+    - key: "left-arm"
+      name: "Left Arm"
+      filepath: "/srv/miru/configs/v1/left-arm.json"
+      required: true
+      description: "Config for the left arm controller"
+    - key: "right-arm"
+      name: "Right Arm"
+      filepath: "/srv/miru/configs/v1/right-arm.json"
+      required: false
+  ```
+
+  
+  ```cue CUE
+  @miru_instance_slot(key="left-arm", name="Left Arm", filepath="/srv/miru/configs/v1/left-arm.json", required=true, description="Config for the left arm controller")
+  @miru_instance_slot(key="right-arm", name="Right Arm", filepath="/srv/miru/configs/v1/right-arm.json", required=false)
+  ```
+
+  
+  ```yaml Opaque
+  instance_slots:
+    - key: "left-arm"
+      name: "Left Arm"
+      filepath: "/srv/miru/configs/v1/left-arm.json"
+      required: true
+      description: "Config for the left arm controller"
+    - key: "right-arm"
+      name: "Right Arm"
+      filepath: "/srv/miru/configs/v1/right-arm.json"
+      required: false
+  ```
+
+  </CodeGroup>
+
+  Slot file paths must be unique across every schema in the release. Unless the schema also declares an [instance format](#param-instance-format), every slot file path must imply the same format.
+</ParamField>
+
 <ParamField path="instance format">
   The instance format declares the format that config instances for this schema are deployed as on the device.
 
   JSON Schema and CUE schemas accept `json` and `yaml`. [Opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas accept a wider set — `json`, `yaml`, `xml`, and `text` — since their instance content is not validated.
 
-  This annotation is optional and is inferred from the instance file path's extension. Under the default instance file path of `/srv/miru/configs/{config-type-slug}.json`, the instance format therefore defaults to `json`.
+  This annotation is optional. When it is omitted, the format is inferred from the extension of the schema's first slot file path, and every slot file path must then imply that same format. Under the default instance file path of `/srv/miru/configs/{config-type-slug}.json`, the instance format therefore defaults to `json`. Declaring this annotation removes the matching requirement: the slot file paths' extensions are no longer compared.
 
   <CodeGroup>
 
