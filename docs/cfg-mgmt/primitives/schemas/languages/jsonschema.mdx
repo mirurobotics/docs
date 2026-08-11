@@ -147,6 +147,28 @@ Although many of JSON Schema's capabilities are omitted in this example, you'll 
 
 For a comprehensive list of JSON Schema keywords, visit the [official JSON Schema website](https://json-schema.org/understanding-json-schema/keywords). We also find the [official test suite](https://github.com/json-schema-org/JSON-Schema-Test-Suite/tree/main/tests/draft2020-12) highly useful, as it contains a large number of simple JSON Schema examples.
 
+## Instance slots
+
+A JSON Schema declares [instance slots](/cfg-mgmt/primitives/schemas/overview#param-instance-slots) with the top-level `x-miru-instance-slots` keyword, an array of slot objects. Each slot is a separate file the schema writes on the device, so a single `motion-control` schema can configure several identical controllers:
+
+```yaml JSON Schema
+$schema: "https://json-schema.org/draft/2020-12/schema"
+x-miru-config-type: "motion-control"
+x-miru-instance-slots:
+  - key: "left-arm"
+    name: "Left Arm"
+    filepath: "/srv/miru/configs/v1/left-arm.json"
+    required: true
+    description: "Config for the left arm controller"
+  - key: "right-arm"
+    name: "Right Arm"
+    filepath: "/srv/miru/configs/v1/right-arm.json"
+    required: false
+type: object
+```
+
+Every slot on the schema is validated against that same schema. Declare `x-miru-instance-slots` or `x-miru-instance-filepath`, but never both — declaring both is an error. Omitting both gives the schema a single default slot.
+
 ## Supported drafts
 
 While JSON Schema has multiple drafts, only [Draft 2020-12](https://json-schema.org/draft/2020-12), the most recent stable draft, is supported.

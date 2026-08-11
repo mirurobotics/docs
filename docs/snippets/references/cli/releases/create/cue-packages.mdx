@@ -20,3 +20,5 @@ You don't need to explicitly specify the package in the CLI command—just provi
 **Annotations**
 
 To annotate a CUE package, annotate **exactly one file** in the package. Annotating multiple files or no files will result in an error.
+
+`@miru_instance_slot` attributes are the exception: they are collected from every file in the package, so they may be declared on any of them. Keep them all in one file so their order stays predictable, since the instance format is inferred from the first slot's file path.
