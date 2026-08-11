@@ -36,8 +36,8 @@ Observable outcome: `grep -rin 'upload rule\|upload-rule\|upload_rule' docs/` re
 - [x] Milestone 2 — The authoring guide (`define-file-rules`) and nav + redirects — 2026-08-11, `b5c5ed0`
 - [x] Milestone 3 — Inbound repoints across data-uploads, developers, primitives, cfg-mgmt, admin — 2026-08-11, `0b797e4`
 - [x] Milestone 4 — CLI reference (flags, usage, scopes) and the unreleased CLI changelog entry — 2026-08-11, `9a2f64b`
-- [ ] Milestone 5 — Changelog link targets (hrefs only, prose untouched)
-- [ ] Milestone 6 — Validation, push, `$preflight` CLEAN, PR out of draft
+- [x] Milestone 5 — Changelog link targets (hrefs only, prose untouched) — 2026-08-11, `d4087d6`
+- [x] Milestone 6 — Validation, push, `$preflight` CLEAN — 2026-08-11, PR [#154](https://github.com/mirurobotics/docs/pull/154) on `d4087d6`. **PR deliberately left in draft**: the D1 stable-`v0.11.0` gate is unmet (see Open Questions below).
 
 ## Surprises & Discoveries
 
@@ -103,7 +103,41 @@ Observable outcome: `grep -rin 'upload rule\|upload-rule\|upload_rule' docs/` re
 
 ## Outcomes & Retrospective
 
-- (fill in on completion)
+**Status: implementation complete, delivery blocked on an external gate.** All six milestones landed in five commits on `docs/rename-upload-rules-to-file-rules`; PR [#154](https://github.com/mirurobotics/docs/pull/154) is open **in draft** against `main`.
+
+| Milestone | Commit |
+| --- | --- |
+| 1 — primitive page, snippets, definition | `a9c3be0` |
+| 2 — authoring guide, nav, redirects | `b5c5ed0` |
+| 3 — inbound repoints | `0b797e4` |
+| 4 — CLI reference and the v0.11.0 entry | `9a2f64b` |
+| 5 — changelog link targets | `d4087d6` |
+
+### CLEAN
+
+`$preflight` is **CLEAN** on the pushed head `d4087d6`. `./scripts/preflight.sh` exits 0 end to end locally (lint smoke tests, the Go linter and coverage gate, `./scripts/lint.sh`, `pnpm run validate`, `./scripts/audit.sh`, 30/30 bats), and `gh pr checks --watch` reports all four docs-only CI jobs green: `changes`, `lint`, `audit`, `shell-tests`. `lint-custom-linter` and `test-custom-linter` are `skipping`, confirming `tools/lint/**` was untouched.
+
+**No pre-existing-failure carve-out was needed.** The plan and the environment memory both warned that `audit` may be red on pristine `main`; it is green here, both locally and in CI, so CLEAN is unconditional. No pristine-`main` worktree comparison was required.
+
+### Validation checks
+
+Checks 1–12 in Validation and Acceptance all pass. Three greps return non-empty output by design, each covered by a decision already in this plan and detailed in Surprises & Discoveries:
+- Check 4 keeps hits in `docs.json` (the two redirect **`source`** strings, which D5 requires be the old URLs), the two `assets.mirurobotics.com` screenshot filenames (unrenameable from this repo, alt text updated), and `docs/changelog/**` historical prose (D6).
+- Check 4's `#destinations` companion grep keeps one same-page hit in `uploads.mdx:25`.
+- Check 6 keeps two hits, both inside the new v0.11.0 migration diff, which must name `delete_policy: after_upload` to explain its removal.
+
+Check 13 (`pnpm dev` browse) was **not run** — the environment is non-interactive. Its substance is covered mechanically: `pnpm run validate` (the real Mintlify build, which resolves nav paths and internal links) passes in CI, the `redirects` lint rule independently proves both sources 404 and both destinations resolve, and check 9 pins the anchor contract.
+
+Content acceptance 15–22 hold; each was written directly from the current `repos/openapi` spec text rather than from this plan's paraphrase.
+
+### Open Questions at close
+
+- **D1 (stable `v0.11.0` tag) — UNRESOLVED, and it is the reason the PR is in draft.** `git tag --list 'v0.11.0'` in `repos/cli-private` is empty; only `v0.11.0-beta.1` contains `8ba7471`. Fallback taken: exactly what D1 prescribes — the CLI reference was still updated to the new flags (D1 explicitly forbids softening the docs to straddle both flag sets), and the PR is held in draft. Re-run the D1 gate command before `gh pr ready`. The v0.11.0 changelog date (*August 12, 2026*) is also still unconfirmed against a real release.
+- **D3 (the Agent version enforcing general `ttl_secs` and retention-only rules) — UNRESOLVED, fallback taken and shippable.** `repos/agent` is still at `0.10.0` and still deserializes `BaseUploadRule`, so there is no version to name. The retention `<Note>` is version-free and makes no timing claim, which D3 designates "a complete, shippable state". Unlike D1, this does **not** block `gh pr ready`. When an Agent release ships general TTL enforcement, add the version and a `/changelog/agent#v-x-y-z` link to `docs/snippets/file-rules/retention.mdx`, matching how `product.mdx` gates uploads on Agent v0.10.0.
+
+### Retrospective
+
+The plan was unusually accurate: every upstream fact re-verified unchanged at Milestone 0, and the file inventory matched to the file. The three deviations were all small and local — the `importresolves` breakage came from a Milestone 2 file rather than a Milestone 3 one (handled with a minimal three-line repoint so both commit messages survived), one `#destinations` anchor turned out to be same-page and had to be left alone, and the `### Deleting after upload` heading needed a rename the plan had not specified. The plan's insistence that the current spec files outrank its own prose was the right call to make explicit, even though this time nothing had moved.
 
 ## Context and Orientation
 
