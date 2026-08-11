@@ -118,7 +118,7 @@
 
   </CodeGroup>
 
-  Slot file paths must be unique across every schema in the release. Unless the schema also declares an [instance format](#param-instance-format), every slot file path must imply the same format.
+  Slot file paths must be unique across every schema in the release. Unless the schema also declares an [instance format](#param-instance-format), every slot file path must imply the same format. Either way, on a JSON Schema or CUE schema every slot file path must end in `.json`, `.yaml`, or `.yml`; only [opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas accept any extension.
 </ParamField>
 
 <ParamField path="instance format">
@@ -126,7 +126,7 @@
 
   JSON Schema and CUE schemas accept `json` and `yaml`. [Opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas accept a wider set — `json`, `yaml`, `xml`, and `text` — since their instance content is not validated.
 
-  This annotation is optional. When it is omitted, the format is inferred from the extension of the schema's first slot file path, and every slot file path must then imply that same format. Under the default instance file path the instance format therefore defaults to `json`, or to `yaml` when the schema is written in YAML and takes the YAML default path. Declaring this annotation removes the matching requirement: the slot file paths' extensions are no longer compared.
+  This annotation is optional. When it is omitted, the format is inferred from the extension of the schema's first slot file path, and every slot file path must then imply that same format. Under the default instance file path the instance format therefore defaults to `json`, or to `yaml` when the schema is written in YAML and takes the YAML default path. Declaring this annotation removes the matching requirement: the slot file paths' extensions are no longer compared to one another. On a JSON Schema or CUE schema each one must still end in `.json`, `.yaml`, or `.yml`; only opaque schemas may use any extension, which is what lets an `xml` or `text` schema write an `.xml` or `.conf` file. This is checked by Miru when the release is created, not by the CLI when it reads your schema files.
 
   <CodeGroup>
 
