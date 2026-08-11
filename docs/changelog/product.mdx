@@ -163,7 +163,7 @@ import { Separator } from '/snippets/components/separator.jsx';
 <Update label="July 20, 2026">
     ## Data Uploads
 
-    **Data Uploads** allows devices to upload files directly to a cloud storage bucket you own. First, define an [upload rule](/data-uploads/primitives/upload-rules), which specifies what files to collect and where to store them in your bucket. Then, the Miru Agent detects matching files on your devices and streams them straight to your bucket.
+    **Data Uploads** allows devices to upload files directly to a cloud storage bucket you own. First, define an [upload rule](/data-uploads/primitives/file-rules), which specifies what files to collect and where to store them in your bucket. Then, the Miru Agent detects matching files on your devices and streams them straight to your bucket.
 
     [Data Uploads »](/data-uploads/overview)
 
@@ -179,7 +179,7 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     Upload rules live in Git alongside your config schemas, and are bundled into a release. The upload rules for a release go into effect anytime a deployment for that release is deployed to a device.
 
-    [Define upload rules »](/data-uploads/define-upload-rules)
+    [Define upload rules »](/data-uploads/define-file-rules)
 
     ### Connect a bucket
 

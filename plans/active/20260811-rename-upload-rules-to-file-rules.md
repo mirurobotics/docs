@@ -35,7 +35,7 @@ Observable outcome: `grep -rin 'upload rule\|upload-rule\|upload_rule' docs/` re
 - [x] Milestone 1 — The file-rule primitive page, snippets, and definition snippet — 2026-08-11, `a9c3be0`
 - [x] Milestone 2 — The authoring guide (`define-file-rules`) and nav + redirects — 2026-08-11, `b5c5ed0`
 - [x] Milestone 3 — Inbound repoints across data-uploads, developers, primitives, cfg-mgmt, admin — 2026-08-11, `0b797e4`
-- [ ] Milestone 4 — CLI reference (flags, usage, scopes) and the unreleased CLI changelog entry
+- [x] Milestone 4 — CLI reference (flags, usage, scopes) and the unreleased CLI changelog entry — 2026-08-11, `9a2f64b`
 - [ ] Milestone 5 — Changelog link targets (hrefs only, prose untouched)
 - [ ] Milestone 6 — Validation, push, `$preflight` CLEAN, PR out of draft
 
