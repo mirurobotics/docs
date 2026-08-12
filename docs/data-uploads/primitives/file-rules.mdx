@@ -11,22 +11,12 @@ import Upload from '/snippets/file-rules/upload.mdx';
 
 <FileRuleDef />
 
-Every rule has a `source` — the files on the device it manages. Beyond that, `upload`
-(where matching files go) and `retention` (how long the device keeps them) are
-independent optional halves: a rule with only `upload` collects data and leaves the local
-copies alone, a rule with only `retention` reclaims disk without sending anything, and a
-rule with both uploads a file and then reclaims its space. A rule with neither does
-nothing useful. Rules are created by defining them as rule files and
-[releasing them via the CLI](/data-uploads/define-file-rules).
-
 ## Properties
 
 <ParamField path="name" type="string" required>
   <ImmutableBadge />
 
-  A human-readable name for the rule. It is **not** unique within a workspace, and it
-  participates in the rule's digest — renaming a rule mints a new rule rather than
-  renaming the existing one.
+  A human-readable name for the rule. 
 
   Examples: `Robot Logs`, `Crash Reports`, `Camera Footage`
 </ParamField>
@@ -34,9 +24,9 @@ nothing useful. Rules are created by defining them as rule files and
 <ParamField path="digest" type="string">
   <ImmutableBadge />
 
-  A hash of the rule's resolved definition — its name, source, upload, and retention.
-  File rules are deduplicated by digest within a workspace: pushing a rule identical to
-  an existing one returns the existing rule instead of a duplicate.
+  A hash of the rule's resolved definition. File rules are deduplicated by digest within
+  a workspace: pushing a rule identical to an existing one returns the existing rule
+  instead of a duplicate.
 
   Example: `sha256:1234567890`
 </ParamField>
@@ -50,17 +40,18 @@ nothing useful. Rules are created by defining them as rule files and
 <ParamField path="upload" type="Upload">
   <ImmutableBadge />
 
-  Where matching files are uploaded, including the
-  [upload collection](/data-uploads/primitives/upload-collections) the resulting uploads
-  are grouped into. Absent when the rule only manages local retention. See
-  [Uploads](#uploads).
-</ParamField>
+  An optional field that defines where matching files are uploaded to. Absent when the
+  rule only manages local retention. See [Uploads](#uploads). 
+  
+  </ParamField>
 
 <ParamField path="retention" type="Retention">
   <ImmutableBadge />
 
-  How long the device keeps the local copies of matching files. Absent when the device
-  keeps them indefinitely — Miru never deletes them. See [Retention](#retention).
+  An optional field that defines how long the device retains local copies of matching
+  files. Absent when the device keeps them indefinitely — Miru never deletes them. See
+  [Retention](#retention).
+
 </ParamField>
 
 ## File format
@@ -68,20 +59,20 @@ nothing useful. Rules are created by defining them as rule files and
 Each rule is defined as a single YAML file in your Git repository:
 
 ```yaml
-name: Robot Logs                       # required
+name: Robot Logs                       
 
 source:
-  glob: "/var/log/robot/*.log"         # required
-  stability_window_secs: 60            # optional, defaults to 60
+  glob: "/var/log/robot/*.log"         
+  stability_window_secs: 60 
 
-upload:                                # optional
-  collection_slug: robot-logs          # required inside upload
-  bucket: my-uploads-bucket            # required inside upload
-  path: "logs/{device_id}/{upload_id}/{file_name}"  # optional
+# optional block
+upload:                                
+  path: "logs/{device_id}/{upload_id}/{file_name}"  
 
-retention:                             # optional
-  ttl_secs: 604800                     # required inside retention
-  require_upload: true                 # set exactly when upload is present
+# optional block
+retention:                             
+  ttl_secs: 604800                     
+  require_upload: true                 
 ```
 
 Rule files reference the rule's upload collection by its slug

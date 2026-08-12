@@ -1,29 +1,19 @@
 A rule's `retention` block governs deletion of the local copies of matching files. When
-absent, the device retains matching files indefinitely (Miru never deletes them). When present, the rule deletes each matching file once its retention guarantee ends.
+absent, the device retains matching files indefinitely (Miru never deletes them). 
 
 The retention block doesn't go into effect until a file is considered stable. That is, its size and modification time have stayed unchanged for [`source.stability_window_secs`](/data-uploads/primitives/file-rules#sources). 
 
-Once a file is considered stable, the Miru Agent will delete it after [`ttl_secs`](/data-uploads/primitives/file-rules#retention) seconds. The only exception is if the file still needs to be uploaded, in which case the file is retained until upload is confirmed regardless of whether the `ttl_secs` has elapsed or not.
-
 <ParamField path="require_upload" type="boolean">
-  Whether a file must have its upload durably confirmed before it may be deleted. Set it
-  exactly when the rule has an [`upload`](/data-uploads/primitives/file-rules#uploads) block: a rule that both uploads and
-  deletes must decide whether local deletion waits for the upload, and a rule with no
-  upload has no upload to require.
+  Whether a file must have its upload durably confirmed before it may be deleted. Must be set when the rule has an [`upload`](/data-uploads/primitives/file-rules#uploads) block.
 
-  - `true` — a file is never deleted before its upload is durably confirmed. A slow or
-    failing upload keeps the local file; the device abandons an upload after 9 attempts,
-    so a permanently failing upload retains the file indefinitely.
-  - `false` — the upload is best-effort. The file may be deleted once it is eligible even
-    if its upload has not completed, and an unfinished upload is abandoned.
+  - `true` — files are *never* deleted before their upload is confirmed. 
+  - `false` — upload is best-effort; files may be deleted once they are eligible, even if their upload has not completed.
 </ParamField>
 
 <ParamField path="ttl_secs" type="integer" required>
-  How long, in seconds, the file lives on after it becomes eligible for deletion. The
-  clock starts when the retention guarantee ends, not when the file was written.
-
-  Required whenever `retention` is present: a rule that deletes must state how long it
-  keeps. Use `0` to delete the file as soon as it becomes eligible.
+  How long, in seconds, the file lives on the device before it is scheduled for deletion. The clock starts as soon as the file is considered stable. 
+  
+  Use `0` to delete the file as soon as it becomes eligible.
 
   Example: `604800`
 </ParamField>
