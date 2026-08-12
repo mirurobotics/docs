@@ -8,16 +8,16 @@ import PushNewSchemas from "/snippets/references/cli/releases/create/new-schemas
 import Scopes from "/snippets/references/cli/releases/create/scopes.mdx";
 import Usage from "/snippets/references/cli/releases/create/usage.mdx";
 
-Create a release along with its associated git commit, config schemas, upload rules in Miru. 
+Create a release along with its associated git commit, config schemas, file rules in Miru. 
 
-For a more detailed guide on creating releases, visit the [release creation](/cfg-mgmt/create-a-release) guide. To include upload rules, see the [release upload rules](/data-uploads/define-upload-rules) guide.
+For a more detailed guide on creating releases, visit the [release creation](/cfg-mgmt/create-a-release) guide. To include file rules, see the [define file rules](/data-uploads/define-file-rules) guide.
 
 ### Requirements
 
-- Schemas and upload rules must be committed to a local Git repository
+- Schemas and file rules must be committed to a local Git repository
 - Schemas must be annotated with their config types (see [annotations](/cfg-mgmt/primitives/schemas/overview#schema-annotations))
 - Git repository must have a remote URL (e.g. GitHub) configured
-- At least one config schema is provided (upload rules are optional) 
+- At least one config schema is provided (file rules are optional) 
 
 ### API key scopes
 

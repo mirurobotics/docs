@@ -11,6 +11,56 @@ import { Dropdown } from '/snippets/components/api-dropdown.jsx';
 
 *August 12, 2026*
 
+CLI `v0.11.0` renames the upload rule to the **file rule**. A file rule still says which files on a device to match, but uploading them and reclaiming their disk space are now two independent, optional halves of one object. See [file rules](/data-uploads/primitives/file-rules).
+
+## Breaking changes
+
+<Dropdown title="File rule flags">
+
+The `miru release create` upload rule flags have been renamed. There are no deprecated aliases, so update your invocations and CI pipelines:
+
+```diff
+  miru release create \
+    --version v1.0.0 \
+    --schemas ./schemas/ \
+-   --upload-rule ./upload-rules/robot-logs.yaml \
+-   --upload-rules ./upload-rules/
++   --file-rule ./file-rules/robot-logs.yaml \
++   --file-rules ./file-rules/
+```
+
+</Dropdown>
+
+<Dropdown title="Rule file format">
+
+The rule file YAML has been restructured. `name` is new and required, `collection_slug` moves under the new optional `upload` block, `destination` is replaced by `upload`, and `delete_policy` is removed in favor of the new optional `retention` block.
+
+```diff
++ name: Robot Logs
+- collection_slug: robot-logs
+
+  source:
+    glob: /var/log/robot/*.log
+    stability_window_secs: 60
+
+- destination:
+-   bucket: my-uploads-bucket
+-   path: logs/{device_id}/{file_name}
+-   delete_policy: after_upload
++ upload:
++   collection_slug: robot-logs
++   bucket: my-uploads-bucket
++   path: logs/{device_id}/{upload_id}/{file_name}
++
++ retention:
++   ttl_secs: 0
++   require_upload: true
+```
+
+Both `upload` and `retention` are optional. Omit `upload` for a rule that only reclaims local disk; omit `retention` and the device retains files on disk indefinitely after uploading. `ttl_secs` is required inside `retention`, and `require_upload` must be set exactly when the rule has an `upload` block.
+
+</Dropdown>
+
 ## Features
 
 - Add support for the [instance slots](/cfg-mgmt/primitives/schemas/overview#instance-slots) schema annotation, letting one config schema write config instances to several file paths
@@ -40,7 +90,7 @@ import { Dropdown } from '/snippets/components/api-dropdown.jsx';
 
 *July 20, 2026*
 
-CLI `v0.10.2` adds support for including [upload rules](/data-uploads/primitives/upload-rules) in a release, letting you define data uploads alongside your config schemas.
+CLI `v0.10.2` adds support for including [upload rules](/data-uploads/primitives/file-rules) in a release, letting you define data uploads alongside your config schemas.
 
 ## Features
 

@@ -1,0 +1,24 @@
+A rule's `retention` block governs deletion of the local copies of matching files. When
+absent, the device retains matching files indefinitely (Miru never deletes them). 
+
+The retention block doesn't go into effect until a file is considered stable. That is, its size and modification time have stayed unchanged for [`source.stability_window_secs`](/data-uploads/primitives/file-rules#sources). 
+
+<ParamField path="require_upload" type="boolean">
+  Whether a file must have its upload durably confirmed before it may be deleted. Must be set when the rule has an [`upload`](/data-uploads/primitives/file-rules#uploads) block.
+
+  - `true` — files are *never* deleted before their upload is confirmed. 
+  - `false` — upload is best-effort; files may be deleted once they are eligible, even if their upload has not completed.
+</ParamField>
+
+<ParamField path="ttl_secs" type="integer" required>
+  How long, in seconds, the file lives on the device before it is scheduled for deletion. The clock starts as soon as the file is considered stable. 
+  
+  Use `0` to delete the file as soon as it becomes eligible.
+
+  Example: `604800`
+</ParamField>
+
+<Note>
+  Local deletion is performed by the Miru Agent. Deleting a file requires write access to
+  its parent directory — see [file system access](/developers/agent/filesys-access#data-uploads).
+</Note>
