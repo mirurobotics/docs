@@ -37,8 +37,8 @@ finished being written to. For deterministic completion detection, write to a fi
 
 ## Device data isolation
 
-Devices' uploads are strictly isolated from each other. Isolation rests on a single requirement on the [destination
-path](/data-uploads/primitives/file-rules): it must include the `{upload_id}` variable somewhere in the template. 
+Devices' uploads are strictly isolated from each other. Isolation rests on a single requirement on the [upload
+path](/data-uploads/primitives/file-rules#uploads): it must include the `{upload_id}` variable somewhere in the template. 
 
 Since devices receive credentials scoped to an **exact object key** for each upload, and a given upload ID is authorized to its device, devices never receive credentials which grant any access to another device's data.
 
