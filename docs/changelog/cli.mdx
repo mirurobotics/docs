@@ -61,9 +61,6 @@ Both `upload` and `retention` are optional. Omit `upload` for a rule that only r
 
 </Dropdown>
 
-- The `upload_rules:*` API key scopes are now `file_rules:*`, so a CI pipeline creating a release with file rules needs `file_rules:manage`
-- Rules are keyed by `name`, which must be unique across the rule files included in one release; two rules may now share an upload collection slug
-
 ## Features
 
 - Add support for the [instance slots](/cfg-mgmt/primitives/schemas/overview#instance-slots) schema annotation, letting one config schema write config instances to several file paths

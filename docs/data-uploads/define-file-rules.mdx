@@ -23,7 +23,10 @@ The generic prerequisites are covered in the [Create a release](/cfg-mgmt/create
 
 ## Define the file rules
 
-File rules are defined as YAML files in your Git repository. Below is an example rule that uploads all log files from the `/var/log/robot` directory to the `my-uploads-bucket` bucket, and then deletes each local copy a week after its upload is confirmed.
+File rules are defined as YAML files in your Git repository. Below is an example rule
+that uploads all log files from the `/var/log/robot` directory to the
+`my-uploads-bucket` bucket, and then deletes each local copy a week after its upload is
+confirmed.
 
 ```yaml robot-logs.yaml
 name: Robot Logs
@@ -54,9 +57,7 @@ retention:
   ttl_secs: 3600
 ```
 
-Like schemas, file rules are identified by hashing their content, so rules with equivalent content are deduplicated even if their comments or formatting differ. The rule's `name` is part of that content, so changing a name produces a new rule.
-
-Rule `name`s must be unique across the rule files included in a single `miru release create`.
+Like schemas, file rules are identified by hashing their content, so rules with equivalent content are deduplicated even if their comments or formatting differ. 
 
 ### Source
 
