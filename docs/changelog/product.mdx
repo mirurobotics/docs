@@ -11,6 +11,61 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 <div className="changelog-page">
 
+<Update label="August 14, 2026">
+    ## Multiple Config Instances per Schema
+
+    A single config schema can now write **several files** to a device, using
+    **instance slots**. Each slot is a separate file system destination validated by the same schema.
+
+    This allows a robot with several identical motor controllers to use one
+    `motor-controller` schema instead of duplicated config types per
+    controller.
+
+    Instance slots are only supported in [Miru CLI v0.11.0](/changelog/cli#v0-11-0) or later.
+
+    [Instance slots »](/cfg-mgmt/primitives/schemas/overview#instance-slots)
+
+    <Framed
+        image="https://assets.mirurobotics.com/docs/changelog/26-08-14/instance-slots.png"
+        background="https://assets.mirurobotics.com/docs/changelog/26-08-14/background.jpg"
+        borderWidth="24px 0px 0px 24px"
+        innerRadius="8px 0px 0px 0px"
+    />
+
+    ## Upload Rules Renamed to File Rules
+
+    Upload rules have been renamed to **file rules**. A rule still watches a glob on
+    the device, but **upload** and **retention** are independent and optional —
+    a rule can upload, reclaim disk, or both.
+
+    The new `retention` block replaces `delete_policy`. Its required `ttl_secs` field
+    sets how long a file lives on the device before it is scheduled for deletion.
+
+    File rules require [Miru CLI v0.11.0](/changelog/cli#v0-11-0) and [Miru Agent
+    v0.10.1](/changelog/agent#v0-10-1) or later.
+
+    [File rules »](/data-uploads/primitives/file-rules)
+
+    <Framed
+        image="https://assets.mirurobotics.com/docs/changelog/26-08-14/file-rule.png"
+        background="https://assets.mirurobotics.com/docs/changelog/26-08-14/background.jpg"
+    />
+
+    <Separator />
+
+    <Dropdown title="Improvements">
+        <DropdownItem>
+            **Draft mode shows diffs:** The draft mode now shows diffs between old
+            values and new values while you're editing a config.
+        </DropdownItem>
+        <DropdownItem>
+            **Git commit message truncation:** Uploaded git commit messages longer
+            than 2KB are now truncated instead of throwing an error.
+        </DropdownItem>
+    </Dropdown>
+
+</Update>
+
 <Update label="August 6, 2026">
     ## Live Schema Validation
 
