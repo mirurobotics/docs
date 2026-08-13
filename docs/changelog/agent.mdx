@@ -4,6 +4,19 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.10.1
+
+*August 12, 2026*
+
+Miru Agent `v0.10.1` is a bug fix release that hardens file uploads against transient network outages and makes agent shutdown flush all on-disk state.
+
+## Fixes
+
+- Upload failures caused by network connection errors—including connection failures reaching AWS S3 and GCS—no longer count against a job's retry budget, so an unreachable backend or storage bucket can no longer cause an upload to be dropped; these failures now wait a flat 10 seconds and requeue behind the other pending uploads
+- Attempt every storage flush during shutdown even if an earlier step fails, so cached state is no longer lost when the device fails to report itself offline
+
+---
+
 # v0.10.0
 
 *July 20, 2026*
