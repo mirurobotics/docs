@@ -12,75 +12,55 @@ import { Separator } from '/snippets/components/separator.jsx';
 <div className="changelog-page">
 
 <Update label="August 14, 2026">
-    ## Multiple Configs per Schema
+    ## Multiple Config Instances per Schema
 
-    One config schema can now write **several config files** to a device, using
-    **instance slots**. Each slot is a distinct file system destination for the same
-    schema, and every config instance binds to exactly one slot. A robot with several
-    identical motor controllers can use a single `motor-controller` schema with one slot
-    per controller instead of a near-identical config type for each one.
-
-    - **Instance slots:** Declared as an annotation inside the schema itself. Each
-      slot has a `key`, a `name`, an absolute `filepath`, and `required`, plus an
-      optional `description`
-    - **Same validation, several files:** Every slot on a schema shares the exact
-      same validation. Two files that need different validation still belong to two
-      config types, not to two slots of one schema
-    - **Slot keys:** Slot keys and file paths are unique within a schema, and every
-      config instance records the `slot key` of the slot it fills. The slot's
-      `filepath` is where that instance is written on the device
-    - **Required and optional slots:** A deployment must include a config instance
-      for every slot marked `required`, and may include one for the rest
-    - **One or the other:** A schema declares an instance file path *or* instance
-      slots. Declaring both is an error. Declaring neither gives the schema a single
-      slot with default values
-
-    Instance slots are available in [Miru CLI v0.11.0](/changelog/cli#v0-11-0).
+    A single config schema can now write **several files** to a device, using
+    **instance slots**. Each slot is a separate file system destination validated by the same schema. 
+    
+    This allows a robot with several identical motor controllers to use one
+    `motor-controller` schema instead of duplicated config types per
+    controller. 
+    
+    Instance slots are only supported in [Miru CLI v0.11.0](/changelog/cli#v0-11-0) or later.
 
     [Instance slots »](/cfg-mgmt/primitives/schemas/overview#instance-slots)
 
-    {/* TODO(assets): asset not yet uploaded — instance-slots.png must exist at the URL below before this entry publishes */}
     <Framed
         image="https://assets.mirurobotics.com/docs/changelog/26-08-14/instance-slots.png"
-        borderWidth="0px"
-        innerRadius="8px"
+        background="https://assets.mirurobotics.com/docs/changelog/26-08-14/background.jpg"
+        borderWidth="24px 0px 0px 24px"
+        innerRadius="8px 0px 0px 0px"
     />
 
-    ## File Rules
+    ## Upload Rules renamed to File Rules
 
-    The upload rule is now the **file rule**. A rule still watches a glob on the
-    device, but uploading the matches and reclaiming their disk space are now two
-    independent, optional halves of one object.
+    Upload rules have been renamed to **file rules**. A rule still watches a glob on
+    the device, but **upload** and **retention** are independent and optional —
+    a rule can upload, reclaim disk, or both.
 
-    - **Source:** Unchanged — the glob to watch, and the stability window that
-      decides when a matching file has finished being written
-    - **Upload:** Optional. Where matching files go: the upload collection, the
-      bucket, and the object path. Omit it for a rule that only reclaims local disk
-    - **Retention:** Optional. How long the device keeps matching files. `ttl_secs`
-      is required inside a retention block, and `require_upload` is set exactly when
-      the rule has an `upload` block. Omit retention and the device keeps matching
-      files indefinitely
-    - **Renamed flags:** `miru release create` takes `--file-rule` and `--file-rules`
-      in place of `--upload-rule` and `--upload-rules`. There are no deprecated
-      aliases, so update your invocations and CI pipelines
-    - **Renamed scopes:** The `upload_rules:*` API key scopes are now `file_rules:*`
+    The `retention` configuration for a file rule added a `ttl_secs` field, which allows you to specify how long a file should be retained on disk before being deleted.
 
-    To use file rules, you'll need to upgrade the Miru CLI and Agent to the following
-    versions (or later):
-
-    - [Miru CLI v0.11.0](/changelog/cli#v0-11-0) — renames the rule flags and accepts
-      the restructured rule file
-    - [Miru Agent v0.10.1](/changelog/agent#v0-10-1) — supports the latest file rule
-      capabilities, including retention-only rules
+    File rules require [Miru CLI v0.11.0](/changelog/cli#v0-11-0) and [Miru Agent
+    v0.10.1](/changelog/agent#v0-10-1) or later.
 
     [File rules »](/data-uploads/primitives/file-rules)
 
-    {/* TODO(assets): asset not yet uploaded — file-rules.png must exist at the URL below before this entry publishes */}
     <Framed
-        image="https://assets.mirurobotics.com/docs/changelog/26-08-14/file-rules.png"
-        borderWidth="0px"
-        innerRadius="8px"
+        image="https://assets.mirurobotics.com/docs/changelog/26-08-14/file-rule.png"
+        background="https://assets.mirurobotics.com/docs/changelog/26-08-14/background.jpg"
     />
+
+    <Separator />
+
+    <Dropdown title="Improvements">
+        <DropdownItem>
+            **Draft Mode Shows Diffs:** The draft mode now shows diffs between old values and new values while you're editing a config.
+        </DropdownItem>
+        <DropdownItem>
+            **Git Commit Message Truncation:** Uploaded git commit messages are now automatically truncated to 2KB instead of throwing an error for messages longer than 2KB.
+        </DropdownItem>
+    </Dropdown>
+
 </Update>
 
 <Update label="August 6, 2026">
