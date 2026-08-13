@@ -4,6 +4,21 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.10.1
+
+*August 12, 2026*
+
+## Features
+
+- Added support for the latest [file rule](/data-uploads/primitives/file-rules) capabilities, including retention-only rules and a configurable delay period before deletion
+
+## Fixes
+
+- Fixed a bug where failing to shut down one component of the agent would block other unrelated components from gracefully shutting down
+- Upload failures are more robust to network connection errors by no longer counting them against a file upload's retry budget for a given upload
+
+---
+
 # v0.10.0
 
 *July 20, 2026*
