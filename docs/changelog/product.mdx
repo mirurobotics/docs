@@ -15,12 +15,12 @@ import { Separator } from '/snippets/components/separator.jsx';
     ## Multiple Config Instances per Schema
 
     A single config schema can now write **several files** to a device, using
-    **instance slots**. Each slot is a separate file system destination validated by the same schema. 
-    
+    **instance slots**. Each slot is a separate file system destination validated by the same schema.
+
     This allows a robot with several identical motor controllers to use one
     `motor-controller` schema instead of duplicated config types per
-    controller. 
-    
+    controller.
+
     Instance slots are only supported in [Miru CLI v0.11.0](/changelog/cli#v0-11-0) or later.
 
     [Instance slots »](/cfg-mgmt/primitives/schemas/overview#instance-slots)
@@ -32,13 +32,14 @@ import { Separator } from '/snippets/components/separator.jsx';
         innerRadius="8px 0px 0px 0px"
     />
 
-    ## Upload Rules renamed to File Rules
+    ## Upload Rules Renamed to File Rules
 
     Upload rules have been renamed to **file rules**. A rule still watches a glob on
     the device, but **upload** and **retention** are independent and optional —
     a rule can upload, reclaim disk, or both.
 
-    The `retention` configuration for a file rule added a `ttl_secs` field, which allows you to specify how long a file should be retained on disk before being deleted.
+    The new `retention` block replaces `delete_policy`. Its required `ttl_secs` field
+    sets how long a file lives on the device before it is scheduled for deletion.
 
     File rules require [Miru CLI v0.11.0](/changelog/cli#v0-11-0) and [Miru Agent
     v0.10.1](/changelog/agent#v0-10-1) or later.
@@ -54,10 +55,12 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     <Dropdown title="Improvements">
         <DropdownItem>
-            **Draft Mode Shows Diffs:** The draft mode now shows diffs between old values and new values while you're editing a config.
+            **Draft mode shows diffs:** The draft mode now shows diffs between old
+            values and new values while you're editing a config.
         </DropdownItem>
         <DropdownItem>
-            **Git Commit Message Truncation:** Uploaded git commit messages are now automatically truncated to 2KB instead of throwing an error for messages longer than 2KB.
+            **Git commit message truncation:** Uploaded git commit messages longer
+            than 2KB are now truncated instead of throwing an error.
         </DropdownItem>
     </Dropdown>
 
