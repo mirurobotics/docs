@@ -1,0 +1,27 @@
+---
+title: "Login"
+---
+
+import LoginInstructions from "/snippets/references/cli/login.mdx";
+
+Authenticate the CLI on your development machine by storing a token locally.
+
+`login` is interactive and prompts for a token. For non-interactive use such as [CI pipelines](/developers/ci/overview), scripts, and AI agents, authenticate with the `MIRU_API_KEY` environment variable instead — see [Authentication](/developers/cli/authentication#api-key).
+
+### Usage
+
+```bash
+miru login
+```
+
+**Flags**
+
+`login` takes no flags beyond the global ones.
+
+<ParamField path="--quiet, -q" type="boolean">
+  Suppress output except errors.
+</ParamField>
+
+### Example
+
+<LoginInstructions />

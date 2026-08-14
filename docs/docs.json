@@ -144,7 +144,7 @@
                 "pages": [
                   "developers/cli/overview",
                   "developers/cli/install",
-                  "developers/cli/login"
+                  "developers/cli/authentication"
                 ]
               },
               {
@@ -207,6 +207,12 @@
       {
         "product": "CLI Reference",
         "groups": [
+          {
+            "group": "Authentication",
+            "pages": [
+              "references/cli/login"
+            ]
+          },
           {
             "group": "Releases",
             "pages": [
@@ -418,6 +424,10 @@
     {
       "source": "/developers/agent/file-permissions",
       "destination": "/developers/agent/filesys-access"
+    },
+    {
+      "source": "/developers/cli/login",
+      "destination": "/developers/cli/authentication"
     },
     {
       "source": "/changelogs/:slug*",
