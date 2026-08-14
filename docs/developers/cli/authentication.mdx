@@ -1,0 +1,25 @@
+---
+title: 'Authentication'
+---
+
+import LoginInstructions from '/snippets/references/cli/login.mdx';
+
+The CLI supports two ways to authenticate: an interactive login for your development machine, and an API key for non-interactive use such as CI pipelines, scripts, and AI agents.
+
+## Interactive login
+
+<LoginInstructions />
+
+## API key
+
+The `login` command prompts for a token, which makes it unsuitable for anything non-interactive. To authenticate without a prompt, export the `MIRU_API_KEY` environment variable instead.
+
+```bash
+export MIRU_API_KEY=<your-api-key>
+```
+
+No `login` is required when `MIRU_API_KEY` is set.
+
+To create an API key, follow the instructions in the [API keys](/admin/apikeys#create-an-api-key) section. To determine which scopes the key needs, find the command you want to run in the [CLI Reference](/references/cli/release-create) and consult its **API key scopes** section.
+
+For using the CLI in a CI pipeline, see the [CI/CD guide](/developers/ci/overview).
