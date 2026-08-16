@@ -449,9 +449,15 @@ A single text insertion. Re-running is safe: delete the inserted section or `git
 
 ## Progress
 
-- [ ] Milestone 1: Insert the everglades section into `docs/changelog/platform-api.mdx`.
-- [ ] Milestone 2: Preflight CLEAN + CI green on the pushed branch head.
-- [ ] Confirm the date line against the stable tag before leaving draft.
+- [x] Milestone 1: Insert the everglades section into `docs/changelog/platform-api.mdx`.
+- [x] Milestone 3 (added — see Decision Log Q6): vendor `docs/references/platform-api/2026-08-17.yaml`.
+- [x] Milestone 3: add the `2026-08-17.everglades` dropdown and repoint the `latest` redirect in `docs/docs.json`.
+- [x] Milestone 3: add the `versioning.mdx` supported-versions row and bump the `Miru-Version` examples site-wide.
+- [x] Milestone 3: add the `sdks.mdx` compatibility row.
+- [x] Milestone 2: Preflight CLEAN (`./scripts/preflight.sh` exit 0, `pnpm run validate` success) + CI green on the pushed branch head.
+- [ ] **Before leaving draft:** confirm the date line against the real `platform/2026-08-17.everglades` stable tag (Decision Log Q1 / Q7).
+- [ ] **Before leaving draft:** replace the `sdks.mdx` "Not yet released" cell once an everglades Python SDK ships, and cap the rainier row's `v0.10.x+`.
+- [ ] **Before leaving draft:** confirm `https://assets.mirurobotics.com/docs/openapi/platform/2026-08-17.yaml` is published (the bucket is populated outside this repo).
 
 ## Surprises & Discoveries
 
@@ -518,6 +524,43 @@ No precedent exists for documenting beta-only churn: the tetons and rainier entr
 ### Q5 — Scope: changelog only, no reference pages
 
 **Answer: changelog only**, matching the rainier plan's explicit scoping ("The 'Platform API documentation' (the OpenAPI reference pages) is OUT OF SCOPE; that lands in a follow-up PR"). The consequence — the two `<PlatformApiReleaseLinks>` links 404 until the reference PR lands — is recorded in "Follow-ups and known dependencies" as a merge gate rather than silently accepted.
+
+### Q6 — Scope expanded at implementation time: the full release-docs bundle
+
+**Answer: Q5's "changelog only" scoping was overridden by the user before implementation. This PR lands the whole release surface in one change, exactly as `97bd94c` did for rainier.**
+
+`97bd94c` is the template. Mirroring it produced these additions beyond the changelog entry:
+
+- `docs/references/platform-api/2026-08-17.yaml` — the vendored reference spec.
+- `docs/docs.json` — a `"dropdown": "2026-08-17.everglades"` block at the top of the Platform API Reference product, **and** the `/references/platform-api/latest/:slug*` redirect repointed to `2026-08-17`.
+- `docs/snippets/components/platform-api-link.jsx` — `PlatformApiLink` repointed to the `2026-08-17` endpoint pages (`97bd94c` did the same bump for rainier).
+- `docs/developers/platform-api/versioning.mdx` — a new `<SupportedBadge />` row, and the `Miru-Version` example bumped.
+- `docs/developers/platform-api/sdks.mdx` — a new compatibility-matrix row (see Q8).
+- `docs/developers/platform-api/authn.mdx`, `query-params/{filtering,sorting,pagination,expansions}.mdx`, and `cfg-mgmt/provision-devices/provisioning-tokens.mdx` — `Miru-Version:` curl examples bumped from `2026-05-06.rainier` to `2026-08-17.everglades`, matching `97bd94c`'s tetons→rainier sweep.
+
+`docs/changelog/product.mdx:421` is deliberately untouched — it is a historical entry referring to the rainier release.
+
+Consequence: the `<PlatformApiReleaseLinks>` "API reference" link now resolves (the reference pages ship in this PR). The "OpenAPI spec" link still points at `https://assets.mirurobotics.com/docs/openapi/platform/2026-08-17.yaml`, which is published from outside this repo and must be confirmed before merge.
+
+**How the reference YAML was produced.** The vendoring pipeline was reverse-engineered from `97bd94c` and confirmed byte-for-byte: `docs/references/platform-api/2026-05-06.yaml` equals the `platform/2026-05-06.rainier-beta.3` release asset run through `api/inject_scopes.py`, plus Stainless-generated `x-codeSamples`. The everglades file was produced by copying the `platform/2026-08-17.everglades-beta.2` `platform.yaml` asset and running `api/inject_scopes.py` on it (31 operations injected, including the two new `groups` operations).
+
+**It carries no `x-codeSamples`.** `api/pull-stainless.sh` pulls `https://app.stainless.com/api/spec/documented/miru-platform/openapi.documented.yml`, which still serves `version: 2026-05-06.rainier` — Stainless has not been regenerated for everglades. Code samples cannot be produced without a Stainless everglades run, and would be wrong if hand-written. The reference pages therefore render without Python samples until the everglades SDK ships; adding them is a follow-up, not a blocker. `mint openapi-check` and `mint validate` both pass on the file as vendored.
+
+### Q7 — The date line is a placeholder
+
+**Answer: `*August 17, 2026*` is written as a placeholder and MUST be re-verified before merge.**
+
+`platform/2026-08-17.everglades` does not exist as a stable tag as of implementation (2026-08-16); only `everglades-beta.1` (2026-08-14) and `everglades-beta.2` (2026-08-16) exist. Precedent says the entry is dated the day the stable tag is cut, and rainier's stable tag slipped **six days** past its version date (`2026-05-06` version → `2026-05-12` tag → `*May 12, 2026*` in the entry). Everglades may slip the same way.
+
+**Action required at merge time:** run `gh release view platform/2026-08-17.everglades -R mirurobotics/openapi --json tagName,publishedAt`. If the tag date is not 2026-08-17, change the date line in `docs/changelog/platform-api.mdx` to the tag date before the PR leaves draft. This is why the PR stays in draft even with CI green.
+
+### Q8 — What goes in the `sdks.mdx` row when no SDK exists?
+
+**Answer: the literal text `Not yet released`. No version number is invented.**
+
+`gh release list -R mirurobotics/python-platform-sdk` shows `v0.10.0` (2026-05-13) as the newest release — that is the rainier SDK. There is no everglades SDK. The rainier row is left at `v0.10.x+`, which remains true. When the everglades SDK ships, replace `Not yet released` with its version series and cap the rainier row (e.g. `v0.10.x - v0.11.x`), mirroring how `97bd94c` capped tetons at `v0.7.x - v0.9.x`.
+
+Consistently, the changelog's "Update the Miru-Version header" migration step omits the rainier-style SDK version sentence and links to `/developers/platform-api/sdks` instead.
 
 ## Content gaps
 
