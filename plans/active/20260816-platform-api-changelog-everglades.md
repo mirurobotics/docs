@@ -572,4 +572,12 @@ Facts that could not be determined from the available sources and must be resolv
 
 ## Outcomes & Retrospective
 
-(populate after implementation)
+Landed as draft PR [mirurobotics/docs#158](https://github.com/mirurobotics/docs/pull/158) across four commits: the vendored spec, the changelog entry, the current-version switch, and this plan update. Preflight exits 0 and all CI checks pass (`lint`, `audit`, `shell-tests`, `changes`; the custom-linter jobs correctly skip because `tools/lint/**` is untouched).
+
+The PR is deliberately held in draft. Three things must be true before it merges, none of which CI can check: the `platform/2026-08-17.everglades` stable tag must exist and its date must match the entry's date line; backend PR #620 (`groups:read` scope registration, now merged) must be deployed, or `GET /groups` 403s for every customer key; and `https://assets.mirurobotics.com/docs/openapi/platform/2026-08-17.yaml` must be published from outside this repo.
+
+What the plan got right: the verbatim entry pasted in unmodified and passed the MDX prose linter, ESLint-MDX, cspell, and `mint validate` on the first try. Predicting the CI command set from `.github/workflows/ci.yml` meant no surprise failures.
+
+What the plan under-scoped: Q5's "changelog only" was reversed before implementation began (Q6). Splitting the changelog from the reference pages would have shipped an entry whose "API reference" link 404s, which the plan itself flagged as a merge gate — landing them together removes that gate entirely and matches what `97bd94c` actually did. The plan should have read the precedent commit's full file list rather than only its changelog hunk.
+
+The one genuinely unknowable fact remained unknowable: no everglades Python SDK exists, so `sdks.mdx` says `Not yet released` rather than inventing a version (Q8). The absent `x-codeSamples` on the vendored spec has the same root cause — Stainless has not been regenerated for everglades — and resolves the same way, when the SDK ships.
