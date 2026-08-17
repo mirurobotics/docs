@@ -4,6 +4,7 @@ title: "Groups"
 
 import { EditableBadge, MutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
+import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge, GroupManagerBadge } from '/snippets/components/role-badges.jsx';
 import MoveDevice from '/snippets/devices/move.mdx';
 
@@ -70,7 +71,21 @@ Groups organize devices into a tree hierarchy. A workspace can have multiple top
 
 Devices belong to at most one group. Devices that haven't been assigned to any group remain ungrouped at the workspace level.
 
+## View a group
+
+**Dashboard**
+
+To view your workspace's groups, navigate to the [Groups page](https://app.mirurobotics.com/groups).
+
+**Platform API**
+
+To retrieve a group programmatically, use the <PlatformApiLink endpoint="groups/get">get group endpoint »</PlatformApiLink>
+
+To list groups programmatically, use the <PlatformApiLink endpoint="groups/list">list groups endpoint »</PlatformApiLink>
+
 ## Create a group  <AdminBadge />  <GroupManagerBadge />
+
+**Dashboard**
 
 Go to the [Groups page](https://app.mirurobotics.com/groups) and navigate into the group you want to create a group inside of. Click the **+ Group** button in the top right corner.
 
@@ -84,7 +99,13 @@ Fill in the fields, then click **Create**.
   ![Create Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/create-dialog.png)
 </Frame>
 
+**Platform API**
+
+To create a group programmatically, use the <PlatformApiLink endpoint="groups/create">create group endpoint »</PlatformApiLink>
+
 ## Edit a group  <AdminBadge />  <GroupManagerBadge />
+
+**Dashboard**
 
 Navigate to the [Groups page](https://assets.mirurobotics.com/docs/v04/images/groups/page.png), click the ellipses (...) on the group you want to edit, and hit **Edit**.
 
@@ -97,6 +118,16 @@ Update the desired fields, then click **Save**.
 <Frame>
   ![Edit Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/edit-dialog.png)
 </Frame>
+
+**Platform API**
+
+To edit a group programmatically, use the <PlatformApiLink endpoint="groups/update">update group endpoint »</PlatformApiLink>
+
+## Move a group  <AdminBadge />  <GroupManagerBadge />
+
+**Platform API**
+
+To move a group to a new parent group—or to the top level by setting `parent_id` to `null`—use the <PlatformApiLink endpoint="groups/move">move group endpoint »</PlatformApiLink>
 
 ## Move a device  <AdminBadge />  <GroupManagerBadge />
 

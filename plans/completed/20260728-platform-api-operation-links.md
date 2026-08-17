@@ -173,12 +173,14 @@ All edits are additive prose blocks plus one link conversion; no state outside t
 ## Progress
 
 - [x] Milestone 1: Add link blocks to the nine pages; verify slug coverage; commit. Landed as `cd164fd` (9 files, insertions only except the one-line provisioning-tokens conversion). Coverage grep returns exactly the 30 slugs from the inventory table.
-- [ ] Milestone 2: Lint passes locally (done, exit 0) and 8 live-slug spot checks return 200 (done); preflight CLEAN on the pushed branch head still pending — branch not yet pushed.
+- [x] Milestone 2: Lint passed locally, 8 live-slug spot checks returned 200, and preflight reported CLEAN — CI green on the pushed branch head — before PR #141 left draft.
+- [x] Milestone 3 (2026-08-17 rebase): Rebased onto main after the `2026-08-17.everglades` API release. The component now targets `2026-08-17`; everglades added a Groups API (`groups/get`, `groups/list`, `groups/create`, `groups/update`, `groups/move`), so `docs/primitives/groups.mdx` gained View/Create/Edit/Move-a-group link blocks. Coverage grep now returns exactly the 35 slugs in the everglades inventory (no missing, no stale); `groups/move`, `groups/list`, and a legacy slug spot-checked live under `2026-08-17`.
 
 ## Surprises & Discoveries
 
 - `PlatformApiLink` was already in use beyond the exemplar pages: `docs/developers/platform-api/query-params/*.mdx` and `docs/developers/agent/versions.mdx` link several of the same slugs (some with `#anchor` suffixes, e.g. `devices/list#query-parameters`). Repo-wide coverage greps therefore count some slugs more than once; the acceptance grep in Concrete Steps step 4 (`sort -u` on the bare slug) still yields exactly 30.
 - Local `main` is behind `origin/main`; `git diff main` includes upstream commits (#125, #140) already merged into the branch's history. Verification of "no-link pages absent from the diff" must look at the work commits (`cd164fd`, `f50c42f`), which touch only the nine pages plus this plan.
+- The `2026-08-17.everglades` release (merged to main after this plan's implementation) exercised the Decision Log's "revisit when the API grows the corresponding endpoints" note sooner than expected: groups became fully API-manageable, so the groups page needed link blocks after all. Device→group assignment remains a dashboard-only flow (`UpdateDeviceRequest` still carries only `name`), so "Move a device" stays unlinked. The rebase conflict in `provisioning-tokens.mdx` (main bumped the hardcoded URL to `2026-08-17` vs. this branch's component conversion) resolved in favor of the component — exactly the staleness the conversion was meant to prevent.
 
 ## Decision Log
 
