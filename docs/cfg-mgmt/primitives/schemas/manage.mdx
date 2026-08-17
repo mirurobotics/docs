@@ -3,6 +3,7 @@ title: "Manage schemas"
 ---
 
 import { Framed } from '/snippets/components/framed.jsx';
+import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
 import { PublisherBadge } from '/snippets/components/role-badges.jsx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v04/images/config-schemas/background.png" image="https://assets.mirurobotics.com/docs/v04/images/config-schemas/header:metadata.png" borderWidth={"24px 48px 0 0"} innerRadius={"0 8px 0 0"} />
@@ -10,6 +11,10 @@ import { PublisherBadge } from '/snippets/components/role-badges.jsx';
 ## Create a schema  <PublisherBadge />
 
 Schemas must be created as part of a release. Visit the [define releases](/cfg-mgmt/create-a-release) page to learn how to create a release along with its schemas.
+
+**Platform API**
+
+To create a config schema programmatically, use the <PlatformApiLink endpoint="config-schemas/create">create config schema endpoint »</PlatformApiLink>
 
 ## View a schema
 
@@ -42,3 +47,9 @@ Click into a schema to open its details, which contains the following tabs:
     </Frame>
   </Tab>
 </Tabs>
+
+**Platform API**
+
+To retrieve a config schema programmatically, use the <PlatformApiLink endpoint="config-schemas/get">get config schema endpoint »</PlatformApiLink>
+
+To list config schemas programmatically, use the <PlatformApiLink endpoint="config-schemas/list">list config schemas endpoint »</PlatformApiLink>
