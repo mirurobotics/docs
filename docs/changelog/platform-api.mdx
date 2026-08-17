@@ -194,8 +194,6 @@ The `everglades` release introduces device groups and adds group membership to d
 
   Devices now include the [group](/primitives/groups) they belong to. `group_id` is always present and is `null` for unassigned devices.
 
-  Membership is read-only over the API. `group_id` is returned, expandable, and filterable, but it cannot be set on <POST /> `/devices` or changed on <PATCH /> `/devices/{device_id}`. Assign and move devices from the dashboard.
-
   **Device Response**
 
   ```diff
