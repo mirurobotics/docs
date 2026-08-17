@@ -73,8 +73,6 @@ Some resources have additional granular scopes beyond the standard tiers (e.g. `
 | `devices:write` | create, update, move between groups |
 | `devices:delete` | delete |
 
-`devices:write` covers bulk moves, which are authorized differently from the rest of the scope. The permission is checked against the group the devices are moving into, not against the devices themselves, so the API key must be granted `devices:write` on the target group. Moving devices to the root of the tree requires a workspace-level grant. Granting `devices:write` on a group therefore allows devices to be moved into that group from anywhere in the workspace.
-
 ### Git commits
 
 | Scope | Permissions |
