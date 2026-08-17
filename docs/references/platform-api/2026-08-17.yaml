@@ -6,163 +6,169 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  x-release-version: 2026-08-17.everglades-beta.2
+  x-release-version: 2026-08-17.everglades-beta.3
   x-git-commit:
-    sha: 6f0a38f616916cf0341789ca73761bf623ae9508
-    url: https://github.com/mirurobotics/openapi/commit/6f0a38f616916cf0341789ca73761bf623ae9508
+    sha: b44810b2c0dbf1bc2af74bf930b5a9881925cc61
+    url: https://github.com/mirurobotics/openapi/commit/b44810b2c0dbf1bc2af74bf930b5a9881925cc61
     message: |-
-      feat(platform): connect devices to groups (#246)
+      feat(platform): add a group write surface (#249)
+
+      ## ⚠️ Two backend release gates — these endpoints 403 for every API key
+      until both land
+
+      This PR defines contracts only. **All four new endpoints are uncallable
+      with a real API key until `mirurobotics/backend` lands both of the
+      following.** They live in different scope nodes and either can be missed
+      independently.
+
+      1. **`groups:write` is not registered.** `GroupNode()` in
+      `internal/authz/scopes/scopes.go` has exactly one child today —
+      `groups:read` (from backend PR #620). It needs a `groups:write` child
+      carrying `Groups.Create`, `Groups.Update`, `Groups.Move`. **Explicitly
+      NOT `Groups.Delete`** — `DELETE /groups/{group_id}` is deferred here,
+      and a scope must never authorize more than the surface exposes. Adding
+      `Delete` later is additive.
+
+      2. **`Perms.Devices.Move` is in NO registered scope at all.** This is a
+      separate, less obvious gap. `devices:manage` is `{Activate, Create, Get,
+      List, Update, Reactivate, Ping}`; `devices:write` is `{Create, Update}`;
+      `devices:provision` is `{Create, List, Activate, Reactivate}`. `Move`
+      appears in none of them, yet it is the permission `BulkMove` actually
+      checks (`internal/configs/services/devices/authz.go`). `POST
+      /devices/move/bulk` 403s until `Move` is added to `devices:write`
+      **and** to the `devices:manage` parent.
+
+      Backend also needs four platform handlers wired (`createGroup`,
+      `updateGroup`, `moveGroup`, `bulkMoveDevices`) and
+      `CreateDevice.GetGroupID()` unstubbed — but all four service layers
+      already exist and are exercised by the frontend audience, so that is
+      handler and request-mapping work, not new domain logic.
 
       ## What this adds
 
-      A read-only link from a device to its group on the **platform**
-      audience:
+      The platform audience today exposes `GET /groups` and `GET
+      /groups/{group_id}` and a read-only `group_id` on devices. `group_id`
+      appears in **no** platform request body. A customer can observe group
+      structure somebody built in the dashboard and do nothing else with it.
+      For a fleet-automation API the intended loop is provision → assign →
+      deploy; steps 1 and 3 are on the surface and **step 2 is unreachable**,
+      since groups cannot be created through the API at all.
 
-      - **`Device.group_id`** — a required, nullable scalar. Which group a
-      device belongs to; `null` when unassigned. Always present in a response,
-      never absent.
-      - **`Device.group`** — an expandable object, available via `GET
-      /devices/{device_id}?expand=group` and `GET /devices?expand=group`.
-      - **`group`** added to *both* `DeviceExpansion` and
-      `DeviceListExpansion` (MIRU002 enforces congruence between the two, and
-      expanding a device's group is equally useful on the list endpoint).
-      - **`device_search_group_id`** — a new filter on `GET /devices`,
-      exposing the wire-level query parameter `group_id`, plus the matching
-      `group_id` value in `DvcSearch`.
+      | Route | Operation | Scope | |
+      |---|---|---|---|
+      | `POST /groups` | `createGroup` | `groups:write` | Create a group,
+      optionally under a parent. |
+      | `PATCH /groups/{group_id}` | `updateGroup` | `groups:write` | Rename a
+      group. `name` only. |
+      | `POST /groups/{group_id}/move` | `moveGroup` | `groups:write` |
+      Reparent, or move to top level with `parent_id: null`. |
+      | `POST /devices/move/bulk` | `bulkMoveDevices` | `devices:write` | Move
+      up to 1000 devices to a target group. |
 
-      Source changes are three files
-      (`platform/components/schemas/device.yaml` +15,
-      `platform/paths/devices.yaml` +18, `.redocly.lint-ignore.yaml` +2) plus
-      the regenerated platform bundle.
+      Plus `group_id` on the platform `CreateDeviceRequest`, collapsing
+      "provision device → assign to group" into one call.
 
-      ## Why it matters: this completes #245
+      Route count `23 → 25`. Scope histogram in the platform bundle:
+      `groups:write` ×3, `devices:write` ×3, `groups:read` ×2.
 
-      PR #245 added a read-only `groups` resource to the platform audience,
-      but its own decision log flagged the consequence: the platform `Device`
-      wraps `BaseDevice`, and `group_id` lives only on the *full* `Device` in
-      `apis/configs`, so **groups shipped as an orphaned tree**. A customer
-      could enumerate the group hierarchy and resolve lineage, but could not
-      connect any of it to a single device in their fleet — which is the only
-      reason they would want it.
+      ## Design decisions
 
-      With this change the platform spec answers all three questions a fleet
-      integration actually asks:
+      **Why `POST /devices/move/bulk` rather than `group_id` on `PATCH
+      /devices/{device_id}`.** The PATCH option is superficially more RESTful
+      and was rejected on three grounds. (a) No backend implementation exists
+      — `dvcsvc.UpdateInputs` has `Name`, `Description`, `AgentVersion` and no
+      `GroupID`, while `BulkMove` does. (b) `BulkMove` carries authorization a
+      naive PATCH would silently skip: it checks `Perms.Devices.Move`
+      **against the target group's resource set**, so a principal must be
+      authorized both to move devices out of their current group and into the
+      destination. Reimplementing that on the generic update path means
+      duplicating the check or shipping a privilege-escalation hole. (c) It
+      would create two ways to do one thing — the exact anti-pattern this repo
+      already removed for groups. Bulk move serves the single-device case fine
+      with a one-element array.
 
-      1. *Which group is this device in?* — `Device.group_id`.
-      2. *Tell me about that group without a second round trip.* —
-      `expand=group`.
-      3. *List every device in group X.* — `GET /devices?group_id=grp_123`.
-      This is the platform-shaped answer to the `GET
-      /groups/{group_id}/members` endpoint #245 deferred, and it is why that
-      deferral was correct: the filter composes with `offset` / `limit` /
-      `order_by` / `expand` and every other device filter, which a bespoke
-      members endpoint would not.
+      **Why `PATCH /groups` is rename-only.** The shared `UpdateGroupRequest`
+      has exactly one property, `name`; `parent_id` was deliberately removed
+      from it repo-wide so reparenting has one path and only one.
+      `internal/configs/services/groups/move.go` is a distinct service with
+      cycle detection and max-depth validation gated on a distinct
+      `Perms.Groups.Move`. Folding that into a generic PATCH would either lose
+      the validation or overload update with move-specific failure modes.
 
-      ## No leak: the `group` expansion points at platform's own `Group`
+      **Why `DELETE /groups/{group_id}` is deferred.** A decision, not an
+      oversight — the backend service and `Perms.Groups.Delete` both already
+      exist, so shipping it would be mechanically easy. It is held back
+      because the *semantics* are unresolved: what happens to child groups
+      (cascade? reparent to the deleted group's parent? refuse while
+      non-empty?) and to member devices (unassign to root? refuse?). Each
+      answer is a different contract, and once one ships, picking another is
+      breaking. Deletion also has no safe default. Ship the additive surface
+      now; decide cascade semantics in its own write-up.
 
-      The single most important line in the diff. The `group` expansion refs
-      `./group.yaml#/Group` — the **platform-local** group, self-closed over
-      itself — not the shared `apis/configs` one.
+      **One `groups:write` scope for create + update + move.** Per-action
+      scopes exist in this audience (`deployments:stage`/`deploy`/`archive`),
+      so splitting was a real option. No group write operation has a blast
+      radius different enough to justify separate grants, and three slugs
+      instead of one triples the cross-repo registration gate for no security
+      gain. Splitting later is additive.
 
-      The shared `Group` carries `has_devices`, `has_subgroups`, and `actions`
-      (`GroupActions`): dashboard rendering affordances and RBAC
-      button-graying hints. #245 went to considerable trouble to keep every
-      one of them out of the platform bundle. Copying the shared device's
-      `group` property verbatim would have undone that in one line, dragging
-      `GroupActions` and `Action` into `components.schemas` and shipping UI
-      state into an external contract.
+      **`POST /devices/move/bulk` declares `devices:write`, not
+      `groups:write`, and not both.** The mutated resource is the device.
+      Requiring both would force every caller organizing a fleet to hold
+      group-write permission they don't need; the backend already enforces
+      target-group authorization at the permission layer, which is the correct
+      place. The scope answers "may this key move devices"; the permission
+      answers "into *that* group".
 
-      Because the platform `Group` is closed over itself via a same-file
-      `#/Group` self-reference, `device.group.parent.parent…` stays clean at
-      arbitrary depth for free.
+      **No new platform-local request files.** All four shared requests were
+      audited property by property and none carries a field platform must
+      withhold, so all four `$ref` the shared components directly — the
+      precedent `PingDeviceRequest` already sets. A platform-local copy
+      byte-identical to the shared one is duplicated surface that drifts
+      silently.
 
-      **Verified:** `has_devices`, `has_subgroups`, and `GroupActions` all
-      return **zero** matches in the platform bundle, and the bundled
-      `Device.group` resolves to `'#/components/schemas/Group'` — platform's
-      own.
+      ## The response-shape invariant
 
-      ## Deliberately read-only, as a reversible first step
+      Every new group response uses the **platform** `Group`, which wraps
+      `BaseGroup` and self-references `#/Group` for its `parent` expansion.
+      The shared full `Group` carries `has_devices`/`has_subgroups` (UI
+      rendering affordances) and `actions`/`GroupActions` (frontend RBAC
+      hints); pointing anything at it readmits all four into the external
+      contract at every depth of `group.parent.parent…`. Same for the
+      bulk-move response, which uses the platform `Device`.
 
-      `group_id` is exposed but **not settable**. `PATCH /devices/{device_id}`
-      keeps its name-only request body, and the frontend's bulk `POST
-      /devices/move` is not ported.
+      Verified on the regenerated bundle: `has_devices`, `has_subgroups`,
+      `GroupActions`, and `ancestors` (removed in #247) are all at **zero**
+      occurrences, `Group.parent` still `$ref`s
+      `'#/components/schemas/Group'`, the bulk-move items `$ref`
+      `'#/components/schemas/Device'`, and no bundler disambiguation suffix
+      (`Group2`, `Device2`, …) appeared. `UpdateGroupRequest` bundles with
+      `name` and nothing else; `group_id` is present on `CreateDeviceRequest`
+      and absent from `UpdateDeviceRequest`.
 
-      Reading a device's group is the useful half and the safe half. Write
-      access can be added later without breaking anyone — it is purely
-      additive — whereas shipping a device-reparenting API into an external
-      contract is effectively irreversible. Reparenting also has RBAC
-      semantics (the caller needs permission on *both* the source and
-      destination group), and that authorization model has not been designed
-      for API-key callers yet. Until it is, the platform surface stays
-      read-only. This is the same reasoning #245 applied to the groups
-      resource itself.
+      ## Compatibility
 
-      **Verified:** zero `group` matches in the device create/update request
-      schemas, and no `/devices/move` route.
+      **Additive and NOT breaking.** None of this shipped in the last stable
+      release `platform/2026-05-06.rainier` — it is four new operations and
+      one new optional request property, no field removed, no shape changed.
+      The bundle diff is `166 insertions(+), 0 deletions(-)`.
 
-      Also out of scope by decision: no `group_id` in `DeviceOrderBy` (sorting
-      a fleet by opaque group ID is not a meaningful operation, and the
-      frontend deliberately doesn't either), and no changes to the platform
-      groups resource.
-
-      ## Reviewer note on the bundle diff
-
-      The regenerated `platform/openapi.gen.yaml` shows **110 insertions / 77
-      deletions** — but every one of those deletions is **relocation, not
-      loss**. Because `Device` now references `Group`, the bundler emits the
-      `BaseGroup` / `Group` block earlier in `components.schemas`. The moved
-      text is byte-identical. No content was lost and there is no unrelated
-      drift. Please don't read the deletion count as a removal.
-
-      ## Lint
-
-      Exactly **one** new `.redocly.lint-ignore.yaml` pointer per platform
-      section —
-      `#/components/schemas/Device/allOf/1/properties/group/nullable` under
-      `nullable-type-sibling`, in both the `platform/openapi.gen.yaml` and
-      `build/dist/platform.yaml` sections. It is a direct consequence of the
-      `allOf` + sibling `nullable` idiom the platform `Device` already uses
-      for `current_release` and `current_deployment`. Nothing else is
-      suppressed; no new `no-invalid-schema-examples` entry was needed.
-
-      `tools/stainless/platform.yml` needed **no change** — MIRU018 diffs
-      route sets, and no route is added; `#/components/schemas/Group` was
-      already registered as a named model by #245.
-
-      ## Invariants held
-
-      - Platform route count unchanged at **23**. No routes added or removed.
-      - No other audience's `openapi.gen.yaml` changed.
-      - `DeviceOrderBy` untouched; `device_search_group_id` appears exactly
-      twice (defined once, referenced once, on `GET /devices` only).
-
-      ## Scope note (backend follow-up, unchanged by this PR)
-
-      Carried forward unresolved from #245: **the `groups:read` scope slug
-      still needs registering in the `mirurobotics/backend` scope registry**
-      before the *groups* endpoints are callable with a real API key.
-
-      This PR's own additions ride on the existing `devices:read` scope, so
-      `GET /devices?group_id=...` and `expand=group` work independently of
-      that scope registration. The device→group link does not wait on it; the
-      group *resource* does.
+      **A new `platform/2026-08-17.everglades-beta.3` must be cut after
+      merge** via the normal release path so downstream consumers pick this
+      up. Not done by this PR.
 
       ## Verification
 
-      - Local: `./scripts/regen.sh`, `./scripts/lint.sh`,
-      `./scripts/preflight.sh` (`=== All checks passed ===`), and
-      `./scripts/is-stale.sh` (`All generated specs are up to date.`) all
-      green.
-      - CI green on head `bcd4287f`: `lint`, `surface-lint`, `tool-tests`,
-      `stale-specs`, and stlc `detect` / `guard` / **`generate` (platform
-      SDK)**.
-
-      🤖 Generated with [Claude Code](https://claude.com/claude-code)
+      `./scripts/regen.sh` and `./scripts/lint.sh` both clean on the first
+      run; `.redocly.lint-ignore.yaml` needed no change.
+      `./scripts/preflight.sh` prints `=== All checks passed ===` and
+      `./scripts/is-stale.sh` reports up to date. No other audience's
+      `openapi.gen.yaml` changed and `apis/configs/` is untouched.
 
       <!-- codesmith:footer -->
       ---
       <a
-      href="https://app.blacksmith.sh/mirurobotics/codesmith/openapi/pr/246"><picture><source
+      href="https://app.blacksmith.sh/mirurobotics/codesmith/openapi/pr/249"><picture><source
       media="(prefers-color-scheme: dark)"
       srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"><source
       media="(prefers-color-scheme: light)"
@@ -170,7 +176,7 @@ info:
       alt="View with [code]smith"
       src="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"></picture></a>
       <a
-      href="https://backend.blacksmith.sh/track/enable-autofix?expires=1789331828&installation_model_id=425273&pr_number=246&repository=mirurobotics%2Fopenapi&return_to=https%3A%2F%2Fgithub.com%2Fmirurobotics%2Fopenapi%2Fpull%2F246&signature=19aa8b32502a3e7ad757ffec7c70dd8bbb2b026f2431c6d181457909255a7dfe"><picture><source
+      href="https://backend.blacksmith.sh/track/enable-autofix?expires=1789509179&installation_model_id=425273&pr_number=249&repository=mirurobotics%2Fopenapi&return_to=https%3A%2F%2Fgithub.com%2Fmirurobotics%2Fopenapi%2Fpull%2F249&signature=46072cdf5dc5f90a56a2fcff37d8c4f4bee44edb674be135bef4913d836b89be"><picture><source
       media="(prefers-color-scheme: dark)"
       srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source
       media="(prefers-color-scheme: light)"
@@ -190,7 +196,7 @@ info:
     branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-08-16T16:35:09.020110+00:00'
+    built_at: '2026-08-16T22:46:55.009208+00:00'
 servers:
 - url: https://api.mirurobotics.com/beta
   description: Miru Platform API
@@ -793,6 +799,41 @@ paths:
           | Scope | Required |
           |-------|----------|
           | `devices:read` | Yes |
+  /devices/move/bulk:
+    parameters:
+    - $ref: '#/components/parameters/MiruVersion'
+    post:
+      tags:
+      - Devices
+      summary: Bulk Move
+      operationId: bulkMoveDevices
+      description: Move multiple devices to a target group in a single request. The
+        `devices:move` permission is evaluated against the target group, so the API
+        key must be granted it on that group. Moving devices to the root of the tree,
+        by omitting the target group, requires a workspace-level grant.
+      parameters:
+      - $ref: '#/components/parameters/device_list_expansions'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkMoveDevicesRequest'
+      responses:
+        '200':
+          description: Successfully moved the devices.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
+                description: The list of moved devices.
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `devices:move` | Yes |
   /provisioning_tokens:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -914,9 +955,62 @@ paths:
           | Scope | Required |
           |-------|----------|
           | `groups:read` | Yes |
+    patch:
+      tags:
+      - Groups
+      summary: Update
+      operationId: updateGroup
+      description: Update a group.
+      parameters:
+      - $ref: '#/components/parameters/group_id'
+      - $ref: '#/components/parameters/group_expansions'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGroupRequest'
+      responses:
+        '200':
+          description: Successfully updated the group.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `groups:write` | Yes |
   /groups:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
+    post:
+      tags:
+      - Groups
+      summary: Create
+      operationId: createGroup
+      description: Create a new group.
+      parameters:
+      - $ref: '#/components/parameters/group_expansions'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGroupRequest'
+      responses:
+        '200':
+          description: Successfully created the group.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `groups:write` | Yes |
     get:
       tags:
       - Groups
@@ -943,6 +1037,37 @@ paths:
           | Scope | Required |
           |-------|----------|
           | `groups:read` | Yes |
+  /groups/{group_id}/move:
+    parameters:
+    - $ref: '#/components/parameters/MiruVersion'
+    post:
+      tags:
+      - Groups
+      summary: Move
+      operationId: moveGroup
+      description: Move a group to a new parent, or to the top level by setting parent_id
+        to null.
+      parameters:
+      - $ref: '#/components/parameters/group_id'
+      - $ref: '#/components/parameters/group_expansions'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveGroupRequest'
+      responses:
+        '200':
+          description: Successfully moved the group.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+      x-mint:
+        content: |
+          | Scope | Required |
+          |-------|----------|
+          | `groups:write` | Yes |
   /principal:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -1073,14 +1198,14 @@ components:
     ReleaseVersion:
       type: string
       enum:
-      - 2026-08-17.everglades-beta.2
+      - 2026-08-17.everglades-beta.3
       x-enum-varnames:
       - RELEASE_VERSION
       x-stainless-const: true
     APIGitCommit:
       type: string
       enum:
-      - 6f0a38f616916cf0341789ca73761bf623ae9508
+      - b44810b2c0dbf1bc2af74bf930b5a9881925cc61
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
@@ -1904,10 +2029,12 @@ components:
       enum:
       - device
       - release
+      - parent
       - config_instances
       x-enum-varnames:
       - DEPLOYMENT_EXPAND_DEVICE
       - DEPLOYMENT_EXPAND_RELEASE
+      - DEPLOYMENT_EXPAND_PARENT
       - DEPLOYMENT_EXPAND_CONFIG_INSTANCES
     DeploymentStatus:
       type: string
@@ -2146,7 +2273,36 @@ components:
       allOf:
       - $ref: '#/components/schemas/BaseDeployment'
       - type: object
+        required:
+        - parent_id
+        - queued_at
+        - deployed_at
+        - archived_at
         properties:
+          parent_id:
+            type: string
+            nullable: true
+            example: dpl_123
+            description: ID of the deployment that this deployment was patched from.
+              Null if this deployment has no parent.
+          queued_at:
+            type: string
+            format: date-time
+            example: '2021-01-01T00:00:00Z'
+            nullable: true
+            description: Timestamp of when the deployment was queued.
+          deployed_at:
+            type: string
+            format: date-time
+            example: '2021-01-01T00:00:00Z'
+            nullable: true
+            description: Timestamp of when the deployment was deployed.
+          archived_at:
+            type: string
+            format: date-time
+            example: '2021-01-01T00:00:00Z'
+            nullable: true
+            description: Timestamp of when the deployment was archived.
           device:
             allOf:
             - $ref: '#/components/schemas/Device'
@@ -2155,6 +2311,13 @@ components:
             allOf:
             - $ref: '#/components/schemas/Release'
             description: Expand the release using 'expand=release' in the query string.
+          parent:
+            allOf:
+            - $ref: '#/components/schemas/Deployment'
+            nullable: true
+            description: The parent deployment that this deployment was patched from.
+              Null if this deployment has no parent. Expand the parent using 'expand=parent'
+              in the query string.
           config_instances:
             type: array
             items:
@@ -2188,8 +2351,12 @@ components:
         target_status: staged
         device_id: dvc_123
         release_id: rls_123
+        parent_id: null
         created_at: '2024-01-01T00:00:00Z'
         updated_at: '2024-01-01T00:00:00Z'
+        queued_at: null
+        deployed_at: null
+        archived_at: null
     BaseRelease:
       title: Base Release
       type: object
@@ -2338,26 +2505,6 @@ components:
             nullable: true
             description: The parent group. Null for top-level groups. Expand using
               `expand=parent` in the query string.
-          ancestors:
-            type: array
-            items:
-              $ref: '#/components/schemas/Group'
-            description: The chain of ancestor groups, ordered root-first. The group
-              itself is not included. Empty array for top-level groups. Expand using
-              `expand=ancestors` in the query string.
-            example:
-            - object: group
-              id: grp_123
-              name: production
-              parent_id: null
-              created_at: '2026-01-01T00:00:00Z'
-              updated_at: '2026-01-01T00:00:00Z'
-            - object: group
-              id: grp_456
-              name: europe
-              parent_id: grp_123
-              created_at: '2026-01-01T00:00:00Z'
-              updated_at: '2026-01-01T00:00:00Z'
       example:
         object: group
         id: grp_789
@@ -2424,11 +2571,13 @@ components:
       - total_count
       - device
       - release
+      - parent
       - config_instances
       x-enum-varnames:
       - DEPLOYMENT_LIST_EXPAND_TOTAL_COUNT
       - DEPLOYMENT_LIST_EXPAND_DEVICE
       - DEPLOYMENT_LIST_EXPAND_RELEASE
+      - DEPLOYMENT_LIST_EXPAND_PARENT
       - DEPLOYMENT_LIST_EXPAND_CONFIG_INSTANCES
     DeploymentList:
       title: Deployment List
@@ -2568,6 +2717,12 @@ components:
           type: string
           description: The name of the device.
           example: Robot 1
+        group_id:
+          type: string
+          nullable: true
+          description: ID of the group to assign the device to. Omit or set to null
+            to leave the device unassigned.
+          example: grp_123
     PingDeviceRequest:
       title: Ping Device Request
       type: object
@@ -2606,6 +2761,27 @@ components:
       example:
         code: success
         round_trip_nanos: 1000000000
+    BulkMoveDevicesRequest:
+      title: Bulk Move Devices Request
+      type: object
+      required:
+      - device_ids
+      - target_group_id
+      properties:
+        device_ids:
+          type: array
+          minItems: 1
+          maxItems: 1000
+          items:
+            type: string
+            example: dvc_123
+          description: IDs of the devices to move.
+        target_group_id:
+          type: string
+          nullable: true
+          example: grp_789
+          description: ID of the target group. Set to null to unassign all listed
+            devices.
     ProvisioningToken:
       title: Provisioning Token
       type: object
@@ -2764,10 +2940,16 @@ components:
       type: string
       enum:
       - parent
-      - ancestors
       x-enum-varnames:
       - GROUP_EXPAND_PARENT
-      - GROUP_EXPAND_ANCESTORS
+    UpdateGroupRequest:
+      title: Update Group Request
+      type: object
+      properties:
+        name:
+          type: string
+          description: The updated name of the group.
+          example: Robots
     GroupOrderBy:
       type: string
       enum:
@@ -2794,11 +2976,9 @@ components:
       enum:
       - total_count
       - parent
-      - ancestors
       x-enum-varnames:
       - GROUP_LIST_EXPAND_TOTAL_COUNT
       - GROUP_LIST_EXPAND_PARENT
-      - GROUP_LIST_EXPAND_ANCESTORS
     GroupList:
       title: Group List
       allOf:
@@ -2812,6 +2992,34 @@ components:
             items:
               $ref: '#/components/schemas/Group'
             description: The list of groups.
+    CreateGroupRequest:
+      title: Create Group Request
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: The name of the group.
+          example: Robots
+        parent_id:
+          type: string
+          nullable: true
+          description: ID of the parent group. Omit or set to null to create a top-level
+            group.
+          example: grp_456
+    MoveGroupRequest:
+      title: Move Group Request
+      type: object
+      required:
+      - parent_id
+      properties:
+        parent_id:
+          type: string
+          nullable: true
+          example: grp_456
+          description: ID of the new parent group. Set to null to make this a top-level
+            group.
     Principal:
       title: Principal
       type: object
@@ -2896,12 +3104,6 @@ components:
           items:
             type: string
             example: cfg_sch_123
-        file_rule_ids:
-          type: array
-          description: The IDs of the file rules included in the release.
-          items:
-            type: string
-            example: file_rule_123
         git_commit_ref:
           $ref: '#/components/schemas/GitCommitRef'
     Event:
