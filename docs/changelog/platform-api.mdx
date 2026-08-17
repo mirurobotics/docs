@@ -11,9 +11,9 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 # 2026-08-17.everglades
 
-*August 17, 2026*
+_August 17, 2026_
 
-The `everglades` release introduces device groups and adds group membership to devices, so you can build your fleet hierarchy over the API and read and filter devices by the same hierarchy you manage in the dashboard. Groups themselves are fully manageable: create them, rename them, and move them to a new parent. A device's membership in a group is read-only, so assigning a device to a group stays a dashboard flow. 
+The `everglades` release introduces device groups, allowing you to build your fleet hierarchy via API and access device group information. Groups themselves are fully manageable: create, rename, and move them as desired. A device's membership in a group is read-only, so assigning a device to a group remains a dashboard flow.
 
 `everglades` also brings the Platform API up to date with three months of configuration changes: config schemas now support instance slots, deployments report more timestamps (queued, deployed, archived), and devices report an `archived` status.
 
@@ -22,17 +22,16 @@ The `everglades` release introduces device groups and adds group membership to d
 ## New endpoints
 
 <Dropdown title="Groups">
-  - <GET /> `/groups` — list groups
-  - <GET /> `/groups/{group_id}` — retrieve a group
-  - <POST /> `/groups` — create a group
-  - <PATCH /> `/groups/{group_id}` — rename a group
-  - <POST /> `/groups/{group_id}/move` — move a group to a new parent
+  * <GET /> `/groups` — list groups
+  * <GET /> `/groups/{group_id}` — retrieve a group
+  * <POST /> `/groups` — create a group
+  * <PATCH /> `/groups/{group_id}` — rename a group
+  * <POST /> `/groups/{group_id}/move` — move a group to a new parent
 </Dropdown>
 
 ## Breaking changes
 
 <Dropdown title="Config schema instance slots">
-
   The config schema `instance_filepath` field is replaced by the `instance_slots` field.  Instance slots specify an array of file system destinations, allowing multiple config instances to share the same schema validation. Visit the [instance slots](/cfg-mgmt/primitives/schemas/overview#instance-slots) for the full field reference.
 
   **Config Schema Response**
@@ -52,6 +51,7 @@ The `everglades` release introduces device groups and adds group membership to d
   ```
 
   Previous `instance_filepath` fields have been converted to the following default slot where the `filepath` field contains the previous value of `instance_filepath`:
+
   ```diff
     {
       "key": "default",
@@ -82,11 +82,11 @@ The `everglades` release introduces device groups and adds group membership to d
       "documents": [ ... ]
     }
   ```
-
 </Dropdown>
-<Separator />
-<Dropdown title="Config type slug is immutable">
 
+<Separator />
+
+<Dropdown title="Config type slug is immutable">
   <PATCH /> `/config_types/{config_type_id}`
 
   Updating a config type no longer accepts a `slug` field — slugs are now immutable.
@@ -97,19 +97,18 @@ The `everglades` release introduces device groups and adds group membership to d
   -   "slug": "motion-control"
     }
   ```
-
 </Dropdown>
 
 <Separator />
-<Dropdown title="Deployment parent id is nullable">
 
+<Dropdown title="Deployment parent id is nullable">
   <POST /> `/deployments`
 
   The `parent_id` field when creating a deployment is now nullable and serves as an optimistic-concurrency token to ensure the parent deployment is the one you assert:
 
-  - Present: asserts the device's current target deployment is the one with the given ID
-  - Null: asserts the device has no current target deployment
-  - Omitted: no concurrency check; the server fills in the device's current target
+  * Present: asserts the device's current target deployment is the one with the given ID
+  * Null: asserts the device has no current target deployment
+  * Omitted: no concurrency check; the server fills in the device's current target
 
   ```diff
   - "parent_id" accepts a deployment ID or is omitted.
@@ -117,21 +116,19 @@ The `everglades` release introduces device groups and adds group membership to d
   + "parent_id": null       — null
   +                         — omitted
   ```
-
 </Dropdown>
 
 ## Additive changes
 
 <Dropdown title="Config schema instance format">
-
   The config schema now contains an `instance_format` field, which explicitly specifies the format of config instances instantiated for that schema. Previously, the format was inferred from the schema's `instance_filepath` extension.
 
   `instance_format` is an enum that supports the following formats:
 
-  - `json`
-  - `yaml`
-  - `xml`
-  - `text`
+  * `json`
+  * `yaml`
+  * `xml`
+  * `text`
 
   **Config Schema Response**
 
@@ -142,8 +139,9 @@ The `everglades` release introduces device groups and adds group membership to d
     "format": "json",
   + "instance_format": "json",
   ```
-  
+
   <POST /> `/config_schemas`
+
   ```diff
     {
       "config_type_ref": { "slug": "motion-control" },
@@ -153,9 +151,10 @@ The `everglades` release introduces device groups and adds group membership to d
     }
   ```
 </Dropdown>
-<Separator />
-<Dropdown title="Config instance slot key">
 
+<Separator />
+
+<Dropdown title="Config instance slot key">
   Config instances must be bound to exactly one slot of their config schema and have thus acquired the `slot_key` field.
 
   **Config Instance Response**
@@ -187,11 +186,11 @@ The `everglades` release introduces device groups and adds group membership to d
     GET /config_instances
   + GET /config_instances?slot_key=controller_2
   ```
-
 </Dropdown>
-<Separator />
-<Dropdown title="Device group membership">
 
+<Separator />
+
+<Dropdown title="Device group membership">
   Devices now include the [group](/primitives/groups) they belong to. `group_id` is always present and is `null` for unassigned devices.
 
   **Device Response**
@@ -218,11 +217,11 @@ The `everglades` release introduces device groups and adds group membership to d
     GET /groups
   + GET /groups?expand=parent
   ```
-
 </Dropdown>
-<Separator />
-<Dropdown title="Archived device status">
 
+<Separator />
+
+<Dropdown title="Archived device status">
   `archived` is added to the device `status` enum. Previously, archived devices were reported as `inactive`, so a device that used to read `inactive` may now read `archived`. Update any code that branches on device status.
 
   **Device Status Enum**
@@ -234,11 +233,11 @@ The `everglades` release introduces device groups and adds group membership to d
       "offline"
   +   "archived"
   ```
-
 </Dropdown>
-<Separator />
-<Dropdown title="Device description, status filter, and status sorting">
 
+<Separator />
+
+<Dropdown title="Device description, status filter, and status sorting">
   Devices now return a free-form `description`, which is `null` when unset.
 
   **Device Response**
@@ -256,11 +255,11 @@ The `everglades` release introduces device groups and adds group membership to d
   + GET /devices?status=online
   + GET /devices?order_by=status:asc
   ```
-
 </Dropdown>
-<Separator />
-<Dropdown title="Opaque schema language">
 
+<Separator />
+
+<Dropdown title="Opaque schema language">
   `opaque` is added to the config schema `language` enum. An opaque schema carries metadata only and treats every config instance as valid. Visit the [opaque schema language](/cfg-mgmt/primitives/schemas/languages/opaque) documentation for details.
 
   **Config Schema Language Enum**
@@ -270,11 +269,11 @@ The `everglades` release introduces device groups and adds group membership to d
       "cue"
   +   "opaque"
   ```
-
 </Dropdown>
-<Separator />
-<Dropdown title="XML and plain text instance formats">
 
+<Separator />
+
+<Dropdown title="XML and plain text instance formats">
   `xml` and `text` are added to the config instance `format` enum, in both config instance responses and the <POST /> `/config_instances` request body. Visit the [config instance file formats](/cfg-mgmt/primitives/config-instances#file-formats) documentation for which formats each schema language supports.
 
   **Config Instance Response**
@@ -285,11 +284,11 @@ The `everglades` release introduces device groups and adds group membership to d
   +   "xml"
   +   "text"
   ```
-
 </Dropdown>
-<Separator />
-<Dropdown title="Deployment parent response">
 
+<Separator />
+
+<Dropdown title="Deployment parent response">
   A deployment now reports the deployment it was patched from. `parent_id` is always present and is `null` when the deployment has no parent.
 
   **Deployment Response**
@@ -307,11 +306,11 @@ The `everglades` release introduces device groups and adds group membership to d
   + GET /deployments?expand=parent
   + GET /deployments/{deployment_id}?expand=parent
   ```
-
 </Dropdown>
-<Separator />
-<Dropdown title="Deployment lifecycle timestamps">
 
+<Separator />
+
+<Dropdown title="Deployment lifecycle timestamps">
   Deployments now report when they reached each stage of their lifecycle. `queued_at`, `deployed_at`, and `archived_at` are always present and are `null` until the deployment reaches that stage.
 
   **Deployment Response**
@@ -323,7 +322,6 @@ The `everglades` release introduces device groups and adds group membership to d
   +   "deployed_at": "2026-08-17T00:04:00Z",
   +   "archived_at": null,
   ```
-
 </Dropdown>
 
 ## Migration steps
@@ -332,34 +330,28 @@ The `everglades` release introduces device groups and adds group membership to d
   <Step title="Update the Miru-Version header">
     Set `Miru-Version: 2026-08-17.everglades` on all API requests. [Python SDK](/developers/platform-api/sdks#python) `v0.11.0` marks the major version rollout of the `2026-08-17.everglades` API. For the latest SDK version compatibility information, visit the [Platform SDKs](/developers/platform-api/sdks) page.
   </Step>
-
   <Step title="Migrate from config schemas to use instance slots">
     Replace reads of `instance_filepath` with `instance_slots[].filepath`, and replace `instance_filepath` in `POST /config_schemas` request bodies with an explicit `instance_slots` array. Omitting `instance_slots` makes the server derive a default filepath rather than reuse your previous one. See [instance slots](/cfg-mgmt/primitives/schemas/overview#instance-slots).
   </Step>
-
   <Step title="Stop sending slug when updating a config type">
     Remove `slug` from `PATCH /config_types/{config_type_id}` request bodies. Config type slugs are immutable.
   </Step>
-
   <Step title="Review parent_id when creating deployments">
     No change is needed if you already omit `parent_id` or always send a deployment ID. Send `null` only to assert that the device has no current target deployment.
   </Step>
-
   <Step title="Optionally integrate new endpoints">
-    Optionally integrate the new group endpoints listed above. 
+    Optionally integrate the new group endpoints listed above.
   </Step>
-
   <Step title="Optionally adopt new additive surface">
     Optionally integrate the new additive API changes listed above.
   </Step>
-
 </Steps>
 
 ---
 
 # 2026-05-06.rainier
 
-*May 12, 2026*
+_May 12, 2026_
 
 The `rainier` release introduces a provisioning-token flow that replaces the activation-token endpoint, expands supported config-instance content formats, restores the `removing` deployment status, and adds expandable `current_release` / `current_deployment` fields on devices.
 
@@ -368,13 +360,12 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
 ## New endpoints
 
 <Dropdown title="Provisioning">
-  - <POST /> `/provisioning_tokens` — create a provisioning token to add a device to your workspace
+  * <POST /> `/provisioning_tokens` — create a provisioning token to add a device to your workspace
 </Dropdown>
 
 ## Breaking changes
 
 <Dropdown title="Activation tokens replaced by provisioning tokens">
-
   The `POST /devices/{device_id}/activation_token` endpoint has been removed. Callers should migrate to `POST /provisioning_tokens` instead.
 
   ```diff
@@ -383,13 +374,11 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
   ```
 
   Provisioning tokens are not scoped to a pre-existing device — create a token first, then use it to provision a new device or activate an existing device. Visit the [provisioning tokens](/cfg-mgmt/provision-devices/provisioning-tokens) documentation for more details.
-
 </Dropdown>
 
 ## Additive changes
 
 <Dropdown title="Instance content enum">
-
   Config instances now support YAML content in addition to JSON.
 
   ```diff
@@ -397,11 +386,11 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
     "json"
   + "yaml"
   ```
-
 </Dropdown>
-<Separator />
-<Dropdown title="Deployment activity status">
 
+<Separator />
+
+<Dropdown title="Deployment activity status">
   `removing` is added back to the `activity_status` and `status` enums. This is a partial reversal of the tetons change, where deployments transitioned directly from `deployed` to `archived`. Deployments can sit in `removing` while config instances are torn down on the device before reaching `archived`.
 
   ```diff
@@ -413,11 +402,11 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
   + "removing"
     "archived"
   ```
-
 </Dropdown>
-<Separator />
-<Dropdown title="Device query parameters">
 
+<Separator />
+
+<Dropdown title="Device query parameters">
   Device endpoints now support a few new query parameters:
 
   1. Expand the `current_deployment` field on a device.
@@ -440,7 +429,6 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
     GET /devices
   + GET /devices?current_release_id=rls_123
   ```
-
 </Dropdown>
 
 ## Migration steps
@@ -449,11 +437,9 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
   <Step title="Update the Miru-Version header">
     Set `Miru-Version: 2026-05-06.rainier` on all API requests. [Python SDK](/developers/platform-api/sdks#python) `v0.10.0` marks the major version rollout of the `2026-05-06.rainier` API. For the latest SDK version compatibility information, visit the [Platform SDKs](/developers/platform-api/sdks) page.
   </Step>
-
   <Step title="Migrate from activation tokens to provisioning tokens">
     Migrate install workflows to use [provisioning tokens](/cfg-mgmt/provision-devices/provisioning-tokens) instead of activation tokens.
   </Step>
-
   <Step title="Optionally adopt new additive surface">
     - Handle `yaml` content format where needed
     - Handle `removing` deployment status or activity status where needed.
@@ -465,7 +451,7 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
 
 # 2026-03-09.tetons
 
-*March 13, 2026*
+_March 13, 2026_
 
 The `tetons` release introduces API versioning and overhauls the representation of deployments, config instances, and config schemas. It introduces management of more configuration resources (config types, schemas, and instances), release creation, git commit tracking, and explicit deployment lifecycle actions.
 
@@ -474,45 +460,59 @@ The `tetons` release introduces API versioning and overhauls the representation 
 ## New endpoints
 
 <Dropdown title="Auth">
-  - <GET /> `/principal` — retrieve the current principal
+  * <GET /> `/principal` — retrieve the current principal
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Config types">
-  - <GET /> `/config_types` — list config types
-  - <GET /> `/config_types/{id}` — retrieve a config type
-  - <POST /> `/config_types` — create a config type
-  - <PATCH /> `/config_types/{id}` — update a config type
+  * <GET /> `/config_types` — list config types
+  * <GET /> `/config_types/{id}` — retrieve a config type
+  * <POST /> `/config_types` — create a config type
+  * <PATCH /> `/config_types/{id}` — update a config type
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Config schemas">
-  - <GET /> `/config_schemas` — list config schemas<br/>
-  - <GET /> `/config_schemas/{id}` — retrieve a config schema
-  - <POST /> `/config_schemas` — create a config schema<br/>
+  * <GET /> `/config_schemas` — list config schemas<br />
+  * <GET /> `/config_schemas/{id}` — retrieve a config schema
+  * <POST /> `/config_schemas` — create a config schema<br />
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Config instances">
-  - <POST /> `/config_instances` — create a config instance
-  - <GET /> `/config_instances/{id}/content` - download config instance content
+  * <POST /> `/config_instances` — create a config instance
+  * <GET /> `/config_instances/{id}/content` - download config instance content
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Deployments">
-  - <POST /> `/deployments/{id}/deploy` — deploy a deployment
-  - <POST /> `/deployments/{id}/archive` — archive a deployment
-  - <GET /> `/deployments/{id}/drifts` — list deployment drifts
+  * <POST /> `/deployments/{id}/deploy` — deploy a deployment
+  * <POST /> `/deployments/{id}/archive` — archive a deployment
+  * <GET /> `/deployments/{id}/drifts` — list deployment drifts
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Devices">
-  - <POST /> `/devices/{id}/ping` — ping a device
+  * <POST /> `/devices/{id}/ping` — ping a device
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Git commits">
-  - <GET /> `/git_commits` — list git commits
-  - <GET /> `/git_commits/{id}` — retrieve a git commit
-  - <POST /> `/git_commits` — create a git commit
+  * <GET /> `/git_commits` — list git commits
+  * <GET /> `/git_commits/{id}` — retrieve a git commit
+  * <POST /> `/git_commits` — create a git commit
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Releases">
-  - <POST /> `/releases` — create a release
+  * <POST /> `/releases` — create a release
 </Dropdown>
 
 ## Breaking changes
@@ -527,7 +527,9 @@ The `tetons` release introduces API versioning and overhauls the representation 
   +   --header 'Miru-Version: 2026-03-09.tetons'
   ```
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Optional total_count">
   When listing resources, the `total_count` field is now omitted from the response if not expanded (i.e. `expand=total_count`) instead of being set to `-1`.
 
@@ -539,11 +541,11 @@ The `tetons` release introduces API versioning and overhauls the representation 
     }
   ```
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Optional instead of nullable expansions">
-
   If an expansion is not included in the response, the field is omitted instead of being set to `null`. For example, the config instance response previously included `content`, `config_schema`, and `config_type` fields as null if not expanded. Now these fields are omitted if not expanded.
-
 
   ```diff
     {
@@ -558,142 +560,144 @@ The `tetons` release introduces API versioning and overhauls the representation 
 
   Most resources are affected by this change, including config instances, config schemas, config types, releases, and deployments. Devices are unaffected.
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Deployment activity status">
+  * Renamed `needs_review` to `drifted`.
+  * Removed `removing` and `validating`—deployments now transition directly from `deployed` to `archived`.
 
-- Renamed `needs_review` to `drifted`.
-- Removed `removing` and `validating`—deployments now transition directly from `deployed` to `archived`.
+  ```diff
+  # activity_status enum values
+  - "validating"
+    "staged"
+  - "needs_review"
+  + "drifted"
+    "queued"
+    "deployed"
+  - "removing"
+    "archived"
+  ```
 
-```diff
-# activity_status enum values
-- "validating"
-  "staged"
-- "needs_review"
-+ "drifted"
-  "queued"
-  "deployed"
-- "removing"
-  "archived"
-```
-
-These changes are also reflected in the deployment's [status](/primitives/deployments#status) field.
-
+  These changes are also reflected in the deployment's [status](/primitives/deployments#status) field.
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Create deployment request">
+  * Replaced inline config instance creation with explicit config instance IDs. Create config instances separately via `POST /config_instances` first, then reference them by ID.
+  * Renamed `patch_source_id` to `parent_id`.
 
-- Replaced inline config instance creation with explicit config instance IDs. Create config instances separately via `POST /config_instances` first, then reference them by ID.
-- Renamed `patch_source_id` to `parent_id`.
+  <POST /> `/deployments`
 
-<POST /> `/deployments`
-```diff
-  {
-    "release_id": "rls_123",
-    "target_status": "staged",
--   "new_config_instances": [
--     {
--       "content": { "speed": 100 },
--       "relative_filepath": "/v1/motion-control.json"
--     }
--   ],
-+   "config_instance_ids": ["cfg_inst_123"],
--   "patch_source_id": "dpl_456"
-+   "parent_id": "dpl_456"
-  }
-```
-
-</Dropdown>
-<Separator />
-<Dropdown title="Config instance response">
-
-- Renamed `relative_filepath` to `filepath`.
-- Removed `device_id`, `activity_status`, `error_status`, `target_status`, and `status` fields. These fields now exclusively exist in the deployment resource.
-- Removed `updated_at` field. Config instances are immutable.
-
-
-```diff
-  {
-    "object": "config_instance",
-    "id": "cfg_inst_123",
-    "config_schema_id": "cfg_sch_123",
-    "config_type_id": "cfg_type_123",
-    "created_at": "2025-10-21T00:00:00Z"
--   "relative_filepath": "/v1/motion-control.json",
-+   "filepath": "/v1/motion-control.json",
--   "activity_status": "deployed",
--   "device_id": "dev_123",
--   "device": null,
--   "error_status": "none",
--   "status": "deployed",
--   "target_status": "deployed",
--   "updated_at": "2025-10-21T00:00:00Z",
-    ...
-  }
-```
-
-- `content` now returns a string and its data format (e.g. `json`, `yaml`) instead of a raw JSON object.
-
-```diff
-  {
--   "content": "{...}",
-+   "content": {
-+     "format": "json",
-+     "data": "<stringified JSON>",
+  ```diff
+    {
+      "release_id": "rls_123",
+      "target_status": "staged",
+  -   "new_config_instances": [
+  -     {
+  -       "content": { "speed": 100 },
+  -       "relative_filepath": "/v1/motion-control.json"
+  -     }
+  -   ],
+  +   "config_instance_ids": ["cfg_inst_123"],
+  -   "patch_source_id": "dpl_456"
+  +   "parent_id": "dpl_456"
     }
-  }
-```
-
+  ```
 </Dropdown>
+
 <Separator />
+
+<Dropdown title="Config instance response">
+  * Renamed `relative_filepath` to `filepath`.
+  * Removed `device_id`, `activity_status`, `error_status`, `target_status`, and `status` fields. These fields now exclusively exist in the deployment resource.
+  * Removed `updated_at` field. Config instances are immutable.
+
+  ```diff
+    {
+      "object": "config_instance",
+      "id": "cfg_inst_123",
+      "config_schema_id": "cfg_sch_123",
+      "config_type_id": "cfg_type_123",
+      "created_at": "2025-10-21T00:00:00Z"
+  -   "relative_filepath": "/v1/motion-control.json",
+  +   "filepath": "/v1/motion-control.json",
+  -   "activity_status": "deployed",
+  -   "device_id": "dev_123",
+  -   "device": null,
+  -   "error_status": "none",
+  -   "status": "deployed",
+  -   "target_status": "deployed",
+  -   "updated_at": "2025-10-21T00:00:00Z",
+      ...
+    }
+  ```
+
+  * `content` now returns a string and its data format (e.g. `json`, `yaml`) instead of a raw JSON object.
+
+  ```diff
+    {
+  -   "content": "{...}",
+  +   "content": {
+  +     "format": "json",
+  +     "data": "<stringified JSON>",
+      }
+    }
+  ```
+</Dropdown>
+
+<Separator />
+
 <Dropdown title="Config schema response">
-- Renamed `relative_filepath` to `instance_filepath`.
-- Removed `version`
+  * Renamed `relative_filepath` to `instance_filepath`.
+  * Removed `version`
 
-```diff
-  {
-    "id": "cfg_sch_123",
-    "config_type_id": "cfg_type_123",
--   "relative_filepath": "/v1/motion-control.json",
-+   "instance_filepath": "/v1/motion-control.json",
--   "version": 1,
-    ...
-  }
-```
+  ```diff
+    {
+      "id": "cfg_sch_123",
+      "config_type_id": "cfg_type_123",
+  -   "relative_filepath": "/v1/motion-control.json",
+  +   "instance_filepath": "/v1/motion-control.json",
+  -   "version": 1,
+      ...
+    }
+  ```
 
-- `content` is replaced by `documents`, which supports schema languages that can be defined across multiple files. 
+  * `content` is replaced by `documents`, which supports schema languages that can be defined across multiple files.
 
-```diff
-  {
--   "content": "{...}",
-+   "documents": [
-+      {
-+        "id": "doc_123",
-+        "name": "main.json",
-+        "data": "<stringified JSON, YAML, CUE, etc.>",
-+      }
-+    ]
-  }
-```
-
+  ```diff
+    {
+  -   "content": "{...}",
+  +   "documents": [
+  +      {
+  +        "id": "doc_123",
+  +        "name": "main.json",
+  +        "data": "<stringified JSON, YAML, CUE, etc.>",
+  +      }
+  +    ]
+    }
+  ```
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Config instance query parameters">
-
-Listing config instances no longer supports the `device_id`, `activity_status`, `error_status`, and `target_status` filters since these fields no longer exist in the config instance resource.
-
+  Listing config instances no longer supports the `device_id`, `activity_status`, `error_status`, and `target_status` filters since these fields no longer exist in the config instance resource.
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Device query parameters">
-
-Listing devices no longer supports the `current_release_id` filter.
-
+  Listing devices no longer supports the `current_release_id` filter.
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Removed endpoints">
+  Deleting devices is no longer supported.
 
-Deleting devices is no longer supported.
-
-- <DELETE /> `/devices/{device_id}`
+  * <DELETE /> `/devices/{device_id}`
 </Dropdown>
 
 ## Additive changes
@@ -708,73 +712,73 @@ Deleting devices is no longer supported.
     --header 'Miru-Version: 2026-03-09.tetons'
   ```
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Config instance response">
+  Added the `config_type_name` field, allowing you to retrieve the name of the config type without expanding the config type resource.
 
-Added the `config_type_name` field, allowing you to retrieve the name of the config type without expanding the config type resource.
-
-```diff
-  {
-    "id": "cfg_inst_123",
-    "config_schema_id": "cfg_sch_123",
-    "config_type_id": "cfg_type_123",
-+   "config_type_name": "motion-control",
-    ...
-    "created_at": "2025-10-21T00:00:00Z"
-  }
-```
-
+  ```diff
+    {
+      "id": "cfg_inst_123",
+      "config_schema_id": "cfg_sch_123",
+      "config_type_id": "cfg_type_123",
+  +   "config_type_name": "motion-control",
+      ...
+      "created_at": "2025-10-21T00:00:00Z"
+    }
+  ```
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Config schema response">
+  * Added the `config_type_name` field, allowing you to retrieve the name of the config type without expanding the config type resource.
+  * Added the `format` and `language` fields, supporting multiple schema formats and languages.
 
-- Added the `config_type_name` field, allowing you to retrieve the name of the config type without expanding the config type resource.
-- Added the `format` and `language` fields, supporting multiple schema formats and languages.
-
-```diff
-  {
-    "id": "cfg_sch_123",
-    "config_type_id": "cfg_type_123",
-+   "config_type_name": "motion-control",
-+   "format": "json",
-+   "language": "jsonschema",
-    ...
-    "created_at": "2025-10-21T00:00:00Z"
-  }
-```
-
+  ```diff
+    {
+      "id": "cfg_sch_123",
+      "config_type_id": "cfg_type_123",
+  +   "config_type_name": "motion-control",
+  +   "format": "json",
+  +   "language": "jsonschema",
+      ...
+      "created_at": "2025-10-21T00:00:00Z"
+    }
+  ```
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Device response">
+  Added `agent_version` field, indicating the version of the Miru Agent running on the device.
 
-Added `agent_version` field, indicating the version of the Miru Agent running on the device.
-
-```diff
-  {
-    "id": "dev_123",
-    "name": "Robot 11",
-    "status": "online",
-+   "agent_version": "v0.7.0",
-    ...
-    "created_at": "2025-10-21T00:00:00Z"
-  }
-```
-
+  ```diff
+    {
+      "id": "dev_123",
+      "name": "Robot 11",
+      "status": "online",
+  +   "agent_version": "v0.7.0",
+      ...
+      "created_at": "2025-10-21T00:00:00Z"
+    }
+  ```
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Release response">
+  Added `git_commit_id` linking releases to their source commit.
 
-Added `git_commit_id` linking releases to their source commit.
-
-```diff
-  {
-    "id": "rls_123",
-    "version": "v1.0.0",
-+   "git_commit_id": "git_cmt_123",
-    "created_at": "2025-10-21T00:00:00Z"
-  }
-```
-
+  ```diff
+    {
+      "id": "rls_123",
+      "version": "v1.0.0",
+  +   "git_commit_id": "git_cmt_123",
+      "created_at": "2025-10-21T00:00:00Z"
+    }
+  ```
 </Dropdown>
 
 ## Python SDK
@@ -796,14 +800,11 @@ Furthermore, SDK `v0.7.0` marks the major version rollout of the `2026-03-09.tet
   <Step title="Set the Miru-Version header">
     Set the `Miru-Version: 2026-03-09.tetons` header on all API requests. If you are using the [Python SDK](/developers/platform-api/sdks#python), this is done automatically.
   </Step>
-
   <Step title="Migrate breaking changes">
     Migrate your client application according to the breaking changes listed above.
 
     If you are using the [Python SDK](/developers/platform-api/sdks#python), migrate from the legacy repository [python-server-sdk](https://github.com/mirurobotics/python-server-sdk) to [python-platform-sdk](https://github.com/mirurobotics/python-platform-sdk) and update imports from `miru_server_sdk` to `miru_platform_sdk`.
-
   </Step>
-
   <Step title="Optionally integrate new endpoints">
     Optionally integrate the new endpoints listed above.
   </Step>
@@ -813,7 +814,7 @@ Furthermore, SDK `v0.7.0` marks the major version rollout of the `2026-03-09.tet
 
 # 2025-10-21.zion
 
-*October 21, 2025*
+_October 21, 2025_
 
 <Danger>
   The `2025-10-21.zion` API version is no longer supported. See [supported versions](/developers/platform-api/versioning#supported-versions).
@@ -826,45 +827,56 @@ Initial release of the Platform API. This version establishes core API endpoints
 ## Endpoints
 
 <Dropdown title="Devices">
-  - <GET /> `/devices` — list devices
-  - <GET /> `/devices/{device_id}` — retrieve a device
-  - <POST /> `/devices` — create a device
-  - <PATCH /> `/devices/{device_id}` — update a device
-  - <DELETE /> `/devices/{device_id}` — delete a device
-  - <POST /> `/devices/{device_id}/activation_token` — create an activation token
+  * <GET /> `/devices` — list devices
+  * <GET /> `/devices/{device_id}` — retrieve a device
+  * <POST /> `/devices` — create a device
+  * <PATCH /> `/devices/{device_id}` — update a device
+  * <DELETE /> `/devices/{device_id}` — delete a device
+  * <POST /> `/devices/{device_id}/activation_token` — create an activation token
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Releases">
-  - <GET /> `/releases` — list releases
-  - <GET /> `/releases/{release_id}` — retrieve a release
+  * <GET /> `/releases` — list releases
+  * <GET /> `/releases/{release_id}` — retrieve a release
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Deployments">
-  - <GET /> `/deployments` — list deployments
-  - <GET /> `/deployments/{deployment_id}` — retrieve a deployment
-  - <POST /> `/deployments` — create a deployment
+  * <GET /> `/deployments` — list deployments
+  * <GET /> `/deployments/{deployment_id}` — retrieve a deployment
+  * <POST /> `/deployments` — create a deployment
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Config instances">
-  - <GET /> `/config_instances` — list config instances
-  - <GET /> `/config_instances/{config_instance_id}` — retrieve a config instance
+  * <GET /> `/config_instances` — list config instances
+  * <GET /> `/config_instances/{config_instance_id}` — retrieve a config instance
 </Dropdown>
 
 ## Query parameters
 
 <Dropdown title="Filters">
   Filtering allows you to narrow list results by resource fields like `id`, `device_id`, `status`, and more. Check out the [Filtering](/developers/platform-api/query-params/filtering) documentation for more details.
-
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Sorting">
   Sort list results with `order_by=<field_name>:<direction>`. Most endpoints default to `order_by=created_at:desc`. Check out the [Sorting](/developers/platform-api/query-params/sorting) documentation for more details.
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Expansions">
   Include related resources in responses with `expand[]` (e.g. `expand[]=config_schema`). See [Expansions](/developers/platform-api/query-params/expansions) documentation for more details.
 </Dropdown>
+
 <Separator />
+
 <Dropdown title="Pagination">
   All list endpoints support offset-based pagination with `offset` and `limit`. Check out the [Pagination](/developers/platform-api/query-params/pagination) documentation for more details.
 </Dropdown>
