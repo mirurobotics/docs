@@ -377,7 +377,7 @@ The `everglades` release introduces device groups and adds group membership to d
   </Step>
 
   <Step title="Optionally integrate new endpoints">
-    Optionally integrate the new group and device move endpoints listed above. Creating, renaming, and moving groups requires the `groups:write` scope, and moving devices requires the `devices:move` scope. Add these scopes to your [API keys](/admin/apikeys) before calling those endpoints, and see [authorization](/developers/platform-api/authz) for the full scope reference.
+    Optionally integrate the new group and device move endpoints listed above. Creating, renaming, and moving groups requires the `groups:write` scope, and moving devices requires the `devices:write` scope. Bulk device moves are authorized against the target group, so grant `devices:write` on the group the devices are moving into. Add these scopes to your [API keys](/admin/apikeys) before calling those endpoints, and see [authorization](/developers/platform-api/authz) for the full scope reference.
   </Step>
 
   <Step title="Optionally adopt new additive surface">
