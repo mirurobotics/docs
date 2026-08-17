@@ -9,6 +9,354 @@ import { PlatformApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
+# 2026-08-17.everglades
+
+*August 17, 2026*
+
+The `everglades` release introduces device groups and adds group membership to devices, so you can build your fleet hierarchy over the API and read and filter devices by the same hierarchy you manage in the dashboard. Groups themselves are fully manageable: create them, rename them, and move them to a new parent. A device's membership in a group is read-only, so assigning a device to a group stays a dashboard flow. 
+
+`everglades` also brings the Platform API up to date with three months of configuration changes: config schemas now support instance slots, deployments report more timestamps (queued, deployed, archived), and devices report an `archived` status.
+
+<PlatformApiReleaseLinks version="2026-08-17.everglades" />
+
+## New endpoints
+
+<Dropdown title="Groups">
+  - <GET /> `/groups` — list groups
+  - <GET /> `/groups/{group_id}` — retrieve a group
+  - <POST /> `/groups` — create a group
+  - <PATCH /> `/groups/{group_id}` — rename a group
+  - <POST /> `/groups/{group_id}/move` — move a group to a new parent
+</Dropdown>
+
+## Breaking changes
+
+<Dropdown title="Config schema instance slots">
+
+  The config schema `instance_filepath` field is replaced by the `instance_slots` field.  Instance slots specify an array of file system destinations, allowing multiple config instances to share the same schema validation. Visit the [instance slots](/cfg-mgmt/primitives/schemas/overview#instance-slots) for the full field reference.
+
+  **Config Schema Response**
+
+  ```diff
+      "id": "cfg_sch_123",
+      "config_type_name": "Motion Control",
+  -   "instance_filepath": "/srv/miru/configs/motion-control.json",
+  +   "instance_slots": [
+  +     {
+  +       "key": "default",
+  +       "name": "Default",
+  +       "filepath": "/srv/miru/configs/motion-control.json",
+  +       "required": true
+  +     }
+  +   ],
+  ```
+
+  Previous `instance_filepath` fields have been converted to the following default slot where the `filepath` field contains the previous value of `instance_filepath`:
+  ```diff
+    {
+      "key": "default",
+      "name": "Default",
+      "filepath": "$instance_filepath",
+      "required": true
+    }
+  ```
+
+  <POST /> `/config_schemas`
+
+  `instance_slots` is optional when creating a config schema. If you omit it, the server creates a single required slot with key `default`, name `Default`, and a filepath derived from the config type slug and the schema format. We recommend sending an explicit `instance_slots` array.
+
+  ```diff
+    {
+      "config_type_ref": { "slug": "motion-control" },
+      "language": "jsonschema",
+      "format": "json",
+  -   "instance_filepath": "/srv/miru/configs/motion-control.json",
+  +   "instance_slots": [
+  +     {
+  +       "key": "default",
+  +       "name": "Default",
+  +       "filepath": "/srv/miru/configs/motion-control.json",
+  +       "required": true
+  +     }
+  +   ],
+      "documents": [ ... ]
+    }
+  ```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Config type slug is immutable">
+
+  <PATCH /> `/config_types/{config_type_id}`
+
+  Updating a config type no longer accepts a `slug` field — slugs are now immutable.
+
+  ```diff
+    {
+      "name": "Motion Control",
+  -   "slug": "motion-control"
+    }
+  ```
+
+</Dropdown>
+
+<Separator />
+<Dropdown title="Deployment parent id is nullable">
+
+  <POST /> `/deployments`
+
+  The `parent_id` field when creating a deployment is now nullable and serves as an optimistic-concurrency token to ensure the parent deployment is the one you assert:
+
+  - Present: asserts the device's current target deployment is the one with the given ID
+  - Null: asserts the device has no current target deployment
+  - Omitted: no concurrency check; the server fills in the device's current target
+
+  ```diff
+  - "parent_id" accepts a deployment ID or is omitted.
+  + "parent_id": "dpl_123"  — present
+  + "parent_id": null       — null
+  +                         — omitted
+  ```
+
+</Dropdown>
+
+## Additive changes
+
+<Dropdown title="Config schema instance format">
+
+  The config schema now contains an `instance_format` field, which explicitly specifies the format of config instances instantiated for that schema. Previously, the format was inferred from the schema's `instance_filepath` extension.
+
+  `instance_format` is an enum that supports the following formats:
+
+  - `json`
+  - `yaml`
+  - `xml`
+  - `text`
+
+  **Config Schema Response**
+
+  ```diff
+    "id": "cfg_sch_123",
+    "config_type_ref": { "slug": "motion-control" },
+    "language": "jsonschema",
+    "format": "json",
+  + "instance_format": "json",
+  ```
+  
+  <POST /> `/config_schemas`
+  ```diff
+    {
+      "config_type_ref": { "slug": "motion-control" },
+      "language": "jsonschema",
+      "format": "json",
+  +   "instance_format": "json",
+    }
+  ```
+</Dropdown>
+<Separator />
+<Dropdown title="Config instance slot key">
+
+  Config instances must be bound to exactly one slot of their config schema and have thus acquired the `slot_key` field.
+
+  **Config Instance Response**
+
+  ```diff
+      "id": "cfg_inst_123",
+      "config_schema_id": "cfg_sch_123",
+      "filepath": "/srv/miru/configs/motion-control.json",
+  +   "slot_key": "default",
+  ```
+
+  <POST /> `/config_instances`
+
+  When creating a config instance, `slot_key` is optional if the schema has exactly one slot. Otherwise, `slot_key` is required.
+
+  ```diff
+    {
+      "config_schema_id": "cfg_sch_123",
+  +   "slot_key": "controller_2",
+      "content": { ... }
+    }
+  ```
+
+  <GET /> `/config_instances`
+
+  Config instances can now be filtered by their `slot_key`.
+
+  ```diff
+    GET /config_instances
+  + GET /config_instances?slot_key=controller_2
+  ```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Device group membership">
+
+  Devices now include the [group](/primitives/groups) they belong to. `group_id` is always present and is `null` for unassigned devices.
+
+  **Device Response**
+
+  ```diff
+      "id": "dvc_123",
+      "name": "My Device",
+  +   "group_id": "grp_123",
+  ```
+
+  **Device Expansions**
+
+  The full group object can be expanded, and devices can be filtered by group.
+
+  ```diff
+    GET /devices
+  + GET /devices?expand=group
+  + GET /devices?group_id=grp_123
+  ```
+
+  On <GET /> `/groups` and <GET /> `/groups/{group_id}`, a group's `parent` can be expanded.
+
+  ```diff
+    GET /groups
+  + GET /groups?expand=parent
+  ```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Archived device status">
+
+  `archived` is added to the device `status` enum. Previously, archived devices were reported as `inactive`, so a device that used to read `inactive` may now read `archived`. Update any code that branches on device status.
+
+  **Device Status Enum**
+
+  ```diff
+      "inactive"
+      "activating"
+      "online"
+      "offline"
+  +   "archived"
+  ```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Device description, status filter, and status sorting">
+
+  Devices now return a free-form `description`, which is `null` when unset.
+
+  **Device Response**
+
+  ```diff
+      "id": "dvc_123",
+      "name": "My Device",
+  +   "description": "Welder on line 3",
+  ```
+
+  <GET /> `/devices` gained a `status` filter and `status` sort options.
+
+  ```diff
+    GET /devices
+  + GET /devices?status=online
+  + GET /devices?order_by=status:asc
+  ```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Opaque schema language">
+
+  `opaque` is added to the config schema `language` enum. An opaque schema carries metadata only and treats every config instance as valid. Visit the [opaque schema language](/cfg-mgmt/primitives/schemas/languages/opaque) documentation for details.
+
+  **Config Schema Language Enum**
+
+  ```diff
+      "jsonschema"
+      "cue"
+  +   "opaque"
+  ```
+
+</Dropdown>
+<Separator />
+<Dropdown title="XML and plain text instance formats">
+
+  `xml` and `text` are added to the config instance `format` enum, in both config instance responses and the <POST /> `/config_instances` request body. Visit the [config instance file formats](/cfg-mgmt/primitives/config-instances#file-formats) documentation for which formats each schema language supports.
+
+  **Config Instance Response**
+
+  ```diff
+      "json"
+      "yaml"
+  +   "xml"
+  +   "text"
+  ```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Deployment parent response">
+
+  A deployment now reports the deployment it was patched from. `parent_id` is always present and is `null` when the deployment has no parent.
+
+  **Deployment Response**
+
+  ```diff
+      "id": "dpl_123",
+      "device_id": "dvc_123",
+  +   "parent_id": "dpl_122",
+  ```
+
+  The full parent deployment can be expanded, on both <GET /> `/deployments` and <GET /> `/deployments/{deployment_id}`.
+
+  ```diff
+    GET /deployments
+  + GET /deployments?expand=parent
+  + GET /deployments/{deployment_id}?expand=parent
+  ```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Deployment lifecycle timestamps">
+
+  Deployments now report when they reached each stage of their lifecycle. `queued_at`, `deployed_at`, and `archived_at` are always present and are `null` until the deployment reaches that stage.
+
+  **Deployment Response**
+
+  ```diff
+      "created_at": "2026-08-17T00:00:00Z",
+      "updated_at": "2026-08-17T00:05:00Z",
+  +   "queued_at": "2026-08-17T00:01:00Z",
+  +   "deployed_at": "2026-08-17T00:04:00Z",
+  +   "archived_at": null,
+  ```
+
+</Dropdown>
+
+## Migration steps
+
+<Steps>
+  <Step title="Update the Miru-Version header">
+    Set `Miru-Version: 2026-08-17.everglades` on all API requests. [Python SDK](/developers/platform-api/sdks#python) `v0.11.0` marks the major version rollout of the `2026-08-17.everglades` API. For the latest SDK version compatibility information, visit the [Platform SDKs](/developers/platform-api/sdks) page.
+  </Step>
+
+  <Step title="Migrate from config schemas to use instance slots">
+    Replace reads of `instance_filepath` with `instance_slots[].filepath`, and replace `instance_filepath` in `POST /config_schemas` request bodies with an explicit `instance_slots` array. Omitting `instance_slots` makes the server derive a default filepath rather than reuse your previous one. See [instance slots](/cfg-mgmt/primitives/schemas/overview#instance-slots).
+  </Step>
+
+  <Step title="Stop sending slug when updating a config type">
+    Remove `slug` from `PATCH /config_types/{config_type_id}` request bodies. Config type slugs are immutable.
+  </Step>
+
+  <Step title="Review parent_id when creating deployments">
+    No change is needed if you already omit `parent_id` or always send a deployment ID. Send `null` only to assert that the device has no current target deployment.
+  </Step>
+
+  <Step title="Optionally integrate new endpoints">
+    Optionally integrate the new group endpoints listed above. 
+  </Step>
+
+  <Step title="Optionally adopt new additive surface">
+    Optionally integrate the new additive API changes listed above.
+  </Step>
+
+</Steps>
+
+---
+
 # 2026-05-06.rainier
 
 *May 12, 2026*
@@ -237,8 +585,8 @@ These changes are also reflected in the deployment's [status](/primitives/deploy
 - Replaced inline config instance creation with explicit config instance IDs. Create config instances separately via `POST /config_instances` first, then reference them by ID.
 - Renamed `patch_source_id` to `parent_id`.
 
+<POST /> `/deployments`
 ```diff
-# POST /deployments request body
   {
     "release_id": "rls_123",
     "target_status": "staged",

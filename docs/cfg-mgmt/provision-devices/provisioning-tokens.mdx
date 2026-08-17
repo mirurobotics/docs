@@ -35,7 +35,7 @@ The recommended method is via `apt` (shown below). However, you can also manuall
 
 ## Create a provisioning token
 
-Provisioning tokens are created via the [Platform API](/references/platform-api/2026-05-06/endpoints/provisioning-tokens/create) endpoint using [API keys](/admin/apikeys).
+Provisioning tokens are created via the [Platform API](/references/platform-api/2026-08-17/endpoints/provisioning-tokens/create) endpoint using [API keys](/admin/apikeys).
 
 **Create the API key**
 
@@ -52,7 +52,7 @@ export MIRU_API_KEY=<api-key>
 
 curl --request POST \
   --url https://api.mirurobotics.com/beta/provisioning_tokens \
-  --header 'Miru-Version: 2026-05-06.rainier' \
+  --header 'Miru-Version: 2026-08-17.everglades' \
   --header "X-API-Key: $MIRU_API_KEY"
 ```
 
