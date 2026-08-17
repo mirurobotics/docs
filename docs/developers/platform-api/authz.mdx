@@ -71,7 +71,10 @@ Some resources have additional granular scopes beyond the standard tiers (e.g. `
 | `devices:read` | get, list, ping |
 | `devices:provision` | create, activate, reactivate, list |
 | `devices:write` | create, update |
+| `devices:move` | move between groups |
 | `devices:delete` | delete |
+
+`devices:move` is checked against the group the devices are moving into, so the API key must be granted it on that group. Moving devices out of every group requires a workspace-level grant.
 
 ### Git commits
 
@@ -80,6 +83,14 @@ Some resources have additional granular scopes beyond the standard tiers (e.g. `
 | `git_commits:manage` | all operations |
 | `git_commits:read` | get, list |
 | `git_commits:write` | create |
+
+### Groups
+
+| Scope | Permissions |
+|-------|-------------|
+| `groups:manage` | all operations |
+| `groups:read` | get, list |
+| `groups:write` | create, rename, move |
 
 ### Provisioning tokens
 
