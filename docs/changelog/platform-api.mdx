@@ -13,7 +13,9 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 *August 17, 2026*
 
-The `everglades` release introduces device groups and adds group membership to devices, so you can build, read, and filter your fleet by the same hierarchy you manage in the dashboard. It also brings the Platform API up to date with three months of configuration changes: config schemas now declare instance slots instead of a single instance file path, config instances carry a slot key, deployments report when they were queued, deployed, and archived, and devices report an `archived` status.
+The `everglades` release introduces device groups and adds group membership to devices, so you can build, read, and filter your fleet by the same hierarchy you manage in the dashboard. 
+
+`everglades` also brings the Platform API up to date with three months of configuration changes: config schemas now support instance slots, deployments report more timestamps (queued, deployed, archived), and devices report an `archived` status.
 
 <PlatformApiReleaseLinks version="2026-08-17.everglades" />
 
@@ -28,21 +30,21 @@ The `everglades` release introduces device groups and adds group membership to d
 </Dropdown>
 <Separator />
 <Dropdown title="Devices">
-  - <POST /> `/devices/move/bulk` — move devices into a group
+  - <POST /> `/devices/move/bulk` — move devices between groups
 </Dropdown>
 
 ## Breaking changes
 
 <Dropdown title="Config schema instance slots">
 
-  A config schema no longer declares a single `instance_filepath`. It declares `instance_slots` — one or more file system destinations that share the schema's validation — and an `instance_format` for the files written to them. The `instance_filepath` field is removed from every config schema response and from the `POST /config_schemas` request body.
+  The config schema `instance_filepath` field is replaced by the `instance_slots` field.  Instance slots specify an array of file system destinations, allowing multiple config instances to share the same schema validation. Visit the [instance slots](/cfg-mgmt/primitives/schemas/overview#instance-slots) for the full field reference.
+
+  **Config Schema Response**
 
   ```diff
-    # Config Schema
       "id": "cfg_sch_123",
       "config_type_name": "Motion Control",
   -   "instance_filepath": "/srv/miru/configs/motion-control.json",
-  +   "instance_format": "json",
   +   "instance_slots": [
   +     {
   +       "key": "default",
@@ -53,16 +55,26 @@ The `everglades` release introduces device groups and adds group membership to d
   +   ],
   ```
 
-  `instance_slots` is optional when creating a config schema. If you omit it, the server creates a single required slot with key `default` and a filepath derived from the config type slug and the schema format — **not** the path you used to pass in `instance_filepath`. To keep an existing path, send it explicitly as a slot.
+  Previous `instance_filepath` fields have been converted to the following default slot where the `filepath` field contains the previous value of `instance_filepath`:
+  ```diff
+    {
+      "key": "default",
+      "name": "Default",
+      "filepath": "$instance_filepath",
+      "required": true
+    }
+  ```
+
+  <POST /> `/config_schemas`
+
+  `instance_slots` is optional when creating a config schema. If you omit it, the server creates a single required slot with key `default`, name `Default`, and a filepath derived from the config type slug and the schema format. We recommend sending an explicit `instance_slots` array.
 
   ```diff
-    POST /config_schemas
     {
       "config_type_ref": { "slug": "motion-control" },
       "language": "jsonschema",
       "format": "json",
   -   "instance_filepath": "/srv/miru/configs/motion-control.json",
-  +   "instance_format": "json",
   +   "instance_slots": [
   +     {
   +       "key": "default",
@@ -75,16 +87,15 @@ The `everglades` release introduces device groups and adds group membership to d
     }
   ```
 
-  Slot keys and filepaths must each be unique within a schema, and slot filepaths must be unique across every config schema in a release. Visit the [instance slots](/cfg-mgmt/primitives/schemas/overview#instance-slots) documentation for the full field reference.
-
 </Dropdown>
 <Separator />
 <Dropdown title="Config type slug is immutable">
 
-  <PATCH /> `/config_types/{config_type_id}` no longer accepts a `slug` field — slugs are fixed when the config type is created.
+  <PATCH /> `/config_types/{config_type_id}`
+
+  Updating a config type no longer accepts a `slug` field — slugs are now immutable.
 
   ```diff
-    PATCH /config_types/{config_type_id}
     {
       "name": "Motion Control",
   -   "slug": "motion-control"
@@ -94,40 +105,77 @@ The `everglades` release introduces device groups and adds group membership to d
 </Dropdown>
 
 <Separator />
-<Dropdown title="Deployment parent_id is nullable">
+<Dropdown title="Deployment parent id is nullable">
 
-  `parent_id` on `POST /deployments` is now nullable and has three distinct meanings. It is an optimistic-concurrency token: it lets you assert what the device's current target deployment is, so a concurrent deployment cannot silently overwrite yours.
+  <POST /> `/deployments`
+
+  The `parent_id` field when creating a deployment is now nullable and serves as an optimistic-concurrency token to ensure the parent deployment is the one you assert:
+
+  - Present: asserts the device's current target deployment is the one with the given ID
+  - Null: asserts the device has no current target deployment
+  - Omitted: no concurrency check; the server fills in the device's current target
 
   ```diff
-    POST /deployments
   - "parent_id" accepts a deployment ID or is omitted.
-  + "parent_id": "dpl_123"  — assert the device's current target is dpl_123; 409 if it is not.
-  + "parent_id": null       — assert the device has no current target; 409 if it has one.
-  + omitted                 — no concurrency check; the server fills in the device's current target.
+  + "parent_id": "dpl_123"  — present
+  + "parent_id": null       — null
+  +                         — omitted
   ```
-
-  Omitting the field keeps the previous behavior. Send `null` only when you intend to assert that the device has no current target deployment.
 
 </Dropdown>
 
 ## Additive changes
 
-<Dropdown title="Config instance slot key">
+<Dropdown title="Config schema instance format">
 
-  A config instance is bound to one slot of its config schema. `slot_key` is now returned on every config instance.
+  The config schema now contains an `instance_format` field, which explicitly specifies the format of config instances instantiated for that schema. Previously, the format was inferred from the schema's `instance_filepath` extension.
+
+  `instance_format` is an enum that supports the following formats:
+
+  - `json`
+  - `yaml`
+  - `xml`
+  - `text`
+
+  **Config Schema Response**
 
   ```diff
-    # Config Instance
+    "id": "cfg_sch_123",
+    "config_type_ref": { "slug": "motion-control" },
+    "language": "jsonschema",
+    "format": "json",
+  + "instance_format": "json",
+  ```
+  
+  <POST /> `/config_schemas`
+  ```diff
+    {
+      "config_type_ref": { "slug": "motion-control" },
+      "language": "jsonschema",
+      "format": "json",
+  +   "instance_format": "json",
+    }
+  ```
+</Dropdown>
+<Separator />
+<Dropdown title="Config instance slot key">
+
+  Config instances must be bound to exactly one slot of their config schema and have thus acquired the `slot_key` field.
+
+  **Config Instance Response**
+
+  ```diff
       "id": "cfg_inst_123",
       "config_schema_id": "cfg_sch_123",
       "filepath": "/srv/miru/configs/motion-control.json",
   +   "slot_key": "default",
   ```
 
-  When creating a config instance, `slot_key` is optional if the schema has exactly one slot, and required otherwise.
+  <POST /> `/config_instances`
+
+  When creating a config instance, `slot_key` is optional if the schema has exactly one slot. Otherwise, `slot_key` is required.
 
   ```diff
-    POST /config_instances
     {
       "config_schema_id": "cfg_sch_123",
   +   "slot_key": "controller_2",
@@ -135,7 +183,9 @@ The `everglades` release introduces device groups and adds group membership to d
     }
   ```
 
-  Config instances can also be filtered by slot.
+  <GET /> `/config_instances`
+
+  Config instances can now be filtered by their `slot_key`.
 
   ```diff
     GET /config_instances
@@ -146,14 +196,17 @@ The `everglades` release introduces device groups and adds group membership to d
 <Separator />
 <Dropdown title="Device group membership">
 
-  Devices now report the [group](/primitives/groups) they belong to. `group_id` is always present and is `null` for unassigned devices.
+  Devices now include the [group](/primitives/groups) they belong to. `group_id` is always present and is `null` for unassigned devices.
+
+  **Device Response**
 
   ```diff
-    # Device
       "id": "dvc_123",
       "name": "My Device",
   +   "group_id": "grp_123",
   ```
+
+  **Device Expansions**
 
   The full group object can be expanded, and devices can be filtered by group.
 
@@ -163,7 +216,7 @@ The `everglades` release introduces device groups and adds group membership to d
   + GET /devices?group_id=grp_123
   ```
 
-  On `GET /groups` and `GET /groups/{group_id}`, a group's `parent` can be expanded.
+  On <GET /> `/groups` and <GET /> `/groups/{group_id}`, a group's `parent` can be expanded.
 
   ```diff
     GET /groups
@@ -172,46 +225,22 @@ The `everglades` release introduces device groups and adds group membership to d
 
 </Dropdown>
 <Separator />
-<Dropdown title="Group management">
-
-  Groups can be created, renamed, and moved through the API. All three endpoints require the `groups:write` scope.
-
-  Create a group at the top level by omitting `parent_id`, or nest it under an existing group by sending one.
-
-  ```diff
-  + POST /groups
-    {
-      "name": "Europe",
-      "parent_id": "grp_123"
-    }
-  ```
-
-  <PATCH /> `/groups/{group_id}` accepts a `name` and nothing else. To change where a group sits in the hierarchy, use <POST /> `/groups/{group_id}/move` and send the new `parent_id`, or `null` to move the group to the top level.
-
-  ```diff
-  + POST /groups/{group_id}/move
-    {
-      "parent_id": "grp_456"
-    }
-  ```
-
-  There is no endpoint for deleting a group. Delete groups from the [dashboard](/primitives/groups#delete-a-group).
-
-</Dropdown>
-<Separator />
 <Dropdown title="Assigning devices to groups">
+
+  <POST /> `/devices`
 
   A device can be assigned to a group when it is created.
 
   ```diff
-    POST /devices
     {
       "name": "Robot 1",
   +   "group_id": "grp_123"
     }
   ```
 
-  Existing devices are reassigned in bulk. <POST /> `/devices/move/bulk` moves up to 1000 devices in one request and returns the moved devices. Send `"target_group_id": null` to unassign them instead.
+  <POST /> `/devices/move/bulk`
+  
+  Existing devices are reassigned in bulk: <POST /> `/devices/move/bulk` moves multiple devices in one request and returns the moved devices. Send `"target_group_id": null` to unassign them instead.
 
   ```diff
   + POST /devices/move/bulk
@@ -221,16 +250,15 @@ The `everglades` release introduces device groups and adds group membership to d
     }
   ```
 
-  Bulk moves require the `devices:move` scope rather than `devices:write`. The permission is checked against the target group, so the API key must be granted `devices:move` on that group. Moving devices out of every group, by sending `"target_group_id": null`, requires a workspace-level grant.
-
 </Dropdown>
 <Separator />
 <Dropdown title="Archived device status">
 
   `archived` is added to the device `status` enum. Previously, archived devices were reported as `inactive`, so a device that used to read `inactive` may now read `archived`. Update any code that branches on device status.
 
+  **Device Status Enum**
+
   ```diff
-    # Device status enum
       "inactive"
       "activating"
       "online"
@@ -244,14 +272,15 @@ The `everglades` release introduces device groups and adds group membership to d
 
   Devices now return a free-form `description`, which is `null` when unset.
 
+  **Device Response**
+
   ```diff
-    # Device
       "id": "dvc_123",
       "name": "My Device",
   +   "description": "Welder on line 3",
   ```
 
-  `GET /devices` gained a `status` filter and `status` sort options.
+  <GET /> `/devices` gained a `status` filter and `status` sort options.
 
   ```diff
     GET /devices
@@ -265,8 +294,9 @@ The `everglades` release introduces device groups and adds group membership to d
 
   `opaque` is added to the config schema `language` enum. An opaque schema carries metadata only and treats every config instance as valid. Visit the [opaque schema language](/cfg-mgmt/primitives/schemas/languages/opaque) documentation for details.
 
+  **Config Schema Language Enum**
+
   ```diff
-    # Schema Language enum
       "jsonschema"
       "cue"
   +   "opaque"
@@ -276,31 +306,32 @@ The `everglades` release introduces device groups and adds group membership to d
 <Separator />
 <Dropdown title="XML and plain text instance formats">
 
-  `xml` and `text` are added to the instance content `format` enum, in both config instance responses and the `POST /config_instances` request body. Visit the [config instance file formats](/cfg-mgmt/primitives/config-instances#file-formats) documentation for which formats each schema language supports.
+  `xml` and `text` are added to the config instance `format` enum, in both config instance responses and the <POST /> `/config_instances` request body. Visit the [config instance file formats](/cfg-mgmt/primitives/config-instances#file-formats) documentation for which formats each schema language supports.
+
+  **Config Instance Response**
 
   ```diff
-    # Instance Content format enum
       "json"
       "yaml"
-      "jsonc"
   +   "xml"
   +   "text"
   ```
 
 </Dropdown>
 <Separator />
-<Dropdown title="Deployment parent">
+<Dropdown title="Deployment parent response">
 
   A deployment now reports the deployment it was patched from. `parent_id` is always present and is `null` when the deployment has no parent.
 
+  **Deployment Response**
+
   ```diff
-    # Deployment
       "id": "dpl_123",
       "device_id": "dvc_123",
   +   "parent_id": "dpl_122",
   ```
 
-  The full parent deployment can be expanded, on both the retrieve and list endpoints.
+  The full parent deployment can be expanded, on both <GET /> `/deployments` and <GET /> `/deployments/{deployment_id}`.
 
   ```diff
     GET /deployments
@@ -314,16 +345,15 @@ The `everglades` release introduces device groups and adds group membership to d
 
   Deployments now report when they reached each stage of their lifecycle. `queued_at`, `deployed_at`, and `archived_at` are always present and are `null` until the deployment reaches that stage.
 
+  **Deployment Response**
+
   ```diff
-    # Deployment
       "created_at": "2026-08-17T00:00:00Z",
       "updated_at": "2026-08-17T00:05:00Z",
   +   "queued_at": "2026-08-17T00:01:00Z",
   +   "deployed_at": "2026-08-17T00:04:00Z",
   +   "archived_at": null,
   ```
-
-  `created_at` and `updated_at` only record when the deployment record changed. Use these fields to tell when a deployment actually reached a device, or to measure how long a rollout took.
 
 </Dropdown>
 
