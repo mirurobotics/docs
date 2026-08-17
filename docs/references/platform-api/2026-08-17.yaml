@@ -6,169 +6,80 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  x-release-version: 2026-08-17.everglades-beta.3
+  x-release-version: 2026-08-17.everglades-beta.4
   x-git-commit:
-    sha: b44810b2c0dbf1bc2af74bf930b5a9881925cc61
-    url: https://github.com/mirurobotics/openapi/commit/b44810b2c0dbf1bc2af74bf930b5a9881925cc61
+    sha: 8169d490c4ce2724ffd5d4adb116b9cf026d7496
+    url: https://github.com/mirurobotics/openapi/commit/8169d490c4ce2724ffd5d4adb116b9cf026d7496
     message: |-
-      feat(platform): add a group write surface (#249)
+      refactor(platform): fold devices:move back into devices:write (#250)
 
-      ## ⚠️ Two backend release gates — these endpoints 403 for every API key
-      until both land
+      ## What
 
-      This PR defines contracts only. **All four new endpoints are uncallable
-      with a real API key until `mirurobotics/backend` lands both of the
-      following.** They live in different scope nodes and either can be missed
-      independently.
+      `POST /devices/move/bulk` now declares `devices:write` instead of the
+      dedicated `devices:move` scope introduced in #249.
 
-      1. **`groups:write` is not registered.** `GroupNode()` in
-      `internal/authz/scopes/scopes.go` has exactly one child today —
-      `groups:read` (from backend PR #620). It needs a `groups:write` child
-      carrying `Groups.Create`, `Groups.Update`, `Groups.Move`. **Explicitly
-      NOT `Groups.Delete`** — `DELETE /groups/{group_id}` is deferred here,
-      and a scope must never authorize more than the surface exposes. Adding
-      `Delete` later is additive.
+      ## Why
 
-      2. **`Perms.Devices.Move` is in NO registered scope at all.** This is a
-      separate, less obvious gap. `devices:manage` is `{Activate, Create, Get,
-      List, Update, Reactivate, Ping}`; `devices:write` is `{Create, Update}`;
-      `devices:provision` is `{Create, List, Activate, Reactivate}`. `Move`
-      appears in none of them, yet it is the permission `BulkMove` actually
-      checks (`internal/configs/services/devices/authz.go`). `POST
-      /devices/move/bulk` 403s until `Move` is added to `devices:write`
-      **and** to the `devices:manage` parent.
+      The dedicated scope was justified on the grounds that
+      `Perms.Devices.Move` is authorized against the **target group's**
+      resource set rather than the devices' — a different resource surface
+      from the rest of `devices:write`.
 
-      Backend also needs four platform handlers wired (`createGroup`,
-      `updateGroup`, `moveGroup`, `bulkMoveDevices`) and
-      `CreateDevice.GetGroupID()` unstubbed — but all four service layers
-      already exist and are exercised by the frontend audience, so that is
-      handler and request-mapping work, not new domain logic.
+      That argument doesn't survive comparison with group reparenting, which
+      has structurally identical authz:
 
-      ## What this adds
+      - `internal/configs/services/groups/move.go:36-46` — when a parent is
+      given, `svcs.ExtraRsrcIDs(parentID)` checks permission on the
+      destination group; moving to root falls back to a workspace-level
+      `authzx.CheckRule`.
+      - `internal/configs/services/devices/bulk_move.go:39-45` — when a target
+      group is given, `authzx.NewResourceSet(rsrcs.Groups, targetGroupID)`;
+      moving to root uses an empty resource set, enforcing a workspace-level
+      grant.
 
-      The platform audience today exposes `GET /groups` and `GET
-      /groups/{group_id}` and a read-only `group_id` on devices. `group_id`
-      appears in **no** platform request body. A customer can observe group
-      structure somebody built in the dashboard and do nothing else with it.
-      For a fleet-automation API the intended loop is provision → assign →
-      deploy; steps 1 and 3 are on the surface and **step 2 is unreachable**,
-      since groups cannot be created through the API at all.
+      Both evaluate against the destination group, with the same root special
+      case. Yet `Groups.Move` sits inside `groups:write`. Splitting one and
+      not the other was arbitrary rather than principled, so both moves now
+      live in their resource's write scope.
 
-      | Route | Operation | Scope | |
-      |---|---|---|---|
-      | `POST /groups` | `createGroup` | `groups:write` | Create a group,
-      optionally under a parent. |
-      | `PATCH /groups/{group_id}` | `updateGroup` | `groups:write` | Rename a
-      group. `name` only. |
-      | `POST /groups/{group_id}/move` | `moveGroup` | `groups:write` |
-      Reparent, or move to top level with `parent_id: null`. |
-      | `POST /devices/move/bulk` | `bulkMoveDevices` | `devices:write` | Move
-      up to 1000 devices to a target group. |
+      The target-group nuance is preserved where it belongs — in the operation
+      description — rather than encoded as a separate slug:
 
-      Plus `group_id` on the platform `CreateDeviceRequest`, collapsing
-      "provision device → assign to group" into one call.
+      > Unlike the other `devices:write` operations, this one is authorized
+      against the target group rather than the devices, so the API key must be
+      granted `devices:write` on that group. Moving devices to the root of the
+      tree, by omitting the target group, requires a workspace-level grant.
 
-      Route count `23 → 25`. Scope histogram in the platform bundle:
-      `groups:write` ×3, `devices:write` ×3, `groups:read` ×2.
+      ## Not breaking
 
-      ## Design decisions
-
-      **Why `POST /devices/move/bulk` rather than `group_id` on `PATCH
-      /devices/{device_id}`.** The PATCH option is superficially more RESTful
-      and was rejected on three grounds. (a) No backend implementation exists
-      — `dvcsvc.UpdateInputs` has `Name`, `Description`, `AgentVersion` and no
-      `GroupID`, while `BulkMove` does. (b) `BulkMove` carries authorization a
-      naive PATCH would silently skip: it checks `Perms.Devices.Move`
-      **against the target group's resource set**, so a principal must be
-      authorized both to move devices out of their current group and into the
-      destination. Reimplementing that on the generic update path means
-      duplicating the check or shipping a privilege-escalation hole. (c) It
-      would create two ways to do one thing — the exact anti-pattern this repo
-      already removed for groups. Bulk move serves the single-device case fine
-      with a one-element array.
-
-      **Why `PATCH /groups` is rename-only.** The shared `UpdateGroupRequest`
-      has exactly one property, `name`; `parent_id` was deliberately removed
-      from it repo-wide so reparenting has one path and only one.
-      `internal/configs/services/groups/move.go` is a distinct service with
-      cycle detection and max-depth validation gated on a distinct
-      `Perms.Groups.Move`. Folding that into a generic PATCH would either lose
-      the validation or overload update with move-specific failure modes.
-
-      **Why `DELETE /groups/{group_id}` is deferred.** A decision, not an
-      oversight — the backend service and `Perms.Groups.Delete` both already
-      exist, so shipping it would be mechanically easy. It is held back
-      because the *semantics* are unresolved: what happens to child groups
-      (cascade? reparent to the deleted group's parent? refuse while
-      non-empty?) and to member devices (unassign to root? refuse?). Each
-      answer is a different contract, and once one ships, picking another is
-      breaking. Deletion also has no safe default. Ship the additive surface
-      now; decide cascade semantics in its own write-up.
-
-      **One `groups:write` scope for create + update + move.** Per-action
-      scopes exist in this audience (`deployments:stage`/`deploy`/`archive`),
-      so splitting was a real option. No group write operation has a blast
-      radius different enough to justify separate grants, and three slugs
-      instead of one triples the cross-repo registration gate for no security
-      gain. Splitting later is additive.
-
-      **`POST /devices/move/bulk` declares `devices:write`, not
-      `groups:write`, and not both.** The mutated resource is the device.
-      Requiring both would force every caller organizing a fleet to hold
-      group-write permission they don't need; the backend already enforces
-      target-group authorization at the permission layer, which is the correct
-      place. The scope answers "may this key move devices"; the permission
-      answers "into *that* group".
-
-      **No new platform-local request files.** All four shared requests were
-      audited property by property and none carries a field platform must
-      withhold, so all four `$ref` the shared components directly — the
-      precedent `PingDeviceRequest` already sets. A platform-local copy
-      byte-identical to the shared one is duplicated surface that drifts
-      silently.
-
-      ## The response-shape invariant
-
-      Every new group response uses the **platform** `Group`, which wraps
-      `BaseGroup` and self-references `#/Group` for its `parent` expansion.
-      The shared full `Group` carries `has_devices`/`has_subgroups` (UI
-      rendering affordances) and `actions`/`GroupActions` (frontend RBAC
-      hints); pointing anything at it readmits all four into the external
-      contract at every depth of `group.parent.parent…`. Same for the
-      bulk-move response, which uses the platform `Device`.
-
-      Verified on the regenerated bundle: `has_devices`, `has_subgroups`,
-      `GroupActions`, and `ancestors` (removed in #247) are all at **zero**
-      occurrences, `Group.parent` still `$ref`s
-      `'#/components/schemas/Group'`, the bulk-move items `$ref`
-      `'#/components/schemas/Device'`, and no bundler disambiguation suffix
-      (`Group2`, `Device2`, …) appeared. `UpdateGroupRequest` bundles with
-      `name` and nothing else; `group_id` is present on `CreateDeviceRequest`
-      and absent from `UpdateDeviceRequest`.
-
-      ## Compatibility
-
-      **Additive and NOT breaking.** None of this shipped in the last stable
-      release `platform/2026-05-06.rainier` — it is four new operations and
-      one new optional request property, no field removed, no shape changed.
-      The bundle diff is `166 insertions(+), 0 deletions(-)`.
-
-      **A new `platform/2026-08-17.everglades-beta.3` must be cut after
-      merge** via the normal release path so downstream consumers pick this
-      up. Not done by this PR.
+      `devices:move` has never shipped in a stable release. The last stable
+      platform release, `platform/2026-05-06.rainier`, has no bulk-move
+      endpoint at all; the scope appeared only in `everglades-beta.3`.
+      Removing it now is free — after everglades goes stable it would not be.
 
       ## Verification
 
-      `./scripts/regen.sh` and `./scripts/lint.sh` both clean on the first
-      run; `.redocly.lint-ignore.yaml` needed no change.
-      `./scripts/preflight.sh` prints `=== All checks passed ===` and
-      `./scripts/is-stale.sh` reports up to date. No other audience's
-      `openapi.gen.yaml` changed and `apis/configs/` is untouched.
+      - `./scripts/regen.sh`, `./scripts/lint.sh`, `./scripts/preflight.sh`
+      all clean; `./scripts/is-stale.sh` reports generated specs up to date.
+      - Scope histogram: `devices:move` **0** (was 1), `devices:write` **3**
+      (was 2), `groups:write` 3 unchanged.
+      - Route count unchanged at 25; no other audience's bundle changed.
+
+      ## Follow-ups
+
+      - A new `platform/2026-08-17.everglades-beta.4` needs cutting after
+      merge — **tag the squash-merge commit on `main`**, or the release job
+      skips silently and publishes nothing.
+      - Backend PR #623 is open and registers `devices:move`; it must drop
+      that node and add `Perms.Devices.Move` to `devices:write` instead.
+      `devices:manage` keeps `Move` either way.
+      - docs#158 documents `devices:move` in `authz.mdx` and needs the same
+      correction.
 
       <!-- codesmith:footer -->
       ---
       <a
-      href="https://app.blacksmith.sh/mirurobotics/codesmith/openapi/pr/249"><picture><source
+      href="https://app.blacksmith.sh/mirurobotics/codesmith/openapi/pr/250"><picture><source
       media="(prefers-color-scheme: dark)"
       srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"><source
       media="(prefers-color-scheme: light)"
@@ -176,7 +87,7 @@ info:
       alt="View with [code]smith"
       src="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"></picture></a>
       <a
-      href="https://backend.blacksmith.sh/track/enable-autofix?expires=1789509179&installation_model_id=425273&pr_number=249&repository=mirurobotics%2Fopenapi&return_to=https%3A%2F%2Fgithub.com%2Fmirurobotics%2Fopenapi%2Fpull%2F249&signature=46072cdf5dc5f90a56a2fcff37d8c4f4bee44edb674be135bef4913d836b89be"><picture><source
+      href="https://backend.blacksmith.sh/track/enable-autofix?expires=1789525733&installation_model_id=425273&pr_number=250&repository=mirurobotics%2Fopenapi&return_to=https%3A%2F%2Fgithub.com%2Fmirurobotics%2Fopenapi%2Fpull%2F250&signature=ab505296653acc4ec899d50524c8df6450d26d81497bfb781f55ce79425846f6"><picture><source
       media="(prefers-color-scheme: dark)"
       srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source
       media="(prefers-color-scheme: light)"
@@ -189,14 +100,12 @@ info:
       <!-- codesmith:autofix:disabled -->
       <!-- /codesmith:footer -->
 
-      ---------
-
       Co-authored-by: Claude <noreply@anthropic.com>
     author: ben-miru
     branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-08-16T22:46:55.009208+00:00'
+    built_at: '2026-08-17T02:42:25.964316+00:00'
 servers:
 - url: https://api.mirurobotics.com/beta
   description: Miru Platform API
@@ -807,10 +716,11 @@ paths:
       - Devices
       summary: Bulk Move
       operationId: bulkMoveDevices
-      description: Move multiple devices to a target group in a single request. The
-        `devices:move` permission is evaluated against the target group, so the API
-        key must be granted it on that group. Moving devices to the root of the tree,
-        by omitting the target group, requires a workspace-level grant.
+      description: Move multiple devices to a target group in a single request. Unlike
+        the other `devices:write` operations, this one is authorized against the target
+        group rather than the devices, so the API key must be granted `devices:write`
+        on that group. Moving devices to the root of the tree, by omitting the target
+        group, requires a workspace-level grant.
       parameters:
       - $ref: '#/components/parameters/device_list_expansions'
       requestBody:
@@ -833,7 +743,7 @@ paths:
         content: |
           | Scope | Required |
           |-------|----------|
-          | `devices:move` | Yes |
+          | `devices:write` | Yes |
   /provisioning_tokens:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -1198,14 +1108,14 @@ components:
     ReleaseVersion:
       type: string
       enum:
-      - 2026-08-17.everglades-beta.3
+      - 2026-08-17.everglades-beta.4
       x-enum-varnames:
       - RELEASE_VERSION
       x-stainless-const: true
     APIGitCommit:
       type: string
       enum:
-      - b44810b2c0dbf1bc2af74bf930b5a9881925cc61
+      - 8169d490c4ce2724ffd5d4adb116b9cf026d7496
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
