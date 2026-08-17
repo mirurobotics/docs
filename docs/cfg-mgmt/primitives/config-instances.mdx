@@ -5,6 +5,7 @@ title: "Config instances"
 import AgentYamlSupport from '/snippets/agent/yaml-support.mdx';
 import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
+import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
 import ConfigInstanceDef from '/snippets/definitions/config-instance.mdx';
 import SchemaFormats from '/snippets/schemas/formats.mdx';
 
@@ -51,3 +52,27 @@ The formats a config instance may use are determined by the schema language of i
 
 
 <AgentYamlSupport />
+
+## View a config instance
+
+**Dashboard**
+
+Config instances are viewed from the places they appear—a device's [config editor](/cfg-mgmt/deploy/config-editor), a release's [staging area](/cfg-mgmt/deploy/staging-area#view-a-deployment), or a device's [deployment history](/cfg-mgmt/audit/device-history#view-a-config-instance).
+
+**Platform API**
+
+To retrieve a config instance programmatically, use the <PlatformApiLink endpoint="config-instances/get">get config instance endpoint »</PlatformApiLink>
+
+To list config instances programmatically, use the <PlatformApiLink endpoint="config-instances/list">list config instances endpoint »</PlatformApiLink>
+
+To download a config instance's content as a file, use the <PlatformApiLink endpoint="config-instances/download-content">download config instance content endpoint »</PlatformApiLink>
+
+## Create a config instance
+
+**Dashboard**
+
+Config instances are created for you whenever configs are deployed from the dashboard, such as when [staging a deployment](/cfg-mgmt/deploy/staging-area#stage-a-deployment) or deploying from a device's [config editor](/cfg-mgmt/deploy/config-editor).
+
+**Platform API**
+
+To create a config instance programmatically, use the <PlatformApiLink endpoint="config-instances/create">create config instance endpoint »</PlatformApiLink>
