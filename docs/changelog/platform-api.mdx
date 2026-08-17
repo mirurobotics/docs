@@ -74,7 +74,7 @@ The `everglades` release introduces read-only device groups and adds group membe
 <Separator />
 <Dropdown title="Config type slug is immutable">
 
-  `PATCH /config_types/{config_type_id}` no longer accepts a `slug`. A config type's slug is fixed when the config type is created. Only `name` can be updated.
+  <PATCH /> `/config_types/{config_type_id}` no longer accepts a `slug` field-- slugs are fixed when the config type is created.
 
   ```diff
     PATCH /config_types/{config_type_id}
@@ -85,21 +85,7 @@ The `everglades` release introduces read-only device groups and adds group membe
   ```
 
 </Dropdown>
-<Separator />
-<Dropdown title="Archived device status">
 
-  `archived` is added to the device `status` enum. Previously, archived devices were reported as `inactive`, so a device that used to read `inactive` may now read `archived`. Update any code that branches on device status.
-
-  ```diff
-    # Device status enum
-      "inactive"
-      "activating"
-      "online"
-      "offline"
-  +   "archived"
-  ```
-
-</Dropdown>
 <Separator />
 <Dropdown title="Deployment parent_id is nullable">
 
@@ -180,6 +166,21 @@ The `everglades` release introduces read-only device groups and adds group membe
 
 </Dropdown>
 <Separator />
+<Dropdown title="Archived device status">
+
+  `archived` is added to the device `status` enum. Previously, archived devices were reported as `inactive`, so a device that used to read `inactive` may now read `archived`. Update any code that branches on device status.
+
+  ```diff
+    # Device status enum
+      "inactive"
+      "activating"
+      "online"
+      "offline"
+  +   "archived"
+  ```
+
+</Dropdown>
+<Separator />
 <Dropdown title="Device description, status filter, and status sorting">
 
   Devices now return a free-form `description`, which is `null` when unset.
@@ -248,10 +249,10 @@ The `everglades` release introduces read-only device groups and adds group membe
 
 <Steps>
   <Step title="Update the Miru-Version header">
-    Set `Miru-Version: 2026-08-17.everglades` on all API requests. For SDK version compatibility, visit the [Platform SDKs](/developers/platform-api/sdks) page.
+    Set `Miru-Version: 2026-08-17.everglades` on all API requests. [Python SDK](/developers/platform-api/sdks#python) `v0.11.0` marks the major version rollout of the `2026-08-17.everglades` API. For the latest SDK version compatibility information, visit the [Platform SDKs](/developers/platform-api/sdks) page.
   </Step>
 
-  <Step title="Migrate from instance_filepath to instance slots">
+  <Step title="Migrate from config schemas to use instance slots">
     Replace reads of `instance_filepath` with `instance_slots[].filepath`, and replace `instance_filepath` in `POST /config_schemas` request bodies with an explicit `instance_slots` array. Omitting `instance_slots` makes the server derive a default filepath rather than reuse your previous one. See [instance slots](/cfg-mgmt/primitives/schemas/overview#instance-slots).
   </Step>
 
@@ -259,21 +260,18 @@ The `everglades` release introduces read-only device groups and adds group membe
     Remove `slug` from `PATCH /config_types/{config_type_id}` request bodies. Config type slugs are immutable.
   </Step>
 
-  <Step title="Handle the archived device status">
-    Add an `archived` branch anywhere you switch on device `status`. Devices that previously reported `inactive` because they were archived now report `archived`.
-  </Step>
-
   <Step title="Review parent_id when creating deployments">
     No change is needed if you already omit `parent_id` or always send a deployment ID. Send `null` only to assert that the device has no current target deployment.
   </Step>
 
-  <Step title="Optionally adopt the new additive surface">
-    - Read `slot_key` on config instances, and set it when a schema declares more than one slot.
-    - Read `group_id` on devices, expand `group`, and filter with `group_id=grp_123`.
-    - Read `description` on devices, and use the `status` filter and `status` sort on `GET /devices`.
-    - Handle the `opaque` schema language and the `xml` and `text` instance formats where needed.
-    - Include `file_rule_ids` when creating releases.
+  <Step title="Optionally integrate new endpoints">
+    Optionally integrate the new group endpoints listed above.
   </Step>
+
+  <Step title="Optionally adopt new additive surface">
+    Optionally integrate the new additive API changes listed above.
+  </Step>
+
 </Steps>
 
 ---
@@ -506,8 +504,8 @@ These changes are also reflected in the deployment's [status](/primitives/deploy
 - Replaced inline config instance creation with explicit config instance IDs. Create config instances separately via `POST /config_instances` first, then reference them by ID.
 - Renamed `patch_source_id` to `parent_id`.
 
+<POST /> `/deployments`
 ```diff
-# POST /deployments request body
   {
     "release_id": "rls_123",
     "target_status": "staged",
