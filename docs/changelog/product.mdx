@@ -10,8 +10,7 @@ import { LazyVideo } from '/snippets/components/lazy-video.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
 <div className="changelog-page">
-
-<Update label="August 14, 2026">
+  <Update label="August 14, 2026">
     ## Multiple Config Instances per Schema
 
     A single config schema can now write **several files** to a device, using
@@ -25,12 +24,7 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     [Instance slots »](/cfg-mgmt/primitives/schemas/overview#instance-slots)
 
-    <Framed
-        image="https://assets.mirurobotics.com/docs/changelog/26-08-14/instance-slots.png"
-        background="https://assets.mirurobotics.com/docs/changelog/26-08-14/background.jpg"
-        borderWidth="24px 0px 0px 24px"
-        innerRadius="8px 0px 0px 0px"
-    />
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-08-14/instance-slots.png" background="https://assets.mirurobotics.com/docs/changelog/26-08-14/background.jpg" borderWidth="24px 0px 0px 24px" innerRadius="8px 0px 0px 0px" />
 
     ## Upload Rules Renamed to File Rules
 
@@ -46,176 +40,173 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     [File rules »](/data-uploads/primitives/file-rules)
 
-    <Framed
-        image="https://assets.mirurobotics.com/docs/changelog/26-08-14/file-rule.png"
-        background="https://assets.mirurobotics.com/docs/changelog/26-08-14/background.jpg"
-    />
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-08-14/file-rule.png" background="https://assets.mirurobotics.com/docs/changelog/26-08-14/background.jpg" />
 
     <Separator />
 
     <Dropdown title="Improvements">
-        <DropdownItem>
-            **Draft mode shows diffs:** The draft mode now shows diffs between old
-            values and new values while you're editing a config.
-        </DropdownItem>
-        <DropdownItem>
-            **Git commit message truncation:** Uploaded git commit messages longer
-            than 2KB are now truncated instead of throwing an error.
-        </DropdownItem>
+      <DropdownItem>
+        **Draft mode shows diffs:** The draft mode now shows diffs between old
+        values and new values while you're editing a config.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Git commit message truncation:** Uploaded git commit messages longer
+        than 2KB are now truncated instead of throwing an error.
+      </DropdownItem>
     </Dropdown>
+  </Update>
 
-</Update>
-
-<Update label="August 6, 2026">
+  <Update label="August 6, 2026">
     ## Live Schema Validation
 
     The editor now validates your draft against its schema **as you type**, so
     a config that won't pass validation is caught before you hit deploy. This feature works
     for JSON and YAML config instances defined by a JSON Schema or CUE schema.
 
-    - **Inline errors:** The invalid value gets a red underline, and hovering over it
+    * **Inline errors:** The invalid value gets a red underline, and hovering over it
       shows the error message
-    - **Errors navigation:** A new section at the top of the right panel lists every
+    * **Errors navigation:** A new section at the top of the right panel lists every
       error in the draft and clicking a row jumps straight to that line in the editor
-    - **Deploy is blocked:** Deploy and Stage buttons are disabled until the draft is clean
+    * **Deploy is blocked:** Deploy and Stage buttons are disabled until the draft is clean
 
-    <LazyVideo
-        alt="Screen recording of live schema validation in the config editor"
-        className="rounded-xl"
-        aspectRatio="3840 / 2260"
-        src="https://assets.mirurobotics.com/docs/changelog/26-08-06/schema-validation.mp4"
-    />
+    <LazyVideo alt="Screen recording of live schema validation in the config editor" className="rounded-xl" aspectRatio="3840 / 2260" src="https://assets.mirurobotics.com/docs/changelog/26-08-06/schema-validation.mp4" />
 
     ## XML and Text Support
 
     The editor now supports **XML** and **plain text**. The text format covers anything
     Miru doesn't natively support, like TOML, INI, or a bare `.conf` file.
 
-    - **Syntax highlighting:** XML has syntax highlighting, but plain text does not
-    - **Line diffs:** XML and text diff line by line rather than by structure, with
+    * **Syntax highlighting:** XML has syntax highlighting, but plain text does not
+    * **Line diffs:** XML and text diff line by line rather than by structure, with
       only the changed tokens highlighted. Changes are counted in lines, like `+12 −4`
 
-    <Framed
-        image="https://assets.mirurobotics.com/docs/changelog/26-08-06/xml-support.png"
-        borderWidth="0px"
-        innerRadius="8px"
-    />
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-08-06/xml-support.png" borderWidth="0px" innerRadius="8px" />
 
     ## Fleet Dashboard
 
     The new **Dashboard** page provides a high-level view of your fleet's status and activity.
 
-    - **Fleet:** Scope to your whole workspace or to any group and its subgroups, then
+    * **Fleet:** Scope to your whole workspace or to any group and its subgroups, then
       break it down by status, group, or agent version. Your scope and breakdown live
       in the URL, so any view is shareable
-    - **Releases:** Your latest release over a rollout bar splitting the fleet into
+    * **Releases:** Your latest release over a rollout bar splitting the fleet into
       devices on it, staged for it, behind it, or with no release at all — plus a
       table of every other release still running somewhere
-    - **Deployments:** A live feed of deployments across your fleet, filterable by
+    * **Deployments:** A live feed of deployments across your fleet, filterable by
       status, device, or release
 
-    <LazyVideo
-        alt="Screen recording of the fleet dashboard"
-        className="aspect-video rounded-xl"
-        src="https://assets.mirurobotics.com/docs/changelog/26-08-06/fleet-dashboard.mp4"
-    />
+    <LazyVideo alt="Screen recording of the fleet dashboard" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/26-08-06/fleet-dashboard.mp4" />
 
     <Separator />
 
     <Dropdown title="Improvements">
-        <DropdownItem>
-            **Device descriptions:** Devices now have a free-text description. Set
-            it when you create or edit a device, or edit it inline on the device
-            overview. The devices list shows it beside the device name.
-        </DropdownItem>
-        <DropdownItem>
-            **Clickable rows in the draft panel:** Every error and change row in
-            the editor's right panel is now clickable. Clicking one opens that
-            config — reopening its tab if you closed it — and puts your cursor on
-            the exact value the row names. Rows address themselves in full
-            (`Mobility › kinematics › wheel_radius`), with the untruncated address
-            on hover.
-        </DropdownItem>
-        <DropdownItem>
-            **Config nav panel and closable tabs:** A collapsible, resizable panel
-            on the left of the editor lists every config in the deployment, with a
-            file-type icon, status markers, error counts, and search. Tabs are now
-            closable — via the hover chip, middle click, or **Delete** — and the
-            panel is how you get them back. Closing a tab never changes what gets
-            deployed, and the panel's width and your closed tabs are remembered the
-            next time you open that editor.
-        </DropdownItem>
-        <DropdownItem>
-            **Diff counts in the nav panel:** Each config row shows how much it
-            changed — while you're drafting, and when you're viewing a historical
-            deployment — so you can see which files a deployment touched without
-            opening them.
-        </DropdownItem>
-        <DropdownItem>
-            **Device overview:** The overview was redesigned around a right-hand
-            rail with **Status** and **Properties** cards covering connection
-            recency, group, release, and agent version. Activity entries are now
-            collapsible with expand-all and collapse-all, and each entry shows its
-            change counts inline.
-        </DropdownItem>
-        <DropdownItem>
-            **Deploy and stage summaries:** The deploy dialog's file summary now
-            lists only the files that actually changed, and the same summary was
-            added to the stage dialog.
-        </DropdownItem>
-        <DropdownItem>
-            **Re-staging a release:** The stage device picker now lets you select
-            devices already running the release being staged, so a re-stage goes
-            through and the editor opens for those devices.
-        </DropdownItem>
-        <DropdownItem>
-            **Full file names in tabs:** Editor tabs no longer truncate file names
-            at a fixed width.
-        </DropdownItem>
-        <DropdownItem>
-            **Safer diff rendering:** Deleted lines now render as real lines in the
-            diff rather than overlays, and the editor verifies its own alignment
-            before decorating anything — if a diff can't be rendered correctly, it
-            falls back to the plain file instead of highlighting the wrong bytes.
-            Collapsed regions can now be expanded with the keyboard.
-        </DropdownItem>
-        <DropdownItem>
-            **Sidebar polish:** Smoother collapse and settings transitions, and
-            leaving settings returns you to the page you came from.
-        </DropdownItem>
+      <DropdownItem>
+        **Device descriptions:** Devices now have a free-text description. Set
+        it when you create or edit a device, or edit it inline on the device
+        overview. The devices list shows it beside the device name.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Clickable rows in the draft panel:** Every error and change row in
+        the editor's right panel is now clickable. Clicking one opens that
+        config — reopening its tab if you closed it — and puts your cursor on
+        the exact value the row names. Rows address themselves in full
+        (`Mobility › kinematics › wheel_radius`), with the untruncated address
+        on hover.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Config nav panel and closable tabs:** A collapsible, resizable panel
+        on the left of the editor lists every config in the deployment, with a
+        file-type icon, status markers, error counts, and search. Tabs are now
+        closable — via the hover chip, middle click, or **Delete** — and the
+        panel is how you get them back. Closing a tab never changes what gets
+        deployed, and the panel's width and your closed tabs are remembered the
+        next time you open that editor.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Diff counts in the nav panel:** Each config row shows how much it
+        changed — while you're drafting, and when you're viewing a historical
+        deployment — so you can see which files a deployment touched without
+        opening them.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Device overview:** The overview was redesigned around a right-hand
+        rail with **Status** and **Properties** cards covering connection
+        recency, group, release, and agent version. Activity entries are now
+        collapsible with expand-all and collapse-all, and each entry shows its
+        change counts inline.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Deploy and stage summaries:** The deploy dialog's file summary now
+        lists only the files that actually changed, and the same summary was
+        added to the stage dialog.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Re-staging a release:** The stage device picker now lets you select
+        devices already running the release being staged, so a re-stage goes
+        through and the editor opens for those devices.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Full file names in tabs:** Editor tabs no longer truncate file names
+        at a fixed width.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Safer diff rendering:** Deleted lines now render as real lines in the
+        diff rather than overlays, and the editor verifies its own alignment
+        before decorating anything — if a diff can't be rendered correctly, it
+        falls back to the plain file instead of highlighting the wrong bytes.
+        Collapsed regions can now be expanded with the keyboard.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Sidebar polish:** Smoother collapse and settings transitions, and
+        leaving settings returns you to the page you came from.
+      </DropdownItem>
     </Dropdown>
 
     <Separator />
 
     <Dropdown title="Fixes">
-        <DropdownItem>
-            **Truncated diff values:** The inline `old → new` widget capped each
-            side at 50 characters, making long string changes impossible to
-            inspect. Both sides now render in full.
-        </DropdownItem>
-        <DropdownItem>
-            **YAML anchor change counts:** An edit inside a `<<`-merged anchor was
-            counted once per consumer of that anchor — 13 changes where there were
-            really 4. It's now counted once, at the edit site.
-        </DropdownItem>
-        <DropdownItem>
-            **Empty YAML containers:** A YAML array or map that was empty on one
-            side and expanded on the other rendered no diff at all. Both directions
-            now render as a single navigable change.
-        </DropdownItem>
-        <DropdownItem>
-            **Unchanged files in the deploy summary:** The deploy dialog listed
-            every file in the draft, labeling untouched ones `UNCHANGED`, which
-            contradicted its own "N files modified" header.
-        </DropdownItem>
-        <DropdownItem>
-            **Read-only editor controls:** The base and head deployment selectors
-            appeared outside diff mode, where they did nothing.
-        </DropdownItem>
-    </Dropdown>
-</Update>
+      <DropdownItem>
+        **Truncated diff values:** The inline `old → new` widget capped each
+        side at 50 characters, making long string changes impossible to
+        inspect. Both sides now render in full.
+      </DropdownItem>
 
-<Update label="July 20, 2026">
+      <DropdownItem>
+        **YAML anchor change counts:** An edit inside a `<<`-merged anchor was
+        counted once per consumer of that anchor — 13 changes where there were
+        really 4. It's now counted once, at the edit site.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Empty YAML containers:** A YAML array or map that was empty on one
+        side and expanded on the other rendered no diff at all. Both directions
+        now render as a single navigable change.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Unchanged files in the deploy summary:** The deploy dialog listed
+        every file in the draft, labeling untouched ones `UNCHANGED`, which
+        contradicted its own "N files modified" header.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Read-only editor controls:** The base and head deployment selectors
+        appeared outside diff mode, where they did nothing.
+      </DropdownItem>
+    </Dropdown>
+  </Update>
+
+  <Update label="July 20, 2026">
     ## Data Uploads
 
     **Data Uploads** allows devices to upload files directly to a cloud storage bucket you own. First, define an [upload rule](/data-uploads/primitives/file-rules), which specifies what files to collect and where to store them in your bucket. Then, the Miru Agent detects matching files on your devices and streams them straight to your bucket.
@@ -226,11 +217,7 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     Upload rules are YAML files that define a source (the files to collect) and a destination (the bucket and object path):
 
-    <Framed
-        image="https://assets.mirurobotics.com/docs/changelog/26-07-23/upload-rule.png"
-        background="https://assets.mirurobotics.com/docs/changelog/26-07-23/background.jpg"
-        innerRadius="8px"
-    />
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-07-23/upload-rule.png" background="https://assets.mirurobotics.com/docs/changelog/26-07-23/background.jpg" innerRadius="8px" />
 
     Upload rules live in Git alongside your config schemas, and are bundled into a release. The upload rules for a release go into effect anytime a deployment for that release is deployed to a device.
 
@@ -240,11 +227,7 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     Miru supports AWS S3 and Google Cloud Storage (GCS) with support for more buckets coming soon. Devices receive short-lived credentials scoped to the exact object key for its own uploads, ensuring strict isolation of data between devices.
 
-    <Framed
-        image="https://assets.mirurobotics.com/docs/changelog/26-07-23/bucket-page.png"
-        background="https://assets.mirurobotics.com/docs/changelog/26-07-23/background.jpg"
-        innerRadius="8px"
-    />
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-07-23/bucket-page.png" background="https://assets.mirurobotics.com/docs/changelog/26-07-23/background.jpg" innerRadius="8px" />
 
     [Connect a bucket »](/data-uploads/connect-a-bucket)
 
@@ -252,44 +235,40 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     To use upload rules, you'll need to upgrade the Miru Agent and CLI to the following versions (or later):
 
-    - [Miru Agent v0.10.0](/changelog/agent#v0-10-0) — detects files matching upload rules and uploads them to your bucket. Reading source files may require granting the `miru` user [read access](/developers/agent/filesys-access#data-uploads)
-    - [Miru CLI v0.10.2](/changelog/cli#v0-10-2) — adds the upload rule flags to `miru release create`
+    * [Miru Agent v0.10.0](/changelog/agent#v0-10-0) — detects files matching upload rules and uploads them to your bucket. Reading source files may require granting the `miru` user [read access](/developers/agent/filesys-access#data-uploads)
+    * [Miru CLI v0.10.2](/changelog/cli#v0-10-2) — adds the upload rule flags to `miru release create`
 
     <Separator />
 
     <Dropdown title="Fixes">
-        <DropdownItem>
-            **Incorrect Device Status:** Fixed an issue where the device status was incorrectly shown as "offline" when the device was actually online.
-        </DropdownItem>
+      <DropdownItem>
+        **Incorrect Device Status:** Fixed an issue where the device status was incorrectly shown as "offline" when the device was actually online.
+      </DropdownItem>
     </Dropdown>
-</Update>
+  </Update>
 
-<Update label="June 23, 2026">
+  <Update label="June 23, 2026">
     ## Access Control
 
     Workspaces now have **fine-grained access control**. Every member has a
-    **user type** that sets their baseline access, plus **roles** that are applied 
+    **user type** that sets their baseline access, plus **roles** that are applied
     either across the whole workspace or to a single
     group and its subgroups.
 
-    <Framed
-        image="https://assets.mirurobotics.com/docs/changelog/26-06-23/members.png"
-        borderWidth="0px"
-        innerRadius="8px"
-    />
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-06-23/members.png" borderWidth="0px" innerRadius="8px" />
 
     ### User types and roles
 
     A member's user type sets the baseline:
 
-    - **Owner** — full control of the workspace
-    - **Admin** — full administrative and application access
-    - **Member** — access is whatever their roles grant
+    * **Owner** — full control of the workspace
+    * **Admin** — full administrative and application access
+    * **Member** — access is whatever their roles grant
 
     Members can then be assigned roles, at the workspace level or per group:
 
-    - **Workspace roles** — viewer, publisher, operator, provisioner
-    - **Group roles** — operator, provisioner, and manager
+    * **Workspace roles** — viewer, publisher, operator, provisioner
+    * **Group roles** — operator, provisioner, and manager
 
     Every member has **viewer** access, so anyone can read the entire
     workspace. Other roles only add the ability to make changes.
@@ -300,18 +279,17 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     Access is editable wherever you're already working:
 
-    - Inline from **Settings → Members**
-    - From a per-member access panel covering workspace and group roles
-    - From any group's members dialog
+    * Inline from **Settings → Members**
+    * From a per-member access panel covering workspace and group roles
+    * From any group's members dialog
 
     Every control is permission-aware, so actions you can't perform are disabled
     with a tooltip explaining why.
 
     [Manage group members »](/primitives/groups)
+  </Update>
 
-</Update>
-
-<Update label="May 27, 2026">
+  <Update label="May 27, 2026">
     ## Groups
 
     Devices can now be organized into a **hierarchical tree of groups**.
@@ -320,11 +298,7 @@ import { Separator } from '/snippets/components/separator.jsx';
     organized by site, fleet, environment, customer, or whatever shape your
     operations take.
 
-    <Framed
-        image="https://assets.mirurobotics.com/docs/changelog/26-05-27/grp.png"
-        borderWidth="0px"
-        innerRadius="8px"
-    />
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-05-27/grp.png" borderWidth="0px" innerRadius="8px" />
 
     [Groups Documentation »](/primitives/groups)
 
@@ -333,155 +307,157 @@ import { Separator } from '/snippets/components/separator.jsx';
     Three new **admin-only workspace settings** under **Settings → Workspace
     → Editor** control how the config editor behaves at deploy time.
 
-    - **Allow offline deployments** (default: off)
-    - **Skip device name confirmation on deploy** (default: off)
-    - **Format files on deploy** (default: on)
+    * **Allow offline deployments** (default: off)
+    * **Skip device name confirmation on deploy** (default: off)
+    * **Format files on deploy** (default: on)
 
-    <Framed
-        image="https://assets.mirurobotics.com/docs/changelog/26-05-27/settings.png"
-        borderWidth="0px"
-        innerRadius="8px"
-    />
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-05-27/settings.png" borderWidth="0px" innerRadius="8px" />
 
     [Editor settings documentation »](/cfg-mgmt/deploy/config-editor#editor-settings)
 
     <Separator />
 
     <Dropdown title="Improvements">
-        <DropdownItem>
-            **Manual file formatting:** In addition to formatting on deploy,
-            you can format the open config file at any time from the
-            editor's overflow menu (**⋯**) → **Format file**, or with
-            **⌘⇧F** (Mac) / **Ctrl+Shift+F** (Windows/Linux).
-        </DropdownItem>
-        <DropdownItem>
-            **Inline duplicate errors:** When you create something with a
-            name, slug, or version that's already taken (devices, groups,
-            releases, config types), the error now appears directly under
-            the field that caused it — instead of as a toast in the
-            bottom-right corner, away from where you're working.
-        </DropdownItem>
-        <DropdownItem>
-            **Deployment parent check:** A deployment's parent must be the
-            device's current deployment, or the deployment is rejected.
-        </DropdownItem>
-        <DropdownItem>
-            **Plan-based device limits:** The number of devices in your
-            workspace is now limited by your billing plan. If you hit your
-            cap, remove devices or upgrade to add more.
-        </DropdownItem>
+      <DropdownItem>
+        **Manual file formatting:** In addition to formatting on deploy,
+        you can format the open config file at any time from the
+        editor's overflow menu (**⋯**) → **Format file**, or with
+        **⌘⇧F** (Mac) / **Ctrl+Shift+F** (Windows/Linux).
+      </DropdownItem>
+
+      <DropdownItem>
+        **Inline duplicate errors:** When you create something with a
+        name, slug, or version that's already taken (devices, groups,
+        releases, config types), the error now appears directly under
+        the field that caused it — instead of as a toast in the
+        bottom-right corner, away from where you're working.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Deployment parent check:** A deployment's parent must be the
+        device's current deployment, or the deployment is rejected.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Plan-based device limits:** The number of devices in your
+        workspace is now limited by your billing plan. If you hit your
+        cap, remove devices or upgrade to add more.
+      </DropdownItem>
     </Dropdown>
 
     <Separator />
 
     <Dropdown title="Fixes">
-        <DropdownItem>
-            **Redeploy from history:** Right-clicking a deployment in the
-            editor's History tab and selecting Redeploy now opens the
-            redeploy dialog. Previously the menu would close silently with
-            no console error and no network call. The same fix restores
-            Set as diff base, Copy ID, and Copy description.
-        </DropdownItem>
-        <DropdownItem>
-            **Config type deletion:** Deleting a config type works again,
-            as long as no deployment references one of its config
-            instances.
-        </DropdownItem>
-        <DropdownItem>
-            **Device online status:** Fixed an MQTT broker reconnection
-            issue that could cause devices to show the wrong
-            online/offline status.
-        </DropdownItem>
-    </Dropdown>
-</Update>
+      <DropdownItem>
+        **Redeploy from history:** Right-clicking a deployment in the
+        editor's History tab and selecting Redeploy now opens the
+        redeploy dialog. Previously the menu would close silently with
+        no console error and no network call. The same fix restores
+        Set as diff base, Copy ID, and Copy description.
+      </DropdownItem>
 
-<Update label="May 12, 2026">
+      <DropdownItem>
+        **Config type deletion:** Deleting a config type works again,
+        as long as no deployment references one of its config
+        instances.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Device online status:** Fixed an MQTT broker reconnection
+        issue that could cause devices to show the wrong
+        online/offline status.
+      </DropdownItem>
+    </Dropdown>
+  </Update>
+
+  <Update label="May 12, 2026">
     ## APT Repository
 
     The Miru Agent and CLI are now distributed through an official `apt` repository at `packages.mirurobotics.com`.
 
-    - **One-time setup:** Add Miru's signing key and a deb822 source entry, then install with a standard `apt-get install miru-agent`
-    - **In-place upgrades:** Miru Agent `v0.9.0` preserves user-customized settings and automatically resets on-device state on package upgrade, so `apt-get install miru-agent` upgrades in place instead of requiring a reprovision
+    * **One-time setup:** Add Miru's signing key and a deb822 source entry, then install with a standard `apt-get install miru-agent`
+    * **In-place upgrades:** Miru Agent `v0.9.0` preserves user-customized settings and automatically resets on-device state on package upgrade, so `apt-get install miru-agent` upgrades in place instead of requiring a reprovision
 
-    <Framed
-        image="https://assets.mirurobotics.com/docs/changelog/26-05-12/apt-repo-install.png"
-        background="https://assets.mirurobotics.com/docs/changelog/26-05-12/background.jpg"
-        innerRadius="8px"
-    />
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-05-12/apt-repo-install.png" background="https://assets.mirurobotics.com/docs/changelog/26-05-12/background.jpg" innerRadius="8px" />
 
     [Agent Install Documentation »](/developers/agent/install)
 
     ## Provisioning tokens
 
-    Device provisioning has been rebuilt around provisioning tokens, replacing the legacy [provisioning script](/cfg-mgmt/provision-devices/provisioning-script) workflow. Provisioning tokens are short-lived (5-minute), single-use credentials that can both create and activate devices for your workspace. 
-
+    Device provisioning has been rebuilt around provisioning tokens, replacing the legacy [provisioning script](/cfg-mgmt/provision-devices/provisioning-script) workflow. Provisioning tokens are short-lived (5-minute), single-use credentials that can both create and activate devices for your workspace.
 
     To support provisioning tokens, we've introduced:
 
-    - [Platform API 2026-05-06.rainier](/changelog/platform-api#2026-05-06-rainier): programmatically mint provisioning tokens for automated workflows
+    * [Platform API 2026-05-06.rainier](/changelog/platform-api#2026-05-06-rainier): programmatically mint provisioning tokens for automated workflows
 
-    - [Miru Agent v0.9.0](/changelog/agent#v0-9-0): bundles provisioning logic inside the `miru-agent` Debian package, removing the need to rely on the provisioning script to install `v0.9.0` or later
+    * [Miru Agent v0.9.0](/changelog/agent#v0-9-0): bundles provisioning logic inside the `miru-agent` Debian package, removing the need to rely on the provisioning script to install `v0.9.0` or later
 
-    <Framed
-        image="https://assets.mirurobotics.com/docs/changelog/26-05-12/provision-dialog.png"
-        background="https://assets.mirurobotics.com/docs/changelog/26-05-12/background.jpg"
-        innerRadius="8px"
-        borderWidth="18px"
-    />
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-05-12/provision-dialog.png" background="https://assets.mirurobotics.com/docs/changelog/26-05-12/background.jpg" innerRadius="8px" borderWidth="18px" />
 
     [Device Provisioning Documentation »](/cfg-mgmt/provision-devices/overview)
 
     <Separator />
 
     <Dropdown title="Improvements">
-        <DropdownItem>
-            **Release overview:** The release overview now shows how many devices are actively running the release, alongside how many are staged.
-        </DropdownItem>
-        <DropdownItem>
-            **Config type slug:** The config types list (/configs page) now has a slug column.
-        </DropdownItem>
-        <DropdownItem>
-            **Compare page visibility:** The Compare page is now a persistent sub-tab under Devices in the sidebar, replacing the previous selection-driven entry point.
-        </DropdownItem>
-        <DropdownItem>
-            **Secrets:** The API keys and CLI token pages have been merged into a single Secrets page.
-        </DropdownItem>
-        <DropdownItem>
-            **API keys:** API keys can now be renamed after creation.
-        </DropdownItem>
-        <DropdownItem>
-            **Members table:** Filters are simplified to Active, Suspended, and Left workspace.
-        </DropdownItem>
-        <DropdownItem>
-            **Workspace logo:** You can now remove your workspace logo.
-        </DropdownItem>
-        <DropdownItem>
-            **UI refresh:** Refreshed the app's dark theme with a layered palette that gives the sidebar, background, cards, dialogs, sheets, and tooltips distinct shades for clearer visual hierarchy.
-        </DropdownItem>
-        <DropdownItem>
-            **Default config file type:** The default config file type now mirrors the file extension of the uploaded config schema instead of always defaulting to JSON.
-        </DropdownItem>
+      <DropdownItem>
+        **Release overview:** The release overview now shows how many devices are actively running the release, alongside how many are staged.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Config type slug:** The config types list (/configs page) now has a slug column.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Compare page visibility:** The Compare page is now a persistent sub-tab under Devices in the sidebar, replacing the previous selection-driven entry point.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Secrets:** The API keys and CLI token pages have been merged into a single Secrets page.
+      </DropdownItem>
+
+      <DropdownItem>
+        **API keys:** API keys can now be renamed after creation.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Members table:** Filters are simplified to Active, Suspended, and Left workspace.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Workspace logo:** You can now remove your workspace logo.
+      </DropdownItem>
+
+      <DropdownItem>
+        **UI refresh:** Refreshed the app's dark theme with a layered palette that gives the sidebar, background, cards, dialogs, sheets, and tooltips distinct shades for clearer visual hierarchy.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Default config file type:** The default config file type now mirrors the file extension of the uploaded config schema instead of always defaulting to JSON.
+      </DropdownItem>
     </Dropdown>
 
     <Separator />
 
     <Dropdown title="Fixes">
-        <DropdownItem>
-            **Broken editor loading:** Fixed a critical issue where the config editor would fail to load due to pulling excessively large numbers of config instances.
-        </DropdownItem>
-        <DropdownItem>
-            **YAML anchors:** The timeline no longer shows duplicate rows for a single edit when the config uses YAML merge-key anchors (`<<: *anchor`).
-        </DropdownItem>
-        <DropdownItem>
-            **Workspace logo:** The workspace logo no longer flashes its fallback while loading the sidebar.
-        </DropdownItem>
-        <DropdownItem>
-            **Editor file tab overflow:** File tabs in the config editor now scroll horizontally on overflow instead of getting clipped.
-        </DropdownItem>
-    </Dropdown>
-</Update>
+      <DropdownItem>
+        **Broken editor loading:** Fixed a critical issue where the config editor would fail to load due to pulling excessively large numbers of config instances.
+      </DropdownItem>
 
-<Update label="April 10, 2026">
+      <DropdownItem>
+        **YAML anchors:** The timeline no longer shows duplicate rows for a single edit when the config uses YAML merge-key anchors (`<<: *anchor`).
+      </DropdownItem>
+
+      <DropdownItem>
+        **Workspace logo:** The workspace logo no longer flashes its fallback while loading the sidebar.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Editor file tab overflow:** File tabs in the config editor now scroll horizontally on overflow instead of getting clipped.
+      </DropdownItem>
+    </Dropdown>
+  </Update>
+
+  <Update label="April 10, 2026">
     ## Compare Devices
 
     You can now compare the configurations across any two devices to understand
@@ -489,22 +465,18 @@ import { Separator } from '/snippets/components/separator.jsx';
     sidebar, or select two devices directly on the Devices page and hit
     Compare.
 
-    - **Summary at a glance:** See the total number of differences, how many
+    * **Summary at a glance:** See the total number of differences, how many
       files changed, and expand into a per-file breakdown without opening each
       one
-    - **Inline diffs:** Expand any configuration file to see highlighted diffs
+    * **Inline diffs:** Expand any configuration file to see highlighted diffs
       with additions, modifications, and deletions color-coded inline
-    - **Select deployments:** Each device defaults to its current deployment,
+    * **Select deployments:** Each device defaults to its current deployment,
       but you can switch to any other deployment or compare two deployments on
       the same device
-    - **Shareable URLs:** Your selections are persisted in the URL, so you can
+    * **Shareable URLs:** Your selections are persisted in the URL, so you can
       share a comparison with your team
 
-    <LazyVideo
-        alt="Screen recording of comparing devices"
-        className="aspect-video rounded-xl"
-        src="https://assets.mirurobotics.com/docs/changelog/26-04-10/compare-devices.mp4"
-    />
+    <LazyVideo alt="Screen recording of comparing devices" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/26-04-10/compare-devices.mp4" />
 
     ### YAML Support
 
@@ -514,11 +486,7 @@ import { Separator } from '/snippets/components/separator.jsx';
     as raw text. This gives you more accurate, meaningful comparisons across
     deployments.
 
-    <Framed 
-        image="https://assets.mirurobotics.com/docs/changelog/26-04-10/yaml-support.png"
-        borderWidth="0px"
-        innerRadius="8px"
-    />
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-04-10/yaml-support.png" borderWidth="0px" innerRadius="8px" />
 
     ### Agent SSE
 
@@ -527,107 +495,92 @@ import { Separator } from '/snippets/components/separator.jsx';
     open a single persistent connection to the `/events` endpoint and get
     notified the moment a deployment lands on the device or is removed.
 
-    - **No more polling:** React instantly when a deployment's configs are
+    * **No more polling:** React instantly when a deployment's configs are
       written to the device (`deployment.deployed`) or archived and cleaned up
       (`deployment.removed`)
-    - **Cursor-based replay:** Reconnect from where you left off using the last
+    * **Cursor-based replay:** Reconnect from where you left off using the last
       event ID, so you never miss an event
-    - **Type filtering:** Subscribe only to the event types you care about
+    * **Type filtering:** Subscribe only to the event types you care about
       instead of processing everything
 
-    <Framed 
-        image="https://assets.mirurobotics.com/docs/changelog/26-04-10/agent-sse.png"
-        borderWidth="0px"
-        innerRadius="8px"
-    />
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-04-10/agent-sse.png" borderWidth="0px" innerRadius="8px" />
 
     [Read about Agent SSE »](/developers/device-api/events)
 
     <Separator />
 
     <Dropdown title="Improvements">
-        <DropdownItem>
-            **Tooltips on disabled selection actions:** Disabled bulk actions in 
-            list views now show tooltips explaining why they're unavailable.
-        </DropdownItem>
-        <DropdownItem>
-            **Clearer whole-file diffs:** Added and removed config files now render 
-            as full-file changes with more consistent styling and badges.
-        </DropdownItem>
+      <DropdownItem>
+        **Tooltips on disabled selection actions:** Disabled bulk actions in
+        list views now show tooltips explaining why they're unavailable.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Clearer whole-file diffs:** Added and removed config files now render
+        as full-file changes with more consistent styling and badges.
+      </DropdownItem>
     </Dropdown>
 
     <Separator />
 
     <Dropdown title="Fixes">
-        <DropdownItem>
-            **Devices without a current release:** Devices with no current release 
-            now load correctly in overview and staging-related flows.
-        </DropdownItem>
-        <DropdownItem>
-            **Diff rendering collisions:** Array diffs are now more reliable when 
-            an item is deleted and added at the same index.
-        </DropdownItem>
-    </Dropdown>
-</Update>
+      <DropdownItem>
+        **Devices without a current release:** Devices with no current release
+        now load correctly in overview and staging-related flows.
+      </DropdownItem>
 
-<Update label="March 23, 2026">
+      <DropdownItem>
+        **Diff rendering collisions:** Array diffs are now more reliable when
+        an item is deleted and added at the same index.
+      </DropdownItem>
+    </Dropdown>
+  </Update>
+
+  <Update label="March 23, 2026">
     ## Device Audit Trail
 
-    We've added an audit trail to device pages, simplified the staging 
+    We've added an audit trail to device pages, simplified the staging
     workflow, and introduced a display name setting.
 
     ### Audit Trail
 
-    The device overview page now includes an activity timeline that lists each 
-    deployment alongside the configuration changes it introduced. Every entry 
-    shows who deployed, when, and exactly which fields were added, modified, or 
+    The device overview page now includes an activity timeline that lists each
+    deployment alongside the configuration changes it introduced. Every entry
+    shows who deployed, when, and exactly which fields were added, modified, or
     deleted — down to the JSON path.
 
-    This gives you a single page to review how a device's configuration changed 
+    This gives you a single page to review how a device's configuration changed
     over time without opening the editor or diffing deployments manually.
 
-    <LazyVideo
-        alt="Screen recording of the device activity timeline"
-        className="aspect-video rounded-xl"
-        src="https://assets.mirurobotics.com/docs/changelog/26-03-23/device-activity-page.mp4"
-    />
+    <LazyVideo alt="Screen recording of the device activity timeline" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/26-03-23/device-activity-page.mp4" />
 
     ### Updated staging workflow
 
-    We've simplified the staging workflow to focus on one device at a time. Instead 
-    of creating a staged deployment first and then choosing devices afterward, you 
+    We've simplified the staging workflow to focus on one device at a time. Instead
+    of creating a staged deployment first and then choosing devices afterward, you
     now start by selecting the device you want to prepare. Miru then opens the new
-    release editor with that device's current configuration, or the release schema 
+    release editor with that device's current configuration, or the release schema
     defaults if no configuration exists yet.
 
-    <LazyVideo
-        alt="Screen recording of the updated staging workflow"
-        className="aspect-video rounded-xl"
-        src="https://assets.mirurobotics.com/docs/changelog/26-03-23/new-staging-workflow.mp4"
-    />
+    <LazyVideo alt="Screen recording of the updated staging workflow" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/26-03-23/new-staging-workflow.mp4" />
 
     [Read the full documentation »](/cfg-mgmt/deploy/staging-area#stage-a-deployment)
 
     ### Display name setting
 
-    You can now choose whether names appear as first name or full name across 
-    the app in **Profile settings**. Hovering any name also reveals the full 
+    You can now choose whether names appear as first name or full name across
+    the app in **Profile settings**. Hovering any name also reveals the full
     name, so you can always tell teammates apart.
 
-    <Framed 
-        background="https://assets.mirurobotics.com/docs/changelog/26-03-23/background.jpg"
-        image="https://assets.mirurobotics.com/docs/changelog/26-03-23/display-name-setting.png"
-        borderWidth="20px"
-        innerRadius="8px"
-    />
-</Update>
+    <Framed background="https://assets.mirurobotics.com/docs/changelog/26-03-23/background.jpg" image="https://assets.mirurobotics.com/docs/changelog/26-03-23/display-name-setting.png" borderWidth="20px" innerRadius="8px" />
+  </Update>
 
-<Update label="March 13, 2026">
+  <Update label="March 13, 2026">
     ## New Platform and Device APIs
 
     We've added a variety of endpoints and resources to both the Platform and Device APIs, giving you more programmatic control and on-device deployment visibility. We've also added versioning to both the Platform and Device APIs, giving you a stable contract for integrations.
 
-    ###  Platform API 2026-03-09.tetons
+    ### Platform API 2026-03-09.tetons
 
     Platform API `2026-03-09.tetons` introduces API versioning and overhauls the representation of deployments, config instances, and config schemas. It also introduces management of more configuration resources (config types, schemas, and instances), release creation, git commit tracking, and explicit deployment lifecycle actions.
 
@@ -651,9 +604,9 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     Outside of the `v0.2.0` Device API changes, `v0.7.0` of the Miru Agent received a variety of small, but impactful improvements:
 
-    - **Atomic Deployments:** Config deployments are now all-or-nothing—all config files for a deployment are written simultaneously or none are
-    - **Deployment Timestamps:** The agent now tracks the `deployed_at` and `archived_at` timestamps on-device when deployments are applied
-    - **Config Instance Formatting:** Config instances deployed to the device's file system are now identical (indents, spacing, etc.) to config instances edited in the config editor
+    * **Atomic Deployments:** Config deployments are now all-or-nothing—all config files for a deployment are written simultaneously or none are
+    * **Deployment Timestamps:** The agent now tracks the `deployed_at` and `archived_at` timestamps on-device when deployments are applied
+    * **Config Instance Formatting:** Config instances deployed to the device's file system are now identical (indents, spacing, etc.) to config instances edited in the config editor
 
     <img src="https://assets.mirurobotics.com/docs/changelog/26-03-13/agent.png" style={{ borderRadius: '8px' }} />
 
@@ -662,27 +615,29 @@ import { Separator } from '/snippets/components/separator.jsx';
     <Separator />
 
     <Dropdown title="Improvements">
-        <DropdownItem>
-            **Miru Agent Documentation:** We've expanded the Miru Agent documentation to include information about its release lifecycle, architecture, and security.
-        </DropdownItem>
-        <DropdownItem>
-            **API Documentation:** We've expanded both the Platform and Device API documentation to include detailed authorization, versioning, and SDK information.
-        </DropdownItem>
+      <DropdownItem>
+        **Miru Agent Documentation:** We've expanded the Miru Agent documentation to include information about its release lifecycle, architecture, and security.
+      </DropdownItem>
+
+      <DropdownItem>
+        **API Documentation:** We've expanded both the Platform and Device API documentation to include detailed authorization, versioning, and SDK information.
+      </DropdownItem>
     </Dropdown>
 
     <Separator />
 
     <Dropdown title="Fixes">
-        <DropdownItem>
-            **Default Validation:** Fixed an issue where JSON Schemas with invalid default values were not rejected by Miru.
-        </DropdownItem>
-        <DropdownItem>
-            **Device Deletion:** Fixed an issue where deleting a device would be blocked by an internal server error.
-        </DropdownItem>
-    </Dropdown>
-</Update>
+      <DropdownItem>
+        **Default Validation:** Fixed an issue where JSON Schemas with invalid default values were not rejected by Miru.
+      </DropdownItem>
 
-<Update label="February 25, 2026">
+      <DropdownItem>
+        **Device Deletion:** Fixed an issue where deleting a device would be blocked by an internal server error.
+      </DropdownItem>
+    </Dropdown>
+  </Update>
+
+  <Update label="February 25, 2026">
     ## Config Editor v3.0
 
     We've rebuilt the config editor with four major new capabilities: edit and
@@ -692,131 +647,121 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     ### Multi-File Editing
 
-    The editor now supports editing multiple files under a single deployment with 
+    The editor now supports editing multiple files under a single deployment with
     improved visibility and control:
-    
-    - **Persistent edits:** Switch between files or view historical deployments 
-    without losing changes in your draft.
-    - **Tab indicators:** Tabs display file status (`M` for modified, `A` for added) 
-    and show linting error counts at a glance.
-    - **Live change list:** The right panel provides a real-time summary of edits 
-    across all files as you work.
-    - **Deploy summary:** Review a file-by-file count of changes by type 
-    (added, modified, deleted) before deploying.
 
-    <LazyVideo
-        alt="Screen recording of multi-file editing in the config editor"
-        className="aspect-video rounded-xl"
-        src="https://assets.mirurobotics.com/docs/changelog/26-02-25/multi-file-editing.mp4"
-    />
+    * **Persistent edits:** Switch between files or view historical deployments
+      without losing changes in your draft.
+    * **Tab indicators:** Tabs display file status (`M` for modified, `A` for added)
+      and show linting error counts at a glance.
+    * **Live change list:** The right panel provides a real-time summary of edits
+      across all files as you work.
+    * **Deploy summary:** Review a file-by-file count of changes by type
+      (added, modified, deleted) before deploying.
+
+    <LazyVideo alt="Screen recording of multi-file editing in the config editor" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/26-02-25/multi-file-editing.mp4" />
 
     ### Redeploy
 
-    Restore any previous deployment directly from the editor. Simply right-click 
-    any deployment in the History tab and select **Redeploy** from the menu to open 
-    the dialog. 
-    
-    All configuration from the historical deployment is perfectly preserved and 
+    Restore any previous deployment directly from the editor. Simply right-click
+    any deployment in the History tab and select **Redeploy** from the menu to open
+    the dialog.
+
+    All configuration from the historical deployment is perfectly preserved and
     shipped as a brand-new deployment on the device.
 
-    <LazyVideo
-        alt="Screen recording of redeploying a historical deployment"
-        className="aspect-video rounded-xl"
-        src="https://assets.mirurobotics.com/docs/changelog/26-02-25/redeploy.mp4"
-    />
+    <LazyVideo alt="Screen recording of redeploying a historical deployment" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/26-02-25/redeploy.mp4" />
 
     ### Diff Navigation
 
-    A floating navigation card now appears at the bottom of the editor when viewing 
-    diffs, allowing you to quickly navigate changes both within and across files. 
-    
-    - **Auto-scroll to first diff:** The editor automatically jumps to the first 
-    difference so you never have to scroll manually.
-    - **In-file navigation:** Use the up and down buttons to jump line-by-line 
-    between changes within the current file. 
-    - **Cross-file navigation:** File navigation buttons let you quickly skip 
-    between files. It only cycles through files that actually have changes, 
-    bypassing untouched files.
-    - **Change overview list:** Click the change counter label (e.g., `1 of 13`) to 
-    open a dropdown listing every change in the current file, including its 
-    modification type and path. Click any item to jump instantly to that line.
+    A floating navigation card now appears at the bottom of the editor when viewing
+    diffs, allowing you to quickly navigate changes both within and across files.
 
-    <Framed 
-        background="https://assets.mirurobotics.com/docs/changelog/26-02-25/background.jpg"
-        image="https://assets.mirurobotics.com/docs/changelog/26-02-25/diff-navigation.png"
-        borderWidth="0 0 24px 24px"
-        innerRadius="0 0 0 8px"
-    />
+    * **Auto-scroll to first diff:** The editor automatically jumps to the first
+      difference so you never have to scroll manually.
+    * **In-file navigation:** Use the up and down buttons to jump line-by-line
+      between changes within the current file.
+    * **Cross-file navigation:** File navigation buttons let you quickly skip
+      between files. It only cycles through files that actually have changes,
+      bypassing untouched files.
+    * **Change overview list:** Click the change counter label (e.g., `1 of 13`) to
+      open a dropdown listing every change in the current file, including its
+      modification type and path. Click any item to jump instantly to that line.
+
+    <Framed background="https://assets.mirurobotics.com/docs/changelog/26-02-25/background.jpg" image="https://assets.mirurobotics.com/docs/changelog/26-02-25/diff-navigation.png" borderWidth="0 0 24px 24px" innerRadius="0 0 0 8px" />
 
     ### Snapshot Comparison
 
-    Compare any two deployments directly from a device's history. Before, you could 
-    only see the diff between a deployment and its parent. Now, you can swap out the 
+    Compare any two deployments directly from a device's history. Before, you could
+    only see the diff between a deployment and its parent. Now, you can swap out the
     base deployment, making it easy to compare changes across any two points in time.
 
-    <LazyVideo
-        alt="Screen recording of diff navigation in the config editor"
-        className="aspect-video rounded-xl"
-        src="https://assets.mirurobotics.com/docs/changelog/26-02-25/diff-comparison.mp4"
-    />
+    <LazyVideo alt="Screen recording of diff navigation in the config editor" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/26-02-25/diff-comparison.mp4" />
 
     [Read the full documentation »](/cfg-mgmt/deploy/config-editor)
 
     <Separator />
 
     <Dropdown title="Improvements">
-        <DropdownItem>
-            **JSON Semantic Diffs:** Diffs are now powered by JSON semantics rather 
-            than plain text, making it much clearer to see exactly what configuration 
-            values changed instead of just what lines changed.
-        </DropdownItem>
-        <DropdownItem>
-            **Draft / History Tab Split:** The right panel now has dedicated
-            Draft and History tabs. The editor opens to the draft tab by default with
-            files automatically created from the most recent deployment.
-        </DropdownItem>
-        <DropdownItem>
-            **External Deployment Alert:** If another user deploys to the same
-            device while your draft is open, an alert appears. You can discard
-            your changes, keep them (rebasing onto the new deployment), or
-            acknowledge and continue editing.
-        </DropdownItem>
-        <DropdownItem>
-            **Release Header:** The deployments in the history panel are separated by
-            the release they belong to. The deployments are still in chronological 
-            order of when they were created.
-        </DropdownItem>
-        <DropdownItem>
-            **Deployment ID in File Tabs:** When viewing a historical deployment,
-            the deployment ID appears in the file tab so you always know which
-            snapshot you're looking at.
-        </DropdownItem>
-        <DropdownItem>
-            **History Pagination:** Deployment history is paginated so devices
-            with many deployments stay fast to load.
-        </DropdownItem>
-        <DropdownItem>
-            **Deploy Disabled When Offline:** The deploy button is disabled with a
-            contextual tooltip when the device is offline.
-        </DropdownItem>
+      <DropdownItem>
+        **JSON Semantic Diffs:** Diffs are now powered by JSON semantics rather
+        than plain text, making it much clearer to see exactly what configuration
+        values changed instead of just what lines changed.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Draft / History Tab Split:** The right panel now has dedicated
+        Draft and History tabs. The editor opens to the draft tab by default with
+        files automatically created from the most recent deployment.
+      </DropdownItem>
+
+      <DropdownItem>
+        **External Deployment Alert:** If another user deploys to the same
+        device while your draft is open, an alert appears. You can discard
+        your changes, keep them (rebasing onto the new deployment), or
+        acknowledge and continue editing.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Release Header:** The deployments in the history panel are separated by
+        the release they belong to. The deployments are still in chronological
+        order of when they were created.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Deployment ID in File Tabs:** When viewing a historical deployment,
+        the deployment ID appears in the file tab so you always know which
+        snapshot you're looking at.
+      </DropdownItem>
+
+      <DropdownItem>
+        **History Pagination:** Deployment history is paginated so devices
+        with many deployments stay fast to load.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Deploy Disabled When Offline:** The deploy button is disabled with a
+        contextual tooltip when the device is offline.
+      </DropdownItem>
     </Dropdown>
 
     <Separator />
 
     <Dropdown title="Fixes">
-        <DropdownItem>
-            **Editor Content Shift:** Fixed a bug that caused the editor content to 
-            shift when switching between file tabs.
-        </DropdownItem>
-        <DropdownItem>
-            **Changes Lost When Switching Configs:** Switching to a historical deployment 
-            no longer silently discards unsaved edits. Changes are now persisted in a 
-            temporary draft until you explicitly discard or deploy them.
-        </DropdownItem>
-    </Dropdown>
-</Update>
+      <DropdownItem>
+        **Editor Content Shift:** Fixed a bug that caused the editor content to
+        shift when switching between file tabs.
+      </DropdownItem>
 
-<Update label="January 27, 2026">
+      <DropdownItem>
+        **Changes Lost When Switching Configs:** Switching to a historical deployment
+        no longer silently discards unsaved edits. Changes are now persisted in a
+        temporary draft until you explicitly discard or deploy them.
+      </DropdownItem>
+    </Dropdown>
+  </Update>
+
+  <Update label="January 27, 2026">
     ## Create Releases in CI/CD
 
     You can now create releases directly from your CI/CD pipeline, ensuring releases are up to date and created consistently.
@@ -827,25 +772,15 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     We've released an official GitHub Actions workflow for creating releases in CI/CD. The workflow installs the Miru CLI and accepts an API Key for authentication, letting you execute any CLI commands from your GitHub runner.
 
-    <Framed 
-        background="https://assets.mirurobotics.com/docs/changelog/26-01-27/background.jpg"
-        image="https://assets.mirurobotics.com/docs/changelog/26-01-27/gh-actions-workflow.png"
-        borderWidth="20px"
-        innerRadius="8px"
-    />
+    <Framed background="https://assets.mirurobotics.com/docs/changelog/26-01-27/background.jpg" image="https://assets.mirurobotics.com/docs/changelog/26-01-27/gh-actions-workflow.png" borderWidth="20px" innerRadius="8px" />
 
     [Read the full documentation »](/developers/ci/gh-actions)
 
     ### Create release CLI command
-    
+
     The new `miru release create` command bundles the entire release process. It creates the release, pushes its schemas, and captures associated Git metadata in one step for greater reliability and ease of use.
 
-    <Framed 
-        background="https://assets.mirurobotics.com/docs/changelog/26-01-27/background.jpg"
-        image="https://assets.mirurobotics.com/docs/changelog/26-01-27/create-release-cmd.png"
-        borderWidth="20px"
-        innerRadius="8px"
-    />
+    <Framed background="https://assets.mirurobotics.com/docs/changelog/26-01-27/background.jpg" image="https://assets.mirurobotics.com/docs/changelog/26-01-27/create-release-cmd.png" borderWidth="20px" innerRadius="8px" />
 
     [Read the full documentation »](/cfg-mgmt/create-a-release)
 
@@ -853,353 +788,331 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     The CLI now supports CUE packages, allowing you to define schemas across multiple files while treating them as a single logical schema in Miru.
 
-    <LazyVideo
-        alt="Screen recording of working with CUE packages in release creation"
-        className="aspect-video rounded-xl"
-        src="https://assets.mirurobotics.com/docs/changelog/26-01-27/cue-package.mp4"
-    />
+    <LazyVideo alt="Screen recording of working with CUE packages in release creation" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/26-01-27/cue-package.mp4" />
 
     [Read the full documentation »](/cfg-mgmt/create-a-release)
 
     <Separator />
-    <Dropdown title="Improvements">
-        <DropdownItem>
-            **Track Git Metadata with Releases:** Releases are now associated with a 
-            specific Git commit and repository, allowing you to easily trace the 
-            release's origin.
-        </DropdownItem>
-        <DropdownItem>
-            **Duplicate Existing Releases:** Create a new release based on an existing 
-            one with a single click. All config schemas and git commit info copy over 
-            automatically.
-        </DropdownItem>
-        <DropdownItem>
-            **Faster Page Navigation:** Data is now prefetched when you 
-            hover over sidebar navigation for devices, releases, and config types, 
-            delivering near-instant page transitions.
-        </DropdownItem>
-    </Dropdown>
-    <Separator />
-    <Dropdown title="Fixes">
-        <DropdownItem>
-            **Show Full Cue Validation Errors:** Validation failures now display 
-            the full CUE validation error message instead of masking larger error 
-            messages, making it easier to debug schema issues.
-        </DropdownItem>
-        <DropdownItem>
-            **List Page Freeze Fixed:** Resolved an issue where quickly navigating between 
-            pages (Devices, Releases, Deployments, etc.) while data was loading could 
-            cause the browser to freeze and display a "Page Unresponsive" error.
-        </DropdownItem>
-        <DropdownItem>
-            **Activation Dialog Auto-Close:** The device activation dialog now automatically 
-            closes when a device status transitions to 'activating', fixing an issue where 
-            the dialog remained open after reactivating a device.
-        </DropdownItem>
-        <DropdownItem>
-            **Accurate Selection Counts:** Fixed stale selection counts in staging area 
-            after patching staged deployments.
-        </DropdownItem>
-    </Dropdown>
-</Update>
 
-<Update label="December 19, 2025">
+    <Dropdown title="Improvements">
+      <DropdownItem>
+        **Track Git Metadata with Releases:** Releases are now associated with a
+        specific Git commit and repository, allowing you to easily trace the
+        release's origin.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Duplicate Existing Releases:** Create a new release based on an existing
+        one with a single click. All config schemas and git commit info copy over
+        automatically.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Faster Page Navigation:** Data is now prefetched when you
+        hover over sidebar navigation for devices, releases, and config types,
+        delivering near-instant page transitions.
+      </DropdownItem>
+    </Dropdown>
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+      <DropdownItem>
+        **Show Full Cue Validation Errors:** Validation failures now display
+        the full CUE validation error message instead of masking larger error
+        messages, making it easier to debug schema issues.
+      </DropdownItem>
+
+      <DropdownItem>
+        **List Page Freeze Fixed:** Resolved an issue where quickly navigating between
+        pages (Devices, Releases, Deployments, etc.) while data was loading could
+        cause the browser to freeze and display a "Page Unresponsive" error.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Activation Dialog Auto-Close:** The device activation dialog now automatically
+        closes when a device status transitions to 'activating', fixing an issue where
+        the dialog remained open after reactivating a device.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Accurate Selection Counts:** Fixed stale selection counts in staging area
+        after patching staged deployments.
+      </DropdownItem>
+    </Dropdown>
+  </Update>
+
+  <Update label="December 19, 2025">
     ## Workspace Logo
 
-    You can now personalize your workspace with a team logo and add a profile picture 
-    to your account. We’ve also added a new feedback form in the app so you can easily 
+    You can now personalize your workspace with a team logo and add a profile picture
+    to your account. We’ve also added a new feedback form in the app so you can easily
     share your thoughts or report bugs.
 
     ### Upload a workspace logo
 
-    Admins and owners can now upload a custom logo for their workspace. Once set, the 
-    logo is displayed in the sidebar and invite pages, giving new members a branded 
+    Admins and owners can now upload a custom logo for their workspace. Once set, the
+    logo is displayed in the sidebar and invite pages, giving new members a branded
     welcome experience.
 
-
-    <LazyVideo
-        alt="Screen recording of uploading a workspace logo"
-        className="aspect-video rounded-xl"
-        src="https://assets.mirurobotics.com/docs/changelog/25-12-19/upload-workspace-logo.mp4"
-    />
+    <LazyVideo alt="Screen recording of uploading a workspace logo" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/25-12-19/upload-workspace-logo.mp4" />
 
     ### Upload a profile picture
 
-    Make your profile your own. Go to **Settings → Profile** to upload a profile 
-    picture. We've included a built-in cropper so you can center your image 
+    Make your profile your own. Go to **Settings → Profile** to upload a profile
+    picture. We've included a built-in cropper so you can center your image
     perfectly before saving.
 
-    <LazyVideo
-        alt="Screen recording of uploading a profile picture"
-        className="aspect-video rounded-xl"
-        src="https://assets.mirurobotics.com/docs/changelog/25-12-19/upload-profile-picture.mp4"
-    />
+    <LazyVideo alt="Screen recording of uploading a profile picture" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/25-12-19/upload-profile-picture.mp4" />
 
     ### Give feedback in the app
 
-    We’ve added a dedicated feedback button directly in the sidebar so you can share 
+    We’ve added a dedicated feedback button directly in the sidebar so you can share
     your thoughts without leaving your workflow.
 
     Use the feedback form to share:
-    - **Feedback** — feature requests, suggestions, or general thoughts
-    - **Bug Report** — issues you encounter while using the app
+
+    * **Feedback** — feature requests, suggestions, or general thoughts
+    * **Bug Report** — issues you encounter while using the app
 
     We take bugs seriously. Our commitment to you:
-    - **All reported bugs** are resolved within **7 days**
-    - **Critical bugs** are resolved within **2 days**
 
-    <LazyVideo
-        alt="Screen recording of submitting in-app feedback"
-        className="aspect-video rounded-xl"
-        src="https://assets.mirurobotics.com/docs/changelog/25-12-19/feedback-demo.mp4"
-    />
+    * **All reported bugs** are resolved within **7 days**
+    * **Critical bugs** are resolved within **2 days**
+
+    <LazyVideo alt="Screen recording of submitting in-app feedback" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/25-12-19/feedback-demo.mp4" />
 
     <Separator />
+
     <Dropdown title="Improvements">
-        <DropdownItem>
-            **Preserved JSON Key Ordering:** We now preserve the order of key-value pairs in 
-            your JSON configuration exactly as you wrote them, preventing unwanted alphabetical 
-            reordering when saved.
-        </DropdownItem>
-        <DropdownItem>
-            **OTP Email Authentication:** Replaced magic links with a 6-digit 
-            one-time password (OTP) code to support sign-in on lab and deployment 
-            machines without email access.
-        </DropdownItem>
-        <DropdownItem>
-            **Removed Schema Versioning:** We've replaced schema version numbers with 
-            unique IDs. Since you version your config schema with your code in Git, 
-            we removed the extra tracking layer in Miru.
-        </DropdownItem>
-        <DropdownItem>
-            **Removed Target File Path:** Removed the target file path setting from the 
-            editor's deployment flow. The file path is now exclusively defined in the config 
-            schema and cannot be overridden during deployment.
-        </DropdownItem>
+      <DropdownItem>
+        **Preserved JSON Key Ordering:** We now preserve the order of key-value pairs in
+        your JSON configuration exactly as you wrote them, preventing unwanted alphabetical
+        reordering when saved.
+      </DropdownItem>
+
+      <DropdownItem>
+        **OTP Email Authentication:** Replaced magic links with a 6-digit
+        one-time password (OTP) code to support sign-in on lab and deployment
+        machines without email access.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Removed Schema Versioning:** We've replaced schema version numbers with
+        unique IDs. Since you version your config schema with your code in Git,
+        we removed the extra tracking layer in Miru.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Removed Target File Path:** Removed the target file path setting from the
+        editor's deployment flow. The file path is now exclusively defined in the config
+        schema and cannot be overridden during deployment.
+      </DropdownItem>
     </Dropdown>
+
     <Separator />
+
     <Dropdown title="Fixes">
-        <DropdownItem>
-            **Detailed Cue Validation Errors:** Validation failures now display 
-            specific error messages instead of a generic popup, making it easier to 
-            debug schema issues.
-        </DropdownItem>
-        <DropdownItem>
-            **Float Value Preservation:** Fixed an issue where trailing `.0` in float values 
-            was stripped during deployment, causing Cue validation failures.
-        </DropdownItem>
-        <DropdownItem>
-            **Authentication Loop Fixed:** Resolved an issue where already-authenticated 
-            users could get stuck in a sign-in loop when accessing login pages from 
-            stale tabs.
-        </DropdownItem>
-        <DropdownItem>
-            **Critical Security Patch:** Patched CVE-2025-66478, a critical CVSS 
-            10.0 vulnerability in React Server Components that could allow remote 
-            code execution.
-        </DropdownItem>
+      <DropdownItem>
+        **Detailed Cue Validation Errors:** Validation failures now display
+        specific error messages instead of a generic popup, making it easier to
+        debug schema issues.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Float Value Preservation:** Fixed an issue where trailing `.0` in float values
+        was stripped during deployment, causing Cue validation failures.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Authentication Loop Fixed:** Resolved an issue where already-authenticated
+        users could get stuck in a sign-in loop when accessing login pages from
+        stale tabs.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Critical Security Patch:** Patched CVE-2025-66478, a critical CVSS
+        10.0 vulnerability in React Server Components that could allow remote
+        code execution.
+      </DropdownItem>
     </Dropdown>
-</Update>
+  </Update>
 
-{/* INTENTIONAL: two distinct releases shipped on December 4, 2025
-    ("CUE Support" and "Workspace Invitations" below). The duplicate
-    date label is deliberate — do NOT merge, rename, or re-date either
-    <Update> block. */}
+  {/* INTENTIONAL: two distinct releases shipped on December 4, 2025
+      ("CUE Support" and "Workspace Invitations" below). The duplicate
+      date label is deliberate — do NOT merge, rename, or re-date either
+      <Update> block. */}
 
-<Update label="December 4, 2025">
+  <Update label="December 4, 2025">
     ## CUE Support
 
-    We are excited to announce full support for CUE (Configure, Unify, Execute) 
-    as a first-class schema language in Miru. You can now define config schemas in 
-    CUE, version them in Git, and push them via the Miru CLI to validate config 
+    We are excited to announce full support for CUE (Configure, Unify, Execute)
+    as a first-class schema language in Miru. You can now define config schemas in
+    CUE, version them in Git, and push them via the Miru CLI to validate config
     instances before deployment.
 
     ### Uploading a CUE schema
 
-    Pushing a CUE schema to Miru follows the same Git-integrated workflow you are used 
+    Pushing a CUE schema to Miru follows the same Git-integrated workflow you are used
     to. Simply define your schema in a `.cue` file and use the Miru CLI to push it.
 
-
-    <Framed
-        background="https://assets.mirurobotics.com/docs/changelog/25-12-04/ocean-background.png"
-        image="https://assets.mirurobotics.com/docs/changelog/25-12-04/upload-cue-schema.png"
-        borderWidth="16px"
-        innerRadius="8px"
-    />
+    <Framed background="https://assets.mirurobotics.com/docs/changelog/25-12-04/ocean-background.png" image="https://assets.mirurobotics.com/docs/changelog/25-12-04/upload-cue-schema.png" borderWidth="16px" innerRadius="8px" />
 
     ### Managing CUE schemas
 
-    Once uploaded, your CUE schemas appear in the dashboard where you can view the raw 
+    Once uploaded, your CUE schemas appear in the dashboard where you can view the raw
     content (preserving comments and formatting) and associated metadata.
 
-    Management works just like existing schemas: most properties are immutable, though 
-    you can update the config instance deployment path. Deletion is only permitted 
+    Management works just like existing schemas: most properties are immutable, though
+    you can update the config instance deployment path. Deletion is only permitted
     for schemas with no active config instances.
 
     <img
-        src={"https://assets.mirurobotics.com/docs/changelog/25-12-04/cue-lang-schema.png"}
-        alt="Viewing a CUE schema"
-        style={{
-            display: "flex",
-            width: "100%",
-            borderRadius: "10px",
-            margin: 0,
-        }}
+      src={"https://assets.mirurobotics.com/docs/changelog/25-12-04/cue-lang-schema.png"}
+      alt="Viewing a CUE schema"
+      style={{
+          display: "flex",
+          width: "100%",
+          borderRadius: "10px",
+          margin: 0,
+      }}
     />
 
     [Read the full documentation »](/cfg-mgmt/primitives/schemas/languages/overview)
+  </Update>
 
-</Update>
-
-<Update label="December 4, 2025">
+  <Update label="December 4, 2025">
     ## Workspace Invitations
 
-    You can now invite team members to your workspace and manage their roles. This 
+    You can now invite team members to your workspace and manage their roles. This
     release also adds new workspace and profile settings.
 
     ### Inviting team members
 
-    Onboard your team directly from the dashboard. Navigate to **Settings > Members** 
+    Onboard your team directly from the dashboard. Navigate to **Settings > Members**
     and click the **Invite** button.
 
-    Once you enter their email and select a role, they will receive an email with 
+    Once you enter their email and select a role, they will receive an email with
     a link to join your workspace.
 
-    - **New users** will be guided to sign up and then prompted to accept the invitation.
-    - **Existing users** can accept the invite via the email link or their Profile settings 
-    page.
+    * **New users** will be guided to sign up and then prompted to accept the invitation.
+    * **Existing users** can accept the invite via the email link or their Profile settings
+      page.
 
-    <LazyVideo
-        alt="Screen recording of inviting a workspace member"
-        className="aspect-video rounded-xl"
-        src="https://assets.mirurobotics.com/docs/changelog/25-12-04/inviting-members.mp4"
-    />
+    <LazyVideo alt="Screen recording of inviting a workspace member" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/25-12-04/inviting-members.mp4" />
 
     ### Manage roles and access
 
     We have introduced three distinct user roles:
 
-    - **Owner** — Full control over the workspace (limit one per workspace).
-    - **Admin** — Administrative access to manage members and workspace settings.
-    - **Member** — Application access without administrative privileges.
+    * **Owner** — Full control over the workspace (limit one per workspace).
+    * **Admin** — Administrative access to manage members and workspace settings.
+    * **Member** — Application access without administrative privileges.
 
-    Admins and owners can manage members: update roles, edit names, suspend users, 
+    Admins and owners can manage members: update roles, edit names, suspend users,
     resend or revoke invites, and reinvite suspended/left users.
 
-    <Framed 
-        background="https://assets.mirurobotics.com/docs/changelog/25-12-04/mountain-background.jpeg"
-        image="https://assets.mirurobotics.com/docs/changelog/25-12-04/manage-members.png"
-        borderWidth="20px"
-        innerRadius="8px"
-    />
+    <Framed background="https://assets.mirurobotics.com/docs/changelog/25-12-04/mountain-background.jpeg" image="https://assets.mirurobotics.com/docs/changelog/25-12-04/manage-members.png" borderWidth="20px" innerRadius="8px" />
 
     ### Profile and workspace settings
 
     Manage your profile and workspace details from dedicated settings pages.
 
-    - **Profile** — Update your name, view pending invites, or leave your workspace.
-    - **Workspace** — Admins and owners can update the workspace name.
+    * **Profile** — Update your name, view pending invites, or leave your workspace.
+    * **Workspace** — Admins and owners can update the workspace name.
 
-    <Framed 
-        background="https://assets.mirurobotics.com/docs/changelog/25-12-04/mountain-background.jpeg"
-        image="https://assets.mirurobotics.com/docs/changelog/25-12-04/profile-settings.png"
-        borderWidth="20px"
-        innerRadius="8px"
-    />
+    <Framed background="https://assets.mirurobotics.com/docs/changelog/25-12-04/mountain-background.jpeg" image="https://assets.mirurobotics.com/docs/changelog/25-12-04/profile-settings.png" borderWidth="20px" innerRadius="8px" />
 
     [Read the full documentation »](/admin/workspace)
 
     <div className="mb-9" />
 
     <Separator />
-    <Dropdown title="Improvements">
-        <DropdownItem>
-            **Release Overview:** We added a dedicated overview page for each release. 
-            This includes the total count of staged deployments and the total number of 
-            deployments created for that release, alongside the defined config schemas.
-        </DropdownItem>
-        <DropdownItem>
-            **Consolidated Page Header:** To maximize screen space, we have collapsed 
-            the page breadcrumb and title headers into a single, unified line across 
-            key pages like Devices, Releases, and Configs.
-        </DropdownItem>
-        <DropdownItem>
-            **Faster Navigation:** Navigation between Release sub-pages is now 
-            significantly smoother due to data prefetching that automatically loads 
-            the next page's data when you hover over navigation links.
-        </DropdownItem>
-    </Dropdown>
-    <Separator />
-    <Dropdown title="Fixes">
-        <DropdownItem>
-            **Form Submission:** You can now press Enter to submit forms when creating 
-            or editing Tags, Config Types, and Config Schemas. Previously, pressing 
-            Enter would accidentally close the form and discard your progress.
-        </DropdownItem>
-        <DropdownItem>
-            **Editor:** Switching releases in the editor no longer incorrectly displays 
-            stale config types from the previous release that are not valid for the 
-            new release.
-        </DropdownItem>
-    </Dropdown>
-</Update>
 
-<Update label="November 10, 2025">
+    <Dropdown title="Improvements">
+      <DropdownItem>
+        **Release Overview:** We added a dedicated overview page for each release.
+        This includes the total count of staged deployments and the total number of
+        deployments created for that release, alongside the defined config schemas.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Consolidated Page Header:** To maximize screen space, we have collapsed
+        the page breadcrumb and title headers into a single, unified line across
+        key pages like Devices, Releases, and Configs.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Faster Navigation:** Navigation between Release sub-pages is now
+        significantly smoother due to data prefetching that automatically loads
+        the next page's data when you hover over navigation links.
+      </DropdownItem>
+    </Dropdown>
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+      <DropdownItem>
+        **Form Submission:** You can now press Enter to submit forms when creating
+        or editing Tags, Config Types, and Config Schemas. Previously, pressing
+        Enter would accidentally close the form and discard your progress.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Editor:** Switching releases in the editor no longer incorrectly displays
+        stale config types from the previous release that are not valid for the
+        new release.
+      </DropdownItem>
+    </Dropdown>
+  </Update>
+
+  <Update label="November 10, 2025">
     ## Device Releases
 
-    You can now set and change a device's release directly from the device page, 
+    You can now set and change a device's release directly from the device page,
     eliminating the need to navigate to the releases page for single-device operations.
-
 
     ### Setting the initial release
 
-    After activating a device, you'll be prompted to set its initial release before 
+    After activating a device, you'll be prompted to set its initial release before
     accessing the config editor. This two-step process requires:
-    
+
     1. **Select a release** - Choose which software version this device will run
     2. **Deploy configurations** - Create a new deployment or deploy a staged deployment
 
-
-    <LazyVideo
-        alt="Screen recording of setting a device's initial release"
-        className="aspect-video rounded-xl"
-        src="https://assets.mirurobotics.com/docs/changelog/25-11-10/setting-init-release.mp4"
-    />
-
+    <LazyVideo alt="Screen recording of setting a device's initial release" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/25-11-10/setting-init-release.mp4" />
 
     ### Changing the release
 
-    The device's current release is now visible in the editor (left sidebar). Click the 
-    release to open a dropdown and select a different release version. 
-    
-    When changing releases, you’ll need to deploy a new set of configurations — either 
+    The device's current release is now visible in the editor (left sidebar). Click the
+    release to open a dropdown and select a different release version.
+
+    When changing releases, you’ll need to deploy a new set of configurations — either
     select a staged deployment or create a new deployment.
 
-    <LazyVideo
-        alt="Screen recording of changing a device's release"
-        className="aspect-video rounded-xl"
-        src="https://assets.mirurobotics.com/docs/changelog/25-11-10/changing-release.mp4"
-    />
+    <LazyVideo alt="Screen recording of changing a device's release" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/25-11-10/changing-release.mp4" />
 
     <div className="mb-9" />
 
     <Separator />
-    <Dropdown title="Improvements">
-        <DropdownItem>All devices in the devices table are always clickable</DropdownItem>
-        <DropdownItem>Removed status column and merged status icon with device name in devices table</DropdownItem>
-        <DropdownItem>Removed last seen column from devices table</DropdownItem>
-        <DropdownItem>Added tooltip on device status hover showing status and connection/disconnection time</DropdownItem>
-        <DropdownItem>Added the ID in the config instance sheet header</DropdownItem>
-        <DropdownItem>Added the metadata tab in the config instance sheet</DropdownItem>
-        <DropdownItem>Renamed "Source" → "Parent" in deployment and config instance metadata</DropdownItem>
-    </Dropdown>
-    <Separator />
-    <Dropdown title="Fixes">
-        <DropdownItem>The create release dialog no longer crashes when opening</DropdownItem>
-        <DropdownItem>Create release dialog form validation now properly detects when required fields are filled</DropdownItem>
-        <DropdownItem>Content overflow in the config instance, config schema, and create API key sheet headers has been fixed</DropdownItem>
-        <DropdownItem>Schema link in the deployment sheet no longer leads to a 404 error</DropdownItem>
-    </Dropdown>
-</Update>
 
+    <Dropdown title="Improvements">
+      <DropdownItem>All devices in the devices table are always clickable</DropdownItem>
+      <DropdownItem>Removed status column and merged status icon with device name in devices table</DropdownItem>
+      <DropdownItem>Removed last seen column from devices table</DropdownItem>
+      <DropdownItem>Added tooltip on device status hover showing status and connection/disconnection time</DropdownItem>
+      <DropdownItem>Added the ID in the config instance sheet header</DropdownItem>
+      <DropdownItem>Added the metadata tab in the config instance sheet</DropdownItem>
+      <DropdownItem>Renamed "Source" → "Parent" in deployment and config instance metadata</DropdownItem>
+    </Dropdown>
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+      <DropdownItem>The create release dialog no longer crashes when opening</DropdownItem>
+      <DropdownItem>Create release dialog form validation now properly detects when required fields are filled</DropdownItem>
+      <DropdownItem>Content overflow in the config instance, config schema, and create API key sheet headers has been fixed</DropdownItem>
+      <DropdownItem>Schema link in the deployment sheet no longer leads to a 404 error</DropdownItem>
+    </Dropdown>
+  </Update>
 </div>
