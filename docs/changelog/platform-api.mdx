@@ -13,7 +13,7 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 *August 17, 2026*
 
-The `everglades` release introduces device groups and adds group membership to devices, so you can build, read, and filter your fleet by the same hierarchy you manage in the dashboard. 
+The `everglades` release introduces device groups and adds group membership to devices, so you can build your fleet hierarchy over the API and read and filter devices by the same hierarchy you manage in the dashboard. Groups themselves are fully manageable: create them, rename them, and move them to a new parent. A device's membership in a group is read-only, so assigning a device to a group stays a dashboard flow. 
 
 `everglades` also brings the Platform API up to date with three months of configuration changes: config schemas now support instance slots, deployments report more timestamps (queued, deployed, archived), and devices report an `archived` status.
 
@@ -27,10 +27,6 @@ The `everglades` release introduces device groups and adds group membership to d
   - <POST /> `/groups` — create a group
   - <PATCH /> `/groups/{group_id}` — rename a group
   - <POST /> `/groups/{group_id}/move` — move a group to a new parent
-</Dropdown>
-<Separator />
-<Dropdown title="Devices">
-  - <POST /> `/devices/move/bulk` — move devices between groups
 </Dropdown>
 
 ## Breaking changes
@@ -198,6 +194,8 @@ The `everglades` release introduces device groups and adds group membership to d
 
   Devices now include the [group](/primitives/groups) they belong to. `group_id` is always present and is `null` for unassigned devices.
 
+  Membership is read-only over the API. `group_id` is returned, expandable, and filterable, but it cannot be set on <POST /> `/devices` or changed on <PATCH /> `/devices/{device_id}`. Assign and move devices from the dashboard.
+
   **Device Response**
 
   ```diff
@@ -221,33 +219,6 @@ The `everglades` release introduces device groups and adds group membership to d
   ```diff
     GET /groups
   + GET /groups?expand=parent
-  ```
-
-</Dropdown>
-<Separator />
-<Dropdown title="Assigning devices to groups">
-
-  <POST /> `/devices`
-
-  A device can be assigned to a group when it is created.
-
-  ```diff
-    {
-      "name": "Robot 1",
-  +   "group_id": "grp_123"
-    }
-  ```
-
-  <POST /> `/devices/move/bulk`
-  
-  Existing devices are reassigned in bulk: <POST /> `/devices/move/bulk` moves multiple devices in one request and returns the moved devices. Send `"target_group_id": null` to unassign them instead.
-
-  ```diff
-  + POST /devices/move/bulk
-    {
-      "device_ids": ["dvc_123", "dvc_456"],
-      "target_group_id": "grp_789"
-    }
   ```
 
 </Dropdown>
@@ -377,7 +348,7 @@ The `everglades` release introduces device groups and adds group membership to d
   </Step>
 
   <Step title="Optionally integrate new endpoints">
-    Optionally integrate the new group and device endpoints listed above. 
+    Optionally integrate the new group endpoints listed above. 
   </Step>
 
   <Step title="Optionally adopt new additive surface">
