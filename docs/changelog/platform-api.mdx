@@ -13,7 +13,7 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 *August 17, 2026*
 
-The `everglades` release introduces read-only device groups and adds group membership to devices, so you can read and filter your fleet by the same hierarchy you manage in the dashboard. It also brings the Platform API up to date with three months of configuration changes: config schemas now declare instance slots instead of a single instance file path, config instances carry a slot key, and devices report an `archived` status.
+The `everglades` release introduces device groups and adds group membership to devices, so you can build, read, and filter your fleet by the same hierarchy you manage in the dashboard. It also brings the Platform API up to date with three months of configuration changes: config schemas now declare instance slots instead of a single instance file path, config instances carry a slot key, deployments report when they were queued, deployed, and archived, and devices report an `archived` status.
 
 <PlatformApiReleaseLinks version="2026-08-17.everglades" />
 
@@ -22,6 +22,13 @@ The `everglades` release introduces read-only device groups and adds group membe
 <Dropdown title="Groups">
   - <GET /> `/groups` — list groups
   - <GET /> `/groups/{group_id}` — retrieve a group
+  - <POST /> `/groups` — create a group
+  - <PATCH /> `/groups/{group_id}` — rename a group
+  - <POST /> `/groups/{group_id}/move` — move a group to a new parent
+</Dropdown>
+<Separator />
+<Dropdown title="Devices">
+  - <POST /> `/devices/move/bulk` — move devices into a group
 </Dropdown>
 
 ## Breaking changes
@@ -74,7 +81,7 @@ The `everglades` release introduces read-only device groups and adds group membe
 <Separator />
 <Dropdown title="Config type slug is immutable">
 
-  <PATCH /> `/config_types/{config_type_id}` no longer accepts a `slug` field-- slugs are fixed when the config type is created.
+  <PATCH /> `/config_types/{config_type_id}` no longer accepts a `slug` field — slugs are fixed when the config type is created.
 
   ```diff
     PATCH /config_types/{config_type_id}
@@ -156,13 +163,65 @@ The `everglades` release introduces read-only device groups and adds group membe
   + GET /devices?group_id=grp_123
   ```
 
-  On `GET /groups` and `GET /groups/{group_id}`, a group's `parent` and its root-first chain of `ancestors` can be expanded.
+  On `GET /groups` and `GET /groups/{group_id}`, a group's `parent` can be expanded.
 
   ```diff
     GET /groups
   + GET /groups?expand=parent
-  + GET /groups?expand=ancestors
   ```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Group management">
+
+  Groups can be created, renamed, and moved through the API. All three endpoints require the `groups:write` scope.
+
+  Create a group at the top level by omitting `parent_id`, or nest it under an existing group by sending one.
+
+  ```diff
+  + POST /groups
+    {
+      "name": "Europe",
+      "parent_id": "grp_123"
+    }
+  ```
+
+  <PATCH /> `/groups/{group_id}` accepts a `name` and nothing else. To change where a group sits in the hierarchy, use <POST /> `/groups/{group_id}/move` and send the new `parent_id`, or `null` to move the group to the top level.
+
+  ```diff
+  + POST /groups/{group_id}/move
+    {
+      "parent_id": "grp_456"
+    }
+  ```
+
+  There is no endpoint for deleting a group. Delete groups from the [dashboard](/primitives/groups#delete-a-group).
+
+</Dropdown>
+<Separator />
+<Dropdown title="Assigning devices to groups">
+
+  A device can be assigned to a group when it is created.
+
+  ```diff
+    POST /devices
+    {
+      "name": "Robot 1",
+  +   "group_id": "grp_123"
+    }
+  ```
+
+  Existing devices are reassigned in bulk. <POST /> `/devices/move/bulk` moves up to 1000 devices in one request and returns the moved devices. Send `"target_group_id": null` to unassign them instead.
+
+  ```diff
+  + POST /devices/move/bulk
+    {
+      "device_ids": ["dvc_123", "dvc_456"],
+      "target_group_id": "grp_789"
+    }
+  ```
+
+  Bulk moves require the `devices:move` scope rather than `devices:write`. The permission is checked against the target group, so the API key must be granted `devices:move` on that group. Moving devices out of every group, by sending `"target_group_id": null`, requires a workspace-level grant.
 
 </Dropdown>
 <Separator />
@@ -230,18 +289,41 @@ The `everglades` release introduces read-only device groups and adds group membe
 
 </Dropdown>
 <Separator />
-<Dropdown title="File rules on releases">
+<Dropdown title="Deployment parent">
 
-  `POST /releases` accepts an optional `file_rule_ids` array, so a release can pin the [file rules](/data-uploads/primitives/file-rules) that apply to devices running it.
+  A deployment now reports the deployment it was patched from. `parent_id` is always present and is `null` when the deployment has no parent.
 
   ```diff
-    POST /releases
-    {
-      "version": "v1.0.0",
-      "config_schema_ids": ["cfg_sch_123"],
-  +   "file_rule_ids": ["file_rule_123"]
-    }
+    # Deployment
+      "id": "dpl_123",
+      "device_id": "dvc_123",
+  +   "parent_id": "dpl_122",
   ```
+
+  The full parent deployment can be expanded, on both the retrieve and list endpoints.
+
+  ```diff
+    GET /deployments
+  + GET /deployments?expand=parent
+  + GET /deployments/{deployment_id}?expand=parent
+  ```
+
+</Dropdown>
+<Separator />
+<Dropdown title="Deployment lifecycle timestamps">
+
+  Deployments now report when they reached each stage of their lifecycle. `queued_at`, `deployed_at`, and `archived_at` are always present and are `null` until the deployment reaches that stage.
+
+  ```diff
+    # Deployment
+      "created_at": "2026-08-17T00:00:00Z",
+      "updated_at": "2026-08-17T00:05:00Z",
+  +   "queued_at": "2026-08-17T00:01:00Z",
+  +   "deployed_at": "2026-08-17T00:04:00Z",
+  +   "archived_at": null,
+  ```
+
+  `created_at` and `updated_at` only record when the deployment record changed. Use these fields to tell when a deployment actually reached a device, or to measure how long a rollout took.
 
 </Dropdown>
 
@@ -265,7 +347,7 @@ The `everglades` release introduces read-only device groups and adds group membe
   </Step>
 
   <Step title="Optionally integrate new endpoints">
-    Optionally integrate the new group endpoints listed above.
+    Optionally integrate the new group and device move endpoints listed above. Creating, renaming, and moving groups requires the `groups:write` scope, and moving devices requires the `devices:move` scope. Add these scopes to your [API keys](/admin/apikeys) before calling those endpoints, and see [authorization](/developers/platform-api/authz) for the full scope reference.
   </Step>
 
   <Step title="Optionally adopt new additive surface">
