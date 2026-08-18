@@ -218,6 +218,12 @@
             "pages": [
               "references/cli/release-create"
             ]
+          },
+          {
+            "group": "Utilities",
+            "pages": [
+              "references/cli/version"
+            ]
           }
         ]
       },
