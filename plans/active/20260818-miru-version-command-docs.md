@@ -21,7 +21,7 @@ After this change, a reader browsing the CLI Reference sees a "Version" page und
 
 ## Progress
 
-- [ ] Milestone 1: create `docs/references/cli/version.mdx` and add the docs.json nav entry; commit.
+- [x] Milestone 1: create `docs/references/cli/version.mdx` and add the docs.json nav entry; commit. (done 2026-08-18T22:35Z)
 - [ ] Milestone 2: run the lint/validate suite (`pnpm run test:lint`, `./scripts/lint.sh`, `pnpm run validate`), fix any findings, commit fixes if any.
 - [ ] Preflight CLEAN: CI green on the pushed branch head before the PR leaves draft.
 
@@ -29,7 +29,7 @@ Use timestamps when you complete steps. Split partially completed work into "don
 
 ## Surprises & Discoveries
 
-(Add entries as you go.)
+- 2026-08-18: the Milestone 1 commit command in Concrete Steps references `plans/backlog/20260818-miru-version-command-docs.md`, but the plan actually lives at `plans/active/`. Committed the `plans/active/` path instead.
 
 ## Decision Log
 
