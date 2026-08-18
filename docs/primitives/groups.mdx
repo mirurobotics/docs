@@ -4,7 +4,7 @@ title: "Groups"
 
 import { EditableBadge, MutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
-import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+import { PlatformApiBadge, PlatformApiLink, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge, GroupManagerBadge } from '/snippets/components/role-badges.jsx';
 import MoveDevice from '/snippets/devices/move.mdx';
 
@@ -73,19 +73,13 @@ Devices belong to at most one group. Devices that haven't been assigned to any g
 
 ## View a group
 
-**Dashboard**
+<PlatformApiBadge endpoint="groups/get" />
 
 To view your workspace's groups, navigate to the [Groups page](https://app.mirurobotics.com/groups).
 
-**Platform API**
-
-To retrieve a group programmatically, use the <PlatformApiLink endpoint="groups/get">get group endpoint »</PlatformApiLink>
-
-To list groups programmatically, use the <PlatformApiLink endpoint="groups/list">list groups endpoint »</PlatformApiLink>
-
 ## Create a group  <AdminBadge />  <GroupManagerBadge />
 
-**Dashboard**
+<PlatformApiBadge endpoint="groups/create" />
 
 Go to the [Groups page](https://app.mirurobotics.com/groups) and navigate into the group you want to create a group inside of. Click the **+ Group** button in the top right corner.
 
@@ -99,13 +93,9 @@ Fill in the fields, then click **Create**.
   ![Create Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/create-dialog.png)
 </Frame>
 
-**Platform API**
-
-To create a group programmatically, use the <PlatformApiLink endpoint="groups/create">create group endpoint »</PlatformApiLink>
-
 ## Edit a group  <AdminBadge />  <GroupManagerBadge />
 
-**Dashboard**
+<PlatformApiBadge endpoint="groups/update" />
 
 Navigate to the [Groups page](https://assets.mirurobotics.com/docs/v04/images/groups/page.png), click the ellipses (...) on the group you want to edit, and hit **Edit**.
 
@@ -119,21 +109,21 @@ Update the desired fields, then click **Save**.
   ![Edit Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/edit-dialog.png)
 </Frame>
 
-**Platform API**
-
-To edit a group programmatically, use the <PlatformApiLink endpoint="groups/update">update group endpoint »</PlatformApiLink>
-
 ## Move a group  <AdminBadge />  <GroupManagerBadge />
 
-**Platform API**
+<PlatformApiBadge endpoint="groups/move" />
 
 To move a group to a new parent group—or to the top level by setting `parent_id` to `null`—use the <PlatformApiLink endpoint="groups/move">move group endpoint »</PlatformApiLink>
 
 ## Move a device  <AdminBadge />  <GroupManagerBadge />
 
+<PlatformUnsupportedBadge />
+
 <MoveDevice />
 
 ## Delete a group  <AdminBadge />  <GroupManagerBadge />
+
+<PlatformUnsupportedBadge />
 
 A group can only be deleted if it has no subgroups and no assigned devices. If you need to delete a group that still contains devices or subgroups, first move or reassign its contents.
 
@@ -150,6 +140,8 @@ A confirmation dialog will appear. Hit **Delete** to confirm the deletion.
 </Frame>
 
 ## Add a member  <AdminBadge />  <GroupManagerBadge />
+
+<PlatformUnsupportedBadge />
 
 To add a member to a group, navigate to the [Groups page](https://app.mirurobotics.com/groups), click the ellipses (...) on the group you want to add a member to, and select **Members** from the dropdown. 
 
@@ -170,6 +162,8 @@ To add a member, input the name of the member you want to add in the search bar 
 </Frame>
 
 ## Edit a member's access  <AdminBadge />  <GroupManagerBadge />
+
+<PlatformUnsupportedBadge />
 
 To edit a member's access to a group, navigate to the [Groups page](https://app.mirurobotics.com/groups), click the ellipses (...) on the group you want to edit, and select **Members** from the dropdown. 
 
@@ -196,6 +190,8 @@ A panel will appear with the member's workspace roles and all of their group rol
 </Frame>
 
 ## Remove a member  <AdminBadge />  <GroupManagerBadge />
+
+<PlatformUnsupportedBadge />
 
 To remove a member from a group, navigate to the [Groups page](https://app.mirurobotics.com/groups), click the ellipses (...) on the group you want to remove a member from, and select **Members** from the dropdown. 
 

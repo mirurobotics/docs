@@ -5,7 +5,7 @@ title: "Devices"
 import { ONLINE_TOOLTIP, OFFLINE_TOOLTIP } from '/snippets/components/devices/statuses.jsx';
 import { MutableBadge, EditableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
-import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge, ProvisionerBadge, ViewerBadge } from '/snippets/components/role-badges.jsx';
 import DeviceDef from '/snippets/definitions/device.mdx';
 import MoveDevice from '/snippets/devices/move.mdx';
@@ -116,6 +116,8 @@ To view a device's status, hover over its name on the Devices page.
 
 ## View a device
 
+<PlatformApiBadge endpoint="devices/get" />
+
 To view a device in Miru, navigate to the [Devices page](https://app.mirurobotics.com/devices), click into the device you want to view, and switch to the **Overview** tab at the top.
 
 **Metadata**
@@ -134,26 +136,13 @@ At the bottom of the page, you'll find a complete audit trail of deployments mad
   ![Device Overview Audit Trail](https://assets.mirurobotics.com/docs/v04/images/devices/overview-audit-trail.png)
 </Frame>
 
-**Platform API**
-
-To retrieve a device programmatically, use the <PlatformApiLink endpoint="devices/get">get device endpoint »</PlatformApiLink>
-
-To list devices programmatically, use the <PlatformApiLink endpoint="devices/list">list devices endpoint »</PlatformApiLink>
-
 ## Provision a device  <ProvisionerBadge />
 
-To provision a device, visit the [device provisioning](/cfg-mgmt/provision-devices/overview) .
-
-**Platform API**
-
-To create a device programmatically, use the <PlatformApiLink endpoint="devices/create">create device endpoint »</PlatformApiLink>
-
-To provision devices programmatically, use [provisioning tokens](/cfg-mgmt/provision-devices/provisioning-tokens), which are created with the <PlatformApiLink endpoint="provisioning-tokens/create">create provisioning token endpoint »</PlatformApiLink>
-
+To provision a device, visit the [device provisioning](/cfg-mgmt/provision-devices/overview) documentation.
 
 ## Edit a device  <ProvisionerBadge />
 
-**Dashboard**
+<PlatformApiBadge endpoint="devices/update" />
 
 Navigate to the [Devices page](https://app.mirurobotics.com/devices), click the ellipses (...) on the device you want to edit, and hit **Edit**.
 
@@ -167,11 +156,9 @@ Update the desired fields, then click **Save**.
   ![Edit Device Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/edit-dialog.png)
 </Frame>
 
-**Platform API**
-
-To edit a device programmatically, use the <PlatformApiLink endpoint="devices/update">update device endpoint »</PlatformApiLink>
-
 ## Ping a device  <ViewerBadge />
+
+<PlatformApiBadge endpoint="devices/ping" />
 
 Pinging a device sends a real-time request to verify whether it is online. Ping requests wait up to 5 seconds for a response from the device before timing out.
 
@@ -187,19 +174,17 @@ On the other hand, <Tooltip tip={OFFLINE_TOOLTIP.tip} cta={OFFLINE_TOOLTIP.cta} 
   ![Ping Timeout](https://assets.mirurobotics.com/docs/v04/images/devices/ping-timeout.png)
 </Frame>
 
-**Platform API**
-
-To ping a device programmatically, use the <PlatformApiLink endpoint="devices/ping">ping device endpoint »</PlatformApiLink>
-
 ## Move a device  <AdminBadge />
+
+<PlatformUnsupportedBadge />
 
 <MoveDevice />
 
 ## Delete a device  <ProvisionerBadge />
 
-Deleting a device immediately invalidates its authentication session and removes all deployment and configuration history. This action is irreversible. Please proceed with caution.
+<PlatformUnsupportedBadge />
 
-**Dashboard**
+Deleting a device immediately invalidates its authentication session and removes all deployment and configuration history. This action is irreversible. Please proceed with caution.
 
 To delete a device, click the ellipses (...) on the device you want to delete and hit **Delete**.
 

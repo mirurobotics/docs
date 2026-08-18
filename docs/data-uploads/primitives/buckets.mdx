@@ -3,6 +3,7 @@ title: "Buckets"
 ---
 
 import { ImmutableBadge, MutableBadge } from '/snippets/components/field-badges.jsx';
+import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { PublisherBadge } from '/snippets/components/role-badges.jsx';
 import BucketDef from '/snippets/definitions/bucket.mdx';
 
@@ -37,6 +38,8 @@ import BucketDef from '/snippets/definitions/bucket.mdx';
 
 ## View a bucket
 
+<PlatformUnsupportedBadge />
+
 To view a bucket, navigate to the [Buckets page](https://app.mirurobotics.com/settings/buckets).
 
 <Frame>
@@ -45,9 +48,13 @@ To view a bucket, navigate to the [Buckets page](https://app.mirurobotics.com/se
 
 ## Connect a bucket  <PublisherBadge />
 
+<PlatformUnsupportedBadge />
+
 To connect a bucket, visit the [Connect buckets](/data-uploads/primitives/buckets#connect-a-bucket) page.
 
 ## Edit a bucket  <PublisherBadge />
+
+<PlatformUnsupportedBadge />
 
 Editing a bucket allows you to update a bucket's authentication configuration. However, it does not allow you to change the bucket's name. To upload to a new bucket, you must create a new bucket connection.
 
@@ -65,6 +72,8 @@ Update the desired fields, then click **Save**.
 
 ## Delete a bucket  <PublisherBadge />
 
+<PlatformUnsupportedBadge />
+
 Deleting a bucket is only possible if there are no file rules associated with the bucket. Otherwise, you must archive the bucket instead.
 
 Navigate to the [Buckets page](https://app.mirurobotics.com/settings/buckets), click the ellipsis (…) next to the bucket you want to delete, and select **Delete**.
@@ -80,6 +89,8 @@ Click **Delete** to confirm.
 </Frame>
 
 ## Archive a bucket  <PublisherBadge />
+
+<PlatformUnsupportedBadge />
 
 Archiving a bucket prevents any data uploads from being written to the bucket. However, it does not delete the bucket itself, and can be unarchived at any time.
 

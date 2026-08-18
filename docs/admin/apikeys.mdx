@@ -3,6 +3,7 @@ title: "API keys"
 ---
 
 import { Framed } from '/snippets/components/framed.jsx';
+import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge } from '/snippets/components/role-badges.jsx';
 
 <Framed 
@@ -19,6 +20,8 @@ Your API keys carry many privileges, so be sure to keep them secure! Do not shar
 
 ## Create an API key  <AdminBadge />
 
+<PlatformUnsupportedBadge />
+
 To create an API key, navigate to the [Secrets page](https://app.mirurobotics.com/settings/secrets) in the dashboard and click **New API Key** in the top right.
 
 <Frame>
@@ -30,6 +33,8 @@ Provide a name for the API key, select the desired scopes, then click **Create**
 Once an API key has been created, it can never be retrieved again. If you lose your API key, you must create a new one.
 
 ## View API keys
+
+<PlatformUnsupportedBadge />
 
 To view your existing API keys, navigate to the [Secrets page](https://app.mirurobotics.com/settings/secrets).
 
@@ -44,6 +49,8 @@ To see the scopes of an API key, hover over the information icon in the **Scopes
 </Frame>
 
 ## Delete an API key  <AdminBadge />
+
+<PlatformUnsupportedBadge />
 
 Deleting an API key immediately revokes it. Attempting to authenticate with a deleted API key will fail. Furthermore, deleting an API key is irreversible. Once an API key is deleted, it cannot be recovered.
 
