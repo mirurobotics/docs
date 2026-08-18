@@ -4,7 +4,7 @@ title: "Config types"
 
 import { ImmutableBadge, EditableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
-import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+import { DashboardOnlyBadge, PlatformApiBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge, PublisherBadge } from '/snippets/components/role-badges.jsx';
 import ConfigTypeDef from '/snippets/definitions/config-type.mdx';
 
@@ -40,19 +40,13 @@ import ConfigTypeDef from '/snippets/definitions/config-type.mdx';
 
 ## View a config type
 
-**Dashboard**
+<PlatformApiBadge endpoint="config-types/get" />
 
 To view your workspace's config types, navigate to the [Config Types page](https://app.mirurobotics.com/configs).
 
-**Platform API**
-
-To retrieve a config type programmatically, use the <PlatformApiLink endpoint="config-types/get">get config type endpoint »</PlatformApiLink>
-
-To list config types programmatically, use the <PlatformApiLink endpoint="config-types/list">list config types endpoint »</PlatformApiLink>
-
 ## Create a config type  <PublisherBadge />
 
-**Dashboard**
+<PlatformApiBadge endpoint="config-types/create" />
 
 Navigate to the [Config Types page](https://app.mirurobotics.com/configs) and click **New Config Type** in the top right corner.
 
@@ -70,13 +64,9 @@ Fill in the fields, then click **Create**.
   Config type slugs are immutable and cannot be modified after creation.
 </Warning>
 
-**Platform API**
-
-To create a config type programmatically, use the <PlatformApiLink endpoint="config-types/create">create config type endpoint »</PlatformApiLink>
-
 ## Edit a config type  <PublisherBadge />
 
-**Dashboard**
+<PlatformApiBadge endpoint="config-types/update" />
 
 Navigate to the [Config Types page](https://app.mirurobotics.com/configs), click the ellipses (...) on the config type you want to edit, and hit **Edit**.
 
@@ -90,11 +80,9 @@ Update the desired fields, then click **Save**.
   ![Edit Config Type Dialog](https://assets.mirurobotics.com/docs/v04/images/config-types/edit-dialog.png)
 </Frame>
 
-**Platform API**
-
-To edit a config type programmatically, use the <PlatformApiLink endpoint="config-types/update">update config type endpoint »</PlatformApiLink>
-
 ## Delete a config type  <AdminBadge />
+
+<DashboardOnlyBadge />
 
 Deleting a config type is irreversible. Once a config type is deleted, it cannot be recovered.
 

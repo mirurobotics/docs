@@ -3,7 +3,7 @@ title: "Create a release"
 ---
 
 import { Framed } from '/snippets/components/framed.jsx';
-import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+import { PlatformApiBadge } from '/snippets/components/platform-api-link.jsx';
 import CreateExistingSchemas from '/snippets/references/cli/releases/create/existing-schemas.mdx';
 import CLIFlags from '/snippets/references/cli/releases/create/flags.mdx';
 import CreateNewSchemas from '/snippets/references/cli/releases/create/new-schemas.mdx';
@@ -76,6 +76,8 @@ The `config type` annotation is the only required annotation—it's how Miru kno
 
 ## Git commit
 
+<PlatformApiBadge endpoint="git-commits/create" />
+
 When creating a release, the CLI captures the following Git metadata from the *local* Git repository where the CLI is run:
 
 | Metadata | Description |
@@ -85,14 +87,6 @@ When creating a release, the CLI captures the following Git metadata from the *l
 | **File paths** | The file paths of the schemas relative to the repository root |
 
 This metadata is then made available in the dashboard for the release, allowing you to easily trace the release's origin.
-
-**Platform API**
-
-To register a git commit programmatically, use the <PlatformApiLink endpoint="git-commits/create">create git commit endpoint »</PlatformApiLink>
-
-To retrieve a git commit programmatically, use the <PlatformApiLink endpoint="git-commits/get">get git commit endpoint »</PlatformApiLink>
-
-To list git commits programmatically, use the <PlatformApiLink endpoint="git-commits/list">list git commits endpoint »</PlatformApiLink>
 
 ### Supported Git providers
 

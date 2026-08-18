@@ -4,7 +4,7 @@ title: "Releases"
 
 import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
-import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+import { DashboardOnlyBadge, PlatformApiBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge, PublisherBadge } from '/snippets/components/role-badges.jsx';
 import ReleaseDef from '/snippets/definitions/release.mdx';
 import SemVer from '/snippets/releases/semver.mdx';
@@ -40,7 +40,7 @@ import SemVer from '/snippets/releases/semver.mdx';
 
 ## View a release
 
-**Dashboard**
+<PlatformApiBadge endpoint="releases/get" />
 
 To view a release and its schemas, click into the release from the releases page and switch to the **Overview** tab at the top.
 
@@ -48,23 +48,15 @@ To view a release and its schemas, click into the release from the releases page
   ![Release Overview](https://assets.mirurobotics.com/docs/v04/images/releases/overview.png)
 </Frame>
 
-**Platform API**
-
-To retrieve a release programmatically, use the <PlatformApiLink endpoint="releases/get">get release endpoint »</PlatformApiLink>
-
-To list releases programmatically, use the <PlatformApiLink endpoint="releases/list">list releases endpoint »</PlatformApiLink>
-
 ## Create a release  <PublisherBadge />
 
-To create a release, visit the config management [create a release](/cfg-mgmt/create-a-release) guide. 
+<PlatformApiBadge endpoint="releases/create" />
 
 If you want to add [file rules](/data-uploads/primitives/file-rules) to your release, visit the data uploads [define file rules](/data-uploads/define-file-rules) guide.
 
-**Platform API**
-
-To create a release programmatically, use the <PlatformApiLink endpoint="releases/create">create release endpoint »</PlatformApiLink>
-
 ## Duplicate a release  <PublisherBadge />
+
+<PlatformApiBadge endpoint="releases/create" tip="Use the create release endpoint to duplicate a release." />
 
 Duplicating a release creates a new release with the same config schemas and git information as the original. 
 
@@ -85,6 +77,8 @@ A dialog will appear—input the new version name and hit **Create**.
 </Frame>
 
 ## Delete a release  <AdminBadge />
+
+<DashboardOnlyBadge />
 
 Deleting a release is only possible if no deployments have been delivered to any device with that release. Otherwise, the release cannot be deleted.
 

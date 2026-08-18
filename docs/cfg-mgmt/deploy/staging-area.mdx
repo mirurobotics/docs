@@ -3,7 +3,7 @@ title: "Staging area"
 ---
 
 import { Framed } from '/snippets/components/framed.jsx';
-import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+import { PlatformApiBadge, PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
 import { OperatorBadge } from '/snippets/components/role-badges.jsx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v04/images/releases/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/releases/stage/header:page.png" borderWidth="30px 0 0 48px" innerRadius="8px 0 0 0" />
@@ -41,6 +41,8 @@ Then select the **Stage** tab at the top of the page.
 </Frame>
 
 ## Stage a deployment  <OperatorBadge />
+
+<PlatformApiBadge endpoint="deployments/create" />
 
 Staging a deployment creates a new deployment in the staging area but does not deploy it
 to any devices.
@@ -98,12 +100,12 @@ list for the selected device.
   ![](https://assets.mirurobotics.com/docs/v04/images/releases/stage/staged-deployment.png)
 </Frame>
 
-**Platform API**
-
 To stage a deployment programmatically, set the `target_status` field to `staged` when
 using the <PlatformApiLink endpoint="deployments/create">create deployment endpoint »</PlatformApiLink>
 
 ## View a deployment
+
+<PlatformApiBadge endpoint="deployments/get" />
 
 To view a deployment in the staging area, select it from the list.
 
@@ -136,13 +138,9 @@ contains audit information—the author, creation date, description, etc.
   </Tab>
 </Tabs>
 
-**Platform API**
-
-To retrieve a deployment programmatically, use the <PlatformApiLink endpoint="deployments/get">get deployment endpoint »</PlatformApiLink>
-
-To list deployments programmatically, use the <PlatformApiLink endpoint="deployments/list">list deployments endpoint »</PlatformApiLink>
-
 ## Patch a deployment  <OperatorBadge />
+
+<PlatformApiBadge endpoint="deployments/create" />
 
 Patching a deployment opens the release editor with the configuration content from an
 existing staged deployment, allowing you to create a replacement staged deployment for
@@ -170,12 +168,12 @@ A dialog will appear asking for a description. Enter a description, then click
 After staging, Miru returns you to the staging area, where the updated staged deployment
 appears in the list.
 
-**Platform API**
-
 To patch a deployment programmatically, set the `parent_id` field to the deployment
 being replaced when using the <PlatformApiLink endpoint="deployments/create">create deployment endpoint »</PlatformApiLink>
 
 ## Archive a deployment  <OperatorBadge />
+
+<PlatformApiBadge endpoint="deployments/archive" />
 
 Archiving a deployment removes it from the staging area and marks it as `archived`.
 
@@ -218,11 +216,9 @@ A confirmation dialog will appear—hit **Archive** to confirm.
   ![Archive Bulk Deployments Dialog](https://assets.mirurobotics.com/docs/v04/images/releases/stage/archive-dialog:bulk.png)
 </Frame>
 
-**Platform API**
-
-To archive a deployment programmatically, use the <PlatformApiLink endpoint="deployments/archive">archive deployment endpoint »</PlatformApiLink>
-
 ## Deploy a deployment  <OperatorBadge />
+
+<PlatformApiBadge endpoint="deployments/deploy" />
 
 Deploying a deployment removes the existing deployment from the device and replaces it
 with the new deployment.
@@ -249,10 +245,6 @@ A confirmation dialog will appear. Hit **Deploy** to confirm.
   ![Deploy Bulk Deployments Dialog](https://assets.mirurobotics.com/docs/v04/images/releases/stage/deploy-dialog:bulk.png)
 </Frame>
 
-**Platform API**
-
-To deploy a deployment programmatically, use the <PlatformApiLink endpoint="deployments/deploy">deploy deployment endpoint »</PlatformApiLink>
-
 ## Deployment drift
 
 When a device receives configuration updates for its current release while having
@@ -278,6 +270,8 @@ The concept of deployment drift ensures that configuration changes aren't lost d
 migrations between releases, preventing misconfigurations.
 
 ## Review a deployment  <OperatorBadge />
+
+<PlatformApiBadge endpoint="deployments/drifts" />
 
 Reviewing a deployment is only possible when a deployment has
 [drifted](#deployment-drift) and is in the `drifted` state. Otherwise, the review button
@@ -339,8 +333,6 @@ deployments are available for historical reference but cannot be deployed.
 
 The ability to apply patches to a drifted deployment is currently unavailable, but will
 be coming soon!
-
-**Platform API**
 
 To list the deployments that have been deployed to a device since a deployment was
 staged, use the <PlatformApiLink endpoint="deployments/drifts">deployment drifts endpoint »</PlatformApiLink>
