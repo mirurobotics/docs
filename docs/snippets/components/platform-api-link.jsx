@@ -25,20 +25,18 @@ export const PlatformApiLink = ({ endpoint, newTab, children }) => {
  * reference in a new tab so the reader keeps their place in the dashboard steps.
  *
  * Where a section covers several endpoints, link the primary one and keep the
- * generic label. Override `tip` when the endpoint doesn't map one-to-one to the
- * operation (e.g. "Use the create release endpoint to duplicate a release.").
+ * generic label.
  *
  * Mintlify tags bare MDX anchors with `class="link"`, which underlines them with
  * a border-bottom rather than text-decoration — both have to be cleared here.
  *
  * @param {string} endpoint - Path after /endpoints/, e.g. "groups/create"
  * @param {string} [label] - Badge text
- * @param {string} [tip] - Hover explanation; defaults to a generic one
  */
-export const PlatformApiBadge = ({ endpoint, label = "Platform API", tip }) => {
+export const PlatformApiBadge = ({ endpoint, label = "Platform API" }) => {
   const href = `/references/platform-api/2026-08-17/endpoints/${endpoint}`;
   return (
-    <Tooltip tip={tip ?? "Open the Platform API reference for this operation"}>
+    <Tooltip tip="Open the Platform API reference for this operation">
       <a
         href={href}
         target="_blank"
@@ -65,12 +63,10 @@ export const PlatformApiBadge = ({ endpoint, label = "Platform API", tip }) => {
  * When an endpoint ships for a marked operation, replace this with a
  * PlatformApiBadge — grep the docs for DashboardOnlyBadge when new endpoints
  * are released.
- *
- * @param {string} [tip] - Hover explanation; defaults to a generic one
  */
-export const DashboardOnlyBadge = ({ tip }) => {
+export const DashboardOnlyBadge = () => {
   return (
-    <Tooltip tip={tip ?? "Platform API does not support this operation"}>
+    <Tooltip tip="Platform API does not support this operation">
       <span
         className="inline-flex items-center gap-1.5 rounded-lg px-2 py-0.5 text-sm text-[rgb(var(--gray-500))] dark:text-[rgb(var(--gray-400))]"
         style={{ marginLeft: '-0.5rem', cursor: 'default' }}
