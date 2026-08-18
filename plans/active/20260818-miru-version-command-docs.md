@@ -23,7 +23,7 @@ After this change, a reader browsing the CLI Reference sees a "Version" page und
 
 - [x] Milestone 1: create `docs/references/cli/version.mdx` and add the docs.json nav entry; commit. (done 2026-08-18T22:35Z)
 - [x] Milestone 2: run the lint/validate suite (`pnpm run test:lint`, `./scripts/lint.sh`, `pnpm run validate`), fix any findings, commit fixes if any. (done 2026-08-18T22:40Z — all three checks exited 0 on the first run; no fixes needed)
-- [ ] Preflight CLEAN: CI green on the pushed branch head before the PR leaves draft.
+- [x] Preflight CLEAN: CI green on the pushed branch head before the PR leaves draft. (2026-08-18T22:41Z — draft PR #165; run 32193736239 on head b62ef92: changes, lint, audit, shell-tests all success on the first round; final plan-update commit re-verified green before completion)
 
 Use timestamps when you complete steps. Split partially completed work into "done" and "remaining" as needed.
 
@@ -50,7 +50,7 @@ Decisions made during authoring (date 2026-08-18, author: plan agent):
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+Completed 2026-08-18. Both milestones landed exactly as planned: `docs/references/cli/version.mdx` created with the plan's embedded content, and a new "Utilities" group added to the CLI Reference product in `docs/docs.json`. All three local checks (`pnpm run test:lint`, `./scripts/lint.sh`, `pnpm run validate`) passed on the first run with no findings, and CI went green on the first preflight round (draft PR #165). No scope changes were needed. Only friction: the plan's Milestone 1 commit command pointed at `plans/backlog/` while the plan lives in `plans/active/`, and no local rendered preview was feasible, so the sidebar check is deferred to the PR's Mintlify preview.
 
 ## Context and Orientation
 
