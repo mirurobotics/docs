@@ -22,7 +22,7 @@ After this change, a reader browsing the CLI Reference sees a "Version" page und
 ## Progress
 
 - [x] Milestone 1: create `docs/references/cli/version.mdx` and add the docs.json nav entry; commit. (done 2026-08-18T22:35Z)
-- [ ] Milestone 2: run the lint/validate suite (`pnpm run test:lint`, `./scripts/lint.sh`, `pnpm run validate`), fix any findings, commit fixes if any.
+- [x] Milestone 2: run the lint/validate suite (`pnpm run test:lint`, `./scripts/lint.sh`, `pnpm run validate`), fix any findings, commit fixes if any. (done 2026-08-18T22:40Z — all three checks exited 0 on the first run; no fixes needed)
 - [ ] Preflight CLEAN: CI green on the pushed branch head before the PR leaves draft.
 
 Use timestamps when you complete steps. Split partially completed work into "done" and "remaining" as needed.
@@ -30,6 +30,7 @@ Use timestamps when you complete steps. Split partially completed work into "don
 ## Surprises & Discoveries
 
 - 2026-08-18: the Milestone 1 commit command in Concrete Steps references `plans/backlog/20260818-miru-version-command-docs.md`, but the plan actually lives at `plans/active/`. Committed the `plans/active/` path instead.
+- 2026-08-18: no local rendered preview (`pnpm dev`) was run in this environment; the sidebar/render check (acceptance criterion 5) is deferred to the PR preview. `pnpm run validate` confirmed the page compiles and the nav entry resolves.
 
 ## Decision Log
 
