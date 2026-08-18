@@ -1,0 +1,51 @@
+// Codespaces / Dev Containers configuration.
+// Format reference: https://containers.dev/implementors/json_reference/
+{
+  "name": "docs",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    // tools/lint is a Go module (go 1.25.3) and scripts/preflight.sh runs it.
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "1.25"
+    }
+  },
+  // Mintlify dev server plus the Go lint tool; no compilation of consequence.
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "16gb",
+    "storage": "32gb"
+  },
+  // pnpm comes from the packageManager field via corepack.
+  "postCreateCommand": "corepack enable && pnpm install",
+  // `mint dev` serves the docs site here.
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "mint dev",
+      "onAutoForward": "notify"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "unifiedjs.vscode-mdx",
+        "davidanson.vscode-markdownlint",
+        "streetsidesoftware.code-spell-checker",
+        "dbaeumer.vscode-eslint",
+        "golang.go",
+        "eamodio.gitlens",
+        "github.vscode-github-actions",
+        "github.vscode-pull-request-github",
+        "redhat.vscode-yaml",
+        "timonwong.shellcheck"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "[go]": {
+          "editor.defaultFormatter": "golang.go"
+        }
+      }
+    }
+  }
+}
