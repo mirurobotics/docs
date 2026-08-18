@@ -4,7 +4,7 @@ title: "Config types"
 
 import { ImmutableBadge, EditableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
-import { DashboardOnlyBadge, PlatformApiBadge } from '/snippets/components/platform-api-link.jsx';
+import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge, PublisherBadge } from '/snippets/components/role-badges.jsx';
 import ConfigTypeDef from '/snippets/definitions/config-type.mdx';
 
@@ -82,7 +82,7 @@ Update the desired fields, then click **Save**.
 
 ## Delete a config type  <AdminBadge />
 
-<DashboardOnlyBadge />
+<PlatformUnsupportedBadge />
 
 Deleting a config type is irreversible. Once a config type is deleted, it cannot be recovered.
 

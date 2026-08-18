@@ -61,10 +61,10 @@ export const PlatformApiBadge = ({ endpoint, label = "Platform API" }) => {
  * carry the "not supported" signal.
  *
  * When an endpoint ships for a marked operation, replace this with a
- * PlatformApiBadge — grep the docs for DashboardOnlyBadge when new endpoints
+ * PlatformApiBadge — grep the docs for PlatformUnsupportedBadge when new endpoints
  * are released.
  */
-export const DashboardOnlyBadge = () => {
+export const PlatformUnsupportedBadge = () => {
   return (
     <Tooltip tip="Platform API does not support this operation">
       <span

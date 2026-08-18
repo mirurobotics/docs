@@ -4,7 +4,7 @@ title: "Releases"
 
 import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
-import { DashboardOnlyBadge, PlatformApiBadge } from '/snippets/components/platform-api-link.jsx';
+import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge, PublisherBadge } from '/snippets/components/role-badges.jsx';
 import ReleaseDef from '/snippets/definitions/release.mdx';
 import SemVer from '/snippets/releases/semver.mdx';
@@ -78,7 +78,7 @@ A dialog will appear—input the new version name and hit **Create**.
 
 ## Delete a release  <AdminBadge />
 
-<DashboardOnlyBadge />
+<PlatformUnsupportedBadge />
 
 Deleting a release is only possible if no deployments have been delivered to any device with that release. Otherwise, the release cannot be deleted.
 

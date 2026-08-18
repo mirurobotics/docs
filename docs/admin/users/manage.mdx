@@ -3,7 +3,7 @@ title: "Manage members"
 ---
 
 import { Framed } from '/snippets/components/framed.jsx';
-import { DashboardOnlyBadge } from '/snippets/components/platform-api-link.jsx';
+import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge } from '/snippets/components/role-badges.jsx';
 import { ROLE_TOOLTIP } from '/snippets/components/users/roles.jsx';
 import { SUSPENDED_TOOLTIP } from '/snippets/components/users/statuses.jsx';
@@ -12,7 +12,7 @@ import { SUSPENDED_TOOLTIP } from '/snippets/components/users/statuses.jsx';
 
 ## Change a member's access <AdminBadge />
 
-<DashboardOnlyBadge />
+<PlatformUnsupportedBadge />
 
 To change a member's <Tooltip tip={ROLE_TOOLTIP.tip} cta={ROLE_TOOLTIP.cta} href={ROLE_TOOLTIP.href}>role</Tooltip>, first navigate to the [members](https://app.mirurobotics.com/settings/members) page.
 
@@ -30,7 +30,7 @@ Select the new role and hit **Save**.
 
 ## Suspend a member  <AdminBadge />
 
-<DashboardOnlyBadge />
+<PlatformUnsupportedBadge />
 
 Suspending a member immediately revokes their access to the workspace and sets their status to <Tooltip tip={SUSPENDED_TOOLTIP.tip} cta={SUSPENDED_TOOLTIP.cta} href={SUSPENDED_TOOLTIP.href}>suspended</Tooltip>:
 

@@ -4,7 +4,7 @@ title: "Groups"
 
 import { EditableBadge, MutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
-import { DashboardOnlyBadge, PlatformApiBadge, PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+import { PlatformApiBadge, PlatformApiLink, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge, GroupManagerBadge } from '/snippets/components/role-badges.jsx';
 import MoveDevice from '/snippets/devices/move.mdx';
 
@@ -117,13 +117,13 @@ To move a group to a new parent group—or to the top level by setting `parent_i
 
 ## Move a device  <AdminBadge />  <GroupManagerBadge />
 
-<DashboardOnlyBadge />
+<PlatformUnsupportedBadge />
 
 <MoveDevice />
 
 ## Delete a group  <AdminBadge />  <GroupManagerBadge />
 
-<DashboardOnlyBadge />
+<PlatformUnsupportedBadge />
 
 A group can only be deleted if it has no subgroups and no assigned devices. If you need to delete a group that still contains devices or subgroups, first move or reassign its contents.
 
@@ -141,7 +141,7 @@ A confirmation dialog will appear. Hit **Delete** to confirm the deletion.
 
 ## Add a member  <AdminBadge />  <GroupManagerBadge />
 
-<DashboardOnlyBadge />
+<PlatformUnsupportedBadge />
 
 To add a member to a group, navigate to the [Groups page](https://app.mirurobotics.com/groups), click the ellipses (...) on the group you want to add a member to, and select **Members** from the dropdown. 
 
@@ -163,7 +163,7 @@ To add a member, input the name of the member you want to add in the search bar 
 
 ## Edit a member's access  <AdminBadge />  <GroupManagerBadge />
 
-<DashboardOnlyBadge />
+<PlatformUnsupportedBadge />
 
 To edit a member's access to a group, navigate to the [Groups page](https://app.mirurobotics.com/groups), click the ellipses (...) on the group you want to edit, and select **Members** from the dropdown. 
 
@@ -191,7 +191,7 @@ A panel will appear with the member's workspace roles and all of their group rol
 
 ## Remove a member  <AdminBadge />  <GroupManagerBadge />
 
-<DashboardOnlyBadge />
+<PlatformUnsupportedBadge />
 
 To remove a member from a group, navigate to the [Groups page](https://app.mirurobotics.com/groups), click the ellipses (...) on the group you want to remove a member from, and select **Members** from the dropdown. 
 

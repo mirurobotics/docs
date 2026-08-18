@@ -5,7 +5,7 @@ title: "Devices"
 import { ONLINE_TOOLTIP, OFFLINE_TOOLTIP } from '/snippets/components/devices/statuses.jsx';
 import { MutableBadge, EditableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
-import { DashboardOnlyBadge, PlatformApiBadge } from '/snippets/components/platform-api-link.jsx';
+import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge, ProvisionerBadge, ViewerBadge } from '/snippets/components/role-badges.jsx';
 import DeviceDef from '/snippets/definitions/device.mdx';
 import MoveDevice from '/snippets/devices/move.mdx';
@@ -176,13 +176,13 @@ On the other hand, <Tooltip tip={OFFLINE_TOOLTIP.tip} cta={OFFLINE_TOOLTIP.cta} 
 
 ## Move a device  <AdminBadge />
 
-<DashboardOnlyBadge />
+<PlatformUnsupportedBadge />
 
 <MoveDevice />
 
 ## Delete a device  <ProvisionerBadge />
 
-<DashboardOnlyBadge />
+<PlatformUnsupportedBadge />
 
 Deleting a device immediately invalidates its authentication session and removes all deployment and configuration history. This action is irreversible. Please proceed with caution.
 
