@@ -1,0 +1,11 @@
+<ParamField path="--root" type="string">
+  Directory to write the cloned config files under. Defaults to the current directory. The directory must already exist.
+
+  Each file is written at its device path relative to this directory, so `/srv/miru/configs/mobility.json` lands at `{--root}/srv/miru/configs/mobility.json`. Pass `/` to write at the computer's root — use `sudo` when those paths need root permissions.
+
+  Examples: `./robot-42-fs`, `/`
+</ParamField>
+
+<ParamField path="--force" type="boolean">
+  Overwrite files that already exist at the destination. Without `--force`, an existing file stops the command and is left untouched.
+</ParamField>

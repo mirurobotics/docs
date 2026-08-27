@@ -210,13 +210,33 @@
           {
             "group": "Authentication",
             "pages": [
-              "references/cli/login"
+              "references/cli/login",
+              "references/cli/whoami"
+            ]
+          },
+          {
+            "group": "Schemas",
+            "pages": [
+              "references/cli/schema-validate"
             ]
           },
           {
             "group": "Releases",
             "pages": [
               "references/cli/release-create"
+            ]
+          },
+          {
+            "group": "Devices",
+            "pages": [
+              "references/cli/device-clone",
+              "references/cli/device-stage"
+            ]
+          },
+          {
+            "group": "Deployments",
+            "pages": [
+              "references/cli/deployment-clone"
             ]
           },
           {

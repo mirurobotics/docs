@@ -2,12 +2,27 @@
 title: "Login"
 ---
 
-import LoginInstructions from "/snippets/references/cli/login.mdx";
+import Examples from "/snippets/references/cli/login/examples.mdx";
+import Flags from "/snippets/references/cli/login/flags.mdx";
+import Scopes from "/snippets/references/cli/login/scopes.mdx";
+import Usage from "/snippets/references/cli/login/usage.mdx";
 
 Authenticate the CLI on your development machine by storing a token locally.
 
-`login` is interactive and prompts for a token. For non-interactive use such as [CI pipelines](/developers/ci/overview), scripts, and AI agents, authenticate with the `MIRU_API_KEY` environment variable instead — see [Authentication](/developers/cli/authentication#api-key).
+`login` is interactive: it opens a browser so you can approve access. For non-interactive use such as [CI pipelines](/developers/ci/overview), scripts, and AI agents, authenticate with the `MIRU_API_KEY` environment variable instead — see [Authentication](/developers/cli/authentication#api-key).
+
+### API key scopes
+
+<Scopes />
 
 ### Usage
 
-<LoginInstructions />
+<Usage />
+
+**Flags**
+
+<Flags />
+
+### Examples
+
+<Examples />

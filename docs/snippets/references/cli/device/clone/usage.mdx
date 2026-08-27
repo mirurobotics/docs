@@ -1,0 +1,17 @@
+`{device-name}` is the name as the dashboard shows it. The device must have a current deployment — to clone a different deployment, use [`miru deployment clone`](/references/cli/deployment-clone).
+
+```bash
+miru device clone {device-name}
+```
+
+Write the mirror somewhere other than the current directory:
+
+```bash
+miru device clone {device-name} --root ./robot-42-fs
+```
+
+Write files at their real device paths on this machine (use `sudo` when those paths need root permissions):
+
+```bash
+sudo miru device clone {device-name} --root /
+```

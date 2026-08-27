@@ -1,0 +1,12 @@
+Each argument is an existing file — the command does not scan directories. Schemas must be annotated the same way they are for a [release](/cfg-mgmt/primitives/schemas/overview#schema-annotations).
+
+```bash
+miru schema validate ./path/to/schema.json
+```
+
+A multi-file [CUE package](/cfg-mgmt/primitives/schemas/languages/cue) is one schema. Pass every file in the package:
+
+```bash
+miru schema validate first.cue second.cue
+miru schema validate ./motion-control/*.cue
+```

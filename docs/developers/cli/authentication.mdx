@@ -10,9 +10,11 @@ The CLI supports two ways to authenticate: an interactive login for your develop
 
 <LoginInstructions />
 
+Confirm the stored identity with [`miru whoami`](/references/cli/whoami).
+
 ## API key
 
-The `login` command prompts for a token, which makes it unsuitable for anything non-interactive. To authenticate without a prompt, export the `MIRU_API_KEY` environment variable instead.
+The `login` command opens a browser so you can approve access, which makes it unsuitable for anything non-interactive. To authenticate without a prompt, export the `MIRU_API_KEY` environment variable instead.
 
 ```bash
 export MIRU_API_KEY=<your-api-key>

@@ -1,28 +1,6 @@
-import { AdminBadge } from '/snippets/components/role-badges.jsx';
+import Examples from "/snippets/references/cli/login/examples.mdx";
+import Usage from "/snippets/references/cli/login/usage.mdx";
 
-To log in, run the `login` command.
+<Usage />
 
-```bash
-miru login
-```
-
-Retrieve your authentication token from the [Secrets](https://app.mirurobotics.com/settings/cli-token) page. <AdminBadge />
-
-<Frame>
-  <img
-    src="https://assets.mirurobotics.com/docs/v04/images/secrets/cli-token/page.png"
-    style={{ borderRadius:"16px" }}
-  />
-</Frame>
-
-Paste the token into the CLI.
-
-```
-Please retrieve your authentication token from the following URL:
-🔗 https://app.mirurobotics.com/settings/cli-token
-
-🔑 Paste your authentication token: **********
-
-Validating authentication token...
-✅ Successfully logged in as Benjamin
-```
+<Examples />

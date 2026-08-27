@@ -1,0 +1,11 @@
+`{device-name}` is the name as the dashboard shows it. `--release` must match a release version exactly. A required slot with no file is an error; an optional slot with no file is skipped.
+
+```bash
+miru device stage {device-name} --release {version}
+```
+
+Read the config files from a local mirror of the device's file system:
+
+```bash
+miru device stage {device-name} --release {version} --root ./robot-42-fs
+```

@@ -1,0 +1,23 @@
+After an interactive login:
+
+```bash command
+$ miru whoami
+
+Authenticated as Benjamin
+  Type         User
+  User Type    Admin
+  Auth Source  Token stored by miru login
+  Workspace    Acme Robotics
+```
+
+When `MIRU_API_KEY` is set:
+
+```bash command
+$ miru whoami
+
+Authenticated as ci-deploy-key
+  Type         API Key
+  Scopes       releases:write, devices:read
+  Auth Source  MIRU_API_KEY environment variable
+  Workspace    Acme Robotics
+```
