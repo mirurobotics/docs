@@ -1,15 +1,33 @@
 <Tabs>
   <Tab title="Current directory">
+
+    By default, cloning a deployment writes the config files to the current directory.
+
     ```bash
     miru deployment clone {deployment-id}
     ```
   </Tab>
 
   <Tab title="Custom root">
-    Write the mirror somewhere other than the current directory:
+
+    Use the `--root` flag to write the config files to a custom root directory.
 
     ```bash
     miru deployment clone {deployment-id} --root ./robot-42-fs
     ```
   </Tab>
+
+  <Tab title="Device paths">
+
+    Use `--root /` to write config files to the exact location they are written to on production devices.
+
+    ```bash
+    miru deployment clone {deployment-id} --root /
+    ```
+
+  </Tab>
 </Tabs>
+
+<Tip>
+  Use `sudo miru ...` to write config files to restricted paths.
+</Tip>

@@ -1,12 +1,16 @@
 <Tabs>
   <Tab title="Current directory">
+
+    By default, cloning a device writes the config files to the current directory.
+
     ```bash
     miru device clone {device-name}
     ```
   </Tab>
 
   <Tab title="Custom root">
-    Write the mirror somewhere other than the current directory:
+
+    Use the `--root` flag to write the config files to a custom root directory.
 
     ```bash
     miru device clone {device-name} --root ./robot-42-fs
@@ -14,10 +18,16 @@
   </Tab>
 
   <Tab title="Device paths">
-    Write files at their real device paths on this machine (use `sudo` when those paths need root permissions):
+
+    Use `--root /` to write config files to the exact location they are written to on production devices.
 
     ```bash
-    sudo miru device clone {device-name} --root /
+    miru device clone {device-name} --root /
     ```
+
   </Tab>
 </Tabs>
+
+<Tip>
+  Use `sudo miru ...` to write config files to restricted paths.
+</Tip>
