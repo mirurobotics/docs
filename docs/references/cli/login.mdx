@@ -2,17 +2,25 @@
 title: "Login"
 ---
 
-import { CliReference } from "/snippets/components/cli-reference.jsx";
 import Examples from "/snippets/references/cli/login/examples.mdx";
 import Flags from "/snippets/references/cli/login/flags.mdx";
 import Usage from "/snippets/references/cli/login/usage.mdx";
+import ExamplesHeading from "/snippets/references/cli/sections/examples.mdx";
+import FlagsHeading from "/snippets/references/cli/sections/flags.mdx";
+import UsageHeading from "/snippets/references/cli/sections/usage.mdx";
 
-<CliReference
-  usage={<Usage />}
-  flags={<Flags />}
-  examples={<Examples />}
->
-  Authenticate the CLI on your development machine by storing a token locally.
+Authenticate the CLI on your development machine by storing a token locally.
 
-  `login` is interactive: it opens a browser so you can approve access. For non-interactive use such as [CI pipelines](/developers/ci/overview), scripts, and AI agents, authenticate with the `MIRU_API_KEY` environment variable instead — see [Authentication](/developers/cli/authentication#api-key).
-</CliReference>
+`login` is interactive: it opens a browser so you can approve access. For non-interactive use such as [CI pipelines](/developers/ci/overview), scripts, and AI agents, authenticate with the `MIRU_API_KEY` environment variable instead — see [Authentication](/developers/cli/authentication#api-key).
+
+<UsageHeading />
+
+<Usage />
+
+<FlagsHeading />
+
+<Flags />
+
+<ExamplesHeading />
+
+<Examples />

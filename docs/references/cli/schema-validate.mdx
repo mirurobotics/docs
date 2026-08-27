@@ -2,17 +2,29 @@
 title: "Validate"
 ---
 
-import { CliReference } from "/snippets/components/cli-reference.jsx";
 import Arguments from "/snippets/references/cli/schema/validate/args.mdx";
 import Examples from "/snippets/references/cli/schema/validate/examples.mdx";
 import Scopes from "/snippets/references/cli/schema/validate/scopes.mdx";
 import Usage from "/snippets/references/cli/schema/validate/usage.mdx";
+import ArgumentsHeading from "/snippets/references/cli/sections/args.mdx";
+import ExamplesHeading from "/snippets/references/cli/sections/examples.mdx";
+import ScopesHeading from "/snippets/references/cli/sections/scopes.mdx";
+import UsageHeading from "/snippets/references/cli/sections/usage.mdx";
 
-<CliReference
-  scopes={<Scopes />}
-  usage={<Usage />}
-  args={<Arguments />}
-  examples={<Examples />}
->
-  Validate a config schema against the same server rules as [`miru release create`](/references/cli/release-create), without creating anything.
-</CliReference>
+Validate a config schema against the same server rules as [`miru release create`](/references/cli/release-create), without creating anything.
+
+<ScopesHeading />
+
+<Scopes />
+
+<UsageHeading />
+
+<Usage />
+
+<ArgumentsHeading />
+
+<Arguments />
+
+<ExamplesHeading />
+
+<Examples />

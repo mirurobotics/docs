@@ -2,21 +2,37 @@
 title: "Stage"
 ---
 
-import { CliReference } from "/snippets/components/cli-reference.jsx";
 import Arguments from "/snippets/references/cli/device/stage/args.mdx";
 import Examples from "/snippets/references/cli/device/stage/examples.mdx";
 import Flags from "/snippets/references/cli/device/stage/flags.mdx";
 import Scopes from "/snippets/references/cli/device/stage/scopes.mdx";
 import Usage from "/snippets/references/cli/device/stage/usage.mdx";
+import ArgumentsHeading from "/snippets/references/cli/sections/args.mdx";
+import ExamplesHeading from "/snippets/references/cli/sections/examples.mdx";
+import FlagsHeading from "/snippets/references/cli/sections/flags.mdx";
+import ScopesHeading from "/snippets/references/cli/sections/scopes.mdx";
+import UsageHeading from "/snippets/references/cli/sections/usage.mdx";
 
-<CliReference
-  scopes={<Scopes />}
-  usage={<Usage />}
-  args={<Arguments />}
-  flags={<Flags />}
-  examples={<Examples />}
->
-  Stage a deployment of a [release](/primitives/releases) from config files on disk. This is the inverse of [`miru device clone`](/references/cli/device-clone).
+Stage a deployment of a [release](/primitives/releases) from config files on disk. This is the inverse of [`miru device clone`](/references/cli/device-clone).
 
-  The deployment is [staged](/cfg-mgmt/deploy/staging-area), not deployed.
-</CliReference>
+The deployment is [staged](/cfg-mgmt/deploy/staging-area), not deployed.
+
+<ScopesHeading />
+
+<Scopes />
+
+<UsageHeading />
+
+<Usage />
+
+<ArgumentsHeading />
+
+<Arguments />
+
+<FlagsHeading />
+
+<Flags />
+
+<ExamplesHeading />
+
+<Examples />

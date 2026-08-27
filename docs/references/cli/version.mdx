@@ -2,18 +2,22 @@
 title: "Version"
 ---
 
-import { CliReference } from "/snippets/components/cli-reference.jsx";
+import ExamplesHeading from "/snippets/references/cli/sections/examples.mdx";
+import UsageHeading from "/snippets/references/cli/sections/usage.mdx";
 import Examples from "/snippets/references/cli/version/examples.mdx";
 import Usage from "/snippets/references/cli/version/usage.mdx";
 
-<CliReference
-  usage={<Usage />}
-  examples={<Examples />}
->
-  Print the version information of the installed CLI.
+Print the version information of the installed CLI.
 
-  `version` runs entirely offline — it takes no flags and requires no authentication.
-</CliReference>
+`version` runs entirely offline — it takes no flags and requires no authentication.
+
+<UsageHeading />
+
+<Usage />
+
+<ExamplesHeading />
+
+<Examples />
 
 `Version`, `Commit`, and `Built` are stamped at release time. `Go` and `OS/Arch` report the Go toolchain and the platform the binary was built for.
 

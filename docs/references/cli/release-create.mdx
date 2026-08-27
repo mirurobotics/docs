@@ -2,31 +2,45 @@
 title: "Create"
 ---
 
-import { CliReference } from "/snippets/components/cli-reference.jsx";
 import PushExistingSchemas from "/snippets/references/cli/releases/create/existing-schemas.mdx";
 import Flags from "/snippets/references/cli/releases/create/flags.mdx";
 import PushNewSchemas from "/snippets/references/cli/releases/create/new-schemas.mdx";
 import Requirements from "/snippets/references/cli/releases/create/requirements.mdx";
 import Scopes from "/snippets/references/cli/releases/create/scopes.mdx";
 import Usage from "/snippets/references/cli/releases/create/usage.mdx";
+import ExamplesHeading from "/snippets/references/cli/sections/examples.mdx";
+import FlagsHeading from "/snippets/references/cli/sections/flags.mdx";
+import RequirementsHeading from "/snippets/references/cli/sections/requirements.mdx";
+import ScopesHeading from "/snippets/references/cli/sections/scopes.mdx";
+import UsageHeading from "/snippets/references/cli/sections/usage.mdx";
 
-<CliReference
-  requirements={<Requirements />}
-  scopes={<Scopes />}
-  usage={<Usage />}
-  flags={<Flags />}
-  examples={
-    <Tabs>
-      <Tab title="New Schemas">
-        <PushNewSchemas />
-      </Tab>
-      <Tab title="Existing Schemas">
-        <PushExistingSchemas />
-      </Tab>
-    </Tabs>
-  }
->
-  Create a release along with its associated git commit, config schemas, file rules in Miru.
+Create a release along with its associated git commit, config schemas, file rules in Miru.
 
-  For a more detailed guide on creating releases, visit the [release creation](/cfg-mgmt/create-a-release) guide. To include file rules, see the [define file rules](/data-uploads/define-file-rules) guide.
-</CliReference>
+For a more detailed guide on creating releases, visit the [release creation](/cfg-mgmt/create-a-release) guide. To include file rules, see the [define file rules](/data-uploads/define-file-rules) guide.
+
+<RequirementsHeading />
+
+<Requirements />
+
+<ScopesHeading />
+
+<Scopes />
+
+<UsageHeading />
+
+<Usage />
+
+<FlagsHeading />
+
+<Flags />
+
+<ExamplesHeading />
+
+<Tabs>
+  <Tab title="New Schemas">
+    <PushNewSchemas />
+  </Tab>
+  <Tab title="Existing Schemas">
+    <PushExistingSchemas />
+  </Tab>
+</Tabs>
