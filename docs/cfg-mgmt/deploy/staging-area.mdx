@@ -2,6 +2,7 @@
 title: "Staging area"
 ---
 
+import { CliBadge } from '/snippets/components/cli-link.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
 import { PlatformApiBadge, PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
 import { OperatorBadge } from '/snippets/components/role-badges.jsx';
@@ -42,6 +43,7 @@ Then select the **Stage** tab at the top of the page.
 
 ## Stage a deployment  <OperatorBadge />
 
+<CliBadge command="device-stage" />
 <PlatformApiBadge endpoint="deployments/create" />
 
 Staging a deployment creates a new deployment in the staging area but does not deploy it
@@ -53,8 +55,6 @@ deployment.
 
 To stage a deployment from the dashboard, click the **Stage** button in the top right. If there are no
 staged deployments yet, click **Stage Deployment** in the empty state instead.
-
-To stage from config files on disk instead, use [`miru device stage`](/references/cli/device-stage).
 
 <Frame>
   ![](https://assets.mirurobotics.com/docs/v04/images/releases/stage/empty-staging.png)
@@ -107,6 +107,7 @@ using the <PlatformApiLink endpoint="deployments/create">create deployment endpo
 
 ## View a deployment
 
+<CliBadge command="deployment-clone" />
 <PlatformApiBadge endpoint="deployments/get" />
 
 To view a deployment in the staging area, select it from the list.

@@ -1,23 +1,38 @@
-After an interactive login:
+<Tabs>
+  <Tab title="Login">
+    <CodeGroup>
+      ```bash Admin
+      $ miru whoami
 
-```bash command
-$ miru whoami
+      Authenticated as Benjamin
+        Type         User
+        User Type    Admin
+        Auth Source  Token stored by miru login
+        Workspace    Acme Robotics
+      ```
 
-Authenticated as Benjamin
-  Type         User
-  User Type    Admin
-  Auth Source  Token stored by miru login
-  Workspace    Acme Robotics
-```
+      ```bash Member
+      $ miru whoami
 
-When `MIRU_API_KEY` is set:
+      Authenticated as Benjamin
+        Type         User
+        User Type    Member
+        Roles        Publisher, Operator
+        Auth Source  Token stored by miru login
+        Workspace    Acme Robotics
+      ```
+    </CodeGroup>
+  </Tab>
 
-```bash command
-$ miru whoami
+  <Tab title="API Key">
+    ```bash command
+    $ miru whoami
 
-Authenticated as ci-deploy-key
-  Type         API Key
-  Scopes       releases:write, devices:read
-  Auth Source  MIRU_API_KEY environment variable
-  Workspace    Acme Robotics
-```
+    Authenticated as ci-publish-key
+      Type         API Key
+      Scopes       releases:write, config_schemas:write, 
+      Auth Source  MIRU_API_KEY environment variable
+      Workspace    Acme Robotics
+    ```
+  </Tab>
+</Tabs>
