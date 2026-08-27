@@ -1,0 +1,38 @@
+<Tabs>
+  <Tab title="Login">
+    <CodeGroup>
+      ```bash Admin
+      $ miru whoami
+
+      Authenticated as Benjamin
+        Type         User
+        User Type    Admin
+        Auth Source  Token stored by miru login
+        Workspace    Acme Robotics
+      ```
+
+      ```bash Member
+      $ miru whoami
+
+      Authenticated as Benjamin
+        Type         User
+        User Type    Member
+        Roles        Publisher, Operator
+        Auth Source  Token stored by miru login
+        Workspace    Acme Robotics
+      ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="API Key">
+    ```bash
+    $ miru whoami
+
+    Authenticated as ci-publish-key
+      Type         API Key
+      Scopes       releases:write, config_schemas:write, 
+      Auth Source  MIRU_API_KEY environment variable
+      Workspace    Acme Robotics
+    ```
+  </Tab>
+</Tabs>

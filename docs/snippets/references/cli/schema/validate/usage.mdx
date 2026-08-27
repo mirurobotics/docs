@@ -1,0 +1,20 @@
+<Tabs>
+  <Tab title="Single File Schema">
+    ```bash
+    miru schema validate ./path/to/schema.json
+    ```
+  </Tab>
+
+  <Tab title="Multi-File Schema">
+
+    <CodeGroup>
+      ```bash Files
+      miru schema validate first.cue second.cue
+      ```
+
+      ```bash Glob
+      miru schema validate ./motion-control/*.cue
+      ```
+    </CodeGroup>
+  </Tab>
+</Tabs>
