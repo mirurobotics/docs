@@ -2,15 +2,17 @@
 
 Copy this skeleton for a new CLI reference command. Put section bodies in
 `docs/snippets/references/cli/{group}/{command}/` — one file per section, named
-after the heading: `scopes.mdx`, `usage.mdx`, `flags.mdx`, `examples.mdx`.
+after the heading: `scopes.mdx`, `usage.mdx`, `args.mdx`, `flags.mdx`,
+`examples.mdx`.
 
 **Requirements is optional.** Most commands have none — do not add the heading,
 the import, or a `requirements.mdx` file. Include it only when the command
 fails unless a checklist of preconditions holds (git state, annotations, and
 so on). `miru release create` is the example that needs it.
 
-Omit **Flags** when the command has none. Keep the remaining headings in this
-order: API key scopes, Usage (Flags nested under it), Examples.
+Omit **Arguments** when the command has no positional arguments. Omit **Flags**
+when it has none. Keep the remaining headings in this order: API key scopes,
+Usage (Arguments then Flags nested under it), Examples.
 
 The page itself is a short intro plus these section imports. Canonical live
 example: `docs/references/cli/release-create.mdx`.
@@ -20,6 +22,7 @@ example: `docs/references/cli/release-create.mdx`.
 title: "Command"
 ---
 
+import Arguments from "/snippets/references/cli/{group}/{command}/args.mdx";
 import Examples from "/snippets/references/cli/{group}/{command}/examples.mdx";
 import Flags from "/snippets/references/cli/{group}/{command}/flags.mdx";
 import Scopes from "/snippets/references/cli/{group}/{command}/scopes.mdx";
@@ -35,6 +38,10 @@ there is one.
 ### Usage
 
 <Usage />
+
+**Arguments**
+
+<Arguments />
 
 **Flags**
 
@@ -64,9 +71,16 @@ of the intro.
 If the command does not use an API key, say so and point at Authentication.
 
 **Usage** — how to invoke the command (invocation variants, not transcripts).
+Use `<Tabs>` when there is more than one invocation.
 
-**Flags** — `<ParamField>` entries nested under Usage. Share a flags snippet
-across commands when the flags are identical.
+**Arguments** (optional) — `<ParamField>` entries for positional arguments,
+nested under Usage. Omit when the command takes none (`login`, `whoami`,
+`version`, `release create`).
 
-**Examples** — a `bash command` fence that starts with `$ miru …` and includes
-the full CLI transcript, matching `miru release create`. Never output-only.
+**Flags** (optional) — `<ParamField>` entries nested under Usage, after
+Arguments. Share a flags snippet across commands when the flags are identical.
+
+**Examples** — use `<Tabs>` when there is more than one transcript. A single
+fence has no language title (` ```bash `, not ` ```bash command `).
+Transcripts start with `$ miru …` and include the full CLI output, matching
+`miru release create`. Never output-only.

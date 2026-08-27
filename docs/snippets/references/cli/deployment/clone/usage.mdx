@@ -1,11 +1,15 @@
-Use the full deployment id (`dpl_…`). The dashboard short id (`DPL-7xKqW`) is not accepted.
+<Tabs>
+  <Tab title="Current directory">
+    ```bash
+    miru deployment clone {deployment-id}
+    ```
+  </Tab>
 
-```bash
-miru deployment clone {deployment-id}
-```
+  <Tab title="Custom root">
+    Write the mirror somewhere other than the current directory:
 
-Write the mirror somewhere other than the current directory:
-
-```bash
-miru deployment clone {deployment-id} --root ./robot-42-fs
-```
+    ```bash
+    miru deployment clone {deployment-id} --root ./robot-42-fs
+    ```
+  </Tab>
+</Tabs>
