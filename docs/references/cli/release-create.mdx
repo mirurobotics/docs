@@ -2,6 +2,7 @@
 title: "Create"
 ---
 
+import { CliReference } from "/snippets/components/cli-reference.jsx";
 import PushExistingSchemas from "/snippets/references/cli/releases/create/existing-schemas.mdx";
 import Flags from "/snippets/references/cli/releases/create/flags.mdx";
 import PushNewSchemas from "/snippets/references/cli/releases/create/new-schemas.mdx";
@@ -9,33 +10,23 @@ import Requirements from "/snippets/references/cli/releases/create/requirements.
 import Scopes from "/snippets/references/cli/releases/create/scopes.mdx";
 import Usage from "/snippets/references/cli/releases/create/usage.mdx";
 
-Create a release along with its associated git commit, config schemas, file rules in Miru. 
+<CliReference
+  requirements={<Requirements />}
+  scopes={<Scopes />}
+  usage={<Usage />}
+  flags={<Flags />}
+  examples={
+    <Tabs>
+      <Tab title="New Schemas">
+        <PushNewSchemas />
+      </Tab>
+      <Tab title="Existing Schemas">
+        <PushExistingSchemas />
+      </Tab>
+    </Tabs>
+  }
+>
+  Create a release along with its associated git commit, config schemas, file rules in Miru.
 
-For a more detailed guide on creating releases, visit the [release creation](/cfg-mgmt/create-a-release) guide. To include file rules, see the [define file rules](/data-uploads/define-file-rules) guide.
-
-### Requirements
-
-<Requirements />
-
-### API key scopes
-
-<Scopes />
-
-### Usage
-
-<Usage />
-
-**Flags**
-
-<Flags />
-
-### Examples
-
-<Tabs>
-  <Tab title="New Schemas">
-    <PushNewSchemas />
-  </Tab>
-  <Tab title="Existing Schemas">
-    <PushExistingSchemas />
-  </Tab>
-</Tabs>
+  For a more detailed guide on creating releases, visit the [release creation](/cfg-mgmt/create-a-release) guide. To include file rules, see the [define file rules](/data-uploads/define-file-rules) guide.
+</CliReference>

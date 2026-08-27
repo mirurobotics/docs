@@ -2,25 +2,18 @@
 title: "Version"
 ---
 
-Print the version information of the installed CLI.
+import { CliReference } from "/snippets/components/cli-reference.jsx";
+import Examples from "/snippets/references/cli/version/examples.mdx";
+import Usage from "/snippets/references/cli/version/usage.mdx";
 
-`version` runs entirely offline — it takes no flags and requires no authentication.
+<CliReference
+  usage={<Usage />}
+  examples={<Examples />}
+>
+  Print the version information of the installed CLI.
 
-### Usage
-
-```bash
-miru version
-```
-
-```bash
-$ miru version
-Miru CLI
-Version: 0.11.1
-Commit: 8875d87370ffda36b4e8ec28704466729270667e
-Built: 2026-08-27T20:18:26Z
-Go: go1.26.6
-OS/Arch: linux/amd64
-```
+  `version` runs entirely offline — it takes no flags and requires no authentication.
+</CliReference>
 
 `Version`, `Commit`, and `Built` are stamped at release time. `Go` and `OS/Arch` report the Go toolchain and the platform the binary was built for.
 

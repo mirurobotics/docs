@@ -2,30 +2,19 @@
 title: "Clone"
 ---
 
+import { CliReference } from "/snippets/components/cli-reference.jsx";
 import Flags from "/snippets/references/cli/clone/flags.mdx";
 import Arguments from "/snippets/references/cli/device/clone/args.mdx";
 import Examples from "/snippets/references/cli/device/clone/examples.mdx";
 import Scopes from "/snippets/references/cli/device/clone/scopes.mdx";
 import Usage from "/snippets/references/cli/device/clone/usage.mdx";
 
-Write the config files of a device's current deployment onto the local file system.
-
-### API key scopes
-
-<Scopes />
-
-### Usage
-
-<Usage />
-
-**Arguments**
-
-<Arguments />
-
-**Flags**
-
-<Flags />
-
-### Examples
-
-<Examples />
+<CliReference
+  scopes={<Scopes />}
+  usage={<Usage />}
+  args={<Arguments />}
+  flags={<Flags />}
+  examples={<Examples />}
+>
+  Write the config files of a device's current deployment onto the local file system.
+</CliReference>

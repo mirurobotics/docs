@@ -2,17 +2,15 @@
 title: "Whoami"
 ---
 
+import { CliReference } from "/snippets/components/cli-reference.jsx";
 import Examples from "/snippets/references/cli/whoami/examples.mdx";
 import Usage from "/snippets/references/cli/whoami/usage.mdx";
 
-Show the principal the CLI is currently authenticated as, and which workspace that principal belongs to.
+<CliReference
+  usage={<Usage />}
+  examples={<Examples />}
+>
+  Show the principal the CLI is currently authenticated as, and which workspace that principal belongs to.
 
-Use this to confirm a [login](/references/cli/login) or `MIRU_API_KEY` is the identity you expect before running other commands.
-
-### Usage
-
-<Usage />
-
-### Examples
-
-<Examples />
+  Use this to confirm a [login](/references/cli/login) or `MIRU_API_KEY` is the identity you expect before running other commands.
+</CliReference>

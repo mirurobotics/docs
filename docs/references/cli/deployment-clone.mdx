@@ -2,32 +2,21 @@
 title: "Clone"
 ---
 
+import { CliReference } from "/snippets/components/cli-reference.jsx";
 import Flags from "/snippets/references/cli/clone/flags.mdx";
 import Arguments from "/snippets/references/cli/deployment/clone/args.mdx";
 import Examples from "/snippets/references/cli/deployment/clone/examples.mdx";
 import Scopes from "/snippets/references/cli/deployment/clone/scopes.mdx";
 import Usage from "/snippets/references/cli/deployment/clone/usage.mdx";
 
-Write a deployment's config files onto the local file system.
+<CliReference
+  scopes={<Scopes />}
+  usage={<Usage />}
+  args={<Arguments />}
+  flags={<Flags />}
+  examples={<Examples />}
+>
+  Write a deployment's config files onto the local file system.
 
-To clone the config files of a device's current deployment, use [`miru device clone`](/references/cli/device-clone).
-
-### API key scopes
-
-<Scopes />
-
-### Usage
-
-<Usage />
-
-**Arguments**
-
-<Arguments />
-
-**Flags**
-
-<Flags />
-
-### Examples
-
-<Examples />
+  To clone the config files of a device's current deployment, use [`miru device clone`](/references/cli/device-clone).
+</CliReference>
