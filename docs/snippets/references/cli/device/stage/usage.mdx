@@ -1,17 +1,27 @@
-A required slot with no file is an error. An optional slot with no file is skipped.
-
 <Tabs>
   <Tab title="Current directory">
+
+    By default, staging a device reads the config files from the current directory.
+
     ```bash
-    miru device stage {device-name} --release {version}
+    miru device stage {device-name} 
+      \ --release {version}
+      \ --description {description}
     ```
   </Tab>
 
   <Tab title="Custom root">
-    Read the config files from a local mirror of the device's file system:
+    Use the `--root` flag to read the config files from a custom root directory.
 
     ```bash
-    miru device stage {device-name} --release {version} --root ./robot-42-fs
+    miru device stage {device-name} 
+      \ --release {version} 
+      \ --description {description}
+      \ --root ./robot-42-fs
     ```
   </Tab>
 </Tabs>
+
+<Tip>
+  Use `sudo miru ...` to read config files from restricted paths.
+</Tip>
