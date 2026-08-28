@@ -7,6 +7,45 @@ description: "Changelog and migration steps for the Miru CLI"
 import { Dropdown } from '/snippets/components/api-dropdown.jsx';
 
 
+# v0.11.1
+
+*August 27, 2026*
+
+CLI `v0.11.1` adds commands for cloning and staging device configs, validating a schema without creating a release, and showing the authenticated principal. Interactive login now uses the OAuth device authorization flow instead of pasting a dashboard token.
+
+## Breaking changes
+
+<Dropdown title="Interactive login">
+
+`miru login` no longer prompts you to paste a token from the dashboard. It opens a verification URL in your browser and waits until you approve access. On SSH sessions or headless machines, pass `--no-browser` to print the URL instead of opening it.
+
+Stored tokens from earlier logins and `MIRU_API_KEY` authentication are unchanged.
+
+</Dropdown>
+
+## Features
+
+- Add [`miru device clone`](/references/cli/device-clone) to write a device's current deployment configs onto disk
+- Add [`miru device stage`](/references/cli/device-stage) to stage a deployment from local config files
+- Add [`miru deployment clone`](/references/cli/deployment-clone) to write a specific deployment's configs onto disk
+- Add [`miru schema validate`](/references/cli/schema-validate) to check a schema against the same server rules as `miru release create` without creating anything
+- Add [`miru whoami`](/references/cli/whoami) to show the authenticated principal and workspace
+- Add the `MIRU_HOME` environment variable to override the CLI state directory (defaults to `~/.miru`)
+
+## Improvements
+
+- `miru version` now prints a `Miru CLI` header plus `Go` and `OS/Arch` lines
+- Clone and stage transcripts render config files as a single tree
+- Refuse to create CLI state under a directory this user does not own, and report the resolved credentials path
+
+## Fixes
+
+- Fix a race where `miru login` could miss a browser approval before the first poll
+- Show API key scopes on `miru whoami`
+- Report a permission-denied or read-only clone destination as such, and an unreachable stage slot file as unreachable rather than missing
+
+---
+
 # v0.11.0
 
 *August 12, 2026*
