@@ -7,6 +7,44 @@ description: "Changelog and migration steps for the Miru CLI"
 import { Dropdown } from '/snippets/components/api-dropdown.jsx';
 
 
+# v0.12.0
+
+*August 27, 2026*
+
+CLI `v0.12.0` adds commands for cloning and staging device configs, validating a schema without creating a release, and showing the authenticated principal. Interactive login now uses the OAuth device authorization flow instead of pasting a dashboard token. The previous login flow is no longer supported, so local login requires `v0.12.0` or later.
+
+## Breaking changes
+
+<Dropdown title="Interactive login">
+
+`miru login` no longer prompts you to paste a token from the dashboard. It opens a verification URL in your browser and waits until you approve access. On SSH sessions or headless machines, pass `--no-browser` to print the URL instead of opening it.
+
+Stored tokens from earlier logins and `MIRU_API_KEY` authentication are unchanged.
+
+</Dropdown>
+
+<Danger>
+The previous paste-token login flow is no longer supported. CLI versions before `v0.12.0` do not support `miru login`. Upgrade to `v0.12.0` or later to log in to the CLI on your development machine.
+</Danger>
+
+CI pipelines that authenticate with `MIRU_API_KEY` continue to work with earlier CLI versions.
+
+## Features
+
+- Add [`miru device clone`](/references/cli/device-clone) to write the config files of a device's current deployment onto your local machine's disk
+- Add [`miru device stage`](/references/cli/device-stage) to stage a deployment from your local machine's disk
+- Add [`miru deployment clone`](/references/cli/deployment-clone) to write the config files of any deployment onto your local machine's disk
+- Add [`miru schema validate`](/references/cli/schema-validate) to check a schema against the same server rules as `miru release create` without creating any resources
+- Add [`miru whoami`](/references/cli/whoami) to show the authenticated principal and workspace
+- Add the `MIRU_HOME` environment variable to override the CLI state directory (defaults to `~/.miru`)
+
+## Improvements
+
+- `miru version` now prints a `Miru CLI` header plus `Go` and `OS/Arch` lines
+- Refuse to create CLI state under a directory the CLI user does not own
+
+---
+
 # v0.11.0
 
 *August 12, 2026*
