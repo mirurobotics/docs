@@ -24,13 +24,14 @@ The CLI Reference product currently documents commands shipped through CLI `v0.1
 - [x] Milestone 1: Re-check the post-release command inventory, add the `miru config validate` reference page/snippets/nav entry, and commit.
 - [x] Milestone 2: Add the `miru deployment validate` reference page/snippets/nav entry, and commit.
 - [x] Milestone 3: Run local docs checks, fix findings, and commit any fixes.
-- [ ] Milestone 4: Push the branch, open or update a draft PR, and drive preflight to `CLEAN`.
+- [x] Milestone 4: Push the branch, open or update a draft PR, and drive preflight to `CLEAN`.
 
 ## Surprises & Discoveries
 
 - 2026-09-03 — Re-running `cli-private` inventory after `git fetch --all --tags --prune` still found `v0.12.0` as the latest stable tag and `v0.12.1-beta.4` as the newest beta tag. No additional post-`v0.12.0` user-facing commands appeared beyond `miru config validate` and `miru deployment validate`.
 - 2026-09-03 — Source refine found the deployment validate prose needed to say optional slots are skipped only when their files are absent. If an optional slot file exists, the CLI reads and validates it.
 - 2026-09-03 — Local validation passed with no docs fixes required, so no validation-fix commit was needed.
+- 2026-09-03 — Draft PR #176 was opened and GitHub CI passed on the implementation head. A final plan-status commit was then pushed and watched as the branch head.
 
 ## Decision Log
 
@@ -40,7 +41,7 @@ The CLI Reference product currently documents commands shipped through CLI `v0.1
 
 ## Outcomes & Retrospective
 
-(Summarize at completion or major milestones.)
+Implemented the planned CLI reference coverage on `docs/update-cli-command-reference`. The docs now include `miru config validate` and `miru deployment validate` reference pages, reusable snippets for usage, flags, scopes, and examples, and navigation entries under CLI Reference. Scope snippets were checked against the CLI, backend authorization, and OpenAPI sources. Local validation passed with `pnpm run test:lint`, `./scripts/lint.sh`, and `pnpm run validate`; draft PR #176 was opened for CI preflight.
 
 ## Context and Orientation
 
