@@ -21,14 +21,16 @@ The CLI Reference product currently documents commands shipped through CLI `v0.1
 
 ## Progress
 
-- [ ] Milestone 1: Re-check the post-release command inventory, add the `miru config validate` reference page/snippets/nav entry, and commit.
-- [ ] Milestone 2: Add the `miru deployment validate` reference page/snippets/nav entry, and commit.
-- [ ] Milestone 3: Run local docs checks, fix findings, and commit any fixes.
+- [x] Milestone 1: Re-check the post-release command inventory, add the `miru config validate` reference page/snippets/nav entry, and commit.
+- [x] Milestone 2: Add the `miru deployment validate` reference page/snippets/nav entry, and commit.
+- [x] Milestone 3: Run local docs checks, fix findings, and commit any fixes.
 - [ ] Milestone 4: Push the branch, open or update a draft PR, and drive preflight to `CLEAN`.
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds.)
+- 2026-09-03 — Re-running `cli-private` inventory after `git fetch --all --tags --prune` still found `v0.12.0` as the latest stable tag and `v0.12.1-beta.4` as the newest beta tag. No additional post-`v0.12.0` user-facing commands appeared beyond `miru config validate` and `miru deployment validate`.
+- 2026-09-03 — Source refine found the deployment validate prose needed to say optional slots are skipped only when their files are absent. If an optional slot file exists, the CLI reads and validates it.
+- 2026-09-03 — Local validation passed with no docs fixes required, so no validation-fix commit was needed.
 
 ## Decision Log
 
@@ -55,7 +57,7 @@ No other post-`v0.12.0` `AddCommand` or `Use:` diff represented a new user-facin
 
 `miru config validate` validates one local config instance file against a persisted config schema without creating anything. It requires authentication. The schema is selected either by full schema ID with `--schema-id cfg_sch_...` or by `--release <version>` plus `--config-type <slug-or-name>`. `--schema-id` is mutually exclusive with `--release` and `--config-type`; `--release` and `--config-type` are required together. A dashboard short ID such as `SCH-KKV8s` is not accepted. Success prints `Config Valid`.
 
-`miru deployment validate` validates local config files against every required slot in a release without creating a deployment. It requires `--release <version>` and accepts optional `--root <dir>`, defaulting to the current directory. Required slots with no file fail; optional slots are skipped; extra files on disk are ignored. Success prints the file tree followed by `Deployment Valid`.
+`miru deployment validate` validates local config files against every required slot in a release without creating a deployment. It requires `--release <version>` and accepts optional `--root <dir>`, defaulting to the current directory. Required slots with no file fail; optional slots with no file are skipped; optional slot files that exist are validated; extra files on disk are ignored. Success prints the file tree followed by `Deployment Valid`.
 
 API key scopes must be checked from source before writing the snippets. At authoring time, backend authorization showed config-instance validation needs the config schema get permission, exposed to users as `config_schemas:read` (`backend/internal/configs/services/config_instances/authz.go`). Selecting a schema by release also needs `releases:read`. `miru deployment validate` fetches a release with expanded config schemas and then validates each local instance, so it needs `releases:read` and `config_schemas:read`. It does not read an existing deployment, so do not list `deployments:read` unless the implementation has changed.
 
