@@ -427,6 +427,9 @@
     },
     "playground": {
       "display": "simple"
+    },
+    "examples": {
+      "prefill": true
     }
   },
   "integrations": {
