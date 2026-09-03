@@ -242,7 +242,8 @@
           {
             "group": "Deployments",
             "pages": [
-              "references/cli/deployment-clone"
+              "references/cli/deployment-clone",
+              "references/cli/deployment-validate"
             ]
           },
           {
