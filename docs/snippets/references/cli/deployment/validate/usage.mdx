@@ -1,19 +1,37 @@
 <Tabs>
   <Tab title="Current directory">
+
+    By default, validating a deployment reads the config files from the current directory.
+
     ```bash
-    miru deployment validate --release {release-version}
+    miru deployment validate \
+      --release {release-version}
     ```
   </Tab>
 
   <Tab title="Custom root">
+
+    Use the `--root` flag to read the config files from a custom root directory.
+
     ```bash
-    miru deployment validate --release {release-version} --root {root-dir}
+    miru deployment validate \
+      --release {release-version} \
+      --root {root-dir}
     ```
   </Tab>
 
   <Tab title="Device paths">
+
+    Use `--root /` to read config files from the exact location they are written to on production devices.
+
     ```bash
-    miru deployment validate --release {release-version} --root /
+    miru deployment validate \
+      --release {release-version} \
+      --root /
     ```
   </Tab>
 </Tabs>
+
+<Tip>
+  Use `sudo miru ...` to read config files from restricted paths.
+</Tip>
