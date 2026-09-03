@@ -221,6 +221,12 @@
             ]
           },
           {
+            "group": "Configs",
+            "pages": [
+              "references/cli/config-validate"
+            ]
+          },
+          {
             "group": "Releases",
             "pages": [
               "references/cli/release-create"
@@ -236,7 +242,8 @@
           {
             "group": "Deployments",
             "pages": [
-              "references/cli/deployment-clone"
+              "references/cli/deployment-clone",
+              "references/cli/deployment-validate"
             ]
           },
           {

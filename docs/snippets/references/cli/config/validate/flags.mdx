@@ -1,0 +1,23 @@
+<ParamField path="--schema-id" type="string">
+  Full config schema ID to validate against. Dashboard short IDs are not accepted.
+
+  Mutually exclusive with `--release` and `--config-type`.
+
+  Examples: `cfg_sch_7xKqW1mZ3nBvTgL5cRs9dYuP`
+</ParamField>
+
+<ParamField path="--release" type="string">
+  Release version used to find the config schema for `--config-type`.
+
+  Required when `--config-type` is provided. Mutually exclusive with `--schema-id`.
+
+  Examples: `v1.2.0`
+</ParamField>
+
+<ParamField path="--config-type" type="string">
+  Config type slug or name within the selected release.
+
+  Required when `--release` is provided. Mutually exclusive with `--schema-id`.
+
+  Examples: `motion-control`, `Motion Control`
+</ParamField>
