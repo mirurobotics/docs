@@ -44,7 +44,7 @@ After this change, a customer reading docs.mirurobotics.com can install the `mir
 
 ## Outcomes & Retrospective
 
-Summarize at completion or major milestones.
+- Milestone 3: `pnpm run test:lint` passed; `./scripts/lint.sh` printed `All documentation lint checks passed.`; `pnpm run validate` printed `success build validation passed`. No lint-fix commit.
 
 
 ## Context and Orientation
