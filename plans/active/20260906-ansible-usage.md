@@ -23,8 +23,8 @@ After this change, a customer reading docs.mirurobotics.com can install the `mir
 
 - [x] Add `docs/cfg-mgmt/provision-devices/ansible.mdx`, nav slug, and CSpell words.
 - [x] Add cross-links on overview, provisioning-tokens, and agent install (optional one-liner on the quick-start provision page).
-- [ ] Run lint, `mint validate`, and preflight; fix until preflight is CLEAN.
-- [ ] Push the branch, open a draft PR so CI runs, and confirm CI lint + audit + shell-tests are green on the pushed HEAD before leaving draft or reporting complete.
+- [x] Run lint, `mint validate`, and preflight; fix until preflight is CLEAN.
+- [x] Push the branch, open a draft PR so CI runs, and confirm CI lint + audit + shell-tests are green on the pushed HEAD before leaving draft or reporting complete.
 
 
 ## Surprises & Discoveries
@@ -45,6 +45,7 @@ After this change, a customer reading docs.mirurobotics.com can install the `mir
 ## Outcomes & Retrospective
 
 - Milestone 3: `pnpm run test:lint` passed; `./scripts/lint.sh` printed `All documentation lint checks passed.`; `pnpm run validate` printed `success build validation passed`. No lint-fix commit.
+- Milestone 4: Draft PR https://github.com/mirurobotics/docs/pull/178. CI jobs `lint`, `audit`, and `shell-tests` were green on the pushed HEAD. Custom-linter jobs skipped. PR left as draft.
 
 
 ## Context and Orientation
