@@ -4,6 +4,23 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.10.2
+
+*September 6, 2026*
+
+Miru Agent `v0.10.2` adds `provision --check` so fleet automation can tell whether a device is already provisioned without minting a token, and stops retrying failed retention deletes forever.
+
+## Features
+
+- Added `provision --check` to report whether the device is already provisioned via exit code, without contacting the control plane
+- Retention [file rule](/data-uploads/primitives/file-rules) delete jobs now stop after 10 failed attempts instead of retrying forever, leaving the file on disk
+
+## Fixes
+
+- Fixed a bug where a backward clock step could stall the upload retry queue
+
+---
+
 # v0.10.1
 
 *August 12, 2026*
