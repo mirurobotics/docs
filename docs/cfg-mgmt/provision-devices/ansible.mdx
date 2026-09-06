@@ -20,7 +20,7 @@ When you apply the role, it:
 1. Asserts that `miru_api_key` is defined and non-empty when `miru_provision` is true.
 2. Installs apt prerequisites (`ca-certificates`, `python3-debian`) and adds Miru's apt source with `ansible.builtin.deb822_repository` (name `miru`, suite `stable`, component `main`, signed by `https://packages.mirurobotics.com/apt/miru.gpg`).
 3. Installs `miru-agent` or a pinned `miru-agent=<version>`, then enables and starts the `miru` systemd unit.
-4. If provisioning: skips the host when any file exists under `/var/lib/miru/auth`. Otherwise the controller POSTs to `{{ miru_api_base_url }}/provisioning_tokens` (`delegate_to: localhost`, headers `Miru-Version` and `X-API-Key`), then runs `/usr/sbin/miru-agent provision --device-name={{ miru_device_name }}` on the host as user `miru`.
+4. If provisioning: skips the host when any file exists under `/var/lib/miru/auth`. Otherwise the controller POSTs to `{{ miru_api_base_url }}/provisioning_tokens` (`delegate_to: localhost`, headers `Miru-Version` and `X-API-Key`), then runs `/usr/sbin/miru-agent provision --device-name={{ miru_device_name }}` on the host as user `miru` with `MIRU_PROVISIONING_TOKEN` in the environment.
 
 ## Requirements
 

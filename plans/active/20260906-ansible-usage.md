@@ -31,6 +31,8 @@ After this change, a customer reading docs.mirurobotics.com can install the `mir
 
 - Observation: CSpell did not already include `Ansible`, `ansible`, `Galaxy`, `deb822`, or `playbook`.
   Evidence: `cspell.json` `words` list before Milestone 1.
+- Observation: Refine pass restored `MIRU_PROVISIONING_TOKEN` on the provision command so the four-step list matches the collection role.
+  Evidence: `roles/provision/tasks/provision.yml` sets `MIRU_PROVISIONING_TOKEN` in the command environment.
 
 
 ## Decision Log
