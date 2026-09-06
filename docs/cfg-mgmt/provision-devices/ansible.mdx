@@ -1,0 +1,68 @@
+---
+title: "Ansible"
+---
+
+import { Framed } from '/snippets/components/framed.jsx';
+
+<Framed
+  background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg"
+  image="https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/header:create-token.png"
+  innerRadius="8px"
+  outerRadius="12px"
+  borderWidth="42px 38px 42px 38px"
+/>
+
+The [`mirurobotics.agent`](https://github.com/mirurobotics/ansible-collection-agent) Ansible collection installs the Miru Agent and provisions every host in your play. It is the [provisioning-token](/cfg-mgmt/provision-devices/provisioning-tokens) flow packaged as a role: the API key stays on the Ansible controller, and only a short-lived token reaches each device.
+
+The collection requires Miru Agent `v0.10.2` or later (`provision --check` is not in earlier releases).
+
+<Note>
+  The collection is not on Ansible Galaxy yet. Install it from the public GitHub repository.
+</Note>
+
+## Install the collection
+
+On the Ansible controller (ansible-core 2.15 or later):
+
+```yaml
+# requirements.yml
+collections:
+  - name: https://github.com/mirurobotics/ansible-collection-agent.git
+    type: git
+    version: main
+```
+
+```bash
+ansible-galaxy collection install -r requirements.yml
+```
+
+## Create an API key
+
+The role mints a provisioning token on the controller. Create an [API key](/admin/apikeys#create-an-api-key) with the `devices:provision` and `provisioning_tokens:write` scopes, and store it in [Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/index.html) or your CI secret store. The key is never written to managed devices.
+
+## Run the role
+
+```yaml
+- name: Provision Miru devices
+  hosts: robots
+  roles:
+    - role: mirurobotics.agent.provision
+      vars:
+        miru_api_key: "{{ vault_miru_api_key }}"
+        miru_agent_version: "0.10.2-beta.1"
+        miru_agent_deb_url: "https://github.com/mirurobotics/agent/releases/download/v0.10.2-beta.1/miru-agent_0.10.2-beta.1_{{ miru_apt_architecture }}.deb"
+```
+
+`miru_agent_version` is required and must be `0.10.2` or later. Use `latest` only when you want the newest package on every run.
+
+<Warning>
+  Apt `stable` does not yet publish `0.10.2`. Until it does, set `miru_agent_deb_url` to the matching GitHub `.deb` (the URL above substitutes `amd64` or `arm64`). Drop `miru_agent_deb_url` once you can pin `miru_agent_version: "0.10.2"` from apt.
+</Warning>
+
+The role is idempotent. Already-provisioned hosts are detected with `miru-agent provision --check` and skipped. A ready-made playbook is included: `ansible-playbook -i inventory mirurobotics.agent.provision` targets the `robots` group.
+
+## Verify
+
+The role confirms the `miru` systemd service is active on each host. To confirm the control-plane side, open the [Devices page](https://app.mirurobotics.com/devices) — new devices transition `Activating` → `Online` within seconds.
+
+Reprovisioning (reassociating a machine with an existing Miru device) remains a [dashboard-only flow](/cfg-mgmt/provision-devices/reprovision).

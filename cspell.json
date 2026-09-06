@@ -26,6 +26,7 @@
     "USERGROUPS",
     "WIF",
     "affordances",
+    "ansible",
     "chgrp",
     "cooldown",
     "costmap",
