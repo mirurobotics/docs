@@ -78,6 +78,7 @@
                 "pages": [
                   "cfg-mgmt/provision-devices/overview",
                   "cfg-mgmt/provision-devices/dashboard",
+                  "cfg-mgmt/provision-devices/ansible",
                   "cfg-mgmt/provision-devices/provisioning-tokens",
                   "cfg-mgmt/provision-devices/provisioning-script",
                   "cfg-mgmt/provision-devices/reprovision"
