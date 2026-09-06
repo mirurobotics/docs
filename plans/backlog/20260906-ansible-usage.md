@@ -24,7 +24,7 @@ After this change, a customer reading docs.mirurobotics.com can install the `mir
 - [ ] Add `docs/cfg-mgmt/provision-devices/ansible.mdx`, nav slug, and CSpell words.
 - [ ] Add cross-links on overview, provisioning-tokens, and agent install (optional one-liner on the quick-start provision page).
 - [ ] Run lint, `mint validate`, and preflight; fix until preflight is CLEAN.
-- [ ] Push the branch and confirm CI lint + audit + shell-tests are green on the pushed HEAD before leaving draft or reporting complete.
+- [ ] Push the branch, open a draft PR so CI runs, and confirm CI lint + audit + shell-tests are green on the pushed HEAD before leaving draft or reporting complete.
 
 
 ## Surprises & Discoveries
@@ -107,7 +107,7 @@ The role does **not** read `MIRU_API_KEY` from the environment (no `lookup('env'
 
 **Reuse, do not duplicate:** `/snippets/agent/supported-platforms.mdx` and `/snippets/agent/install/verify.mdx`.
 
-**Lint / CI:** `./scripts/preflight.sh` runs `pnpm run test:lint`, Go linter + covgate, `./scripts/lint.sh` (MDX prose, ESLint MDX, CSpell, OpenAPI), `./scripts/audit.sh`, and bats. It does **not** print the word CLEAN; CLEAN means exit 0 with no warnings. It does **not** run `pnpm run validate`. CI (`.github/workflows/ci.yml`) on every PR also runs `pnpm run validate` (`cd docs && mint validate`, strict, fails on warnings). CI on this feature branch runs only when a PR exists. Custom-linter jobs skip unless `tools/lint/**` changes.
+**Lint / CI:** `./scripts/preflight.sh` runs `pnpm run test:lint`, Go linter + covgate, `./scripts/lint.sh` (MDX prose, ESLint MDX, CSpell, OpenAPI), `./scripts/audit.sh`, and bats. It does **not** print the word CLEAN; CLEAN means exit 0 with no warnings. It does **not** run `pnpm run validate`. CI (`.github/workflows/ci.yml`) on every PR also runs `pnpm run validate` (`cd docs && mint validate`, strict, fails on warnings). CI on this feature branch runs only when a PR exists; Milestone 4 therefore requires opening a draft PR. Custom-linter jobs skip unless `tools/lint/**` changes.
 
 
 ## Plan of Work
@@ -157,7 +157,7 @@ Do not document Galaxy install, `miru-agent provision --check`, curl/Python toke
 
 **5. Headings and dashes.** Keep mid-heading Ansible in backticks. Never write raw `--` in MDX prose.
 
-**6. Validate.** Run the commands in Concrete Steps until preflight is CLEAN and `pnpm run validate` passes. Push and keep any PR draft until CI is green on that HEAD.
+**6. Validate.** Run the commands in Concrete Steps until preflight is CLEAN and `pnpm run validate` passes. Push, open a draft PR if none exists (required so CI runs on this branch), and keep the PR draft until CI is green on that HEAD.
 
 
 ## Concrete Steps
@@ -221,9 +221,16 @@ Optional extra check (not in preflight or CI):
 
     cd docs && mint broken-links
 
-If milestone 3 produced file changes:
+If milestone 3 produced file changes, stage only the files this work may have changed (do not use `git add -u`, `git add .`, or `git add -A`):
 
-    git add -u
+    git add docs/cfg-mgmt/provision-devices/ansible.mdx \
+      docs/docs.json \
+      cspell.json \
+      docs/cfg-mgmt/provision-devices/overview.mdx \
+      docs/cfg-mgmt/provision-devices/provisioning-tokens.mdx \
+      docs/developers/agent/install.mdx
+    # include the quick-start file only if you edited it:
+    # git add docs/getting-started/quick-start/provision-device.mdx
     git commit -m "$(cat <<'EOF'
     docs: fix lint on Ansible usage docs
 
@@ -243,7 +250,15 @@ Push the existing branch:
 
     git push -u origin HEAD
 
-CI lint, audit, and shell-tests run on this branch when a pull request exists (see `.github/workflows/ci.yml`). If a draft PR is already open, wait until those jobs are green on the pushed HEAD. Creating the PR is not a required milestone of this plan; do not undraft or report complete until Validation and Acceptance is met. If CI fails, fix on this branch, commit, push, and re-check the new HEAD.
+Open a draft pull request if one does not already exist. This is a required Milestone 4 step: `.github/workflows/ci.yml` runs `lint`, `audit`, and `shell-tests` on this feature branch only for `pull_request` events, not for a push to `docs/ansible-usage`.
+
+    gh pr view --json url,isDraft >/dev/null 2>&1 || gh pr create --draft --title "docs: add Ansible usage page" --body "$(cat <<'EOF'
+    Add Ansible collection usage docs for installing the agent and provisioning devices.
+
+    EOF
+    )"
+
+Wait until CI jobs `lint`, `audit`, and `shell-tests` are green on the pushed HEAD. Opening the PR is how CI becomes runnable; it is not itself acceptance. Do not mark the PR ready and do not report complete until Validation and Acceptance is met. If CI fails, fix on this branch, commit, push, and re-check the new HEAD.
 
 
 ## Validation and Acceptance
@@ -253,7 +268,7 @@ Phrase of success is behavior, not “files exist.”
 - `pnpm run dev` shows **Ansible** in Provision devices after Provisioning tokens and before Provisioning script. Opening `/cfg-mgmt/provision-devices/ansible` shows the prototype warning, git install (not Galaxy), Vault / extra-vars secret guidance, role and bundled-playbook invocation (`robots` + `vault_miru_api_key`), the role-variables table with the names in Context, install-only `miru_provision: false`, and verify plus auth-dir / reprovision limits.
 - Overview lists Ansible as a fourth method. Tokens and agent install pages link to the new page. Clicking those links reaches the Ansible page.
 - From the docs repo root, `./scripts/lint.sh` prints `All documentation lint checks passed.` `pnpm run validate` exits 0. `./scripts/preflight.sh` exits 0 with no warnings (CLEAN).
-- Preflight must report CLEAN (CI green on the pushed branch head) before the PR leaves draft or the task is reported complete. For this content-only change, that means CI jobs `lint`, `audit`, and `shell-tests` green; `lint-custom-linter` / `test-custom-linter` are skipped.
+- Preflight must report CLEAN (CI green on the pushed branch head) before the PR leaves draft or the task is reported complete. For this content-only change, that means CI jobs `lint`, `audit`, and `shell-tests` green; `lint-custom-linter` / `test-custom-linter` are skipped. The draft PR in Milestone 4 is required so those jobs run; do not report complete after a branch push alone.
 
 A reader of the published page can follow it to install the collection and provision devices without opening the collection repo. Do not treat “added ansible.mdx” as acceptance by itself.
 
