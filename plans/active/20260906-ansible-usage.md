@@ -21,7 +21,7 @@ After this change, a customer reading docs.mirurobotics.com can install the `mir
 
 ## Progress
 
-- [ ] Add `docs/cfg-mgmt/provision-devices/ansible.mdx`, nav slug, and CSpell words.
+- [x] Add `docs/cfg-mgmt/provision-devices/ansible.mdx`, nav slug, and CSpell words.
 - [ ] Add cross-links on overview, provisioning-tokens, and agent install (optional one-liner on the quick-start provision page).
 - [ ] Run lint, `mint validate`, and preflight; fix until preflight is CLEAN.
 - [ ] Push the branch, open a draft PR so CI runs, and confirm CI lint + audit + shell-tests are green on the pushed HEAD before leaving draft or reporting complete.
@@ -29,10 +29,8 @@ After this change, a customer reading docs.mirurobotics.com can install the `mir
 
 ## Surprises & Discoveries
 
-Add entries as work proceeds.
-
-- Observation: …
-  Evidence: …
+- Observation: CSpell did not already include `Ansible`, `ansible`, `Galaxy`, `deb822`, or `playbook`.
+  Evidence: `cspell.json` `words` list before Milestone 1.
 
 
 ## Decision Log

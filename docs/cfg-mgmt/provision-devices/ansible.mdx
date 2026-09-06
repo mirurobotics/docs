@@ -1,0 +1,104 @@
+---
+title: "Ansible"
+---
+
+import Verify from '/snippets/agent/install/verify.mdx';
+import SupportedPlatforms from '/snippets/agent/supported-platforms.mdx';
+
+<Note>
+  The `mirurobotics.agent` collection is a prototype. It is not published to Ansible Galaxy, and interfaces may change. Install it from git only.
+</Note>
+
+The `mirurobotics.agent.provision` role installs the Miru Agent and registers devices with the control plane. It does both unless you set `miru_provision` to `false`. The Platform API key stays on the Ansible controller — it never lands on the target hosts.
+
+Use this page when you want a fleet-wide install and provision flow. For minting tokens yourself, see [provisioning tokens](/cfg-mgmt/provision-devices/provisioning-tokens). For a manual Debian install, see [agent install](/developers/agent/install).
+
+## What it does
+
+When you apply the role, it:
+
+1. Asserts that `miru_api_key` is defined and non-empty when `miru_provision` is true.
+2. Installs apt prerequisites (`ca-certificates`, `python3-debian`) and adds Miru's apt source with `ansible.builtin.deb822_repository` (name `miru`, suite `stable`, component `main`, signed by `https://packages.mirurobotics.com/apt/miru.gpg`).
+3. Installs `miru-agent` or a pinned `miru-agent=<version>`, then enables and starts the `miru` systemd unit.
+4. If provisioning: skips the host when any file exists under `/var/lib/miru/auth`. Otherwise the controller POSTs to `{{ miru_api_base_url }}/provisioning_tokens` (`delegate_to: localhost`, headers `Miru-Version` and `X-API-Key`), then runs `/usr/sbin/miru-agent provision --device-name={{ miru_device_name }}` on the host as user `miru`.
+
+## Requirements
+
+- ansible-core 2.15 or later on the controller
+- Privilege escalation (`become`) on the targets
+- Agent `v0.9.0` or later when provisioning
+- An [API key](/admin/apikeys) with the `devices:provision` and `provisioning_tokens:write` [scopes](/developers/platform-api/authz), unless you are installing without provisioning
+
+<SupportedPlatforms />
+
+Targets also need `systemd` and apt. The collection is tested on Ubuntu 22.04 and 24.04.
+
+## Install the collection
+
+Create a `requirements.yml` and install from git:
+
+```yaml
+collections:
+  - name: https://github.com/mirurobotics/ansible-collection-agent.git
+    type: git
+    version: main
+```
+
+```bash
+ansible-galaxy collection install -r requirements.yml
+```
+
+## Store the API key
+
+The role does not read `MIRU_API_KEY` from the environment. You must set `miru_api_key` yourself.
+
+Store the key as Ansible Vault variable `vault_miru_api_key`, or inject it at runtime with extra-vars such as `-e vault_miru_api_key="$MIRU_API_KEY"`. Never commit a plaintext key in a playbook.
+
+## Run the role
+
+Apply `mirurobotics.agent.provision` in a custom play, or run the bundled playbook:
+
+```bash
+ansible-playbook -i inventory mirurobotics.agent.provision
+```
+
+The bundled playbook targets inventory group `robots` and expects `vault_miru_api_key`.
+
+Recommended role usage:
+
+```yaml
+- name: Provision Miru devices
+  hosts: robots
+  roles:
+    - role: mirurobotics.agent.provision
+      vars:
+        miru_api_key: "{{ vault_miru_api_key }}"
+        miru_agent_version: "0.10.1"   # optional; omit for latest
+```
+
+## Role variables
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `miru_api_key` | none | Platform API key. Required only when `miru_provision` is true. Controller-side only. |
+| `miru_provision` | `true` | Set `false` to install without provisioning. No API key required. |
+| `miru_agent_version` | `""` (latest) | Apt version such as `0.10.1` (no `v` prefix). |
+| `miru_device_name` | `{{ inventory_hostname }}` | Device name shown in the dashboard. |
+| `miru_api_base_url` | `https://api.mirurobotics.com/beta` | Platform API base URL. |
+| `miru_api_version` | `2026-05-06.rainier` | `Miru-Version` header sent to the Platform API. |
+| `miru_apt_url` | `https://packages.mirurobotics.com/apt` | Miru apt repository. |
+| `miru_apt_key_url` | `https://packages.mirurobotics.com/apt/miru.gpg` | Miru apt signing key URL. |
+| `miru_apt_architecture` | mapped from `ansible_facts.architecture` (`x86_64` → `amd64`, `aarch64` → `arm64`) | Debian architecture for the apt source. |
+| `miru_provision_no_log` | `true` | Hide tokens and the provision command from logs. |
+
+`miru_api_key` is marked optional in the role spec so install-only mode works. The role still asserts it at runtime when provisioning.
+
+## Install without provisioning
+
+Set `miru_provision: false` to install the agent without registering the device — for example when baking a machine image. No API key is required in that mode.
+
+## Verify
+
+<Verify />
+
+Already-provisioned detection treats any file in `/var/lib/miru/auth` as provisioned. Stale credentials after a hardware swap still count, so the role will skip that host. Reprovisioning is [dashboard-only](/cfg-mgmt/provision-devices/reprovision).
