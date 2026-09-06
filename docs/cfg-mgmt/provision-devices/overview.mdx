@@ -10,21 +10,25 @@ Provisioning a device is the process of creating a device in Miru and registerin
 
 ## Methods
 
-There are three methods for provisioning a device:
+There are four methods for provisioning a device:
 
 1. [Dashboard](/cfg-mgmt/provision-devices/dashboard) - a manual method for provisioning devices one at a time via the Miru web interface; great for getting started or managing individual devices.
 
 2. [Provisioning tokens](/cfg-mgmt/provision-devices/provisioning-tokens) - a programmatic method for securely provisioning devices at scale; great for automated provisioning or integrating with existing infrastructure management tools and workflows.
 
-3. [Provisioning script](/cfg-mgmt/provision-devices/provisioning-script) - the legacy method for programmatically provisioning devices; unsupported with Miru Agent [v0.9.0](/changelog/agent) or later.
+3. [Ansible](/cfg-mgmt/provision-devices/ansible) - an Ansible collection that installs the agent and provisions devices in one role; great for applying the same play across a fleet.
+
+4. [Provisioning script](/cfg-mgmt/provision-devices/provisioning-script) - the legacy method for programmatically provisioning devices; unsupported with Miru Agent [v0.9.0](/changelog/agent) or later.
 
 ## Miru Agent installation
 
-No matter which method you choose, the device requires the `miru-agent` package to be installed. For more information about installing the `miru-agent` package, visit the [agent installation](/developers/agent/install) documentation.
+The dashboard, provisioning tokens, and the legacy script require the `miru-agent` package to be installed first. The [Ansible](/cfg-mgmt/provision-devices/ansible) collection installs the agent as part of the provision role.
+
+For a manual install, visit the [agent installation](/developers/agent/install) documentation.
 
 If you're having trouble downloading the `miru-agent` package to your device, refer to the [poor connectivity](/developers/agent/install#poor-connectivity) documentation for a workaround.
 
-Once you've installed the `miru-agent` package, proceed with the provisioning process via the [dashboard](/cfg-mgmt/provision-devices/dashboard) or [provisioning tokens](/cfg-mgmt/provision-devices/provisioning-tokens).
+Once you've installed the `miru-agent` package, proceed with the provisioning process via the [dashboard](/cfg-mgmt/provision-devices/dashboard) or [provisioning tokens](/cfg-mgmt/provision-devices/provisioning-tokens). To install and provision together, use [Ansible](/cfg-mgmt/provision-devices/ansible).
 
 ## Reprovisioning
 

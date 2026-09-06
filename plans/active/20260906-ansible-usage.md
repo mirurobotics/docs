@@ -22,7 +22,7 @@ After this change, a customer reading docs.mirurobotics.com can install the `mir
 ## Progress
 
 - [x] Add `docs/cfg-mgmt/provision-devices/ansible.mdx`, nav slug, and CSpell words.
-- [ ] Add cross-links on overview, provisioning-tokens, and agent install (optional one-liner on the quick-start provision page).
+- [x] Add cross-links on overview, provisioning-tokens, and agent install (optional one-liner on the quick-start provision page).
 - [ ] Run lint, `mint validate`, and preflight; fix until preflight is CLEAN.
 - [ ] Push the branch, open a draft PR so CI runs, and confirm CI lint + audit + shell-tests are green on the pushed HEAD before leaving draft or reporting complete.
 
@@ -35,11 +35,9 @@ After this change, a customer reading docs.mirurobotics.com can install the `mir
 
 ## Decision Log
 
-Add entries as work proceeds.
-
-- Decision: …
-  Rationale: …
-  Date/Author: …
+- Decision: Include the optional one-liner on `getting-started/quick-start/provision-device.mdx`.
+  Rationale: The plan allows it, and the page already points at tokens as an alternative; Ansible is the same kind of discoverability link.
+  Date/Author: 2026-09-06 / implement agent
 
 
 ## Outcomes & Retrospective
