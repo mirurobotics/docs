@@ -49,15 +49,10 @@ The role mints a provisioning token on the controller. Create an [API key](/admi
     - role: mirurobotics.agent.provision
       vars:
         miru_api_key: "{{ vault_miru_api_key }}"
-        miru_agent_version: "0.10.2-beta.1"
-        miru_agent_deb_url: "https://github.com/mirurobotics/agent/releases/download/v0.10.2-beta.1/miru-agent_0.10.2-beta.1_{{ miru_apt_architecture }}.deb"
+        miru_agent_version: "0.10.2"
 ```
 
 `miru_agent_version` is required and must be `0.10.2` or later. Use `latest` only when you want the newest package on every run.
-
-<Warning>
-  Apt `stable` does not yet publish `0.10.2`. Until it does, set `miru_agent_deb_url` to the matching GitHub `.deb` (the URL above substitutes `amd64` or `arm64`). Drop `miru_agent_deb_url` once you can pin `miru_agent_version: "0.10.2"` from apt.
-</Warning>
 
 The role is idempotent. Already-provisioned hosts are detected with `miru-agent provision --check` and skipped. A ready-made playbook is included: `ansible-playbook -i inventory mirurobotics.agent.provision` targets the `robots` group.
 
