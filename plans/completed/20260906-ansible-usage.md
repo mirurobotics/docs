@@ -45,7 +45,8 @@ After this change, a customer reading docs.mirurobotics.com can install the `mir
 ## Outcomes & Retrospective
 
 - Milestone 3: `pnpm run test:lint` passed; `./scripts/lint.sh` printed `All documentation lint checks passed.`; `pnpm run validate` printed `success build validation passed`. No lint-fix commit.
-- Milestone 4: Draft PR https://github.com/mirurobotics/docs/pull/178. CI jobs `lint`, `audit`, and `shell-tests` were green on the pushed HEAD. Custom-linter jobs skipped. PR left as draft.
+- Milestone 4: Draft PR https://github.com/mirurobotics/docs/pull/178. CI jobs `lint`, `audit`, and `shell-tests` were green on the pushed HEAD. Custom-linter jobs skipped.
+- Complete: Plan moved to `plans/completed/`. Delivery marks the PR ready after the post-move CI re-check.
 
 
 ## Context and Orientation
