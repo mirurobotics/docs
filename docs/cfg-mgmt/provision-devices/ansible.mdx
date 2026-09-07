@@ -1,0 +1,111 @@
+---
+title: "Ansible"
+---
+
+import Verify from '/snippets/agent/install/verify.mdx';
+
+The official [Ansible collection](https://github.com/mirurobotics/ansible-collection-agent) installs the Miru Agent debian package and provisions the target host in Miru.
+
+The collection only supports Miru Agent versions `v0.10.2` or later. To provision an earlier version of the Miru Agent, use a different provisioning method.
+
+## What it does
+
+The Ansible collection installs the Miru Agent [debian package](/developers/agent/install) and provisions the target host in Miru. It is the [provisioning-token](/cfg-mgmt/provision-devices/provisioning-tokens) flow packaged as a role: the API key stays on the Ansible controller, and only a short-lived token reaches each device.
+
+{/* lint-ignore image-domain */}
+<img src="/snippets/devices/provision/ansible-control-flow.light.svg" alt="Provision role control flow: install or upgrade, skip if already provisioned, create a token, create the device in Miru if needed, then activate" className="block dark:hidden" />
+{/* lint-ignore image-domain */}
+<img src="/snippets/devices/provision/ansible-control-flow.dark.svg" alt="Provision role control flow: install or upgrade, skip if already provisioned, create a token, create the device in Miru if needed, then activate" className="hidden dark:block" />
+
+Miru matches `miru_device_name` (default `inventory_hostname`). 
+
+If a device with that name doesn't exist, is created and activated in Miru. If that device has been created in Miru but not yet activated (has state `inactive`), then the device is activated.
+
+## Requirements
+
+- `ansible-core` 2.15 or later on the controller
+- A target host on a [supported platform](/developers/agent/install#supported-platforms)
+- Miru Agent `v0.10.2` or later
+- An [API key](/admin/apikeys#create-an-api-key) with the `devices:provision` and `provisioning_tokens:write` [scopes](/developers/platform-api/authz)
+
+## Install the collection
+
+The collection is available on [GitHub](https://github.com/mirurobotics/ansible-collection-agent/releases). Support for Ansible Galaxy is coming soon.
+
+Install the collection on the Ansible controller:
+
+```yaml requirements.yml
+collections:
+  - name: https://github.com/mirurobotics/ansible-collection-agent.git
+    type: git
+    version: main
+```
+
+```bash
+ansible-galaxy collection install -r requirements.yml
+```
+
+You can also install a [release tarball](https://github.com/mirurobotics/ansible-collection-agent/releases).
+
+## Use the role
+
+### Write the playbook
+
+Write the playbook to apply the provision role to the hosts in your inventory. 
+
+```yaml
+- name: Provision Miru devices
+  hosts: {your-inventory-group}
+  roles:
+    - role: mirurobotics.agent.provision
+      vars:
+        miru_agent_version: "0.10.2"
+```
+
+Be sure to set the `hosts` variable to your inventory group. We recommend passing `miru_api_key` at run time, which is why it isn't included in the snippet above.
+
+<Warning>
+  `miru_agent_version` is required and must be `0.10.2` or later.
+</Warning>
+
+### Role variables
+
+<ParamField path="miru_api_key" type="string" required>
+  Platform API key used to mint provisioning tokens. This secret remains on the Ansible controller.
+</ParamField>
+
+<ParamField path="miru_agent_version" type="string" required>
+  Miru Agent version to install. The version must be `0.10.2` or later. 
+  
+  Use `latest` to install the newest available package on every run.
+
+  Example: `0.10.2`
+</ParamField>
+
+<ParamField path="miru_device_name" type="string">
+  Device name shown in the dashboard. Defaults to the hostname of the target host.
+
+  Default: `inventory_hostname`
+</ParamField>
+
+<ParamField path="miru_apt_architecture" type="string">
+  Debian package architecture. The role automatically detects `amd64` or `arm64`.
+
+  Default: auto-detected
+</ParamField>
+
+### Run the playbook
+
+Run the playbook and pass the [API key](/admin/apikeys#create-an-api-key) in at runtime:
+
+```bash
+ansible-playbook \
+  -i inventory {path-to-playbook.yaml} \
+  -e miru_api_key="$MIRU_API_KEY"
+```
+
+[Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/index.html) or a CI secret store also work for storing the API key. Never commit a plaintext key.
+
+## Verify
+
+<Verify />
