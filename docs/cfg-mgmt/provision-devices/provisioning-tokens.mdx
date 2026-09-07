@@ -85,7 +85,7 @@ The command can be broken into the following components:
 
 Provisioning performs the following actions:
 
-1. **Creates the device** - creates a new device in the Miru dashboard (if a device with the provided name doesn't already exist).
+1. **Creates or activates the device** - creates a new device if the provided name does not exist, or activates an existing `inactive` device with that name. If the named device has already been activated (`online`, `offline`, and so on), the command fails. To attach a machine to an already-activated device, use the [reprovision](/cfg-mgmt/provision-devices/reprovision) flow.
 1. **Provisions the device** - registers the agent with the Miru control plane.
 
 ### Troubleshooting
