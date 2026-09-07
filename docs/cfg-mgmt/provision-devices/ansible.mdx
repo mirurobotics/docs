@@ -4,20 +4,16 @@ title: "Ansible"
 
 import Verify from '/snippets/agent/install/verify.mdx';
 
-The official [Ansible collection](https://github.com/mirurobotics/ansible-collection-agent) installs the Miru Agent debian package and provisions the target host in Miru.
-
-The collection only supports Miru Agent versions `v0.10.2` or later. To provision an earlier version of the Miru Agent, use a different provisioning method.
+If you already manage hosts with Ansible, use the official [Ansible collection](https://github.com/mirurobotics/ansible-collection-agent) instead of minting [provisioning tokens](/cfg-mgmt/provision-devices/provisioning-tokens) yourself. One play installs the agent and registers each host.
 
 ## What it does
 
-The Ansible collection installs the Miru Agent [debian package](/developers/agent/install) and provisions the target host in Miru. It is the [provisioning-token](/cfg-mgmt/provision-devices/provisioning-tokens) flow packaged as a role: the API key stays on the Ansible controller, and only a short-lived token reaches each device.
+The collection installs the Miru Agent debian package and provisions the target host in Miru. It is the [provisioning-token](/cfg-mgmt/provision-devices/provisioning-tokens) flow packaged as a role: the API key stays on the Ansible controller, and only a short-lived token reaches each device.
 
 <img src="https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/ansible-control-flow.light.svg" alt="Provision role control flow: install or upgrade, skip if already provisioned, create a token, create the device in Miru if needed, then activate" className="block dark:hidden" />
 <img src="https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/ansible-control-flow.dark.svg" alt="Provision role control flow: install or upgrade, skip if already provisioned, create a token, create the device in Miru if needed, then activate" className="hidden dark:block" />
 
-Miru matches `miru_device_name` (default `inventory_hostname`). 
-
-If a device with that name doesn't exist, is created and activated in Miru. If that device has been created in Miru but not yet activated (has state `inactive`), then the device is activated.
+The `miru_device_name` is used to match the device in Miru. If a device with that name doesn't exist, it is created and activated in Miru. If that device has been created in Miru but not yet activated (has state `inactive`), then the device is activated.
 
 ## Requirements
 
@@ -69,7 +65,7 @@ Be sure to set the `hosts` variable to your inventory group. We recommend passin
 ### Role variables
 
 <ParamField path="miru_api_key" type="string" required>
-  Platform API key used to mint provisioning tokens. This secret remains on the Ansible controller.
+  Platform API key used to mint provisioning tokens. This secret remains on the Ansible controller; it is never transferred to the target host.
 </ParamField>
 
 <ParamField path="miru_agent_version" type="string" required>
