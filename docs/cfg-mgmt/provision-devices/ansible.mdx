@@ -3,7 +3,6 @@ title: "Ansible"
 ---
 
 import Verify from '/snippets/agent/install/verify.mdx';
-import SupportedPlatforms from '/snippets/agent/supported-platforms.mdx';
 import { Framed } from '/snippets/components/framed.jsx';
 
 <Framed
@@ -14,41 +13,33 @@ import { Framed } from '/snippets/components/framed.jsx';
   borderWidth="42px 38px 42px 38px"
 />
 
-The [`mirurobotics.agent`](https://github.com/mirurobotics/ansible-collection-agent) collection installs the Miru Agent and provisions every host in your play. It is the [provisioning-token](/cfg-mgmt/provision-devices/provisioning-tokens) flow packaged as a role: the API key stays on the Ansible controller, and only a short-lived token reaches each device.
+The official [Ansible collection](https://github.com/mirurobotics/ansible-collection-agent) installs the Miru Agent debian package and provisions the target host in Miru.
 
-Use this page for a fleet-wide install and provision. To mint tokens yourself, see [provisioning tokens](/cfg-mgmt/provision-devices/provisioning-tokens). For a manual Debian install, see [agent install](/developers/agent/install).
-
-The collection requires Miru Agent `v0.10.2` or later (`provision --check` is not in earlier releases).
-
-<Note>
-  The collection is not on Ansible Galaxy yet. Install it from the public GitHub repository.
-</Note>
+The collection only supports Miru Agent versions `v0.10.2` or later. To provision an earlier version of the Miru Agent, use a different provisioning method.
 
 ## What it does
 
-1. Asserts that `miru_api_key` and `miru_agent_version` are set, and that the version is `0.10.2` or later.
-2. Installs apt prerequisites and adds Miru's apt source.
-3. Installs the pinned `miru-agent` package and enables the `miru` systemd unit.
-4. Runs `miru-agent provision --check`. Already-provisioned hosts are skipped. Unprovisioned hosts get a token minted on the controller (`delegate_to: localhost`), then `/usr/sbin/miru-agent provision` runs on the device as user `miru`.
+The Ansible collection installs the Miru Agent [debian package](/developers/agent/install) and provisions the target host in Miru. It is the [provisioning-token](/cfg-mgmt/provision-devices/provisioning-tokens) flow packaged as a role: the API key stays on the Ansible controller, and only a short-lived token reaches each device.
 
-The role is idempotent. A pinned version converges every host to that package, and only unprovisioned hosts are provisioned.
+{/* lint-ignore image-domain */}
+<img src="/snippets/devices/provision/ansible-control-flow.light.svg" alt="Provision role control flow: install or upgrade, stop if already provisioned, otherwise create a token and provision" className="block dark:hidden" />
+{/* lint-ignore image-domain */}
+<img src="/snippets/devices/provision/ansible-control-flow.dark.svg" alt="Provision role control flow: install or upgrade, stop if already provisioned, otherwise create a token and provision" className="hidden dark:block" />
 
 ## Requirements
 
-- ansible-core 2.15 or later on the controller (`become` on the targets)
+- `ansible-core` 2.15 or later on the controller
+- A target host on a [supported platform](/developers/agent/install#supported-platforms)
 - Miru Agent `v0.10.2` or later
 - An [API key](/admin/apikeys#create-an-api-key) with the `devices:provision` and `provisioning_tokens:write` [scopes](/developers/platform-api/authz)
 
-<SupportedPlatforms />
-
-Targets also need `systemd` and apt. The collection is tested on Ubuntu 20.04, 22.04, and 24.04. ansible-core 2.17+ needs Python 3.9+ on the target; Ubuntu 20.04 ships 3.8, so use ansible-core 2.16 on those hosts or install a newer Python.
-
 ## Install the collection
 
-On the Ansible controller:
+The collection is available on [GitHub](https://github.com/mirurobotics/ansible-collection-agent/releases). Support for Ansible Galaxy is coming soon.
 
-```yaml
-# requirements.yml
+Install the collection on the Ansible controller:
+
+```yaml requirements.yml
 collections:
   - name: https://github.com/mirurobotics/ansible-collection-agent.git
     type: git
@@ -61,46 +52,63 @@ ansible-galaxy collection install -r requirements.yml
 
 You can also install a [release tarball](https://github.com/mirurobotics/ansible-collection-agent/releases).
 
-## Store the API key
+## Use the role
 
-The role does not read `MIRU_API_KEY` from the environment. Set `miru_api_key` yourself.
+### Write the playbook
 
-Store it as Ansible Vault variable `vault_miru_api_key`, or inject it at runtime with extra-vars such as `-e vault_miru_api_key="$MIRU_API_KEY"`. Never commit a plaintext key.
-
-## Run the role
+Write a playbook to apply the role to the hosts in your inventory. 
 
 ```yaml
 - name: Provision Miru devices
-  hosts: robots
+  hosts: {your-inventory-group}
   roles:
     - role: mirurobotics.agent.provision
       vars:
-        miru_api_key: "{{ vault_miru_api_key }}"
         miru_agent_version: "0.10.2"
 ```
 
-`miru_agent_version` is required and must be `0.10.2` or later. Use `latest` only when you want the newest package on every run.
+Be sure to set the `hosts` variable to your inventory group. We recommend passing `miru_api_key` at run time, which is why it isn't included in the snippet above.
 
-A bundled playbook is included: `ansible-playbook -i inventory mirurobotics.agent.provision` targets the `robots` group and expects `vault_miru_api_key`.
+<Warning>
+  `miru_agent_version` is required and must be `0.10.2` or later.
+</Warning>
 
-## Role variables
+### Role variables
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `miru_api_key` | — (required) | Platform API key used to mint tokens. Controller-side only. |
-| `miru_agent_version` | — (required) | Agent version to install, e.g. `0.10.2`. Must be `0.10.2` or later. Use `latest` to float. |
-| `miru_device_name` | `inventory_hostname` | Device name shown in the dashboard. |
-| `miru_api_base_url` | `https://api.mirurobotics.com/beta` | Platform API base URL. |
-| `miru_api_version` | `2026-08-17.everglades` | `Miru-Version` header sent to the Platform API. |
-| `miru_apt_url` | `https://packages.mirurobotics.com/apt` | Miru apt repository. |
-| `miru_apt_key_url` | `https://packages.mirurobotics.com/apt/miru.gpg` | Miru apt signing key. |
-| `miru_apt_architecture` | auto-detected | Debian architecture (`amd64`, `arm64`). |
-| `miru_log_secrets` | `false` | Print the API key and token in Ansible output. Leave off except for a local debug run. |
+<ParamField path="miru_api_key" type="string" required>
+  Platform API key used to mint provisioning tokens. This secret remains on the Ansible controller.
+</ParamField>
+
+<ParamField path="miru_agent_version" type="string" required>
+  Miru Agent version to install. The version must be `0.10.2` or later. Use `latest` to install the newest available package on every run.
+
+  Example: `0.10.2`
+</ParamField>
+
+<ParamField path="miru_device_name" type="string">
+  Device name shown in the dashboard.
+
+  Default: `inventory_hostname`
+</ParamField>
+
+<ParamField path="miru_apt_architecture" type="string">
+  Debian package architecture. The role automatically detects `amd64` or `arm64`.
+
+  Default: auto-detected
+</ParamField>
+
+### Run the playbook
+
+Run the playbook and pass the [API key](/admin/apikeys#create-an-api-key) in at runtime:
+
+```bash
+ansible-playbook \
+  -i inventory playbook.yml \
+  -e miru_api_key="$MIRU_API_KEY"
+```
+
+[Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/index.html) or a CI secret store also work for storing the API key. Never commit a plaintext key.
 
 ## Verify
 
-The role confirms the `miru` systemd service is active on each host.
-
 <Verify />
-
-Already-provisioned detection uses `miru-agent provision --check` (exit `0` provisioned, `3` not provisioned, anything else fails the play). A machine that still holds stale local credentials after a hardware swap is treated as provisioned. Reprovisioning is a [dashboard-only flow](/cfg-mgmt/provision-devices/reprovision).
