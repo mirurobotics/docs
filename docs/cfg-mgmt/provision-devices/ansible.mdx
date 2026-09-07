@@ -3,15 +3,6 @@ title: "Ansible"
 ---
 
 import Verify from '/snippets/agent/install/verify.mdx';
-import { Framed } from '/snippets/components/framed.jsx';
-
-<Framed
-  background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg"
-  image="https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/header:create-token.png"
-  innerRadius="8px"
-  outerRadius="12px"
-  borderWidth="42px 38px 42px 38px"
-/>
 
 The official [Ansible collection](https://github.com/mirurobotics/ansible-collection-agent) installs the Miru Agent debian package and provisions the target host in Miru.
 
@@ -56,7 +47,7 @@ You can also install a [release tarball](https://github.com/mirurobotics/ansible
 
 ### Write the playbook
 
-Write a playbook to apply the role to the hosts in your inventory. 
+Write the playbook to apply the provision role to the hosts in your inventory. 
 
 ```yaml
 - name: Provision Miru devices
@@ -80,13 +71,15 @@ Be sure to set the `hosts` variable to your inventory group. We recommend passin
 </ParamField>
 
 <ParamField path="miru_agent_version" type="string" required>
-  Miru Agent version to install. The version must be `0.10.2` or later. Use `latest` to install the newest available package on every run.
+  Miru Agent version to install. The version must be `0.10.2` or later. 
+  
+  Use `latest` to install the newest available package on every run.
 
   Example: `0.10.2`
 </ParamField>
 
 <ParamField path="miru_device_name" type="string">
-  Device name shown in the dashboard.
+  Device name shown in the dashboard. Defaults to the hostname of the target host.
 
   Default: `inventory_hostname`
 </ParamField>
