@@ -12,10 +12,8 @@ The collection only supports Miru Agent versions `v0.10.2` or later. To provisio
 
 The Ansible collection installs the Miru Agent [debian package](/developers/agent/install) and provisions the target host in Miru. It is the [provisioning-token](/cfg-mgmt/provision-devices/provisioning-tokens) flow packaged as a role: the API key stays on the Ansible controller, and only a short-lived token reaches each device.
 
-{/* lint-ignore image-domain */}
-<img src="/snippets/devices/provision/ansible-control-flow.light.svg" alt="Provision role control flow: install or upgrade, skip if already provisioned, create a token, create the device in Miru if needed, then activate" className="block dark:hidden" />
-{/* lint-ignore image-domain */}
-<img src="/snippets/devices/provision/ansible-control-flow.dark.svg" alt="Provision role control flow: install or upgrade, skip if already provisioned, create a token, create the device in Miru if needed, then activate" className="hidden dark:block" />
+<img src="https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/ansible-control-flow.light.svg" alt="Provision role control flow: install or upgrade, skip if already provisioned, create a token, create the device in Miru if needed, then activate" className="block dark:hidden" />
+<img src="https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/ansible-control-flow.dark.svg" alt="Provision role control flow: install or upgrade, skip if already provisioned, create a token, create the device in Miru if needed, then activate" className="hidden dark:block" />
 
 Miru matches `miru_device_name` (default `inventory_hostname`). 
 
