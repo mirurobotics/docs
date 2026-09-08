@@ -4,7 +4,7 @@ title: "Ansible"
 
 import Verify from '/snippets/agent/install/verify.mdx';
 
-If you already manage hosts with Ansible, use the official [Ansible collection](https://github.com/mirurobotics/ansible-collection-agent) instead of minting [provisioning tokens](/cfg-mgmt/provision-devices/provisioning-tokens) yourself. One play installs the agent and registers each host.
+If you already manage hosts with Ansible, use the official [`mirurobotics.agent`](https://galaxy.ansible.com/ui/repo/published/mirurobotics/agent/) collection instead of minting [provisioning tokens](/cfg-mgmt/provision-devices/provisioning-tokens) yourself. One play installs the agent and registers each host.
 
 ## What it does
 
@@ -24,22 +24,25 @@ The `miru_device_name` is used to match the device in Miru. If a device with tha
 
 ## Install the collection
 
-The collection is available on [GitHub](https://github.com/mirurobotics/ansible-collection-agent/releases). Support for Ansible Galaxy is coming soon.
+Install the collection from [Ansible Galaxy](https://galaxy.ansible.com/ui/repo/published/mirurobotics/agent/) on the Ansible controller:
 
-Install the collection on the Ansible controller:
+```bash
+ansible-galaxy collection install mirurobotics.agent
+```
+
+Or pin a version in `requirements.yml`:
 
 ```yaml requirements.yml
 collections:
-  - name: https://github.com/mirurobotics/ansible-collection-agent.git
-    type: git
-    version: main
+  - name: mirurobotics.agent
+    version: ">=0.1.2"
 ```
 
 ```bash
 ansible-galaxy collection install -r requirements.yml
 ```
 
-You can also install a [release tarball](https://github.com/mirurobotics/ansible-collection-agent/releases).
+You can also install from [git](https://github.com/mirurobotics/ansible-collection-agent) or a [GitHub Release tarball](https://github.com/mirurobotics/ansible-collection-agent/releases).
 
 ## Use the role
 
