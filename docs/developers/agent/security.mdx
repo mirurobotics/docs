@@ -112,8 +112,12 @@ The agent can only create Unix domain sockets and IPv4/IPv6 connections. All oth
 
 All communication between the agent and the Miru control plane is encrypted in transit:
 
-- **HTTPS** — REST API calls use HTTPS with TLS certificate validation
-- **MQTT over TLS** — the persistent MQTT connection uses TLS on port `443`. Current agents connect on port `443` so a device only needs outbound `443`/HTTPS access through a firewall; older agent versions connect on port `8883`, which the broker still accepts.
+- **HTTPS** — REST API calls use HTTPS with TLS certificate validation on port 443
+- **MQTT over TLS** — the persistent MQTT connection uses TLS on port 443
+
+<Info>
+Agent versions prior to [v0.10.3](/changelog/agent#v0-10-3) use port 8883 for MQTT communication.
+</Info>
 
 ## Network posture
 
