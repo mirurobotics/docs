@@ -9,10 +9,10 @@
     "test:lint": "./tests/test-lint.sh"
   },
   "devDependencies": {
-    "cspell": "10.2.2",
+    "cspell": "10.3.1",
     "eslint": "10.10.0",
     "eslint-plugin-mdx": "3.8.1",
-    "mint": "4.2.842"
+    "mint": "4.2.891"
   },
   "pnpm": {
     "overrides": {
