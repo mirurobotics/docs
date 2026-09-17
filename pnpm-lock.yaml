@@ -33,7 +33,7 @@ overrides:
   zod: 3.24.0
   follow-redirects: '>=1.16.0'
   ws: '>=8.20.1'
-  adm-zip: '>=0.6.0'
+  adm-zip: '>=0.6.1'
   fast-uri: '>=3.1.5 <4'
   sharp: '>=0.35.0'
 
@@ -1240,8 +1240,8 @@ packages:
     resolution: {integrity: sha512-4B/qKCfeE/ODUaAUpSwfzazo5x29WD4r3vXiWsB7I2mSDAihwEqKO+g8GELZUQSSAo5e1XTYh3ZVfLyxBc12nA==}
     engines: {node: '>= 10.0.0'}
 
-  adm-zip@0.6.0:
-    resolution: {integrity: sha512-XleryMhbuksdKtofnWZ9Sk+4CUTbms4Mb/EU32SZwToAyZ5RgVos/ki8n+yr0LWHOGKuakbXTuuYNHLQjhddgg==}
+  adm-zip@0.6.1:
+    resolution: {integrity: sha512-Xwrja8nx9e5o2N1my4DsKCeKpdrnACyr1wtbPxBDgGzKzKyE9kRtBFA8mWldI+RVlD7CBZNWY/wQ2+ydwOR6kQ==}
     engines: {node: '>=14.0'}
 
   agent-base@6.0.2:
@@ -5254,7 +5254,7 @@ snapshots:
       '@mintlify/prebuild': 1.0.1269(@base-ui/react@1.7.0(@types/react@19.2.2)(react-dom@18.3.1(react@19.2.3))(react@19.2.3))(@types/node@26.4.0)(@types/react@19.2.2)(react-dom@18.3.1(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
       '@mintlify/previewing': 4.0.1341(@base-ui/react@1.7.0(@types/react@19.2.2)(react-dom@18.3.1(react@19.2.3))(react@19.2.3))(@types/node@26.4.0)(@types/react@19.2.2)(react-dom@18.3.1(react@19.2.3))(typescript@5.9.3)
       '@mintlify/validation': 0.1.842(@base-ui/react@1.7.0(@types/react@19.2.2)(react-dom@18.3.1(react@19.2.3))(react@19.2.3))(@types/react@19.2.2)(react-dom@18.3.1(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
-      adm-zip: 0.6.0
+      adm-zip: 0.6.1
       chalk: 5.2.0
       color: 4.2.3
       detect-port: 1.5.1
@@ -5473,7 +5473,7 @@ snapshots:
       '@mintlify/common': 1.0.1115(@base-ui/react@1.7.0(@types/react@19.2.2)(react-dom@18.3.1(react@19.2.3))(react@19.2.3))(@types/react@19.2.2)(react-dom@18.3.1(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
       '@mintlify/prebuild': 1.0.1269(@base-ui/react@1.7.0(@types/react@19.2.2)(react-dom@18.3.1(react@19.2.3))(react@19.2.3))(@types/node@26.4.0)(@types/react@19.2.2)(react-dom@18.3.1(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
       '@mintlify/validation': 0.1.842(@base-ui/react@1.7.0(@types/react@19.2.2)(react-dom@18.3.1(react@19.2.3))(react@19.2.3))(@types/react@19.2.2)(react-dom@18.3.1(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
-      adm-zip: 0.6.0
+      adm-zip: 0.6.1
       better-opn: 3.0.2
       chalk: 5.2.0
       chokidar: 3.5.3
@@ -6044,7 +6044,7 @@ snapshots:
 
   address@1.2.2: {}
 
-  adm-zip@0.6.0: {}
+  adm-zip@0.6.1: {}
 
   agent-base@6.0.2:
     dependencies:
