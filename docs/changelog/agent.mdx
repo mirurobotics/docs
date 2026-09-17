@@ -143,13 +143,13 @@ To learn more, visit the [file system access](/developers/agent/filesys-access#c
 
 Backport of the MQTT port-`443` change to the `v0.7` line. Miru Agent `v0.7.2` connects to the MQTT broker over TLS on port `443` instead of `8883` so devices behind firewalls that only allow outbound `443`/HTTPS traffic can maintain their real-time connection, and hardens the MQTT TLS stack.
 
+## Fixes
+
+- Moved the MQTT TLS stack from `rustls` to `native-tls`, resolving the known `rustls-webpki` security advisories RUSTSEC-2026-0098, RUSTSEC-2026-0099, and RUSTSEC-2026-0104
+
 ## Improvements
 
 - The agent now maintains its real-time MQTT connection over TLS on port `443` instead of `8883`, so it works on networks that only permit outbound `443`/HTTPS traffic
-
-## Fixes
-
-- Moved the MQTT TLS stack from rustls to native-tls, resolving the known `rustls-webpki` security advisories RUSTSEC-2026-0098, RUSTSEC-2026-0099, and RUSTSEC-2026-0104
 
 ---
 
