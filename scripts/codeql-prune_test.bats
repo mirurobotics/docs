@@ -14,6 +14,7 @@ setup() {
 	STUB_BIN="$BATS_TEST_TMPDIR/bin"
 	mkdir -p "$STUB_BIN" "$BATS_TEST_TMPDIR/empty"
 	export GH_STUB_LOG="$BATS_TEST_TMPDIR/gh.log"
+	export GH_STUB_ARGS="$BATS_TEST_TMPDIR/gh.args"
 	write_gh_stub "$STUB_BIN/gh"
 	chmod +x "$STUB_BIN/gh"
 }
@@ -80,6 +81,7 @@ case "${args[0]}" in
 			echo "${args[3]}" >> "$GH_STUB_LOG"
 			delete_response "${args[3]}" | emit
 		else
+			printf '%s\n' "${args[@]}" >> "$GH_STUB_ARGS"
 			analyses | emit
 		fi
 		;;
@@ -133,4 +135,14 @@ EOF
 	grep -q 'analyses/100?confirm_delete' "$GH_STUB_LOG"
 	grep -q 'analyses/50?confirm_delete' "$GH_STUB_LOG"
 	! grep -q 'analyses/300' "$GH_STUB_LOG"
+}
+
+@test "ref is passed as a query field, not interpolated into the URL" {
+	run env PATH="$STUB_BIN:$PATH" bash "$SCRIPT" --repo mirurobotics/docs \
+		--ref 'refs/heads/release#old'
+	[ "$status" -eq 0 ]
+	[[ "$output" == *"== mirurobotics/docs refs/heads/release#old =="* ]]
+	grep -qx 'ref=refs/heads/release#old' "$GH_STUB_ARGS"
+	grep -qx 'repos/mirurobotics/docs/code-scanning/analyses' "$GH_STUB_ARGS"
+	! grep -q '?' "$GH_STUB_ARGS"
 }

@@ -81,10 +81,12 @@ if [[ -z "${repo}" ]]; then
 fi
 
 # Prints one TSV line per CodeQL category on the ref, describing its newest
-# analysis: category, created_at, short sha, id, deletable.
+# analysis: category, created_at, short sha, id, deletable. The ref is sent as
+# a query field so gh URL-encodes characters such as # and & in branch names.
 latest_per_category() {
 	local repo="$1" ref="$2"
-	gh api --paginate "repos/${repo}/code-scanning/analyses?ref=${ref}&per_page=100" |
+	gh api --paginate -X GET -f "ref=${ref}" -F per_page=100 \
+		"repos/${repo}/code-scanning/analyses" |
 		jq -s 'add // []' |
 		jq -r '[.[] | select(.tool.name == "CodeQL")]
 			| group_by(.category) | map(max_by(.created_at)) | .[]
