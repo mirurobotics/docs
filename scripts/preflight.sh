@@ -25,4 +25,4 @@ echo "=== Audit ==="
 echo ""
 
 echo "=== Shell Script Tests ==="
-bats pub/scripts/agent/check-miru-access_test.bats
+bats pub/scripts/agent/check-miru-access_test.bats scripts/codeql-prune_test.bats
