@@ -31,7 +31,7 @@ After this change the repo ships `scripts/codeql-prune.sh`. A maintainer with th
 - [x] Milestone 1: Write `scripts/codeql-prune.sh`; commit. (2026-09-20)
 - [x] Milestone 2: Write `scripts/codeql-prune_test.bats`; wire into `ci.yml` and `preflight.sh`; commit. (2026-09-20)
 - [x] Milestone 3: Add the job-id comment to `codeql-analysis.yml`; commit. (2026-09-20)
-- [ ] Milestone 4: Push, open the draft PR, drive CI to CLEAN, mark ready for review.
+- [x] Milestone 4: Push, open the draft PR (#192), drive CI to CLEAN. (2026-09-20; `lint`, `audit`, `shell-tests` green on `5ae4e26`; marking ready for review is left to the task orchestrator.)
 - [ ] Post-merge (maintainer, not a PR gate): run the script with `--delete`; confirm the Tools page shows one configuration.
 
 
@@ -53,7 +53,9 @@ After this change the repo ships `scripts/codeql-prune.sh`. A maintainer with th
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+- Delivered in PR #192 (`claude/upbeat-davinci-tyzi5x` -> `main`): `scripts/codeql-prune.sh`, `scripts/codeql-prune_test.bats` (5 tests), the `shell-tests` / `preflight.sh` wiring, and the job-id comment in `codeql-analysis.yml`. CI (`lint`, `audit`, `shell-tests`) is green on the pushed head.
+- The one deviation from the plan was a real bug the plan's design would have shipped: reading the listing through `< <(...)` hides `gh api` failures from `set -e`. Capturing it in a variable fixed it and a fifth test locks it in. Worth remembering for future scripts that combine `set -e` with process substitution.
+- The post-merge `--delete` run still needs a maintainer with code-scanning write access; the PR body carries the commands.
 
 
 ## Context and Orientation
