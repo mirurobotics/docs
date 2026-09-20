@@ -28,16 +28,17 @@ After this change the repo ships `scripts/codeql-prune.sh`. A maintainer with th
 
 ## Progress
 
-- [ ] Milestone 1: Write `scripts/codeql-prune.sh`; commit.
-- [ ] Milestone 2: Write `scripts/codeql-prune_test.bats`; wire into `ci.yml` and `preflight.sh`; commit.
-- [ ] Milestone 3: Add the job-id comment to `codeql-analysis.yml`; commit.
+- [x] Milestone 1: Write `scripts/codeql-prune.sh`; commit. (2026-09-20)
+- [x] Milestone 2: Write `scripts/codeql-prune_test.bats`; wire into `ci.yml` and `preflight.sh`; commit. (2026-09-20)
+- [x] Milestone 3: Add the job-id comment to `codeql-analysis.yml`; commit. (2026-09-20)
 - [ ] Milestone 4: Push, open the draft PR, drive CI to CLEAN, mark ready for review.
 - [ ] Post-merge (maintainer, not a PR gate): run the script with `--delete`; confirm the Tools page shows one configuration.
 
 
 ## Surprises & Discoveries
 
-(Add entries as you go.)
+- 2026-09-20: `bats` and `shellcheck` installed fine via `apt-get` in the implementation session, so the test ran locally: `bats scripts/codeql-prune_test.bats` reports `5 tests, 0 failures` and `shellcheck scripts/codeql-prune.sh` is clean.
+- 2026-09-20: The combined CI command `bats pub/scripts/agent/check-miru-access_test.bats scripts/codeql-prune_test.bats` fails locally only because the session runs as uid 0 and `check-miru-access.sh` refuses to run as root (18 pre-existing tests fail for that reason). CI runners are non-root, so this is environmental; all 4 new tests pass in the combined run.
 
 
 ## Decision Log
@@ -45,6 +46,8 @@ After this change the repo ships `scripts/codeql-prune.sh`. A maintainer with th
 - Decision: Hardcode the default keep category (`.github/workflows/codeql-analysis.yml:codeql`) in the script instead of parsing the workflow YAML. / Rationale: parsing job ids out of YAML with grep is fragile and the workflow comment already tells whoever renames the job to update the script; `--keep` overrides the default when needed. / Date/Author: 2026-09-20, plan author.
 - Decision: The script only considers analyses whose `tool.name` is `CodeQL`. / Rationale: the default keep list is CodeQL-specific; if another SARIF uploader is ever added its categories must not be pruned by accident. / Date/Author: 2026-09-20, plan author.
 - Decision: No README change. / Rationale: the root `README.md` is a content index for the docs site with no contributor-tooling section; the script's `--help` is its documentation. / Date/Author: 2026-09-20, plan author.
+- Decision: `die` prefixes messages with `codeql-prune.sh:` and `process_ref` prints a `pruned N categories` summary line in `--delete` mode. / Rationale: the prefix makes stderr attributable when the script is chained in CI; the summary keeps the dry-run and delete outputs symmetric. Neither changes the strings the tests assert on. / Date/Author: 2026-09-20, implementer.
+- Decision: `process_ref` captures the listing in a variable instead of reading from a process substitution, and a fifth bats test (`gh api failure aborts instead of reporting nothing to prune`) covers it. / Rationale: `set -e` does not see failures inside `< <(...)`, so an HTTP 403 from `gh api` would have printed `nothing to prune` and exited 0; assigning the command substitution to a variable makes the failure fatal as the plan intended. / Date/Author: 2026-09-20, implementer.
 - Decision: The deletion itself is out of scope for the PR. / Rationale: the session token gets HTTP 403 on `/code-scanning/analyses`; the PR delivers the tool and the PR body carries the run instructions for a maintainer. / Date/Author: 2026-09-20, plan author.
 
 
