@@ -72,6 +72,10 @@ case "${args[0]}" in
 		echo "mirurobotics/docs"
 		;;
 	api)
+		if [[ -n "${GH_STUB_FAIL:-}" ]]; then
+			echo "gh: HTTP 403: Resource not accessible by integration" >&2
+			exit 1
+		fi
 		if [[ "${args[1]}" == "-X" && "${args[2]}" == "DELETE" ]]; then
 			echo "${args[3]}" >> "$GH_STUB_LOG"
 			delete_response "${args[3]}" | emit
@@ -108,6 +112,14 @@ EOF
 	[[ "$output" == *"id=100"* ]]
 	[[ "$output" != *"id=50"* ]]
 	[[ "$output" == *"dry run: 2 categories would be pruned"* ]]
+	[ ! -s "$GH_STUB_LOG" ]
+}
+
+@test "gh api failure aborts instead of reporting nothing to prune" {
+	run env PATH="$STUB_BIN:$PATH" GH_STUB_FAIL=1 bash "$SCRIPT" --repo mirurobotics/docs
+	[ "$status" -ne 0 ]
+	[[ "$output" == *"HTTP 403"* ]]
+	[[ "$output" != *"nothing to prune"* ]]
 	[ ! -s "$GH_STUB_LOG" ]
 }
 

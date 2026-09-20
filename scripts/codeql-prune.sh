@@ -109,17 +109,27 @@ prune_category() {
 	done
 }
 
+classify() {
+	local category="$1" deletable="$2"
+	if is_kept "${category}"; then
+		echo KEEP
+	elif [[ "${deletable}" != "true" ]]; then
+		echo SKIP
+	else
+		echo PRUNE
+	fi
+}
+
+# The listing is captured into a variable rather than read from a process
+# substitution so that a gh/jq failure (for example HTTP 403) trips set -e.
 process_ref() {
 	local repo="$1" ref="$2"
-	local category created sha id deletable action count=0
+	local lines category created sha id deletable action count=0
 	echo "== ${repo} ${ref} =="
+	lines="$(latest_per_category "${repo}" "${ref}")"
 	while IFS=$'\t' read -r category created sha id deletable; do
-		action=PRUNE
-		if is_kept "${category}"; then
-			action=KEEP
-		elif [[ "${deletable}" != "true" ]]; then
-			action=SKIP
-		fi
+		[[ -n "${category}" ]] || continue
+		action="$(classify "${category}" "${deletable}")"
 		echo "${action} ${category} ${created} ${sha} id=${id}"
 		[[ "${action}" == "PRUNE" ]] || continue
 		if [[ "${delete}" == "true" ]]; then
@@ -127,7 +137,7 @@ process_ref() {
 			echo "deleted ${category}"
 		fi
 		count=$((count + 1))
-	done < <(latest_per_category "${repo}" "${ref}")
+	done <<< "${lines}"
 	report "${count}"
 }
 
