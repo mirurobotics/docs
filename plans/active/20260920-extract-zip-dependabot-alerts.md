@@ -26,14 +26,14 @@ GitHub Dependabot has two open High alerts on `mirurobotics/docs`, both against 
 
 ## Progress
 
-- [ ] Milestone 1: Add the `puppeteer` override, drop the two CVE ignores, regenerate `pnpm-lock.yaml`, confirm `extract-zip` is gone; commit.
-- [ ] Milestone 2: Run the local checks (`./scripts/audit.sh`, `pnpm run test:lint`, `./scripts/lint.sh`, `pnpm run validate`); commit only if a fix was needed.
+- [x] Milestone 1: Add the `puppeteer` override, drop the two CVE ignores, regenerate `pnpm-lock.yaml`, confirm `extract-zip` is gone; commit.
+- [x] Milestone 2: Run the local checks (`./scripts/audit.sh`, `pnpm run test:lint`, `./scripts/lint.sh`, `pnpm run validate`); commit only if a fix was needed.
 - [ ] Milestone 3: Push, open the draft PR, drive CI to CLEAN, mark ready for review.
 
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds.)
+- 2026-09-20: `pnpm run validate` cannot run in the implementation sandbox. `mint validate` gates on the `is-online` package (raw DNS/socket probe that bypasses the egress proxy) and, with no cached preview client under `~/.mintlify`, exits with `running mint validate-build after updating requires an internet connection.` The `mint` version (4.2.891) is identical on `main` and this branch, so the failure is environmental, not caused by the override. The other three local checks passed; `pnpm run validate` is verified by the CI `lint` job instead.
 
 
 ## Decision Log
