@@ -18,6 +18,12 @@ permissions:
   security-events: write
 
 jobs:
+  # The job id below is part of the code-scanning category
+  # (".github/workflows/codeql-analysis.yml:codeql"). Renaming it or adding a
+  # matrix orphans the old category as a stale "results may be out of date"
+  # configuration under Security > Code scanning > Tools. After such a change,
+  # update the default keep category in scripts/codeql-prune.sh and run it to
+  # prune the old one.
   codeql:
     runs-on: blacksmith-2vcpu-ubuntu-2404
 
