@@ -28,7 +28,7 @@ GitHub Dependabot has two open High alerts on `mirurobotics/docs`, both against 
 
 - [x] Milestone 1: Add the `puppeteer` override, drop the two CVE ignores, regenerate `pnpm-lock.yaml`, confirm `extract-zip` is gone; commit.
 - [x] Milestone 2: Run the local checks (`./scripts/audit.sh`, `pnpm run test:lint`, `./scripts/lint.sh`, `pnpm run validate`); commit only if a fix was needed.
-- [ ] Milestone 3: Push, open the draft PR, drive CI to CLEAN, mark ready for review.
+- [x] Milestone 3: Push, open the draft PR, drive CI to CLEAN, mark ready for review.
 
 
 ## Surprises & Discoveries
@@ -43,7 +43,10 @@ GitHub Dependabot has two open High alerts on `mirurobotics/docs`, both against 
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+- Delivered as PR #191 (`fix(deps): override puppeteer to >=25 to drop extract-zip`). CI (`lint`, `audit`, `shell-tests`) green on the pushed head on the first round; no CI-driven fixes were needed.
+- `pnpm-lock.yaml` no longer contains `extract-zip`; `puppeteer`/`puppeteer-core` resolve to 25.11.0 and `@puppeteer/browsers` to 3.2.2. The audit job now runs without ignoring CVE-2026-56876 or CVE-2026-19693.
+- Dependabot alerts #69 and #71 close automatically once the PR merges to `main`.
+- Retrospective: `mint validate` cannot run in a sandbox without internet-probe access, so CI is the only place that check is verified for this kind of change.
 
 
 ## Context and Orientation
