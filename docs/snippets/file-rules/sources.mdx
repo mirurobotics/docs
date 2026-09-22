@@ -10,10 +10,15 @@ and when a matching file is considered finished.
   - No `..` segments, and no empty segments (`//` or a trailing `/`)
 
   <Warning>
-    You must grant the Miru Agent read access to the files you want to upload. Visit the [file system access](/developers/agent/filesys-access#data-uploads) section for more details.
+    You must grant the Miru Agent read access to matching files and their containing
+    directories. Files in directories the agent can't read are silently skipped. See
+    [file system access](/developers/agent/filesys-access#data-uploads) for details.
   </Warning>
 
   Example: `/var/log/robot/*.log`
+
+  See [glob patterns](/data-uploads/primitives/file-rules/rule-definition#glob-patterns) for
+  supported syntax, examples, and matching behavior.
 </ParamField>
 
 <ParamField path="stability_window_secs" type="integer" default="60">

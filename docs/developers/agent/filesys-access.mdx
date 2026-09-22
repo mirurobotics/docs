@@ -92,7 +92,7 @@ To write to a given file, the `miru` user requires the following Unix permission
 ## Data uploads
 
 To upload data, the agent **reads** the files matched by a
-[file rule](/data-uploads/primitives/file-rules)'s `source.glob` and streams them to
+[file rule's](/data-uploads/primitives/file-rules/overview) `source.glob` and streams them to
 your bucket. The `miru` user needs read access to the files themselves, read and execute
 on the directory that contains them (to list and match the glob), and execute access to
 traverse the remaining directories along the path.
@@ -141,7 +141,7 @@ files, unless the rule also deletes them, covered next.
 
 ### Deleting local files
 
-If a file rule has a [`retention`](/data-uploads/primitives/file-rules#retention) block,
+If a file rule has a [`retention`](/data-uploads/primitives/file-rules/rule-definition#retention) block,
 the agent removes each matching file once its retention guarantee ends. Deleting a file
 requires **write (`w`)** access to its **parent directory** (to remove the directory
 entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case:
