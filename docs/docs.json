@@ -466,6 +466,14 @@
       "destination": "/data-uploads/define-file-rules"
     },
     {
+      "source": "/data-uploads/buckets/connect/gcs",
+      "destination": "/data-uploads/connect-a-bucket/gcs"
+    },
+    {
+      "source": "/data-uploads/buckets/connect/aws",
+      "destination": "/data-uploads/connect-a-bucket/aws"
+    },
+    {
       "source": "/developers/agent/file-permissions",
       "destination": "/developers/agent/filesys-access"
     },
