@@ -26,12 +26,14 @@ The data uploads overview and the retention field point readers to that section.
 
 ## Progress
 
-- [ ] Milestone 1: re-run the agent behavior check (test step), apply Edits 1-3, pass local checks, commit.
-- [ ] Milestone 2: push, open a draft PR, get preflight to `CLEAN`, mark the PR ready.
+- [x] Milestone 1: re-run the agent behavior check (test step), apply Edits 1-3, pass local checks, commit. (2026-09-22: `cargo test -p miru-agent --lib data_uploads::scan` 116 passed, 0 failed, all six named tests present; `pnpm run test:lint`, `./scripts/lint.sh`, `pnpm run validate` all exit 0.)
+- [ ] Milestone 2: push, open a draft PR, get preflight to `CLEAN`. (PR left in draft for human review per the orchestrator's instructions.)
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds.)
+- `docs/snippets/file-rules/retention.mdx` is shorter than the plan assumed: the "retention block doesn't go into effect until a file is considered stable" paragraph is at line 4, not line 32. Edit 3 was inserted after that paragraph as intended.
+- `#param-<path>` anchors are already used for same-page links (`docs/snippets/references/cli/releases/create/schema-annotations.mdx` links `#param-instance-slots`), and `mint validate` passes, so `[digest](#param-digest)` was kept.
+- No CSpell words needed; `cspell.json` unchanged.
 
 ## Decision Log
 
@@ -44,7 +46,7 @@ The data uploads overview and the retention field point readers to that section.
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+- Added `## Deployment` (with `### Existing files` and `### Later deployments`) to the file rule overview, plus pointers from the data uploads overview and the shared retention snippet. Local lint, spell, and validate checks pass. CI status is recorded in the PR.
 
 ## Context and Orientation
 

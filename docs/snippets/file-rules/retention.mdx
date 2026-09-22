@@ -3,6 +3,10 @@ absent, the device retains matching files indefinitely (Miru never deletes them)
 
 The retention block doesn't go into effect until a file is considered stable. That is, its size and modification time have stayed unchanged for [`source.stability_window_secs`](/data-uploads/primitives/file-rules/rule-definition#sources).
 
+Files that already matched the rule when it was deployed to the device are never
+deleted unless they change afterward. See
+[deployment](/data-uploads/primitives/file-rules/overview#deployment).
+
 <ParamField path="require_upload" type="boolean">
   Whether a file must have its upload durably confirmed before it may be deleted. Must be set when the rule has an [`upload`](/data-uploads/primitives/file-rules/rule-definition#uploads) block.
 
