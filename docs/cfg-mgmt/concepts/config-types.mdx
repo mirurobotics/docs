@@ -80,6 +80,31 @@ Update the desired fields, then click **Save**.
   ![Edit Config Type Dialog](https://assets.mirurobotics.com/docs/v04/images/config-types/edit-dialog.png)
 </Frame>
 
+## Archive a config type  <PublisherBadge />
+
+<PlatformUnsupportedBadge />
+
+Archiving a config type retires it from future releases. While a config type is
+archived:
+
+- new [releases](/concepts/releases) that include it can't be created
+- new [schemas](/cfg-mgmt/concepts/schemas/manage) can't be added to it
+
+Existing schemas, releases, and deployments that use the config type are not
+affected, and devices keep their current configs. An archived config type can be
+unarchived at any time.
+
+Since most config types can't be deleted, archiving is the usual way to retire a
+config type you no longer use.
+
+To archive a config type, click the ellipses (...) on the config type and select
+**Archive**, then confirm.
+
+### Unarchive a config type
+
+Unarchiving a config type lets you create schemas and releases with it again. Click
+the ellipses (...) on the archived config type and select **Unarchive**.
+
 ## Delete a config type  <AdminBadge />
 
 <PlatformUnsupportedBadge />

@@ -73,11 +73,44 @@ On the other hand, <Tooltip tip={OFFLINE_TOOLTIP.tip} cta={OFFLINE_TOOLTIP.cta} 
 
 <MoveDevice />
 
+## Archive a device  <ProvisionerBadge />
+
+<PlatformUnsupportedBadge />
+
+Archive a device when it is retired, replaced, or no longer managed by Miru. Archiving
+a device:
+
+- sets its [status](/concepts/devices/overview#status) to `archived` and hides it from the devices list
+- immediately invalidates its authentication session, so the Miru Agent can no longer
+  connect to Miru or receive config updates
+- prevents new deployments to the device
+- frees up a device slot in your plan's device limit
+
+Archiving keeps the device's deployment and configuration history. It does not remove
+configs that were already written to the machine. The device's name stays reserved in
+the workspace.
+
+To archive a device, click the ellipses (...) on the device and select **Archive**,
+then confirm. To archive several devices at once (up to 100), select them and choose
+**Archive** from the bulk actions.
+
+### Restore an archived device
+
+Archived devices can't be unarchived directly. To bring an archived device back,
+[reprovision](/provision-devices/reprovision) it, or
+[provision](/provision-devices/overview) a machine with the archived
+device's name. The device returns to `activating` and then `online`, and keeps its
+deployment history. Restoring a device counts toward your plan's device limit.
+
 ## Delete a device  <ProvisionerBadge />
 
 <PlatformUnsupportedBadge />
 
-Deleting a device immediately invalidates its authentication session and removes all deployment and configuration history. This action is irreversible. Please proceed with caution.
+Deleting a device permanently removes it from Miru and immediately invalidates its
+authentication session. This action is irreversible. Please proceed with caution.
+
+A device can only be deleted if it has never had a deployment. Devices with
+deployment history must be [archived](#archive-a-device) instead.
 
 To delete a device, click the ellipses (...) on the device you want to delete and hit **Delete**.
 

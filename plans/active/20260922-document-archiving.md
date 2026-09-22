@@ -19,12 +19,14 @@ Miru's dashboard lets users archive releases, devices, and config types, but the
 
 ## Progress
 
-- [ ] Milestone 1: apply Edits 1-5, pass local checks, commit.
-- [ ] Milestone 2: push, open a draft PR, get preflight to `CLEAN`.
+- [x] Milestone 1: apply Edits 1-5, pass local checks, commit. (2026-09-22) Backend greps re-run at `d4799e6`, all matched. `pnpm run test:lint`, `./scripts/lint.sh`, and `pnpm run validate` pass locally.
+- [ ] Milestone 2: push, open a draft PR, get preflight to `CLEAN`. (Branch pushed; draft PR and CI watch owned by the orchestrator.)
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds.)
+- CSpell flagged `Unarchiving` (the headings' body text), so Edit 5 was applied: `unarchiving` was added to `cspell.json`. `unarchive` was not flagged.
+- `pnpm exec mint broken-links` failed to parse this plan because of bare `'<id>'` placeholders in the quoted backend error messages (MDX reads `<id>` as a JSX tag). They are now in backticks. The command still aborts on a pre-existing parse error in `plans/completed/20260428-redirect-lint-rule.md` (`<short>`), which is outside this plan's scope. `broken-links` is not part of CI; `pnpm run validate` passes. Link targets and anchors in the new text were checked by hand.
+- Deployment activity statuses also include `failed` and `retrying` (`docs/primitives/deployments.mdx`), so the Edit 1 sentence "A deployment that is queued, deployed, or being removed is archived once the device moves to a deployment of another release" was not exhaustive. See the Decision Log.
 
 ## Decision Log
 
@@ -40,10 +42,16 @@ Miru's dashboard lets users archive releases, devices, and config types, but the
 - Decision: No changelog entry.
   Rationale: Archiving shipped earlier (backend `CHANGELOG.md`: "archive/unarchive for releases (#162)", "archive/unarchive for config_types (#161)"). Changelog entries are made at release time, not for documentation catch-up (precedent: `plans/completed/20260922-file-rule-deployment-behavior-docs.md`).
   Date/Author: 2026-09-22, plan author.
+- Decision: In `releases.mdx`, say "A deployment that has already been sent to a device is archived automatically once a newer deployment replaces it on that device" instead of the plan's wording.
+  Rationale: Matches the Terms section ("Deployed ones become `archived` once a newer deployment replaces them on the device") and does not list an incomplete set of statuses.
+  Date/Author: 2026-09-22, implementer.
+- Decision: In `devices.mdx`, the status-section sentence says the device leaves `archived` "when it is [restored](#restore-an-archived-device)" instead of "when it is provisioned again".
+  Rationale: Restoring covers both reprovisioning and provisioning by name, and the link points to the section that explains both.
+  Date/Author: 2026-09-22, implementer.
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+Milestone 1 is complete. `releases.mdx` and `config-types.mdx` have archive and unarchive sections. `devices.mdx` has the `archived` status, archive and restore sections, and a corrected "Delete a device" section. `access-control.mdx` lists the five new operations. `cspell.json` gained `unarchiving`. All local lint and validate checks pass. Still open: CI preflight on the draft PR, and a reviewer check of the dashboard labels (**Archive**, **Unarchive**, bulk actions, how archived items are listed), since the frontend source was not available.
 
 ## Context and Orientation
 
@@ -65,14 +73,14 @@ Releases (`internal/configs/services/releases/`):
 
 1. Archive and unarchive are both supported. Bulk archive or unarchive takes at most 100 releases per request (`archive.go`, `unarchive.go`, `bulk_archive.go`, `bulk_unarchive.go`; `errors.go:21` `MaxBulkArchiveReleases = 100`).
 2. Precondition: a release can be archived only if every one of its deployments is `archived`. Otherwise the request fails with `release_has_unarchived_deployments`, "this release cannot be archived since it has unarchived deployments" (`bulk_archive.go` `verifyNoUnarchivedDeployments`; `errors.go:89-111`; `internal/configs/db/release.go:107-116`). The dashboard tooltip reads "Cannot archive releases that have staged or active deployments" (`internal/authz/actions/release.go:59-75`).
-3. Effect: new deployments of an archived release are rejected with `deployment_release_archived`, "cannot create deployment: release '<id>' is archived" (`internal/configs/services/deployments/create/entry.go:162,249-254`; `internal/configs/domain/deployments/errors.go:22,304-319`). Existing, already-archived deployments and history are kept.
+3. Effect: new deployments of an archived release are rejected with `deployment_release_archived`, `cannot create deployment: release '<id>' is archived` (`internal/configs/services/deployments/create/entry.go:162,249-254`; `internal/configs/domain/deployments/errors.go:22,304-319`). Existing, already-archived deployments and history are kept.
 4. Unarchive has no precondition beyond the release being archived (`bulk_unarchive.go`; `internal/authz/actions/release.go:77-91`).
 5. Permission: publisher (and admin/owner) roles (`internal/authz/permissions/configs/role_grants.go:48,107`).
 
 Config types (`internal/configs/services/config_types/`):
 
 1. Archive and unarchive are both supported, one config type at a time (`archive.go`, `unarchive.go`; bulk was removed, backend `CHANGELOG.md` #377). There is no precondition other than not already being archived (`internal/authz/actions/config_type.go:73-103`).
-2. Effect: new releases that include an archived config type are rejected with `release_config_type_archived`, "cannot create release: config type '<id>' is archived" (`internal/configs/services/releases/create.go:223-232`, `errors.go:158-183`). New schemas for it are rejected with `config_schema_config_type_archived`, "cannot create config schema: config type '<id>' is archived" (`internal/configs/services/config_schemas/create.go:603-604`, `errors.go:117-142`). Existing schemas, releases, and deployments are not changed.
+2. Effect: new releases that include an archived config type are rejected with `release_config_type_archived`, `cannot create release: config type '<id>' is archived` (`internal/configs/services/releases/create.go:223-232`, `errors.go:158-183`). New schemas for it are rejected with `config_schema_config_type_archived`, `cannot create config schema: config type '<id>' is archived` (`internal/configs/services/config_schemas/create.go:603-604`, `errors.go:117-142`). Existing schemas, releases, and deployments are not changed.
 3. Permission: publisher (and admin/owner) (`role_grants.go:46,103`).
 
 Devices (`internal/configs/services/devices/`):
