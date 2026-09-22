@@ -1,23 +1,22 @@
 ---
-title: "File rules"
+title: "Overview"
 ---
 
 import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
 import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { PublisherBadge } from '/snippets/components/role-badges.jsx';
 import FileRuleDef from '/snippets/definitions/file-rule.mdx';
-import Retention from '/snippets/file-rules/retention.mdx';
-import Sources from '/snippets/file-rules/sources.mdx';
-import Upload from '/snippets/file-rules/upload.mdx';
 
 <FileRuleDef />
+
+For details on how to define file rules, see the [rule definition](/data-uploads/primitives/file-rules/rule-definition) page.
 
 ## Properties
 
 <ParamField path="name" type="string" required>
   <ImmutableBadge />
 
-  A human-readable name for the rule. 
+  A human-readable name for the rule.
 
   Examples: `Robot Logs`, `Crash Reports`, `Camera Footage`
 </ParamField>
@@ -35,14 +34,16 @@ import Upload from '/snippets/file-rules/upload.mdx';
 <ParamField path="source" type="Source" required>
   <ImmutableBadge />
 
-  Which files on the device the rule manages. See [Sources](#sources).
+  Which files on the device the rule manages. See
+  [sources](/data-uploads/primitives/file-rules/rule-definition#sources).
 </ParamField>
 
 <ParamField path="upload" type="Upload">
   <ImmutableBadge />
 
   An optional field that defines where matching files are uploaded to. Absent when the
-  rule only manages local retention. See [Uploads](#uploads).
+  rule only manages local retention. See
+  [uploads](/data-uploads/primitives/file-rules/rule-definition#uploads).
 </ParamField>
 
 <ParamField path="retention" type="Retention">
@@ -50,51 +51,8 @@ import Upload from '/snippets/file-rules/upload.mdx';
 
   An optional field that defines how long the device retains local copies of matching
   files. Absent when the device keeps them indefinitely — Miru never deletes them. See
-  [Retention](#retention).
+  [retention](/data-uploads/primitives/file-rules/rule-definition#retention).
 </ParamField>
-
-## File format
-
-Each rule is defined as a single YAML file in your Git repository:
-
-```yaml
-name: Robot Logs                       
-
-source:
-  glob: "/var/log/robot/*.log"         
-  stability_window_secs: 60 
-
-# optional block
-upload:                                
-  collection_slug: robot-logs
-  bucket: my-uploads-bucket
-  path: "logs/{device_id}/{upload_id}/{file_name}"  
-
-# optional block
-retention:                             
-  ttl_secs: 604800                     
-  require_upload: true                 
-```
-
-Rule files reference the rule's upload collection by its slug
-(`upload.collection_slug`) and the bucket by name (`upload.bucket`), while the API object
-returns their ids (`upload.upload_collection_id`, `upload.bucket_id`).
-
-See [sources](#sources), [uploads](#uploads), and [retention](#retention) for details on
-each field, and [define file rules](/data-uploads/define-file-rules) for how to release
-them.
-
-## Sources
-
-<Sources />
-
-## Uploads
-
-<Upload />
-
-## Retention
-
-<Retention />
 
 ## Immutability
 
@@ -108,31 +66,36 @@ Rules are defined as YAML files in your Git repository and created by
 [releasing them via the CLI](/data-uploads/define-file-rules). Each rule records the
 Git commits it was released from — the commit itself and the rule file's path relative
 to the repository root — so any rule in Miru can be traced back to the exact lines of
-YAML that defined it. 
+YAML that defined it.
 
 ## Create a file rule  <PublisherBadge />
 
 <PlatformUnsupportedBadge />
 
-File rules must be created as part of a [release](/primitives/releases). Visit the [define file rules](/data-uploads/define-file-rules) page to learn how to create file rules and releases.
+File rules must be created as part of a [release](/primitives/releases). Visit the
+[define file rules](/data-uploads/define-file-rules) page to learn how to create file
+rules and releases.
 
 ## View a file rule
 
 <PlatformUnsupportedBadge />
 
-To view a file rule in Miru, navigate to the [Releases page](https://app.mirurobotics.com/releases), and click into the release that contains the file rule you want to view.
+To view a file rule in Miru, navigate to the
+[Releases page](https://app.mirurobotics.com/releases), and click into the release that
+contains the file rule you want to view.
 
 <Frame>
   ![Releases Page](https://assets.mirurobotics.com/docs/v04/images/releases/page.png)
 </Frame>
 
-At the bottom of the page under the **Overview** tab, you will find a list of the release's file rules.
+At the bottom of the page under the **Overview** tab, you will find a list of the
+release's file rules.
 
 <Frame>
   ![Release File Rules List](https://assets.mirurobotics.com/docs/v04/images/releases/upload-rule-list.png)
 </Frame>
 
-To see more details about a file rule, simply click on the dropdown arrow next to the file rule.
+To see more details about a file rule, click the dropdown arrow next to the file rule.
 
 <Frame>
   ![Release File Rule Details](https://assets.mirurobotics.com/docs/v04/images/releases/upload-rule-details.png)

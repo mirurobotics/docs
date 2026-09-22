@@ -7,7 +7,7 @@ import UploadDef from '/snippets/definitions/upload.mdx';
 
 <UploadDef />
 
-Once a [file rule](/data-uploads/primitives/file-rules) with an `upload` block is
+Once a [file rule](/data-uploads/primitives/file-rules/overview) with an `upload` block is
 deployed to a device, the Miru Agent handles the rest: detecting when a matching file is
 finished, uploading it to your bucket, and recording it in the ledger with the
 properties below.
@@ -66,7 +66,7 @@ properties below.
 <ParamField path="file rule" type="File Rule">
   <ImmutableBadge />
 
-  The [file rule](/data-uploads/primitives/file-rules) that produced the upload.
+  The [file rule](/data-uploads/primitives/file-rules/overview) that produced the upload.
 </ParamField>
 
 <ParamField path="deployment" type="Deployment">
@@ -88,7 +88,7 @@ last modified.
   <ImmutableBadge />
 
   Absolute path of the file on the device. Its basename renders the `{file_name}`
-  variable in the [upload path template](/data-uploads/primitives/file-rules#uploads).
+  variable in the [upload path template](/data-uploads/primitives/file-rules/rule-definition#uploads).
 
   Example: `/var/log/robot/robot.log`
 </ParamField>

@@ -92,7 +92,7 @@ To write to a given file, the `miru` user requires the following Unix permission
 ## Data uploads
 
 To upload data, the agent **reads** the files matched by a
-[file rule](/data-uploads/primitives/file-rules)'s `source.glob` and streams them to
+[file rule's](/data-uploads/primitives/file-rules/overview) `source.glob` and streams them to
 your bucket. The `miru` user needs read access to the files themselves, read and execute
 on the directory that contains them (to list and match the glob), and execute access to
 traverse the remaining directories along the path.
@@ -141,7 +141,7 @@ files, unless the rule also deletes them, covered next.
 
 ### Deleting local files
 
-If a file rule has a [`retention`](/data-uploads/primitives/file-rules#retention) block,
+If a file rule has a [`retention`](/data-uploads/primitives/file-rules/rule-definition#retention) block,
 the agent removes each matching file once its retention guarantee ends. Deleting a file
 requires **write (`w`)** access to its **parent directory** (to remove the directory
 entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case:
@@ -152,27 +152,6 @@ entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case
 | `/var/log/robot` | read (`r`), write (`w`), execute (`x`) |
 | `/var/log` | execute (`x`) |
 | `/var` | execute (`x`) |
-
-### Recursive globs
-
-When a rule's `source.glob` contains `**`, the agent lists every directory the `**`
-descends into, so the `miru` user needs read (`r`) and execute (`x`) on each of those
-directories, not only the top one. For the glob `/var/log/robot/**/*.log` matching the
-file `/var/log/robot/nav/2026/app.log`, the required permissions are:
-
-| Path | Permissions |
-|------|----------------------|
-| `/var/log/robot/nav/2026/app.log` | read (`r`) |
-| `/var/log/robot/nav/2026` | read (`r`), execute (`x`) |
-| `/var/log/robot/nav` | read (`r`), execute (`x`) |
-| `/var/log/robot` | read (`r`), execute (`x`) |
-| `/var/log` | execute (`x`) |
-| `/var` | execute (`x`) |
-
-Directories the `miru` user can't read are silently skipped: files beneath them are
-never matched. If the rule also has a `retention` block, add write (`w`) on each
-directory that directly contains a matching file, as described in
-[deleting local files](#deleting-local-files).
 
 ## Testing access
 
