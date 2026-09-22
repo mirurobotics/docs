@@ -34,6 +34,10 @@ is considered finished and eligible for upload.
 While this works for any file type, it is a heuristic for detecting when a file is
 finished being written to. For deterministic completion detection, write to a file location that does not match the rule's glob and rename on completion. This ensures the Miru Agent only ever sees finished files — zero false positives.
 
+The Agent only uploads files that are new or have changed since the rule took effect on
+the device. Files that already match a rule when it is deployed are skipped. See
+[deployment](/data-uploads/primitives/file-rules/overview#deployment) for details.
+
 
 ## Device data isolation
 

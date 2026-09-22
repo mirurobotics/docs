@@ -68,6 +68,14 @@ Git commits it was released from — the commit itself and the rule file's path 
 to the repository root — so any rule in Miru can be traced back to the exact lines of
 YAML that defined it.
 
+## Deployment
+
+File rules go into effect when a
+[deployment](/primitives/deployments) containing the rule reaches the `deployed`
+[activity status](/primitives/deployments#activity-status) on *that device*.
+
+A file is processed only if it was created or modified after the rule took effect. Files that existed before the rule took effect are ignored as long as they remain unchanged.
+
 ## Create a file rule  <PublisherBadge />
 
 <PlatformUnsupportedBadge />
