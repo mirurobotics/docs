@@ -60,57 +60,6 @@ File rules are **immutable**. A rule is created once, shipped to devices as part
 a [release](/primitives/releases), and never edited in place. To change
 what is managed, you must create a new rule, release it, and deploy it to your devices.
 
-## Deployment
-
-A file rule takes effect on a device when that device applies a
-[deployment](/primitives/deployments) whose release contains the rule. Each device
-starts the rule at its own moment: when the deployment reaches the `deployed`
-[activity status](/primitives/deployments#activity-status) on that device, not when the
-release or deployment was created. A device that is offline starts the rule once it
-comes back online and applies the deployment.
-
-### Existing files
-
-When a rule takes effect on a device, the Miru Agent records every file that already
-matches the rule's [glob](/data-uploads/primitives/file-rules/rule-definition#glob-patterns),
-along with each file's size and modification time. These pre-existing files are left
-alone: they are not uploaded, and the rule's
-[retention](/data-uploads/primitives/file-rules/rule-definition#retention) never
-deletes them.
-
-A pre-existing file is picked up only once it changes. If its size or modification time
-no longer matches what the agent recorded, for example because a process appended to
-it or because it was still being written when the rule took effect, the agent treats
-it like a new file. It waits for the file to become stable, then uploads it and applies
-retention.
-
-The agent compares files against this record, not against timestamps. A new file that
-appears after the rule takes effect is uploaded even if its modification time is older
-than the deployment, such as a file copied onto the device with its original
-timestamps. The record is stored on the device and survives agent restarts.
-
-<Tip>
-  To upload files that were already on a device when the rule took effect, update their
-  modification time after the rule takes effect (for example, with `touch`). The agent
-  then treats them as changed, uploads them, and applies the rule's retention to them.
-</Tip>
-
-### Later deployments
-
-File rules are identified by their [digest](#param-digest). Deploying a new release that
-contains the same rule (identical name, source, upload, and retention) continues the
-rule on each device instead of starting it again. The device keeps its original record,
-so files that were already uploaded, or skipped as pre-existing, are not revisited.
-
-Changing anything in a rule, even only its name, creates a new rule. When the new rule is
-deployed, each device takes a new record for it, so files already on the device are not
-uploaded by the new rule. This includes files that a widened glob now matches for the
-first time. Files that the previous rule was still waiting on to become stable finish
-under the previous rule.
-
-If a rule is removed from a device and deployed to it again later, the device takes a
-new record, so files created while the rule was removed are not uploaded.
-
 ## Git provenance
 
 Rules are defined as YAML files in your Git repository and created by
@@ -118,6 +67,14 @@ Rules are defined as YAML files in your Git repository and created by
 Git commits it was released from — the commit itself and the rule file's path relative
 to the repository root — so any rule in Miru can be traced back to the exact lines of
 YAML that defined it.
+
+## Deployment
+
+File rules go into effect when a
+[deployment](/primitives/deployments) containing the rule reaches the `deployed`
+[activity status](/primitives/deployments#activity-status) on *that device*.
+
+A file is processed only if it was created or modified after the rule took effect. Files that existed before the rule took effect are ignored as long as they remain unchanged.
 
 ## Create a file rule  <PublisherBadge />
 
