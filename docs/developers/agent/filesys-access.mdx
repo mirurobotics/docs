@@ -153,6 +153,27 @@ entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case
 | `/var/log` | execute (`x`) |
 | `/var` | execute (`x`) |
 
+### Recursive globs
+
+When a rule's `source.glob` contains `**`, the agent lists every directory the `**`
+descends into, so the `miru` user needs read (`r`) and execute (`x`) on each of those
+directories, not only the top one. For the glob `/var/log/robot/**/*.log` matching the
+file `/var/log/robot/nav/2026/app.log`, the required permissions are:
+
+| Path | Permissions |
+|------|----------------------|
+| `/var/log/robot/nav/2026/app.log` | read (`r`) |
+| `/var/log/robot/nav/2026` | read (`r`), execute (`x`) |
+| `/var/log/robot/nav` | read (`r`), execute (`x`) |
+| `/var/log/robot` | read (`r`), execute (`x`) |
+| `/var/log` | execute (`x`) |
+| `/var` | execute (`x`) |
+
+Directories the `miru` user can't read are silently skipped: files beneath them are
+never matched. If the rule also has a `retention` block, add write (`w`) on each
+directory that directly contains a matching file, as described in
+[deleting local files](#deleting-local-files).
+
 ## Testing access
 
 To help you navigate the necessary permissions, we've provided an automated script that

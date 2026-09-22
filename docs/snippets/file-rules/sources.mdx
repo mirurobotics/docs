@@ -2,18 +2,66 @@ A rule's `source` declares what the rule matches on the device: which files it m
 and when a matching file is considered finished.
 
 <ParamField path="glob" type="string" required>
-  An absolute glob pattern that selects the files this rule manages.
+  An absolute glob pattern that selects the files this rule manages. The Miru Agent
+  matches it on the device and re-evaluates it on every scan, so matching files that
+  appear later are picked up.
 
   Must satisfy the following criteria:
   - Absolute — it starts with `/`
   - At most 1024 bytes, with no control characters
   - No `..` segments, and no empty segments (`//` or a trailing `/`)
 
+  The following syntax is supported:
+
+  | Syntax | Matches |
+  | --- | --- |
+  | `*` | Any characters within one path segment. Never crosses a `/`. |
+  | `**` | Zero or more directories, at any depth. Must be a whole path segment on its own, as in `/var/log/**/*.log` — `**.log`, `run**`, and `***` are invalid. |
+  | `?` | Exactly one character. |
+  | `[abc]`, `[a-z]` | One character from the set or range. |
+  | `[!abc]`, `[!a-z]` | One character not in the set or range. |
+
+  Brace expansion (`{a,b}`), backslash escapes (`\*`), and extended patterns such as
+  `!(x)` are not supported — braces and backslashes match literally. To match a literal
+  `*`, `?`, or `[`, wrap it in brackets: `[*]`, `[?]`, `[[]`. Each rule has exactly one
+  pattern; to match files that no single pattern covers, such as `.log` and `.txt`
+  files, define a rule for each.
+
+  Examples:
+
+  | Pattern | Matches |
+  | --- | --- |
+  | `/var/log/robot/*.log` | `.log` files directly inside `/var/log/robot` |
+  | `/var/log/robot/*/*.log` | `.log` files exactly one directory below `/var/log/robot` |
+  | `/var/log/robot/**/*.log` | `.log` files in `/var/log/robot` and all of its subdirectories |
+  | `/var/log/robot/**/*` | Every file in `/var/log/robot` and all of its subdirectories |
+  | `/var/log/robot/run-[0-9].log` | `run-0.log` through `run-9.log` in `/var/log/robot` |
+
+  Keep in mind:
+  - A trailing `**` matches only directories, so `/var/log/robot/**` matches no files.
+    Use `/var/log/robot/**/*` instead.
+  - Only regular files match; a directory never matches, even if its name does.
+    Symbolic links to files and directories are followed.
+  - Matching is case-sensitive (`*.log` does not match `APP.LOG`), and `*` and `**`
+    match hidden files and directories (names starting with `.`).
+  - Keep the part of the pattern before the first wildcard as specific as possible. A
+    broad pattern such as `/**/*.log` walks large parts of the file system on every
+    scan.
+
   <Warning>
-    You must grant the Miru Agent read access to the files you want to upload. Visit the [file system access](/developers/agent/filesys-access#data-uploads) section for more details.
+    Pattern syntax is not checked when a release is created. `miru release create`
+    accepts an invalid pattern such as `/var/log/**.log`, but the pattern fails on the
+    device and the release's file rules do not run. Before releasing, check that every
+    `**` is a whole path segment on its own.
   </Warning>
 
-  Example: `/var/log/robot/*.log`
+  <Warning>
+    You must grant the Miru Agent read access to the files you want to upload and to
+    the directories that contain them, including every directory a `**` descends into.
+    Files in directories the agent can't read are silently skipped. Visit the
+    [file system access](/developers/agent/filesys-access#data-uploads) section for
+    more details.
+  </Warning>
 </ParamField>
 
 <ParamField path="stability_window_secs" type="integer" default="60">
