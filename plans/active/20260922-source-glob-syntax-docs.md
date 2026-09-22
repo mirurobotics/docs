@@ -23,13 +23,16 @@ A customer asked whether a file rule's `source.glob` supports `**` for deep recu
     - [x] (2026-09-22) Edits 1-3 applied as written in Plan of Work; step 4 greps return 1 / 0 / 1 and the heading order Deleting local files (142), Recursive globs (156), Testing access (177).
     - [x] (2026-09-22) `pnpm install --frozen-lockfile`, `pnpm run test:lint`, `./scripts/lint.sh` ("All documentation lint checks passed.") and `pnpm run validate` ("build validation passed") all exit 0. CSpell flagged nothing, so `cspell.json` is unchanged.
 - [ ] Milestone 2: push, open a draft PR, get preflight to `CLEAN`, mark the PR ready.
-    - [ ] Push and open the draft PR.
-    - [ ] Preflight to `CLEAN`. Marking the PR ready and moving this plan to `plans/completed/` are left to the orchestrator.
+    - [x] (2026-09-22) Pushed `claude/beautiful-pascal-ikbvlx` (already up to date with `origin/main`, no rebase needed) and opened draft PR [#196](https://github.com/mirurobotics/docs/pull/196).
+    - [x] (2026-09-22) Preflight `CLEAN` on `7412493` in CI round 1 of 3 (workflow `CI` run 519): `changes`, `lint`, `audit`, and `shell-tests` succeeded, and `lint-custom-linter` and `test-custom-linter` were skipped. No CI fixes were needed. The commit that records this touches only this plan file.
+    - [ ] Mark the PR ready and move this plan to `plans/completed/` (left to the orchestrator).
 
 ## Surprises & Discoveries
 
 - (2026-09-22) The glob check program prints `=> ` with a trailing space on the two lines that match nothing (`**` and `{app,notes}.*`); the expected transcript shows them trimmed. After stripping trailing whitespace the output is identical, so this is not a behavior difference and no docs text changed.
 - (2026-09-22) The agent source lives at `agent/agent/src/filesys/files.rs` in the local checkout (the Cargo workspace crate is nested one level down), not `agent/src/filesys/files.rs`. `Cargo.lock` pins `glob` 0.3.4, matching the version the check used.
+- (2026-09-22) Two check runs besides the CI workflow report on the PR head: `[code]smith` and `Mintlify Deployment`. Both are third-party app checks, not jobs in `.github/workflows/ci.yml`, and both complete as `skipped` on this draft PR.
+- (2026-09-22) The release-time Warning matches the agent code: `RuleScanner::new` (`agent/agent/src/data_uploads/scan/rule.rs`) calls `files::glob(...)?`, so an invalid pattern fails the scanner's rule-apply for the whole deployment (`agent/agent/src/data_uploads/scan/scanner.rs`).
 
 ## Decision Log
 
