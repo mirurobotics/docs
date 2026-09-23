@@ -1,0 +1,130 @@
+---
+title: "Manage devices"
+---
+
+import { ONLINE_TOOLTIP, OFFLINE_TOOLTIP } from '/snippets/components/devices/statuses.jsx';
+import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
+import { AdminBadge, ProvisionerBadge, ViewerBadge } from '/snippets/components/role-badges.jsx';
+import MoveDevice from '/snippets/devices/move.mdx';
+
+## View a device
+
+<PlatformApiBadge endpoint="devices/get" />
+
+To view a device in Miru, navigate to the [Devices page](https://app.mirurobotics.com/devices), click into the device you want to view, and switch to the **Overview** tab at the top.
+
+**Metadata**
+
+At the top of the page, you'll find the device's metadata, including its name, status, agent version, and more.
+
+<Frame>
+  ![Device Overview Metadata](https://assets.mirurobotics.com/docs/v04/images/devices/overview-metadata.png)
+</Frame>
+
+**Audit trail**
+
+At the bottom of the page, you'll find a complete audit trail of deployments made to the device.
+
+<Frame>
+  ![Device Overview Audit Trail](https://assets.mirurobotics.com/docs/v04/images/devices/overview-audit-trail.png)
+</Frame>
+
+## Provision a device  <ProvisionerBadge />
+
+To provision a device, visit the [device provisioning](/provision-devices/overview) documentation.
+
+## Edit a device  <ProvisionerBadge />
+
+<PlatformApiBadge endpoint="devices/update" />
+
+Navigate to the [Devices page](https://app.mirurobotics.com/devices), click the ellipses (...) on the device you want to edit, and hit **Edit**.
+
+<Frame>
+  ![Device Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/devices/ellipses-dropdown.png)
+</Frame>
+
+Update the desired fields, then click **Save**.
+
+<Frame>
+  ![Edit Device Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/edit-dialog.png)
+</Frame>
+
+## Ping a device  <ViewerBadge />
+
+<PlatformApiBadge endpoint="devices/ping" />
+
+Pinging a device sends a real-time request to verify whether it is online. Ping requests wait up to 5 seconds for a response from the device before timing out.
+
+<Tooltip tip={ONLINE_TOOLTIP.tip} cta={ONLINE_TOOLTIP.cta} href={ONLINE_TOOLTIP.href}>Online</Tooltip> devices should return a success message similar to the one below.
+
+<Frame>
+  ![Ping Success](https://assets.mirurobotics.com/docs/v04/images/devices/ping-success.png)
+</Frame>
+
+On the other hand, <Tooltip tip={OFFLINE_TOOLTIP.tip} cta={OFFLINE_TOOLTIP.cta} href={OFFLINE_TOOLTIP.href}>offline</Tooltip> devices should return a timeout message similar to the one below.
+
+<Frame>
+  ![Ping Timeout](https://assets.mirurobotics.com/docs/v04/images/devices/ping-timeout.png)
+</Frame>
+
+## Move a device  <AdminBadge />
+
+<PlatformUnsupportedBadge />
+
+<MoveDevice />
+
+## Archive a device  <ProvisionerBadge />
+
+<PlatformUnsupportedBadge />
+
+Archiving a device:
+
+- Sets its [status](/concepts/devices/overview#status) to `archived` and hides it from the devices list
+- Immediately invalidates the device's authentication session, so the Miru Agent can no
+  longer connect to Miru or receive config updates
+- Prevents new deployments to the device
+- Frees up a device slot in your plan's device limit (archived devices do not count toward billing)
+
+Archiving keeps the device's full deployment and configuration history. No data is lost when archiving a device and it can be restored at any time.
+
+To archive a device, click the ellipses (...) on the device and select **Archive**.
+
+<Frame>
+  ![Archive Device Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/devices/ellipses-dropdown.png)
+</Frame>
+
+A confirmation dialog will appear—click **Archive** to confirm.
+
+<Frame>
+  ![Archive Device Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/archive-dialog.png)
+</Frame>
+
+## Restore an archived device
+
+Archived devices can't be unarchived directly. To bring an archived device back, you
+must [reprovision](/provision-devices/reprovision) it. The device returns to
+`activating` and then `online`, and keeps its deployment history.
+
+Restoring a device counts toward your plan's device limit and will be billed accordingly.
+
+## Delete a device  <ProvisionerBadge />
+
+<PlatformUnsupportedBadge />
+
+Deleting a device permanently removes it from Miru and immediately invalidates its
+authentication session. This action is irreversible. Please proceed with caution.
+
+A device can only be deleted if it has never had a deployment. Devices with
+deployment history must be [archived](#archive-a-device) instead.
+
+To delete a device, click the ellipses (...) on the device you want to delete and hit **Delete**.
+
+<Frame>
+  ![Device Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/devices/ellipses-dropdown.png)
+</Frame>
+
+A confirmation dialog will appear—click **Delete** to confirm.
+
+<Frame>
+  ![Delete Device Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/delete-dialog.png)
+</Frame>

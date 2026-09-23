@@ -1,0 +1,136 @@
+---
+title: "Annotations"
+---
+
+import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+import Annotations from '/snippets/references/cli/releases/create/schema-annotations.mdx';
+
+Annotations are a convenient way to store metadata with your schemas. Most annotations are optional, but some are required for Miru to process the schemas correctly.
+
+<Annotations />
+
+## Instance slots
+
+An instance slot defines one or more valid config instances that are valid for a given schema. Instance slots are declared with the [instance slots](#param-instance-slots) annotation.
+
+### Multiple slots
+
+Instance slots are primarily used to define a schema that serves multiple config instances with the same validation.
+
+<CodeGroup>
+
+```yaml JSON Schema
+x-miru-config-type: "Motor Controller"
+x-miru-instance-slots:
+  - key: "motor-controller-1"
+    name: "Motor Controller 1"
+    filepath: "/srv/miru/configs/motor-controller-1.json"
+    required: true
+  - key: "motor-controller-2"
+    name: "Motor Controller 2"
+    filepath: "/srv/miru/configs/motor-controller-2.json"
+    required: true
+  - key: "motor-controller-3"
+    name: "Motor Controller 3"
+    filepath: "/srv/miru/configs/motor-controller-3.json"
+    required: true
+[...schema content...]
+```
+
+```cue CUE
+@miru(config_type="Motor Controller")
+@miru_instance_slot(
+  name="Motor Controller 1",
+  key="motor-controller-1",
+  filepath="/srv/miru/configs/motor-controller-1.json",
+  required=true
+)
+@miru_instance_slot(
+  name="Motor Controller 2",
+  key="motor-controller-2",
+  filepath="/srv/miru/configs/motor-controller-2.json",
+  required=true,
+)
+@miru_instance_slot(
+  name="Motor Controller 3",
+  key="motor-controller-3",
+  filepath="/srv/miru/configs/motor-controller-3.json",
+  required=true,
+)
+
+[...schema content...]
+```
+
+```YAML Opaque
+config_type: "Motor Controller"
+instance_slots:
+  - key: "motor-controller-1"
+    name: "Motor Controller 1"
+    filepath: "/srv/miru/configs/motor-controller-1.json"
+    required: true
+  - key: "motor-controller-2"
+    name: "Motor Controller 2"
+    filepath: "/srv/miru/configs/motor-controller-2.json"
+    required: true
+  - key: "motor-controller-3"
+    name: "Motor Controller 3"
+    filepath: "/srv/miru/configs/motor-controller-3.json"
+    required: true
+[...schema content...]
+```
+
+</CodeGroup>
+
+A schema with multiple slots allows multiple config instances to be written to different destinations.  This structure allows a `motor-controller` schema to serve three identical motor controllers.
+
+All instance slots share the exact same validation. So two files that need different validation belong to two config types, not to two slots of one schema.
+
+### Slot fields
+
+Each instance slot is defined by the following fields:
+
+<ParamField path="key" type="string" required>
+  <ImmutableBadge />
+
+  An immutable, code-friendly identifier for the slot.
+
+  Slot keys must be unique within a schema. Two slots cannot have the same key.
+
+  Examples: `motor-controller-1`, `motor-controller-2`, `motor-controller-3`
+</ParamField>
+
+<ParamField path="name" type="string" required>
+  <ImmutableBadge />
+
+  A human-readable display name for the slot.
+
+  Examples: `Motor Controller 1`, `Motor Controller 2`, `Motor Controller 3`
+</ParamField>
+
+<ParamField path="filepath" type="string" required>
+  <ImmutableBadge />
+
+  The absolute file system path where this slot's config instance is written on the device.
+
+  Slot file paths must be unique within a schema. Two slots cannot have the same file path.
+
+  Examples: `/srv/miru/configs/motor-controller-1.json`, `/srv/miru/configs/motor-controller-2.json`, `/srv/miru/configs/motor-controller-3.json`
+</ParamField>
+
+<ParamField path="required" type="boolean" required>
+  <ImmutableBadge />
+
+  Whether a deployment must include a config instance for this slot or not.
+
+  If `true`, a deployment must include a config instance for this slot. If `false`, a deployment may optionally include a config instance for this slot.
+
+  Examples: `true`, `false`
+</ParamField>
+
+<ParamField path="description" type="string">
+  <ImmutableBadge />
+
+  An optional explanation of what the slot is for.
+
+  Examples: `The first motor controller`, `The second motor controller`, `The third motor controller`
+</ParamField>

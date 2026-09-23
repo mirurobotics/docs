@@ -1,0 +1,122 @@
+---
+title: "Overview"
+---
+
+import { EditableBadge, MutableBadge, ImmutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
+import { Framed } from '/snippets/components/framed.jsx';
+import DeploymentConstraints from '/snippets/definitions/deployment-constraints.mdx';
+import DeploymentDef from '/snippets/definitions/deployment.mdx';
+import DeploymentStatus from '/snippets/deployments/status.mdx';
+
+<Framed background="https://assets.mirurobotics.com/docs/v04/images/deployments/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/deployments/header:panel.png" borderWidth="28px 56px 0 0" innerRadius="0 8px 0 0" />
+
+<DeploymentDef />
+
+<DeploymentConstraints />
+
+## Properties
+
+<ParamField path="description" type="string">
+  <ImmutableBadge />
+
+  A user-provided description of the deployment.
+
+  Example: "increase acceleration limit to 1.2 m/s^2"
+</ParamField>
+
+<ParamField path="target status" type="enum">
+  <EditableBadge />
+
+  The [desired state](/concepts/deployments/status#target-status) of the deployment.
+
+  Allowed values:
+  - `staged`
+  - `deployed`
+  - `archived`
+
+</ParamField>
+
+<ParamField path="activity status" type="enum">
+  <MutableBadge />
+
+  The deployment's last known [activity state](/concepts/deployments/status#activity-status).
+
+  Allowed values:
+  - `staged`
+  - `drifted`
+  - `queued`
+  - `deployed`
+  - `removing`
+  - `archived`
+
+</ParamField>
+
+<ParamField path="error status" type="enum">
+  <MutableBadge />
+
+  The deployment's last known [error state](/concepts/deployments/status#error-status).
+
+  Allowed values:
+  - `none`
+  - `failed`
+  - `retrying`
+</ParamField>
+
+<ParamField path="status" type="string">
+  <MutableBadge />
+
+  <DeploymentStatus />
+
+  Enum: `staged`, `drifted`, `queued`, `deployed`, `removing`, `archived`, `failed`, `retrying`
+</ParamField>
+
+<ParamField path="parent" type="Deployment">
+  <ImmutableBadge />
+
+  {' '}
+
+  <NullableBadge />
+
+  The deployment from which this deployment was patched.
+
+  Examples: `DPL-L5B8b`
+</ParamField>
+
+<ParamField path="release" type="Release">
+  <ImmutableBadge />
+
+  The [release](/concepts/releases#properties) which the deployment adheres to.
+
+  Examples: `1.0.1`, `1.7.0-beta.1`
+</ParamField>
+
+<ParamField path="config instances" type="[] Config Instance">
+  <ImmutableBadge />
+
+  The [config instances](/cfg-mgmt/concepts/config-instances#properties) in the deployment, each of which satisfies a different config schema in the deployment's release.
+
+  Examples: `CFG-68hdX`, `CFG-Cpa13`
+</ParamField>
+
+## Deployment methods
+
+Broadly speaking, there are two methods for creating and deploying configurations. Configurations can be:
+
+1. Edited per device via the [config editor](/cfg-mgmt/deploy/config-editor)
+2. Staged in a release's [staging area](/cfg-mgmt/deploy/staging-area) to be deployed at a later time
+
+**Per-Device Editing**
+
+Each device has a dedicated config editor for viewing and editing its configurations. Changes made in the config editor are immediately deployed to the device.
+
+The config editor deals only with a single device's configurations. It does not support multiple devices at once nor does it support staging new deployments.
+
+For more information, check out the [config editor](/cfg-mgmt/deploy/config-editor) documentation.
+
+**Release Staging**
+
+Staging a deployment is the process of creating a new deployment in a release's [staging area](/cfg-mgmt/deploy/staging-area) to be deployed in the future. Staging is primarily used to rollout a new release, providing an unobtrusive place to create and review deployments before being deployed to devices.
+
+A release's staging area is also useful for batch operations. Deployments can be created, deployed, and archived in bulk, which helps manage large numbers of deployments at once.
+
+For more information, check out the [staging area](/cfg-mgmt/deploy/staging-area) documentation.

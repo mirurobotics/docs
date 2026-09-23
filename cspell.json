@@ -74,6 +74,7 @@
     "tmpfiles",
     "tunables",
     "unarchived",
+    "unarchiving",
     "usermod",
     "webpki",
     "zeroizes"
