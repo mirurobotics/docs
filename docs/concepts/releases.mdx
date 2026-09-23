@@ -58,7 +58,7 @@ Releases are created via the CLI — visit the config management [create a relea
 
 ## Duplicate a release  <PublisherBadge />
 
-Duplicating a release creates a new release with the same config schemas and git information as the original. 
+Duplicating a release creates a new release with the same config schemas and git information as the original.
 
 Of course, since releases require a unique version, the duplicated release must have a *different version* from the original release.
 
@@ -67,7 +67,7 @@ Duplicating a release does not duplicate the release's deployments—only the re
 To duplicate a release, click the ellipses (...) on the release you want to duplicate and select **Duplicate**.
 
 <Frame>
-  ![Release Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/releases/ellipses-dropdown.png)
+  ![Release Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/releases/active-ellipses-dropdown.png)
 </Frame>
 
 A dialog will appear—input the new version name and hit **Create**.
@@ -80,24 +80,41 @@ A dialog will appear—input the new version name and hit **Create**.
 
 <PlatformUnsupportedBadge />
 
-Archiving a release retires it. It's hidden from the releases list, and no new devices can adopt it. Devices already running the release keep it and can still receive deployments from it, so you can change their configs without upgrading them.
+Archiving a release hides it from the releases list and restricts deployments to *only* devices currently running that release.
 
-Deploying the release to any other device is blocked, including rolling a device back to it. To do that, unarchive the release first.
+New devices cannot be deployed with an archived release and existing devices cannot switch to or rollback to an archived release.
 
-A release can't be archived while it has [staged or drifted deployments](/cfg-mgmt/deploy/staging-area#archive-a-deployment). Archive those first.
-
-The release, its config schemas, and its deployment history are kept, and an archived release can be unarchived at any time.
+Archiving a release retains its config schemas and deployment history, and releases can be unarchived at any time.
 
 To archive a release, click the ellipses (...) on the release and select **Archive**.
 
+<Frame>
+  ![Archive Release Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/releases/active-ellipses-dropdown.png)
+</Frame>
+
 A dialog will appear. Hit **Archive** to confirm the archive.
+
+<Frame>
+  ![Archive Release Dialog](https://assets.mirurobotics.com/docs/v04/images/releases/archive-dialog.png)
+</Frame>
 
 ## Unarchive a release
 
 <PlatformUnsupportedBadge />
 
-Unarchiving a release makes it available for deployments again. Find the release
-among the archived releases, click the ellipses (...), and select **Unarchive**.
+Unarchiving a release makes it available for any device to deploy from it again.
+
+Find the release among the archived releases, click the ellipses (...), and select **Unarchive**.
+
+<Frame>
+  ![Unarchive Release Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/releases/archived-ellipses-dropdown.png)
+</Frame>
+
+A dialog will appear. Hit **Unarchive** to confirm the unarchive.
+
+<Frame>
+  ![Unarchive Release Dialog](https://assets.mirurobotics.com/docs/v04/images/releases/unarchive-dialog.png)
+</Frame>
 
 ## Delete a release  <AdminBadge />
 
