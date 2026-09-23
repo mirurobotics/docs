@@ -20,13 +20,13 @@ import { Separator } from '/snippets/components/separator.jsx';
     Narrow down a large fleet to the devices you care about with new filters, group by,
     and display options. Save any combination as a view and share it with your workspace.
 
-    {/* TODO: screen recording of filtering, grouping, and saving a view */}
-
     ### Filters and search
 
     Filter devices by **status**, **release**, **group**, or **agent version**. Each
     active filter shows up as a chip above the list that you can click to remove. In
     addition, you can now search devices by their name and description.
+
+    <LazyVideo alt="Screen recording of filtering and searching devices" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/26-09-23/device-filtering.mp4" />
 
     ### Display options
 
@@ -39,7 +39,7 @@ import { Separator } from '/snippets/components/separator.jsx';
     * **Compact:** Shorter rows to fit more devices on the screen
     * **Columns:** Show or hide the release, agent, and group columns
 
-    {/* TODO: video of group by — section headers pinned while scrolling, collapsing a section, selecting a whole section */}
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-09-23/display-menu.png" borderWidth="0px" innerRadius="8px" />
 
     ### Saved views
 
@@ -54,6 +54,8 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     Right-click a view's tab to edit, duplicate, or delete it.
 
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-09-23/saved-views.png" borderWidth="0px" innerRadius="8px" />
+
     ## Archiving
 
     Devices, releases, and config types can now be archived. Archiving removes
@@ -66,7 +68,7 @@ import { Separator } from '/snippets/components/separator.jsx';
     * **Config types:** An archived config type can't be added to new releases
       until it's unarchived
 
-    {/* TODO: screenshot of the archive dialog or the Archived tab */}
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-09-23/archived.png" borderWidth="0px" innerRadius="8px" />
 
     ## Groups Layout
 
@@ -78,7 +80,7 @@ import { Separator } from '/snippets/components/separator.jsx';
       directly in the pane, so you can see at a glance who has access to the
       group.
 
-    {/* TODO: screenshot of the three-pane groups page */}
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-09-23/groups-layout.png" borderWidth="0px" innerRadius="8px" />
 
     [Groups »](/primitives/groups)
 
@@ -161,7 +163,7 @@ import { Separator } from '/snippets/components/separator.jsx';
     `miru login` now opens Miru in your browser to authorize the device. Check the
     machine, location, IP address, and request time before clicking **Allow**.
 
-    {/* TODO: screenshot of the Authorize Device page */}
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-09-23/miru-login.png" borderWidth="0px" innerRadius="8px" />
 
     [CLI changelog »](/changelog/cli)
 
@@ -174,7 +176,7 @@ import { Separator } from '/snippets/components/separator.jsx';
     * **Create page:** Creating a key moved from a dialog to its own page
     * **Description:** Add a description for each key
 
-    {/* TODO: screenshot of the API key create page */}
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-09-23/edit-api-key.png" borderWidth="0px" innerRadius="8px" />
 
     [API keys »](/admin/apikeys)
 
