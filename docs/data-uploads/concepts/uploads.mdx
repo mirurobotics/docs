@@ -7,7 +7,7 @@ import UploadDef from '/snippets/definitions/upload.mdx';
 
 <UploadDef />
 
-Once a [file rule](/data-uploads/primitives/file-rules/overview) with an `upload` block is
+Once a [file rule](/data-uploads/concepts/file-rules/overview) with an `upload` block is
 deployed to a device, the Miru Agent handles the rest: detecting when a matching file is
 finished, uploading it to your bucket, and recording it in the ledger with the
 properties below.
@@ -60,19 +60,19 @@ properties below.
 <ParamField path="device" type="Device">
   <ImmutableBadge />
 
-  The [device](/primitives/devices) that produced the upload.
+  The [device](/concepts/devices) that produced the upload.
 </ParamField>
 
 <ParamField path="file rule" type="File Rule">
   <ImmutableBadge />
 
-  The [file rule](/data-uploads/primitives/file-rules/overview) that produced the upload.
+  The [file rule](/data-uploads/concepts/file-rules/overview) that produced the upload.
 </ParamField>
 
 <ParamField path="deployment" type="Deployment">
   <ImmutableBadge />
 
-  The [deployment](/primitives/deployments) that was active on the device when the
+  The [deployment](/concepts/deployments) that was active on the device when the
   upload was produced.
 </ParamField>
 
@@ -88,7 +88,7 @@ last modified.
   <ImmutableBadge />
 
   Absolute path of the file on the device. Its basename renders the `{file_name}`
-  variable in the [upload path template](/data-uploads/primitives/file-rules/rule-definition#uploads).
+  variable in the [upload path template](/data-uploads/concepts/file-rules/rule-definition#uploads).
 
   Example: `/var/log/robot/robot.log`
 </ParamField>
@@ -119,7 +119,7 @@ written.
 <ParamField path="bucket" type="Bucket">
   <ImmutableBadge />
 
-  The registered [bucket](/data-uploads/primitives/buckets) the file was uploaded to.
+  The registered [bucket](/data-uploads/concepts/buckets) the file was uploaded to.
 </ParamField>
 
 <ParamField path="object_key" type="string">
