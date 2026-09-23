@@ -73,11 +73,49 @@ On the other hand, <Tooltip tip={OFFLINE_TOOLTIP.tip} cta={OFFLINE_TOOLTIP.cta} 
 
 <MoveDevice />
 
+## Archive a device  <ProvisionerBadge />
+
+<PlatformUnsupportedBadge />
+
+Archiving a device:
+
+- Sets its [status](/concepts/devices/overview#status) to `archived` and hides it from the devices list
+- Immediately invalidates the device's authentication session, so the Miru Agent can no
+  longer connect to Miru or receive config updates
+- Prevents new deployments to the device
+- Frees up a device slot in your plan's device limit (archived devices do not count toward billing)
+
+Archiving keeps the device's full deployment and configuration history. No data is lost when archiving a device and it can be restored at any time.
+
+To archive a device, click the ellipses (...) on the device and select **Archive**.
+
+<Frame>
+  ![Archive Device Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/devices/ellipses-dropdown.png)
+</Frame>
+
+A confirmation dialog will appear—click **Archive** to confirm.
+
+<Frame>
+  ![Archive Device Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/archive-dialog.png)
+</Frame>
+
+## Restore an archived device
+
+Archived devices can't be unarchived directly. To bring an archived device back, you
+must [reprovision](/provision-devices/reprovision) it. The device returns to
+`activating` and then `online`, and keeps its deployment history.
+
+Restoring a device counts toward your plan's device limit and will be billed accordingly.
+
 ## Delete a device  <ProvisionerBadge />
 
 <PlatformUnsupportedBadge />
 
-Deleting a device immediately invalidates its authentication session and removes all deployment and configuration history. This action is irreversible. Please proceed with caution.
+Deleting a device permanently removes it from Miru and immediately invalidates its
+authentication session. This action is irreversible. Please proceed with caution.
+
+A device can only be deleted if it has never had a deployment. Devices with
+deployment history must be [archived](#archive-a-device) instead.
 
 To delete a device, click the ellipses (...) on the device you want to delete and hit **Delete**.
 
