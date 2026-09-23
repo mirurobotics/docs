@@ -80,48 +80,13 @@ Update the desired fields, then click **Save**.
   ![Edit Config Type Dialog](https://assets.mirurobotics.com/docs/v04/images/config-types/edit-dialog.png)
 </Frame>
 
-## Archive a config type  <PublisherBadge />
-
-<PlatformUnsupportedBadge />
-
-Archiving a config type retires it from future releases. While a config type is
-archived:
-
-- New [releases](/concepts/releases) cannot be created with it
-- New [schemas](/cfg-mgmt/concepts/schemas/manage) cannot be added to it
-
-Existing schemas, releases, and deployments that use the config type are not
-affected, and devices keep their current config instances. An archived config type can be
-[unarchived](#unarchive-a-config-type) at any time.
-
-To archive a config type, click the ellipses (...) on the config type and select
-**Archive**.
-
-<Frame>
-  ![Config Type Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/config-types/ellipses-dropdown.png)
-</Frame>
-
-A dialog will appear. Hit **Archive** to confirm the archive.
-
-<Frame>
-  ![Archive Config Type Dialog](https://assets.mirurobotics.com/docs/v04/images/config-types/archive-dialog.png)
-</Frame>
-
-## Unarchive a config type
-
-<PlatformUnsupportedBadge />
-
-Unarchiving removes the archive restrictions placed on it, allowing releases and schemas to be created with it again.
-
-To unarchive a config type, click the ellipses (...) on the archived config type and select **Unarchive**.
-
 ## Delete a config type  <AdminBadge />
 
 <PlatformUnsupportedBadge />
 
 Deleting a config type is irreversible. Once a config type is deleted, it cannot be recovered.
 
-Deleting a config type is only possible if there are no config instances for that config type. If a config type cannot be deleted, try [archiving](#archive-a-config-type) it instead.
+Deleting a config type is only possible if there are no config instances for that config type. As such, most config types cannot be deleted. If no config instances exist for the config type, deleting a config type removes all associated schemas.
 
 To delete a config type, click the ellipses of the config type you want to delete and select **Delete**.
 
