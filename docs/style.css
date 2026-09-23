@@ -15,6 +15,28 @@
   border-radius: 10px !important;  /* Change from 10px */
 }
 
+/* Changelog: center mode caps #content-area at max-w-3xl (max-w-2xl on 2xl
+   screens) and subtracts 19rem for a table of contents it doesn't render */
+#content-area:has(.changelog-page) {
+  max-width: 52rem;
+  width: 100%;
+}
+
+/* Changelog: feature titles (h2) read clearly above their sections (h3) */
+.changelog-page [data-component-part="update-content"] h2 {
+  font-size: 1.5rem;
+  margin-top: 3rem;
+}
+
+.changelog-page [data-component-part="update-content"] > h2:first-child {
+  margin-top: 0;
+}
+
+.changelog-page [data-component-part="update-content"] h3 {
+  font-size: 1rem;
+  margin-top: 1.5rem;
+}
+
 /* Center mermaid diagrams horizontally */
 .mermaid {
   display: flex;
