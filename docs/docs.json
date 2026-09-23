@@ -101,8 +101,6 @@
                     "group": "Config schemas",
                     "pages": [
                       "cfg-mgmt/concepts/schemas/overview",
-                      "cfg-mgmt/concepts/schemas/annotations",
-                      "cfg-mgmt/concepts/schemas/validation",
                       {
                         "group": "Languages",
                         "pages": [
@@ -112,6 +110,8 @@
                           "cfg-mgmt/concepts/schemas/languages/opaque"
                         ]
                       },
+                      "cfg-mgmt/concepts/schemas/annotations",
+                      "cfg-mgmt/concepts/schemas/validation",
                       "cfg-mgmt/concepts/schemas/manage"
                     ]
                   },
