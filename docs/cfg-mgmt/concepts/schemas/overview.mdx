@@ -5,7 +5,6 @@ title: "Overview"
 import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
 import ConfigSchemaDef from '/snippets/definitions/config-schema.mdx';
-import Annotations from '/snippets/references/cli/releases/create/schema-annotations.mdx';
 import SchemaFormats from '/snippets/schemas/formats.mdx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v04/images/config-schemas/background.png" image="https://assets.mirurobotics.com/docs/v04/images/config-schemas/header:panel.png" borderWidth={"32px 56px 0 0"} innerRadius={"0 8px 0 0"} />
@@ -65,7 +64,7 @@ import SchemaFormats from '/snippets/schemas/formats.mdx';
   
   Typically a schema defines only a single required slot. However, schemas may define several instance slots when the same validation applies to several different config instances in a release. 
   
-  See [Instance slots](/cfg-mgmt/concepts/schemas/instance-slots) for fields, constraints, and default behavior.
+  See [Instance slots](/cfg-mgmt/concepts/schemas/annotations/instance-slots) for fields, constraints, and default behavior.
 </ParamField>
 
 <ParamField path="instance format" type="string">
@@ -106,9 +105,9 @@ For more information on schema languages, visit the [languages](/cfg-mgmt/concep
 
 ## Schema annotations
 
-Annotations are a convenient way to store metadata with your schemas. Most annotations are optional, but some are required for Miru to process the schemas correctly.
+Annotations are a convenient way to store metadata with your schemas, such as the schema's config type and where its config instances are written on the device. Most annotations are optional, but some are required for Miru to process the schemas correctly.
 
-<Annotations />
+For the full list of annotations and their syntax in each schema language, visit the [annotations](/cfg-mgmt/concepts/schemas/annotations/overview) section of this guide.
 
 ## Immutability
 
