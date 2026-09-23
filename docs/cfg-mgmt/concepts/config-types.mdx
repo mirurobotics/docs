@@ -87,23 +87,31 @@ Update the desired fields, then click **Save**.
 Archiving a config type retires it from future releases. While a config type is
 archived:
 
-- new [releases](/concepts/releases) that include it can't be created
-- new [schemas](/cfg-mgmt/concepts/schemas/manage) can't be added to it
+- New [releases](/concepts/releases) cannot be created with it
+- New [schemas](/cfg-mgmt/concepts/schemas/manage) cannot be added to it
 
 Existing schemas, releases, and deployments that use the config type are not
-affected, and devices keep their current configs. An archived config type can be
-unarchived at any time.
-
-Since most config types can't be deleted, archiving is the usual way to retire a
-config type you no longer use.
+affected, and devices keep their current config instances. An archived config type can be
+[unarchived](#unarchive-a-config-type) at any time.
 
 To archive a config type, click the ellipses (...) on the config type and select
-**Archive**, then confirm.
+**Archive**.
 
-### Unarchive a config type
+<Frame>
+  ![Archive Config Type Dialog](/images/config-types/ellipses-dropdown.png)
+</Frame>
 
-Unarchiving a config type lets you create schemas and releases with it again. Click
-the ellipses (...) on the archived config type and select **Unarchive**.
+A dialog will appear. Hit **Archive** to confirm the archive.
+
+<Frame>
+  ![Archive Config Type Dialog](/images/config-types/archive-dialog.png)
+</Frame>
+
+## Unarchive a config type
+
+Unarchiving removes the the archive restrictions placed on it, allowing releases and schemas to be created with it again. 
+
+To unarchive a config type, click the ellipses (...) on the archived config type and select **Unarchive**.
 
 ## Delete a config type  <AdminBadge />
 
@@ -111,7 +119,7 @@ the ellipses (...) on the archived config type and select **Unarchive**.
 
 Deleting a config type is irreversible. Once a config type is deleted, it cannot be recovered.
 
-Deleting a config type is only possible if there are no config instances for that config type. As such, most config types cannot be deleted. If no config instances exist for the config type, deleting a config type removes all associated schemas.
+Deleting a config type is only possible if there are no config instances for that config type. If a config type cannot be deleted, try [archiving](#archive-a-config-type) it instead.
 
 To delete a config type, click the ellipses of the config type you want to delete and select **Delete**.
 
