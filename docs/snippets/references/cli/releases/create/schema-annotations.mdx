@@ -1,5 +1,5 @@
 <ParamField path="config type" required>
-  The config type is a required annotation that identifies the config type to which a schema belongs. Below is the syntax for annotating a schema with a [config type slug](/cfg-mgmt/primitives/config-types#param-slug).
+  The config type is a required annotation that identifies the config type to which a schema belongs. Below is the syntax for annotating a schema with a [config type slug](/cfg-mgmt/concepts/config-types#param-slug).
 
   <CodeGroup>
 
@@ -19,13 +19,13 @@
 
   </CodeGroup>
 
-  If the provided config type slug does not yet exist, it is automatically created. To edit a config type after creation, visit the [config types documentation](/cfg-mgmt/primitives/config-types#edit-a-config-type).
+  If the provided config type slug does not yet exist, it is automatically created. To edit a config type after creation, visit the [config types documentation](/cfg-mgmt/concepts/config-types#edit-a-config-type).
 
   Examples: `mobility`, `communication`, `perception`
 </ParamField>
 
 <ParamField path="schema language">
-  The schema language declares the language that a schema is written in. This annotation applies to [Opaque](/cfg-mgmt/primitives/schemas/languages/opaque) schemas only, and is required for them.
+  The schema language declares the language that a schema is written in. This annotation applies to [Opaque](/cfg-mgmt/concepts/schemas/languages/opaque) schemas only, and is required for them.
 
   JSON Schema and CUE schemas have no schema language annotation. Their language is inferred from the schema file itself, so a `.cue` file is read as CUE, and a `.json` or `.yaml` file is read as JSON Schema unless it declares itself opaque.
 
@@ -127,14 +127,14 @@
   ```
   </CodeGroup>
 
-  For more information about instance slots, visit the [Instance slots](/cfg-mgmt/primitives/schemas/overview#instance-slots) section of the schemas documentation.
+  For more information about instance slots, visit the [Instance slots](/cfg-mgmt/concepts/schemas/overview#instance-slots) section of the schemas documentation.
 
 </ParamField>
 
 <ParamField path="instance format">
   The instance format declares the format that config instances for this schema are deployed as on the device. 
   
-  Visit the [File formats](/cfg-mgmt/primitives/schemas/overview#file-formats) section of the schemas documentation to learn which formats are supported for each schema language.
+  Visit the [File formats](/cfg-mgmt/concepts/schemas/overview#file-formats) section of the schemas documentation to learn which formats are supported for each schema language.
 
   This annotation is optional and is inferred from the instance file path's extension. Under the default instance file path of `/srv/miru/configs/{config-type-slug}.json`, the instance format therefore defaults to `json`.
 

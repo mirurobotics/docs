@@ -73,7 +73,7 @@ Configurations are deployed to devices via the Miru Agent, a lightweight `system
 <ParamField path="current release" type="Release">
   <MutableBadge /> {' '} <NullableBadge />
 
-  The [release](/primitives/releases#properties) to which the device's current deployment belongs.
+  The [release](/concepts/releases#properties) to which the device's current deployment belongs.
 
   If the device is `inactive` or `activating`, the current release id is `null`. If the device is `online` or `offline`, the current release may still be `null` if the device has no deployed config instances.
 
@@ -83,7 +83,7 @@ Configurations are deployed to devices via the Miru Agent, a lightweight `system
 <ParamField path="group" type="Group">
   <EditableBadge /> {' '} <NullableBadge />
 
-  The [group](/primitives/groups#properties) to which the device belongs. If the device's group is not set, the group id is `null`.
+  The [group](/concepts/groups#properties) to which the device belongs. If the device's group is not set, the group id is `null`.
 
   Examples: `grp_123`
 </ParamField>

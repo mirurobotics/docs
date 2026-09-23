@@ -31,10 +31,10 @@ There are a variety of privileges which are only available to owners and adminis
 - Create a new API key
 - Delete an API key
 
-[Config types](/cfg-mgmt/primitives/config-types)
+[Config types](/cfg-mgmt/concepts/config-types)
 - Delete a config type
 
-[Groups](/primitives/groups)
+[Groups](/concepts/groups)
 - Create a group
 - Update a group
 - Delete a group
@@ -49,7 +49,7 @@ There are a variety of privileges which are only available to owners and adminis
 - Suspend a member
 - Update another member's role
 
-[Releases](/primitives/releases)
+[Releases](/concepts/releases)
 - Delete a release
 
 [Workspace](/admin/workspace)
@@ -62,7 +62,7 @@ While a user's type determines broad access and administrative capabilities, **r
 A member's roles are defined in two independent sources:
 
 - **Workspace roles** apply across the entire workspace
-- **Group roles** apply to a [group](/primitives/groups) and all of its subgroups
+- **Group roles** apply to a [group](/concepts/groups) and all of its subgroups
 
 A member can hold any combination of both. Permissions are always **additive** — Miru allows an action if any of the member's roles permit it, and one role never removes access granted by another.
 
@@ -80,31 +80,31 @@ Viewer is the least privileged role there is. All roles implicitly include viewe
 
 The publisher role allows members to create and edit config types, schemas, and releases (all the resources needed to publish a release). The publisher role grants access to the following operations:
 
-[Config types](/cfg-mgmt/primitives/config-types)
+[Config types](/cfg-mgmt/concepts/config-types)
 
 - Create a config type
 - Edit a config type
 
-[Config schemas](/cfg-mgmt/primitives/schemas/manage)
+[Config schemas](/cfg-mgmt/concepts/schemas/manage)
 
 - Create a config schema
 
-[Buckets](/data-uploads/primitives/buckets)
+[Buckets](/data-uploads/concepts/buckets)
 
 - Connect a bucket
 - Edit a bucket
 - Delete a bucket
 - Archive a bucket
 
-[Upload collections](/data-uploads/primitives/upload-collections)
+[Upload collections](/data-uploads/concepts/upload-collections)
 
 - Create an upload collection
 
-[File rules](/data-uploads/primitives/file-rules/overview)
+[File rules](/data-uploads/concepts/file-rules/overview)
 
 - Create a file rule
 
-[Releases](/primitives/releases)
+[Releases](/concepts/releases)
 
 - Create a release
 - Duplicate a release
@@ -133,7 +133,7 @@ The operator role allows members to deploy configurations to devices. The operat
 
 The provisioner role allows members to create and activate devices. The provisioner role grants access to the following operations:
 
-[Manage devices](/primitives/devices)
+[Manage devices](/concepts/devices)
 
 - Create a device
 - Edit a device
@@ -152,18 +152,18 @@ Below are the roles which are only available at the group level. These roles can
 
 The group manager role allows members to manage the members in a group, the members' grants, and the group's subgroups. It includes everything the operator and provisioner roles can do, along with the following operations:
 
-[Groups](/primitives/groups)
+[Groups](/concepts/groups)
 
 - Create a subgroup
 - Edit a group
 - Move a device
 - Delete a subgroup
 
-[Devices](/primitives/devices)
+[Devices](/concepts/devices)
 
 - Move a device to a different group
 
-[Members](/primitives/groups)
+[Members](/concepts/groups)
 
 - Add a group member
 - Edit group member permissions

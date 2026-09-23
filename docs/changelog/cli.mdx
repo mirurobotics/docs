@@ -62,7 +62,7 @@ CI pipelines that authenticate with `MIRU_API_KEY` continue to work with earlier
 
 *August 12, 2026*
 
-CLI `v0.11.0` renames the upload rule to the **file rule**. A file rule still says which files on a device to match, but uploading them and reclaiming their disk space are now two independent, optional halves of one object. See [file rules](/data-uploads/primitives/file-rules/overview).
+CLI `v0.11.0` renames the upload rule to the **file rule**. A file rule still says which files on a device to match, but uploading them and reclaiming their disk space are now two independent, optional halves of one object. See [file rules](/data-uploads/concepts/file-rules/overview).
 
 ## Breaking changes
 
@@ -114,7 +114,7 @@ Both `upload` and `retention` are optional. Omit `upload` for a rule that only r
 
 ## Features
 
-- Add support for the [instance slots](/cfg-mgmt/primitives/schemas/overview#instance-slots) schema annotation, letting one config schema write config instances to several file paths
+- Add support for the [instance slots](/cfg-mgmt/concepts/schemas/overview#instance-slots) schema annotation, letting one config schema write config instances to several file paths
 
 ## Improvements
 
@@ -141,7 +141,7 @@ Both `upload` and `retention` are optional. Omit `upload` for a rule that only r
 
 *July 20, 2026*
 
-CLI `v0.10.2` adds support for including [upload rules](/data-uploads/primitives/file-rules/overview) in a release, letting you define data uploads alongside your config schemas.
+CLI `v0.10.2` adds support for including [upload rules](/data-uploads/concepts/file-rules/overview) in a release, letting you define data uploads alongside your config schemas.
 
 ## Features
 
@@ -303,7 +303,7 @@ miru schema push schema.json \
 
 ## CUE support
 
-`v0.7.0` is the first CLI release with [CUE](/cfg-mgmt/primitives/schemas/languages/overview) support. You can now push CUE-based schemas directly and use CUE alongside existing JSON Schema workflows.
+`v0.7.0` is the first CLI release with [CUE](/cfg-mgmt/concepts/schemas/languages/overview) support. You can now push CUE-based schemas directly and use CUE alongside existing JSON Schema workflows.
 
 ## Schema push improvements
 
