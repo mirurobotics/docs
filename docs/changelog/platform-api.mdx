@@ -32,7 +32,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 ## Breaking changes
 
 <Dropdown title="Config schema instance slots">
-  The config schema `instance_filepath` field is replaced by the `instance_slots` field.  Instance slots specify an array of file system destinations, allowing multiple config instances to share the same schema validation. Visit the [instance slots](/cfg-mgmt/concepts/schemas/overview#instance-slots) for the full field reference.
+  The config schema `instance_filepath` field is replaced by the `instance_slots` field.  Instance slots specify an array of file system destinations, allowing multiple config instances to share the same schema validation. Visit the [instance slots](/cfg-mgmt/concepts/schemas/instance-slots) for the full field reference.
 
   **Config Schema Response**
 
@@ -191,7 +191,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 <Separator />
 
 <Dropdown title="Device group membership">
-  Devices now include the [group](/concepts/groups) they belong to. `group_id` is always present and is `null` for unassigned devices.
+  Devices now include the [group](/concepts/groups/overview) they belong to. `group_id` is always present and is `null` for unassigned devices.
 
   **Device Response**
 
@@ -331,7 +331,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
     Set `Miru-Version: 2026-08-17.everglades` on all API requests. [Python SDK](/developers/platform-api/sdks#python) `v0.11.0` marks the major version rollout of the `2026-08-17.everglades` API. For the latest SDK version compatibility information, visit the [Platform SDKs](/developers/platform-api/sdks) page.
   </Step>
   <Step title="Migrate from config schemas to use instance slots">
-    Replace reads of `instance_filepath` with `instance_slots[].filepath`, and replace `instance_filepath` in `POST /config_schemas` request bodies with an explicit `instance_slots` array. Omitting `instance_slots` makes the server derive a default filepath rather than reuse your previous one. See [instance slots](/cfg-mgmt/concepts/schemas/overview#instance-slots).
+    Replace reads of `instance_filepath` with `instance_slots[].filepath`, and replace `instance_filepath` in `POST /config_schemas` request bodies with an explicit `instance_slots` array. Omitting `instance_slots` makes the server derive a default filepath rather than reuse your previous one. See [instance slots](/cfg-mgmt/concepts/schemas/instance-slots).
   </Step>
   <Step title="Stop sending slug when updating a config type">
     Remove `slug` from `PATCH /config_types/{config_type_id}` request bodies. Config type slugs are immutable.
@@ -579,7 +579,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
     "archived"
   ```
 
-  These changes are also reflected in the deployment's [status](/concepts/deployments#status) field.
+  These changes are also reflected in the deployment's [status](/concepts/deployments/status#status) field.
 </Dropdown>
 
 <Separator />

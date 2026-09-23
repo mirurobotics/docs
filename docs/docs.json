@@ -45,10 +45,29 @@
                 "group": "Concepts",
                 "expanded": true,
                 "pages": [
-                  "concepts/devices",
-                  "concepts/groups",
+                  {
+                    "group": "Devices",
+                    "pages": [
+                      "concepts/devices/overview",
+                      "concepts/devices/manage"
+                    ]
+                  },
+                  {
+                    "group": "Groups",
+                    "pages": [
+                      "concepts/groups/overview",
+                      "concepts/groups/manage",
+                      "concepts/groups/members"
+                    ]
+                  },
                   "concepts/releases",
-                  "concepts/deployments"
+                  {
+                    "group": "Deployments",
+                    "pages": [
+                      "concepts/deployments/overview",
+                      "concepts/deployments/status"
+                    ]
+                  }
                 ]
               },
               {
@@ -82,6 +101,8 @@
                     "group": "Config schemas",
                     "pages": [
                       "cfg-mgmt/concepts/schemas/overview",
+                      "cfg-mgmt/concepts/schemas/instance-slots",
+                      "cfg-mgmt/concepts/schemas/validation",
                       {
                         "group": "Languages",
                         "pages": [
@@ -490,6 +511,42 @@
   },
   "redirects": [
     {
+      "source": "/concepts/devices",
+      "destination": "/concepts/devices/overview"
+    },
+    {
+      "source": "/primitives/devices",
+      "destination": "/concepts/devices/overview"
+    },
+    {
+      "source": "/fundamentals/devices",
+      "destination": "/concepts/devices/overview"
+    },
+    {
+      "source": "/concepts/groups",
+      "destination": "/concepts/groups/overview"
+    },
+    {
+      "source": "/primitives/groups",
+      "destination": "/concepts/groups/overview"
+    },
+    {
+      "source": "/fundamentals/groups",
+      "destination": "/concepts/groups/overview"
+    },
+    {
+      "source": "/concepts/deployments",
+      "destination": "/concepts/deployments/overview"
+    },
+    {
+      "source": "/primitives/deployments",
+      "destination": "/concepts/deployments/overview"
+    },
+    {
+      "source": "/fundamentals/deployments",
+      "destination": "/concepts/deployments/overview"
+    },
+    {
       "source": "/data-uploads/concepts/file-rules",
       "destination": "/data-uploads/concepts/file-rules/overview"
     },
@@ -563,7 +620,7 @@
     },
     {
       "source": "/getting-started/concepts",
-      "destination": "/concepts/devices"
+      "destination": "/concepts/devices/overview"
     },
     {
       "source": "/fundamentals/:slug*",
@@ -579,7 +636,7 @@
     },
     {
       "source": "/learn/deployments",
-      "destination": "/concepts/deployments"
+      "destination": "/concepts/deployments/overview"
     },
     {
       "source": "/learn/devices/compare",
@@ -599,11 +656,11 @@
     },
     {
       "source": "/learn/devices/manage",
-      "destination": "/concepts/devices"
+      "destination": "/concepts/devices/manage"
     },
     {
       "source": "/learn/devices/overview",
-      "destination": "/concepts/devices"
+      "destination": "/concepts/devices/overview"
     },
     {
       "source": "/learn/devices/provision/dashboard",
@@ -627,15 +684,15 @@
     },
     {
       "source": "/learn/groups/manage",
-      "destination": "/concepts/groups"
+      "destination": "/concepts/groups/manage"
     },
     {
       "source": "/learn/groups/members",
-      "destination": "/concepts/groups"
+      "destination": "/concepts/groups/members"
     },
     {
       "source": "/learn/groups/overview",
-      "destination": "/concepts/groups"
+      "destination": "/concepts/groups/overview"
     },
     {
       "source": "/learn/releases/create",
