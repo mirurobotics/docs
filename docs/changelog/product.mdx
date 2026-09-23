@@ -10,6 +10,196 @@ import { LazyVideo } from '/snippets/components/lazy-video.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
 <div className="changelog-page">
+  {/* INTENTIONAL: two distinct releases shipped on September 23, 2026
+      ("Device Views" and "CLI Commands" below). The duplicate date label is
+      deliberate — do NOT merge, rename, or re-date either <Update> block. */}
+
+  <Update label="September 23, 2026">
+    ## Device Views
+
+    Narrow down a large fleet to the devices you care about with new filters, group by,
+    and display options. Save any combination as a view and share it with your workspace.
+
+    ### Filters and search
+
+    Filter devices by **status**, **release**, **group**, or **agent version**. Each
+    active filter shows up as a chip above the list that you can click to remove. In
+    addition, you can now search devices by their name and description.
+
+    <LazyVideo alt="Screen recording of filtering and searching devices" className="aspect-video rounded-xl" src="https://assets.mirurobotics.com/docs/changelog/26-09-23/device-filtering.mp4" />
+
+    ### Display options
+
+    The Display menu allows you to control how the list is laid out.
+
+    * **Group by:** Split the list into sections by status, release, group, or
+      agent version
+    * **Order by:** Sort by name or status, ascending or descending
+    * **Multi-select:** Adds checkboxes to each row so you can perform a bulk action
+    * **Compact:** Shorter rows to fit more devices on the screen
+    * **Columns:** Show or hide the release, agent, and group columns
+
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-09-23/display-menu.png" borderWidth="0px" innerRadius="8px" />
+
+    ### Saved views
+
+    Save the current search, filters, grouping, ordering, and columns as a
+    view. Saved views appear as tabs at the top of the list.
+
+    * **Shared by default:** Views are shared with your workspace unless you
+      disable the option.
+    * **Shareable links:** Share a view with a teammate by sending its link
+    * **Per group:** Each group has its own  views, separate from
+      the views on the workspace level
+
+    Right-click a view's tab to edit, duplicate, or delete it.
+
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-09-23/saved-views.png" borderWidth="0px" innerRadius="8px" />
+
+    ## Archiving
+
+    Devices, releases, and config types can now be archived. Archiving removes
+    them from the active list without deleting them.
+
+    * **Devices:** Archiving a device ends its agent session. To unarchive it,
+      [reprovision](/provision-devices/reprovision) the device
+    * **Releases:** A release can be archived once it has no staged or active
+      deployments
+    * **Config types:** An archived config type can't be added to new releases
+      until it's unarchived
+
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-09-23/archived.png" borderWidth="0px" innerRadius="8px" />
+
+    ## Groups Layout
+
+    The Groups page has been rebuilt as three resizable panes.
+
+    * **Tree:** Navigate your groups like a file directory
+    * **Devices:** View, filter, and organize the selected group's devices
+    * **Details:** The group's properties and members. Members are listed
+      directly in the pane, so you can see at a glance who has access to the
+      group.
+
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-09-23/groups-layout.png" borderWidth="0px" innerRadius="8px" />
+
+    [Groups »](/concepts/groups)
+
+    <Separator />
+
+    <Dropdown title="Improvements">
+      <DropdownItem>
+        **Releases and config types lists:** The Releases and Config Types
+        lists are rebuilt on the same list system as Devices, with search,
+        display options (ordering, columns, compact rows), and multi-select.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Faster lists:** Lists you've visited stay cached for 15 minutes, so
+        returning to them is instant. Search results start loading while you
+        type, and hovering a row preloads the page it opens.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Short and full deployment IDs:** Every place that copies a
+        deployment ID now offers both the short `DPL-XXX` ID and the full ID.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Unavailable diffs are labeled:** When a diff can't be rendered, the
+        editor and compare views now say why, instead of showing the file as
+        if nothing changed.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Security hardening:** The app now enforces a Content Security
+        Policy, sends additional security headers, and publishes a
+        `security.txt` for reporting vulnerabilities.
+      </DropdownItem>
+    </Dropdown>
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+      <DropdownItem>
+        **Reordered map keys in compare:** Comparing two devices whose configs
+        list the same map keys in a different order showed no highlighting,
+        even though the summary counted every change. Map entries that were
+        both moved and edited now keep their diff.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Removed array elements:** Removing an element from an array without
+        keys is now reported as one deletion, instead of a change to every
+        element after it.
+      </DropdownItem>
+    </Dropdown>
+  </Update>
+
+  <Update label="September 23, 2026">
+    ## CLI Commands
+
+    The Miru CLI can now clone, stage, and validate configs from your local machine, and
+    logging in no longer requires copying a token from the dashboard.
+
+    ### New commands
+
+    * [`miru device clone`](/references/cli/device-clone): Write a device's current config
+      files to your local machine
+    * [`miru deployment clone`](/references/cli/deployment-clone): Write any deployment's
+      config files to your local machine
+    * [`miru device stage`](/references/cli/device-stage): Stage a deployment from config
+      files on your local machine
+    * [`miru config validate`](/references/cli/config-validate): Check a local config file
+      against a config schema
+    * [`miru deployment validate`](/references/cli/deployment-validate): Check local config
+      files against a release's schemas
+    * [`miru schema validate`](/references/cli/schema-validate): Check a schema against the
+      same rules as `miru release create`, without creating a release
+    * [`miru whoami`](/references/cli/whoami): Show which user or API key the CLI is signed
+      in as
+
+    ### Browser login
+
+    `miru login` now opens Miru in your browser to authorize the device. Check the
+    machine, location, IP address, and request time before clicking **Allow**.
+
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-09-23/miru-login.png" borderWidth="0px" innerRadius="8px" />
+
+    [CLI changelog »](/changelog/cli)
+
+    ## API Keys
+
+    API keys are easier to audit and manage with these new features:
+
+    * **Last used:** Each key shows the date it was last used
+    * **Editable scopes:** Change a key's scopes after it's been created
+    * **Create page:** Creating a key moved from a dialog to its own page
+    * **Description:** Add a description for each key
+
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-09-23/edit-api-key.png" borderWidth="0px" innerRadius="8px" />
+
+    [API keys »](/admin/apikeys)
+
+    ## Ansible
+
+    Provision devices with the official [`mirurobotics.agent`](https://galaxy.ansible.com/ui/repo/published/mirurobotics/agent/)
+    Ansible collection. One play installs the Miru Agent on each host and registers it in Miru.
+
+    ```bash
+    ansible-galaxy collection install mirurobotics.agent
+    ```
+
+    * **API key stays on the controller:** Only a short-lived provisioning token reaches
+      each device
+    * **Safe to re-run:** Hosts that are already provisioned are skipped
+    * **Matched by name:** Hosts are matched to devices by name. A missing device is
+      created, and an inactive one is activated
+
+    The collection requires [Miru Agent v0.10.2](/changelog/agent#v0-10-2) or later.
+
+    [Provision with Ansible »](/provision-devices/ansible)
+  </Update>
+
   <Update label="August 14, 2026">
     ## Multiple Config Instances per Schema
 
