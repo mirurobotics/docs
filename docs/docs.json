@@ -39,12 +39,35 @@
             ]
           },
           {
-            "group": "Core Concepts",
+            "group": "Foundations",
             "pages": [
-              "concepts/devices",
-              "concepts/groups",
-              "concepts/releases",
-              "concepts/deployments"
+              {
+                "group": "Concepts",
+                "expanded": true,
+                "pages": [
+                  "concepts/devices",
+                  "concepts/groups",
+                  "concepts/releases",
+                  "concepts/deployments"
+                ]
+              },
+              {
+                "group": "Guides",
+                "expanded": true,
+                "pages": [
+                  {
+                    "group": "Provision devices",
+                    "pages": [
+                      "provision-devices/overview",
+                      "provision-devices/dashboard",
+                      "provision-devices/ansible",
+                      "provision-devices/provisioning-tokens",
+                      "provision-devices/provisioning-script",
+                      "provision-devices/reprovision"
+                    ]
+                  }
+                ]
+              }
             ]
           },
           {
@@ -78,17 +101,6 @@
                 "group": "Guides",
                 "expanded": true,
                 "pages": [
-                  {
-                    "group": "Provision devices",
-                    "pages": [
-                      "cfg-mgmt/provision-devices/overview",
-                      "cfg-mgmt/provision-devices/dashboard",
-                      "cfg-mgmt/provision-devices/ansible",
-                      "cfg-mgmt/provision-devices/provisioning-tokens",
-                      "cfg-mgmt/provision-devices/provisioning-script",
-                      "cfg-mgmt/provision-devices/reprovision"
-                    ]
-                  },
                   "cfg-mgmt/create-a-release",
                   {
                     "group": "Deploy configs",
@@ -494,6 +506,10 @@
       "destination": "/data-uploads/concepts/:slug*"
     },
     {
+      "source": "/cfg-mgmt/provision-devices/:slug*",
+      "destination": "/provision-devices/:slug*"
+    },
+    {
       "source": "/cfg-mgmt/primitives/:slug*",
       "destination": "/cfg-mgmt/concepts/:slug*"
     },
@@ -591,23 +607,23 @@
     },
     {
       "source": "/learn/devices/provision/dashboard",
-      "destination": "/cfg-mgmt/provision-devices/dashboard"
+      "destination": "/provision-devices/dashboard"
     },
     {
       "source": "/learn/devices/provision/overview",
-      "destination": "/cfg-mgmt/provision-devices/overview"
+      "destination": "/provision-devices/overview"
     },
     {
       "source": "/learn/devices/provision/provisioning-script",
-      "destination": "/cfg-mgmt/provision-devices/provisioning-script"
+      "destination": "/provision-devices/provisioning-script"
     },
     {
       "source": "/learn/devices/provision/provisioning-tokens",
-      "destination": "/cfg-mgmt/provision-devices/provisioning-tokens"
+      "destination": "/provision-devices/provisioning-tokens"
     },
     {
       "source": "/learn/devices/provision/reprovision",
-      "destination": "/cfg-mgmt/provision-devices/reprovision"
+      "destination": "/provision-devices/reprovision"
     },
     {
       "source": "/learn/groups/manage",
