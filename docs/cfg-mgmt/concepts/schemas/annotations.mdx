@@ -1,12 +1,19 @@
 ---
-title: "Instance slots"
+title: "Annotations"
 ---
 
 import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+import Annotations from '/snippets/references/cli/releases/create/schema-annotations.mdx';
 
-An instance slot defines one or more valid config instances that are valid for a given schema. Instance slots are defined as an [annotation](/cfg-mgmt/concepts/schemas/annotations/overview) within the schema itself.
+Annotations are a convenient way to store metadata with your schemas. Most annotations are optional, but some are required for Miru to process the schemas correctly.
 
-## Multiple slots
+<Annotations />
+
+## Instance slots
+
+An instance slot defines one or more valid config instances that are valid for a given schema. Instance slots are declared with the [instance slots](#param-instance-slots) annotation.
+
+### Multiple slots
 
 Instance slots are primarily used to define a schema that serves multiple config instances with the same validation.
 
@@ -78,7 +85,7 @@ A schema with multiple slots allows multiple config instances to be written to d
 
 All instance slots share the exact same validation. So two files that need different validation belong to two config types, not to two slots of one schema.
 
-## Slot fields
+### Slot fields
 
 Each instance slot is defined by the following fields:
 

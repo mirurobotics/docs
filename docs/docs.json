@@ -101,13 +101,7 @@
                     "group": "Config schemas",
                     "pages": [
                       "cfg-mgmt/concepts/schemas/overview",
-                      {
-                        "group": "Annotations",
-                        "pages": [
-                          "cfg-mgmt/concepts/schemas/annotations/overview",
-                          "cfg-mgmt/concepts/schemas/annotations/instance-slots"
-                        ]
-                      },
+                      "cfg-mgmt/concepts/schemas/annotations",
                       "cfg-mgmt/concepts/schemas/validation",
                       {
                         "group": "Languages",
