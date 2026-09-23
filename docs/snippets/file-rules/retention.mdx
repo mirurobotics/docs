@@ -1,14 +1,14 @@
 A rule's `retention` block governs deletion of the local copies of matching files. When
 absent, the device retains matching files indefinitely (Miru never deletes them). 
 
-The retention block doesn't go into effect until a file is considered stable. That is, its size and modification time have stayed unchanged for [`source.stability_window_secs`](/data-uploads/primitives/file-rules/rule-definition#sources).
+The retention block doesn't go into effect until a file is considered stable. That is, its size and modification time have stayed unchanged for [`source.stability_window_secs`](/data-uploads/concepts/file-rules/rule-definition#sources).
 
 Files that already matched the rule when it was deployed to the device are never
 deleted unless they change afterward. See
-[deployment](/data-uploads/primitives/file-rules/overview#deployment).
+[deployment](/data-uploads/concepts/file-rules/overview#deployment).
 
 <ParamField path="require_upload" type="boolean">
-  Whether a file must have its upload durably confirmed before it may be deleted. Must be set when the rule has an [`upload`](/data-uploads/primitives/file-rules/rule-definition#uploads) block.
+  Whether a file must have its upload durably confirmed before it may be deleted. Must be set when the rule has an [`upload`](/data-uploads/concepts/file-rules/rule-definition#uploads) block.
 
   - `true` — files are *never* deleted before their upload is confirmed. 
   - `false` — upload is best-effort; files may be deleted once they are eligible, even if their upload has not completed.

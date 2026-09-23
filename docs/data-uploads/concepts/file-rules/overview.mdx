@@ -9,7 +9,7 @@ import FileRuleDef from '/snippets/definitions/file-rule.mdx';
 
 <FileRuleDef />
 
-For details on how to define file rules, see the [rule definition](/data-uploads/primitives/file-rules/rule-definition) page.
+For details on how to define file rules, see the [rule definition](/data-uploads/concepts/file-rules/rule-definition) page.
 
 ## Properties
 
@@ -35,7 +35,7 @@ For details on how to define file rules, see the [rule definition](/data-uploads
   <ImmutableBadge />
 
   Which files on the device the rule manages. See
-  [sources](/data-uploads/primitives/file-rules/rule-definition#sources).
+  [sources](/data-uploads/concepts/file-rules/rule-definition#sources).
 </ParamField>
 
 <ParamField path="upload" type="Upload">
@@ -43,7 +43,7 @@ For details on how to define file rules, see the [rule definition](/data-uploads
 
   An optional field that defines where matching files are uploaded to. Absent when the
   rule only manages local retention. See
-  [uploads](/data-uploads/primitives/file-rules/rule-definition#uploads).
+  [uploads](/data-uploads/concepts/file-rules/rule-definition#uploads).
 </ParamField>
 
 <ParamField path="retention" type="Retention">
@@ -51,13 +51,13 @@ For details on how to define file rules, see the [rule definition](/data-uploads
 
   An optional field that defines how long the device retains local copies of matching
   files. Absent when the device keeps them indefinitely — Miru never deletes them. See
-  [retention](/data-uploads/primitives/file-rules/rule-definition#retention).
+  [retention](/data-uploads/concepts/file-rules/rule-definition#retention).
 </ParamField>
 
 ## Immutability
 
 File rules are **immutable**. A rule is created once, shipped to devices as part of
-a [release](/primitives/releases), and never edited in place. To change
+a [release](/concepts/releases), and never edited in place. To change
 what is managed, you must create a new rule, release it, and deploy it to your devices.
 
 ## Git provenance
@@ -71,8 +71,8 @@ YAML that defined it.
 ## Deployment
 
 File rules go into effect when a
-[deployment](/primitives/deployments) containing the rule reaches the `deployed`
-[activity status](/primitives/deployments#activity-status) on *that device*.
+[deployment](/concepts/deployments) containing the rule reaches the `deployed`
+[activity status](/concepts/deployments#activity-status) on *that device*.
 
 A file is processed only if it was created or modified after the rule took effect. Files that existed before the rule took effect are ignored as long as they remain unchanged.
 
@@ -80,7 +80,7 @@ A file is processed only if it was created or modified after the rule took effec
 
 <PlatformUnsupportedBadge />
 
-File rules must be created as part of a [release](/primitives/releases). Visit the
+File rules must be created as part of a [release](/concepts/releases). Visit the
 [define file rules](/data-uploads/define-file-rules) page to learn how to create file
 rules and releases.
 

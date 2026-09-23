@@ -39,65 +39,72 @@
             ]
           },
           {
-            "group": "Primitives",
+            "group": "Core Concepts",
             "pages": [
-              "primitives/devices",
-              "primitives/groups",
-              "primitives/releases",
-              "primitives/deployments"
+              "concepts/devices",
+              "concepts/groups",
+              "concepts/releases",
+              "concepts/deployments"
             ]
           },
           {
             "group": "Config Management",
             "pages": [
               {
-                "group": "Primitives",
+                "group": "Concepts",
+                "expanded": true,
                 "pages": [
-                  "cfg-mgmt/primitives/config-types",
+                  "cfg-mgmt/concepts/config-types",
                   {
                     "group": "Config schemas",
                     "pages": [
-                      "cfg-mgmt/primitives/schemas/overview",
+                      "cfg-mgmt/concepts/schemas/overview",
                       {
                         "group": "Languages",
                         "pages": [
-                          "cfg-mgmt/primitives/schemas/languages/overview",
-                          "cfg-mgmt/primitives/schemas/languages/jsonschema",
-                          "cfg-mgmt/primitives/schemas/languages/cue",
-                          "cfg-mgmt/primitives/schemas/languages/opaque"
+                          "cfg-mgmt/concepts/schemas/languages/overview",
+                          "cfg-mgmt/concepts/schemas/languages/jsonschema",
+                          "cfg-mgmt/concepts/schemas/languages/cue",
+                          "cfg-mgmt/concepts/schemas/languages/opaque"
                         ]
                       },
-                      "cfg-mgmt/primitives/schemas/manage"
+                      "cfg-mgmt/concepts/schemas/manage"
                     ]
                   },
-                  "cfg-mgmt/primitives/config-instances"
+                  "cfg-mgmt/concepts/config-instances"
                 ]
               },
               {
-                "group": "Provision devices",
+                "group": "Guides",
+                "expanded": true,
                 "pages": [
-                  "cfg-mgmt/provision-devices/overview",
-                  "cfg-mgmt/provision-devices/dashboard",
-                  "cfg-mgmt/provision-devices/ansible",
-                  "cfg-mgmt/provision-devices/provisioning-tokens",
-                  "cfg-mgmt/provision-devices/provisioning-script",
-                  "cfg-mgmt/provision-devices/reprovision"
-                ]
-              },
-              "cfg-mgmt/create-a-release",
-              {
-                "group": "Deploy configs",
-                "pages": [
-                  "cfg-mgmt/deploy/initial-deployment",
-                  "cfg-mgmt/deploy/config-editor",
-                  "cfg-mgmt/deploy/staging-area"
-                ]
-              },
-              {
-                "group": "Audit configs",
-                "pages": [
-                  "cfg-mgmt/audit/device-history",
-                  "cfg-mgmt/audit/compare-devices"
+                  {
+                    "group": "Provision devices",
+                    "pages": [
+                      "cfg-mgmt/provision-devices/overview",
+                      "cfg-mgmt/provision-devices/dashboard",
+                      "cfg-mgmt/provision-devices/ansible",
+                      "cfg-mgmt/provision-devices/provisioning-tokens",
+                      "cfg-mgmt/provision-devices/provisioning-script",
+                      "cfg-mgmt/provision-devices/reprovision"
+                    ]
+                  },
+                  "cfg-mgmt/create-a-release",
+                  {
+                    "group": "Deploy configs",
+                    "pages": [
+                      "cfg-mgmt/deploy/initial-deployment",
+                      "cfg-mgmt/deploy/config-editor",
+                      "cfg-mgmt/deploy/staging-area"
+                    ]
+                  },
+                  {
+                    "group": "Audit configs",
+                    "pages": [
+                      "cfg-mgmt/audit/device-history",
+                      "cfg-mgmt/audit/compare-devices"
+                    ]
+                  }
                 ]
               }
             ]
@@ -107,28 +114,35 @@
             "pages": [
               "data-uploads/overview",
               {
-                "group": "Primitives",
+                "group": "Concepts",
+                "expanded": true,
                 "pages": [
-                  "data-uploads/primitives/buckets",
-                  "data-uploads/primitives/upload-collections",
+                  "data-uploads/concepts/buckets",
+                  "data-uploads/concepts/upload-collections",
                   {
                     "group": "File rules",
                     "pages": [
-                      "data-uploads/primitives/file-rules/overview",
-                      "data-uploads/primitives/file-rules/rule-definition"
+                      "data-uploads/concepts/file-rules/overview",
+                      "data-uploads/concepts/file-rules/rule-definition"
                     ]
                   },
-                  "data-uploads/primitives/uploads"
+                  "data-uploads/concepts/uploads"
                 ]
               },
               {
-                "group": "Connect a bucket",
+                "group": "Guides",
+                "expanded": true,
                 "pages": [
-                  "data-uploads/connect-a-bucket/aws",
-                  "data-uploads/connect-a-bucket/gcs"
+                  {
+                    "group": "Connect a bucket",
+                    "pages": [
+                      "data-uploads/connect-a-bucket/aws",
+                      "data-uploads/connect-a-bucket/gcs"
+                    ]
+                  },
+                  "data-uploads/define-file-rules"
                 ]
-              },
-              "data-uploads/define-file-rules"
+              }
             ]
           },
           {
@@ -464,12 +478,28 @@
   },
   "redirects": [
     {
+      "source": "/data-uploads/concepts/file-rules",
+      "destination": "/data-uploads/concepts/file-rules/overview"
+    },
+    {
       "source": "/data-uploads/primitives/file-rules",
-      "destination": "/data-uploads/primitives/file-rules/overview"
+      "destination": "/data-uploads/concepts/file-rules/overview"
     },
     {
       "source": "/data-uploads/primitives/upload-rules",
-      "destination": "/data-uploads/primitives/file-rules/overview"
+      "destination": "/data-uploads/concepts/file-rules/overview"
+    },
+    {
+      "source": "/data-uploads/primitives/:slug*",
+      "destination": "/data-uploads/concepts/:slug*"
+    },
+    {
+      "source": "/cfg-mgmt/primitives/:slug*",
+      "destination": "/cfg-mgmt/concepts/:slug*"
+    },
+    {
+      "source": "/primitives/:slug*",
+      "destination": "/concepts/:slug*"
     },
     {
       "source": "/data-uploads/define-upload-rules",
@@ -517,23 +547,23 @@
     },
     {
       "source": "/getting-started/concepts",
-      "destination": "/primitives/devices"
+      "destination": "/concepts/devices"
     },
     {
       "source": "/fundamentals/:slug*",
-      "destination": "/primitives/:slug*"
+      "destination": "/concepts/:slug*"
     },
     {
       "source": "/learn/config-instances",
-      "destination": "/cfg-mgmt/primitives/config-instances"
+      "destination": "/cfg-mgmt/concepts/config-instances"
     },
     {
       "source": "/learn/config-types",
-      "destination": "/cfg-mgmt/primitives/config-types"
+      "destination": "/cfg-mgmt/concepts/config-types"
     },
     {
       "source": "/learn/deployments",
-      "destination": "/primitives/deployments"
+      "destination": "/concepts/deployments"
     },
     {
       "source": "/learn/devices/compare",
@@ -553,11 +583,11 @@
     },
     {
       "source": "/learn/devices/manage",
-      "destination": "/primitives/devices"
+      "destination": "/concepts/devices"
     },
     {
       "source": "/learn/devices/overview",
-      "destination": "/primitives/devices"
+      "destination": "/concepts/devices"
     },
     {
       "source": "/learn/devices/provision/dashboard",
@@ -581,15 +611,15 @@
     },
     {
       "source": "/learn/groups/manage",
-      "destination": "/primitives/groups"
+      "destination": "/concepts/groups"
     },
     {
       "source": "/learn/groups/members",
-      "destination": "/primitives/groups"
+      "destination": "/concepts/groups"
     },
     {
       "source": "/learn/groups/overview",
-      "destination": "/primitives/groups"
+      "destination": "/concepts/groups"
     },
     {
       "source": "/learn/releases/create",
@@ -597,11 +627,11 @@
     },
     {
       "source": "/learn/releases/manage",
-      "destination": "/primitives/releases"
+      "destination": "/concepts/releases"
     },
     {
       "source": "/learn/releases/overview",
-      "destination": "/primitives/releases"
+      "destination": "/concepts/releases"
     },
     {
       "source": "/learn/releases/staging-area",
@@ -609,23 +639,23 @@
     },
     {
       "source": "/learn/schemas/languages/cue",
-      "destination": "/cfg-mgmt/primitives/schemas/languages/cue"
+      "destination": "/cfg-mgmt/concepts/schemas/languages/cue"
     },
     {
       "source": "/learn/schemas/languages/jsonschema",
-      "destination": "/cfg-mgmt/primitives/schemas/languages/jsonschema"
+      "destination": "/cfg-mgmt/concepts/schemas/languages/jsonschema"
     },
     {
       "source": "/learn/schemas/languages/overview",
-      "destination": "/cfg-mgmt/primitives/schemas/languages/overview"
+      "destination": "/cfg-mgmt/concepts/schemas/languages/overview"
     },
     {
       "source": "/learn/schemas/manage",
-      "destination": "/cfg-mgmt/primitives/schemas/manage"
+      "destination": "/cfg-mgmt/concepts/schemas/manage"
     },
     {
       "source": "/learn/schemas/overview",
-      "destination": "/cfg-mgmt/primitives/schemas/overview"
+      "destination": "/cfg-mgmt/concepts/schemas/overview"
     },
     {
       "source": "/docs/:slug*",

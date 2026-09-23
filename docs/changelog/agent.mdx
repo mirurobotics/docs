@@ -25,7 +25,7 @@ Miru Agent `v0.10.2` adds `provision --check` so fleet automation can tell wheth
 ## Features
 
 - Added `provision --check` to report whether the device is already provisioned via exit code, without contacting the control plane
-- Retention [file rule](/data-uploads/primitives/file-rules/overview) delete jobs now stop after 10 failed attempts instead of retrying forever, leaving the file on disk
+- Retention [file rule](/data-uploads/concepts/file-rules/overview) delete jobs now stop after 10 failed attempts instead of retrying forever, leaving the file on disk
 
 ## Fixes
 
@@ -39,7 +39,7 @@ Miru Agent `v0.10.2` adds `provision --check` so fleet automation can tell wheth
 
 ## Features
 
-- Added support for the latest [file rule](/data-uploads/primitives/file-rules/overview) capabilities, including retention-only rules and a configurable delay period before deletion
+- Added support for the latest [file rule](/data-uploads/concepts/file-rules/overview) capabilities, including retention-only rules and a configurable delay period before deletion
 
 ## Fixes
 
@@ -52,7 +52,7 @@ Miru Agent `v0.10.2` adds `provision --check` so fleet automation can tell wheth
 
 *July 20, 2026*
 
-Miru Agent `v0.10.0` introduces **data uploads**. The agent can now upload files from your devices directly to your own cloud storage bucket: when an [upload rule](/data-uploads/primitives/file-rules/overview) matches files on a device, the agent streams them straight to your AWS S3 or GCS bucket—your data never passes through Miru.
+Miru Agent `v0.10.0` introduces **data uploads**. The agent can now upload files from your devices directly to your own cloud storage bucket: when an [upload rule](/data-uploads/concepts/file-rules/overview) matches files on a device, the agent streams them straight to your AWS S3 or GCS bucket—your data never passes through Miru.
 
 Reading files for upload may require granting the `miru` user [read access](/developers/agent/filesys-access#data-uploads) to the source paths. To learn more, visit the [data uploads](/data-uploads/overview) documentation.
 
