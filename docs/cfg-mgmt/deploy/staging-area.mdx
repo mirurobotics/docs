@@ -150,8 +150,8 @@ Patching a deployment opens the release editor with the configuration content fr
 existing staged deployment, allowing you to create a replacement staged deployment for
 that device.
 
-You can patch staged and [drifted](#deployment-drift) deployments. Patching a drifted
-deployment is how you apply a drift's patches to it.
+You can patch staged and [drifted](#deployment-drift) deployments. To apply a drift's
+patches, patch the drifted deployment and make the same changes in the release editor.
 
 To patch a deployment, click the ellipses (...) on the deployment to patch and select
 **Patch** from the dropdown.
@@ -271,8 +271,8 @@ this patch also needs to be applied to the staged deployment `DPL-Q4CeX`, we say
 
 When a deployment drifts, it is marked as `drifted` and cannot be deployed until an
 explicit review is performed. You must either ignore the patch by
-[restaging](#review-a-deployment) the deployment, or apply the patch by
-[patching](#patch-a-deployment) the staged deployment in the release editor.
+[restaging](#review-a-deployment) the deployment, or apply it yourself by
+[patching](#patch-a-deployment) the staged deployment and making the same changes.
 
 The concept of deployment drift ensures that configuration changes aren't lost during
 migrations between releases, preventing misconfigurations.
