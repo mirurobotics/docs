@@ -68,9 +68,9 @@ device you want to create a staged deployment for.
 </Frame>
 
 <Note>
-  Some devices may be unavailable for selection. These devices are already running this
-  release and cannot be staged from this flow. You can only stage deployments for 
-  devices that are running a _different release_.
+  Devices that are already running this release can be staged too, for example to
+  prepare changes to their current configuration. Devices you don't have permission
+  to stage deployments for are unavailable for selection.
 </Note>
 
 After selecting a device, the release editor opens. The editor is pre-filled with the
@@ -88,11 +88,12 @@ Review the configuration tabs and make any edits you want. When you are ready, c
   ![](https://assets.mirurobotics.com/docs/v04/images/releases/stage/stage-button.png)
 </Frame>
 
-A dialog will appear asking for a description. Enter a description for the staged
-deployment, then click **Stage**.
+A dialog will appear summarizing the files you changed (for example, `1 file modified`)
+and asking for a description. Enter a description for the staged deployment, then click
+**Stage**.
 
 <Frame>
-  ![](https://assets.mirurobotics.com/docs/v04/images/releases/stage/stage-dialog.png)
+  ![](https://assets.mirurobotics.com/docs/v04/images/releases/stage/dialog-stage.png)
 </Frame>
 
 Miru will return you to the staging area, where the new staged deployment appears in the
@@ -149,6 +150,9 @@ Patching a deployment opens the release editor with the configuration content fr
 existing staged deployment, allowing you to create a replacement staged deployment for
 that device.
 
+You can patch staged and [drifted](#deployment-drift) deployments. Patching a drifted
+deployment is how you apply a drift's patches to it.
+
 To patch a deployment, click the ellipses (...) on the deployment to patch and select
 **Patch** from the dropdown.
 
@@ -165,8 +169,8 @@ each tab.
 
 Review the configurations and make any desired edits. When you are ready, click
 **Stage** in the editor panel.
-A dialog will appear asking for a description. Enter a description, then click
-**Stage**.
+A dialog will appear summarizing the files you changed and asking for a description.
+Enter a description, then click **Stage**.
 
 After staging, Miru returns you to the staging area, where the updated staged deployment
 appears in the list.
@@ -266,8 +270,9 @@ this patch also needs to be applied to the staged deployment `DPL-Q4CeX`, we say
 `DPL-Q4CeX` has _drifted_.
 
 When a deployment drifts, it is marked as `drifted` and cannot be deployed until an
-explicit review is performed. You must either ignore the patch or apply the patch to the
-staged deployment.
+explicit review is performed. You must either ignore the patch by
+[restaging](#review-a-deployment) the deployment, or apply the patch by
+[patching](#patch-a-deployment) the staged deployment in the release editor.
 
 The concept of deployment drift ensures that configuration changes aren't lost during
 migrations between releases, preventing misconfigurations.
@@ -310,7 +315,9 @@ with the differences highlighted.
   ![Review Deployment Config Panel](https://assets.mirurobotics.com/docs/v04/images/releases/stage/config-panel.png)
 </Frame>
 
-With the deployment's patches available for review, you have two options for proceeding.
+With the deployment's patches available for review, the dialog offers two options:
+**Restage** and **Archive**. To apply the patches instead, close the dialog and
+[patch](#patch-a-deployment) the deployment.
 
 **Restage**
 
@@ -324,18 +331,14 @@ be deployed.
 
 **Archive**
 
-The second option is to [archive](#archive-a-deployment) the deployment. This removes
+The second option, in the dropdown next to **Restage**, is to
+[archive](#archive-a-deployment) the deployment. This removes
 the deployment from the staging area and moves it to the `archived` state. Archived
 deployments are available for historical reference but cannot be deployed.
 
 <Frame>
   ![Review Archive Dialog](https://assets.mirurobotics.com/docs/v04/images/releases/stage/review-dialog:archive.png)
 </Frame>
-
-**Patch**
-
-The ability to apply patches to a drifted deployment is currently unavailable, but will
-be coming soon!
 
 To list the deployments that have been deployed to a device since a deployment was
 staged, use the <PlatformApiLink endpoint="deployments/drifts">deployment drifts endpoint »</PlatformApiLink>

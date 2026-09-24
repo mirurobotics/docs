@@ -16,6 +16,15 @@ import DeploymentStatus from '/snippets/deployments/status.mdx';
 
 ## Properties
 
+<ParamField path="id" type="string">
+  <ImmutableBadge />
+
+  The deployment's unique identifier. The dashboard shows a short form: `DPL-` plus the
+  first five characters after `dpl_`. The CLI and Platform API take the full ID.
+
+  Examples: `dpl_7xKqW1mZ3nBvTgL5cRs9dYuP` (full), `DPL-7xKqW` (short)
+</ParamField>
+
 <ParamField path="description" type="string">
   <ImmutableBadge />
 

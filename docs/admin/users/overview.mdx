@@ -36,15 +36,31 @@ import UserDef from '/snippets/definitions/user.mdx';
   Examples: `john.doe@example.com`, `jane.smith@example.com`
 </ParamField>
 
-<ParamField path="role" type="enum">
+<ParamField path="type" type="enum">
   <MutableBadge />
 
-  The user's [access role](/admin/users/access-control) in the workspace.
+  The user's [type](/admin/users/access-control#user-types), which sets their broad
+  access level in the workspace.
 
-  Allowed values: 
+  Allowed values:
   - `member`
   - `admin`
   - `owner`
+
+</ParamField>
+
+<ParamField path="roles" type="[]enum">
+  <MutableBadge />
+
+  The user's workspace [roles](/admin/users/access-control#roles). Members have at
+  least one role; admins and owners have none. Roles within a group are granted
+  through [group membership](/concepts/groups/members).
+
+  Allowed values:
+  - `viewer`
+  - `operator`
+  - `provisioner`
+  - `publisher`
 
 </ParamField>
 
