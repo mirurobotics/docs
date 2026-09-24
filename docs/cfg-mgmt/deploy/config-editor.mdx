@@ -206,21 +206,13 @@ The redeploy dialog shows:
 ## Deployment alert
 
 If another user (or system) deploys to the same device while you have the editor
-open, an alert appears with the new deployment's details. The alert offers different 
-options depending on whether you have unsaved edits:
+open, a **New deployment detected** alert appears with the new deployment's details.
+The only option is **Acknowledge**, which loads the new deployment into the editor.
 
-**No edits in progress:**
-- **Acknowledge** — Accepts the external deployment and resets your draft to
-  match it.
-
-**Edits in progress:**
-- **Discard** — Discards your edits and resets the draft to the external
-  deployment.
-- **Keep** — Merges your edits on top of the external deployment using a
-  three-way JSON merge, preserving your changes where possible.
+If you have unsaved edits, acknowledging discards them.
 
 <Frame>
-  ![Deployment Alert](https://assets.mirurobotics.com/docs/v04/images/devices/editor/deployment-alert.png)
+  ![Deployment Alert](https://assets.mirurobotics.com/docs/v04/images/devices/editor/depl-alert.png)
 </Frame>  
 
 ---
