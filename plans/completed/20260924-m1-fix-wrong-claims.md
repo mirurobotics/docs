@@ -88,9 +88,11 @@ Record each of Armel's answers here as it's given at its issue (the questions th
 
 ## Outcomes & Retrospective
 
-Done 2026-09-24. All eight issues are fixed, one commit each with its Linear title as the subject and `Refs ENG-XXXX`, plus this plan's own commit, on `docs/m1-fix-wrong-claims`. All eight are Done in Linear. `./scripts/lint.sh` and `pnpm validate` pass on the branch head. Nothing is pushed; the draft PR is opened from the Project.
+Complete 2026-09-24. All eight issues are fixed, one commit each with its Linear title as the subject and `Refs ENG-XXXX`, plus this plan's own commit, on `docs/m1-fix-wrong-claims`. All eight are Done in Linear. `./scripts/lint.sh` and `pnpm validate` pass on the branch head. Merged as #206 (`6fb17dc`). The M1 review's two follow-ups (the Patch wording for drifted deployments and moving this plan to `plans/completed/`) landed in a separate PR.
 
 What changed from the plan as written:
+
+- #206 was opened ready for review and squash-merged, not opened as a draft.
 
 - Every flagged screenshot was replaced, not just flagged (see Surprises).
 - Armel previewed each issue before committing, and asked for a few extra edits. On the groups page: wrapping at 88 columns and rewording the intro's group-assignment sentence. On the deployments overview: a shorter `id` property. On the users overview: tightened `roles` wording.
@@ -161,7 +163,7 @@ Line numbers are from `main` at `7695aba` plus the ENG-1373 commit. Earlier edit
 
 ### ENG-1373: `docs(groups): correct group name uniqueness and document max depth`, done
 
-Status: committed as `75fcf6d`. One step left, done first, before ENG-1374 starts.
+Status: committed as `3fc03ab` (amended from `75fcf6d`); 12 levels kept (see the Decision Log).
 
 - File: `docs/concepts/groups/overview.mdx`.
 - `name` property: "Must be unique within the workspace." was changed to "Must be unique among its sibling groups: subgroups of the same parent, or top-level groups." Evidence: the partial unique indexes `unique_parent_group_name_child` (`name, parent_id, workspace_id` where `parent_id IS NOT NULL`) and `unique_parent_group_name_root` (`name, workspace_id` where `parent_id IS NULL`) in `backend/tools/supabase/migrations/20250915183477_root.sql` (around lines 1340–1349).
