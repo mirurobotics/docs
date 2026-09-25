@@ -5,9 +5,12 @@ title: "Versions"
 import { CardNewTab } from '/snippets/components/card.jsx';
 import { LinkNewTab } from '/snippets/components/link.jsx';
 import { SupportedBadge, EndOfLifeBadge } from '/snippets/components/support.jsx';
+import LinuxOnly from '/snippets/device-api/linux-only.mdx';
 import StabilityGuarantees from '/snippets/device-api/stability-guarantees.mdx';
 import BreakingChanges from '/snippets/references/apis/breaking.mdx';
 import NonBreakingChanges from '/snippets/references/apis/non-breaking.mdx';
+
+<LinuxOnly />
 
 
 The Device API adheres to [semantic versioning](https://semver.org/), which was chosen so that on-device applications can easily determine API version compatibility.
