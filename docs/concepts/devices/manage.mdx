@@ -4,7 +4,7 @@ title: "Manage devices"
 
 import { ONLINE_TOOLTIP, OFFLINE_TOOLTIP } from '/snippets/components/devices/statuses.jsx';
 import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
-import { AdminBadge, ProvisionerBadge, ViewerBadge } from '/snippets/components/role-badges.jsx';
+import { AdminBadge, GroupManagerBadge, ProvisionerBadge, ViewerBadge } from '/snippets/components/role-badges.jsx';
 import MoveDevice from '/snippets/devices/move.mdx';
 
 ## View a device
@@ -67,7 +67,7 @@ On the other hand, <Tooltip tip={OFFLINE_TOOLTIP.tip} cta={OFFLINE_TOOLTIP.cta} 
   ![Ping Timeout](https://assets.mirurobotics.com/docs/v04/images/devices/ping-timeout.png)
 </Frame>
 
-## Move a device  <AdminBadge />
+## Move a device  <AdminBadge />  <GroupManagerBadge />
 
 <PlatformUnsupportedBadge />
 
@@ -120,3 +120,18 @@ To delete a device, click the ellipses (...) on the device you want to delete an
 </Frame>
 
 A confirmation dialog will appear—click **Delete** to confirm.
+
+## Bulk actions
+
+<PlatformUnsupportedBadge />
+
+To act on several devices at once, turn on **Multi-select** in the
+[display options](/concepts/devices/views#display-options) and check the devices you
+want. A bar at the bottom of the page shows how many devices are selected and what you
+can do with them:
+
+- **Move** <AdminBadge /> <GroupManagerBadge />: move the devices to a group, up to
+  1,000 at a time. See [Move a device](#move-a-device).
+- **Archive** <ProvisionerBadge />: archive the devices, up to 100 at a time. If only
+  some of them can be archived, the button shows how many, for example **Archive (3)**.
+  See [Archive a device](#archive-a-device).

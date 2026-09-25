@@ -1,0 +1,48 @@
+---
+title: "Device views"
+---
+
+import { PlatformApiBadge } from '/snippets/components/platform-api-link.jsx';
+import { ViewerBadge } from '/snippets/components/role-badges.jsx';
+
+The [Devices page](https://app.mirurobotics.com/devices) lists every device in your
+workspace. Use search, filters, and display options to find the devices you need.
+
+## Search devices  <ViewerBadge />
+
+<PlatformApiBadge endpoint="devices/list" />
+
+Click the search icon above the list, type, and press **Enter**. Search matches device
+names by default; switch the field to **Description** to search descriptions instead.
+
+<Frame>
+  ![Device Search](https://assets.mirurobotics.com/docs/v04/images/devices/views/search.png)
+</Frame>
+
+## Filter devices  <ViewerBadge />
+
+<PlatformApiBadge endpoint="devices/list" />
+
+Click the filter icon and filter by status, release, group, or agent version. You can
+also find devices with no release, group, or agent version.
+
+<Frame>
+  ![Device Filter Menu](https://assets.mirurobotics.com/docs/v04/images/devices/views/filter-menu.png)
+</Frame>
+
+Selecting multiple values in the same filter widens the list: online and offline shows
+devices that are online *or* offline. Adding another filter narrows it: online with
+release `v2.0.0` shows devices that are online *and* on `v2.0.0`.
+
+Active searches and filters appear as chips above the list. Click a chip's × to remove
+it, or **Clear** to remove them all. Filters are saved in the page's URL, so you can
+bookmark or share a filtered list.
+
+## Display options  <ViewerBadge />
+
+Click the display icon to group the list by status, release, group, or agent version,
+sort it by name or status, switch to compact rows, or show and hide columns.
+
+<Frame>
+  ![Device Display Options](https://assets.mirurobotics.com/docs/v04/images/devices/views/display-menu.png)
+</Frame>

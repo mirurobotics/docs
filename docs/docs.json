@@ -49,7 +49,8 @@
                     "group": "Devices",
                     "pages": [
                       "concepts/devices/overview",
-                      "concepts/devices/manage"
+                      "concepts/devices/manage",
+                      "concepts/devices/views"
                     ]
                   },
                   {
