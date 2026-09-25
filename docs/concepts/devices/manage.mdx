@@ -11,23 +11,23 @@ import MoveDevice from '/snippets/devices/move.mdx';
 
 <PlatformApiBadge endpoint="devices/get" />
 
-To view a device in Miru, navigate to the [Devices page](https://app.mirurobotics.com/devices), click into the device you want to view, and switch to the **Overview** tab at the top.
-
-**Metadata**
-
-At the top of the page, you'll find the device's metadata, including its name, status, agent version, and more.
+To view a device in Miru, navigate to the
+[Devices page](https://app.mirurobotics.com/devices), click the device, and open its
+**Overview** tab. The Overview shows the device's details and its deployment activity.
 
 <Frame>
-  ![Device Overview Metadata](https://assets.mirurobotics.com/docs/v04/images/devices/overview-metadata.png)
+  ![Device Overview](https://assets.mirurobotics.com/docs/v04/images/devices/manage/overview.png)
 </Frame>
 
-**Audit trail**
+**Details**
 
-At the bottom of the page, you'll find a complete audit trail of deployments made to the device.
+The **Status** and **Properties** cards show the device's
+[status](/concepts/devices/overview#status), group, current release, and agent version.
 
-<Frame>
-  ![Device Overview Audit Trail](https://assets.mirurobotics.com/docs/v04/images/devices/overview-audit-trail.png)
-</Frame>
+**Activity**
+
+The deployments for this device are listed with the most recent at the top. Click a
+deployment to expand the list of changes it made, and click a change to view its diff.
 
 ## Provision a device  <ProvisionerBadge />
 
@@ -37,17 +37,17 @@ To provision a device, visit the [device provisioning](/provision-devices/overvi
 
 <PlatformApiBadge endpoint="devices/update" />
 
-Navigate to the [Devices page](https://app.mirurobotics.com/devices), click the ellipses (...) on the device you want to edit, and hit **Edit**.
+You can change a device's name and description. To change its group,
+[move the device](#move-a-device) instead.
+
+To edit a device, click the ellipses (...) on the device you want to edit and hit
+**Edit**.
 
 <Frame>
-  ![Device Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/devices/ellipses-dropdown.png)
+  ![Device Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/devices/manage/edit-menu.png)
 </Frame>
 
-Update the desired fields, then click **Save**.
-
-<Frame>
-  ![Edit Device Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/edit-dialog.png)
-</Frame>
+A dialog will appear—update the name or description, then click **Save**.
 
 ## Ping a device  <ViewerBadge />
 
@@ -90,14 +90,10 @@ Archiving keeps the device's full deployment and configuration history. No data 
 To archive a device, click the ellipses (...) on the device and select **Archive**.
 
 <Frame>
-  ![Archive Device Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/devices/ellipses-dropdown.png)
+  ![Archive Device Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/devices/manage/archive-menu.png)
 </Frame>
 
 A confirmation dialog will appear—click **Archive** to confirm.
-
-<Frame>
-  ![Archive Device Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/archive-dialog.png)
-</Frame>
 
 ## Restore an archived device
 
@@ -120,11 +116,7 @@ deployment history must be [archived](#archive-a-device) instead.
 To delete a device, click the ellipses (...) on the device you want to delete and hit **Delete**.
 
 <Frame>
-  ![Device Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/devices/ellipses-dropdown.png)
+  ![Device Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/devices/manage/delete-menu.png)
 </Frame>
 
 A confirmation dialog will appear—click **Delete** to confirm.
-
-<Frame>
-  ![Delete Device Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/delete-dialog.png)
-</Frame>
