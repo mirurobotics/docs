@@ -1,15 +1,34 @@
 import RemoveApt from '/snippets/apt/remove.mdx';
 
-Remove the Debian package.
+<Tabs>
+  <Tab title="Linux">
+    Remove the Debian package.
 
-```bash
-sudo apt-get purge miru-agent
-```
+    ```bash
+    sudo apt-get purge miru-agent
+    ```
 
-If installed via `apt`, you can also remove the apt source and keyring.
+    If installed via `apt`, you can also remove the apt source and keyring.
 
-<RemoveApt />
+    <RemoveApt />
 
-<Info>
-    The signing key at `/etc/apt/keyrings/miru-archive-keyring.gpg` is shared with the Miru CLI. Only remove it if you have also uninstalled the Miru CLI.
-</Info>
+    <Info>
+        The signing key at `/etc/apt/keyrings/miru-archive-keyring.gpg` is shared with the Miru CLI. Only remove it if you have also uninstalled the Miru CLI.
+    </Info>
+  </Tab>
+  <Tab title="Windows">
+    Uninstall **Miru Agent** from **Settings > Apps > Installed apps**, or run the following from PowerShell opened with **Run as administrator**, using the MSI of the installed version.
+
+    ```powershell
+    Start-Process msiexec.exe -ArgumentList '/x','"C:\path\to\miru-agent-<version>.msi"','/qn','/norestart' -Wait -PassThru
+    ```
+
+    <Warning>
+        Uninstalling keeps `%ProgramData%\Miru`, which holds the agent's settings, device identity, keys, and logs. For a clean removal, delete it afterwards. The machine must then be provisioned again.
+
+        ```powershell
+        Remove-Item -Recurse -Force "$env:ProgramData\Miru"
+        ```
+    </Warning>
+  </Tab>
+</Tabs>

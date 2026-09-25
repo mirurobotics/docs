@@ -25,8 +25,8 @@ Merge gate: agent GitHub releases currently attach only `agent_Windows_x86_64.zi
 
 ## Progress
 
-- [ ] Pre-work: move this plan to `plans/active/`, re-verify facts against source repos, record discrepancies in Surprises.
-- [ ] M1: supported platforms, install, upgrade, uninstall, poor connectivity; test; commit.
+- [x] Pre-work: move this plan to `plans/active/`, re-verify facts against source repos, record discrepancies in Surprises.
+- [x] M1: supported platforms, install, upgrade, uninstall, poor connectivity; test; commit.
 - [ ] M2: provisioning, reprovisioning, dashboard dialog notes, legacy script and Ansible notes; test; commit.
 - [ ] M3: agent commands, default permissions, security, architecture, file system access, overview; test; commit.
 - [ ] M4: config file paths and file rule globs; test; commit.
@@ -36,7 +36,13 @@ Merge gate: agent GitHub releases currently attach only `agent_Windows_x86_64.zi
 
 ## Surprises & Discoveries
 
-(Add entries as you go.)
+- Latest agent release (`v0.10.3`, checked 2026-09-24) attaches only Linux assets (`.deb`, `.tar.gz`, SBOMs, checksums); neither the MSI nor `agent_Windows_x86_64.zip` is published yet. `build/.goreleaser.yaml` on `main` adds the Windows zip and PDB for future releases. Merge gate unchanged.
+  Evidence: `gh release view -R mirurobotics/agent --json assets`.
+
+- `path_not_absolute` is defined in `backend/internal/configs/domain/platform/errors.go`, not `filepaths.go`. No doc impact.
+
+- The agent matches file rule globs with the `glob` crate 0.3.4 (`agent/src/filesys/files.rs` `glob()`), default `MatchOptions` (`case_sensitive: true`). Wildcard segments are matched case-sensitively on every OS; segments without wildcards are resolved by the file system, so on Windows (NTFS) literal directory and file names match regardless of case. The `glob` crate has no backslash escape (literal metacharacters are escaped with `[*]`), so on Linux `\` is a literal character, not an escape; the backend comment in `spec.go` ("on unix it is a glob escape") only means the backend does not split on it.
+  Evidence: `~/.cargo/registry/src/*/glob-0.3.4/src/lib.rs` (`fill_todo`, `chars_eq`, `Pattern::escape`).
 
 ## Decision Log
 
@@ -59,6 +65,10 @@ Merge gate: agent GitHub releases currently attach only `agent_Windows_x86_64.zi
 - Decision: the CLI install page keeps "Windows is not supported" and adds a WSL 2 hint.
   Rationale: requested by the user.
   Date/Author: 2026-09-24, plan author.
+
+- Decision: keep the existing "backslash escapes are not supported" statement for Linux globs instead of saying `\` escapes the next character (M4.4), and document case sensitivity as: wildcards are case-sensitive everywhere; on Windows, segments without wildcards follow the file system (case-insensitive).
+  Rationale: the agent's `glob` crate has no backslash escape; see Surprises.
+  Date/Author: 2026-09-24, implementer.
 
 ## Outcomes & Retrospective
 
