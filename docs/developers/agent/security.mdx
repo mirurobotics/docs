@@ -43,14 +43,23 @@ If a token refresh fails due to a transient network issue, the agent retries aut
 
 ### Credential storage
 
-The agent's identity is bound to the RSA key pair generated on-device during [provisioning](/provision-devices/overview). Currently, these credentials are protected at rest through file system permissions:
+<Tabs>
+  <Tab title="Linux">
+    The agent's identity is bound to the RSA key pair generated on-device during [provisioning](/provision-devices/overview). Currently, these credentials are protected at rest through file system permissions:
 
-| File | Permissions | Access |
-|------|------------|--------|
-| Private key | `0600` | Owner (miru) read/write only |
-| Public key | `0640` | Owner read/write, group read-only |
+    | File | Permissions | Access |
+    |------|------------|--------|
+    | Private key | `0600` | Owner (miru) read/write only |
+    | Public key | `0640` | Owner read/write, group read-only |
 
-All credential files are stored under `/var/lib/miru/auth/`, owned by `miru:miru`. The private key never leaves the device—it is used locally to sign token requests but is never transmitted over the network.
+    All credential files are stored under `/var/lib/miru/auth/`, owned by `miru:miru`. The private key never leaves the device—it is used locally to sign token requests but is never transmitted over the network.
+  </Tab>
+  <Tab title="Windows">
+    The agent's identity is bound to the RSA key pair generated on-device during [provisioning](/provision-devices/overview). Currently, these credentials are protected at rest through file system permissions.
+
+    All credential files are stored under `%ProgramData%\Miru\auth\`. The directory's access control list grants access only to SYSTEM and Administrators. The private key never leaves the device—it is used locally to sign token requests but is never transmitted over the network.
+  </Tab>
+</Tabs>
 
 Sensitive values are handled in memory using a secrecy library that minimizes exposure and zeroizes data when it is no longer needed. Tokens are redacted in log output to prevent accidental credential leakage through logs.
 
@@ -108,6 +117,8 @@ The agent can only create Unix domain sockets and IPv4/IPv6 connections. All oth
 
 </Dropdown>
 
+On Windows, the agent runs as a Windows service under the LocalSystem account. The systemd hardening directives above apply to Linux only and have no Windows equivalent.
+
 ## Transport security
 
 All communication between the agent and the Miru control plane is encrypted in transit:
@@ -125,6 +136,8 @@ The agent initiates all connections outbound. No inbound ports need to be opened
 
 The only local interface is a Unix domain socket at `/run/miru/miru.sock`, used by applications on the same device to query the agent's [REST API](/developers/device-api/overview). This socket is not accessible over the network.
 
+On Windows, the agent creates no local socket and no listening port because the [Device API](/developers/device-api/overview) is not available.
+
 ## Local API access control
 
 The agent's local REST API is exposed through a Unix domain socket, not a TCP port. It is not possible to access the agent's local API over a network—it is only accessible from processes running on the same device as the agent.
@@ -136,6 +149,8 @@ Access is controlled through file system permissions:
 - **Group-based access** — applications that need to query the agent are added to the `miru` group
 
 This means only processes running as the `miru` user or in the `miru` group can communicate with the agent's local API. Other users and processes on the device cannot access it.
+
+On Windows, the Device API is not available, so there is no local API to access.
 
 {/* ## Installation
 

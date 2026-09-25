@@ -61,7 +61,7 @@ Oftentimes it's beneficial to manually trigger a sync cycle from an on-device ap
 
 As a fallback to the above triggers, the agent regularly checks that the local state has been synced within some polling interval. If the local state has not been synced within that interval, the agent triggers a sync cycle for itself.
 
-**4. Restart (systemd)**
+**4. Restart**
 
 As a final fallback, the agent performs an initial sync cycle on startup. If encountering real-time sync issues with the agent, we recommend [restarting](/developers/agent/commands#restart) the agent to manually trigger a sync cycle.
 
