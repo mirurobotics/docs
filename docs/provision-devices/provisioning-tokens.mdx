@@ -30,9 +30,16 @@ Unlike the dashboard, which requires manual interaction with the web interface f
 
 Before provisioning a device via provisioning tokens, you must first install the `miru-agent` package onto the target machine.
 
-The recommended method is via `apt` (shown below). However, you can also manually download the package from GitHub. Visit the [agent installation](/developers/agent/install) documentation for more information.
+<Tabs>
+  <Tab title="Linux">
+    The recommended method is via `apt` (shown below). However, you can also manually download the package from GitHub. Visit the [agent installation](/developers/agent/install) documentation for more information.
 
-<AptInstall />
+    <AptInstall />
+  </Tab>
+  <Tab title="Windows">
+    Install the MSI installer by following the [agent installation](/developers/agent/install#install) documentation.
+  </Tab>
+</Tabs>
 
 ## Create a provisioning token
 
@@ -72,16 +79,31 @@ provisioning_token = client.provisioning_tokens.create()
 
 ## Provision the device
 
-After retrieving the provisioning token, run the following command. Make sure to replace `<token>` with the actual token.
+<Tabs>
+  <Tab title="Linux">
+    After retrieving the provisioning token, run the following command. Make sure to replace `<token>` with the actual token.
 
-```bash
-sudo -u miru MIRU_PROVISIONING_TOKEN=<token> \
-  /usr/sbin/miru-agent provision
-```
+    ```bash
+    sudo -u miru MIRU_PROVISIONING_TOKEN=<token> \
+      /usr/sbin/miru-agent provision
+    ```
 
-The command can be broken into the following components:
+    The command can be broken into the following components:
 
-<CmdBreakdown />
+    <CmdBreakdown />
+  </Tab>
+  <Tab title="Windows">
+    After retrieving the provisioning token, run the following commands from PowerShell opened with **Run as administrator**. Make sure to replace `<token>` with the actual token.
+
+    ```powershell
+    $env:MIRU_PROVISIONING_TOKEN = "<token>"
+    & "$env:ProgramW6432\Miru\Agent\miru-agent.exe" provision
+    Remove-Item Env:MIRU_PROVISIONING_TOKEN
+    ```
+
+    The agent reads the token only from the `MIRU_PROVISIONING_TOKEN` environment variable, which the last command clears. Administrator rights are required because `%ProgramData%\Miru` is restricted to SYSTEM and Administrators.
+  </Tab>
+</Tabs>
 
 Provisioning performs the following actions:
 
@@ -94,17 +116,21 @@ If the machine you're provisioning on has already been provisioned, the provisio
 
 To reassociate the machine with an existing Miru device, follow the [reprovisioning](/provision-devices/reprovision) documentation.
 
-To provision the machine as a brand new Miru device (never been provisioned in Miru before), first [uninstall](/developers/agent/install#uninstall) the `miru-agent` package before continuing with the provisioning process.
+To provision the machine as a brand new Miru device (never been provisioned in Miru before), first [uninstall](/developers/agent/install#uninstall) the `miru-agent` package before continuing with the provisioning process. On Windows, also delete `%ProgramData%\Miru` after uninstalling, as described in the [uninstall](/developers/agent/install#uninstall) instructions.
 
 ### Arguments
 
 The provision command supports the following parameters to tune your installation:
 
 <ParamField path="--device-name" type="string">
-  The name of the device in the Miru dashboard; defaults to `$HOSTNAME`.
+  The name of the device in the Miru dashboard; defaults to the machine's hostname (the output of `hostname`).
 
-  Default: `$HOSTNAME`
+  Default: `hostname`
 </ParamField>
+
+<Tip>
+  To check whether a machine is provisioned, run `provision --check`. It exits with `0` if provisioned, `3` if not provisioned, and `1` on error. See [provisioning status](/developers/agent/commands#provisioning-status).
+</Tip>
 
 ## Verify installation
 
