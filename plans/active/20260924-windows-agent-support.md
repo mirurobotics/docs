@@ -28,7 +28,7 @@ Merge gate: agent GitHub releases currently attach only `agent_Windows_x86_64.zi
 - [x] Pre-work: move this plan to `plans/active/`, re-verify facts against source repos, record discrepancies in Surprises.
 - [x] M1: supported platforms, install, upgrade, uninstall, poor connectivity; test; commit.
 - [x] M2: provisioning, reprovisioning, dashboard dialog notes, legacy script and Ansible notes; test; commit.
-- [ ] M3: agent commands, default permissions, security, architecture, file system access, overview; test; commit.
+- [x] M3: agent commands, default permissions, security, architecture, file system access, overview; test; commit.
 - [ ] M4: config file paths and file rule globs; test; commit.
 - [ ] M5: device concepts, Device API Linux-only notes, CLI WSL 2 hint, quick start touch-ups; test; commit.
 - [ ] M6: grep assertions, preview check, push, draft PR, preflight reports CLEAN.
