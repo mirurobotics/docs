@@ -45,6 +45,8 @@ retention:
   require_upload: true
 ```
 
+For Windows devices, use a Windows path such as `glob: 'C:\ProgramData\Robot\logs\*.log'`. Single quotes keep YAML from treating the backslashes as escapes.
+
 Both `upload` and `retention` are optional and independent. A rule with only `retention` uploads nothing and simply reclaims disk on the device:
 
 ```yaml scratch-cleanup.yaml
