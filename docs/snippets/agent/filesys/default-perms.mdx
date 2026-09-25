@@ -27,7 +27,7 @@
     | `%ProgramData%\Miru` | Agent state, credentials, device identity |
     | `%ProgramData%\Miru\logs` | Log files (hourly rotation) |
 
-    Both directories are only for internal use by the agent. The `auth`, `logs`, and `tmp` directories inside `%ProgramData%\Miru` are restricted to SYSTEM and Administrators.
+    Both directories are only for internal use by the agent. `%ProgramData%\Miru` and everything inside it are restricted to SYSTEM and Administrators.
 
     There is no default directory for config instances on Windows. The agent writes each config instance to the absolute path set in its [config schema](/cfg-mgmt/concepts/schemas/annotations).
   </Tab>
