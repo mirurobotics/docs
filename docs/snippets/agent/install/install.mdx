@@ -1,30 +1,70 @@
 import Apt from '/snippets/agent/install/apt.mdx';
 import GithubDownload from '/snippets/agent/install/github-download.mdx';
 
-The Miru Agent is distributed as a Debian package. Other package formats are not yet supported.
-
-We recommend using `apt` to install the agent. However, you can manually install the package by downloading it from GitHub and installing it with `dpkg`.
-
-<Danger>
-    [Provisioning tokens](/provision-devices/provisioning-tokens) require Miru Agent `v0.9.0` or later. To install and provision a version that precedes `v0.9.0`, use the legacy [provisioning script](/provision-devices/provisioning-script) instead.
-</Danger>
-
 <Tabs>
-  <Tab title="APT">
-    <Apt />
+  <Tab title="Linux">
+    The Miru Agent is distributed as a Debian package. Other package formats are not yet supported.
+
+    We recommend using `apt` to install the agent. However, you can manually install the package by downloading it from GitHub and installing it with `dpkg`.
+
+    <Danger>
+        [Provisioning tokens](/provision-devices/provisioning-tokens) require Miru Agent `v0.9.0` or later. To install and provision a version that precedes `v0.9.0`, use the legacy [provisioning script](/provision-devices/provisioning-script) instead.
+    </Danger>
+
+    <Tabs>
+      <Tab title="APT">
+        <Apt />
+      </Tab>
+      <Tab title="Manual">
+        <Steps>
+          <Step title="Download">
+            <GithubDownload />
+          </Step>
+          <Step title="Install">
+
+            After downloading the package, install it using `dpkg`.
+
+            ```bash
+            sudo dpkg -i <...>.deb
+            ```
+          </Step>
+        </Steps>
+      </Tab>
+    </Tabs>
   </Tab>
-  <Tab title="Manual">
+  <Tab title="Windows">
+    The Miru Agent for Windows is distributed as an MSI installer.
+
     <Steps>
       <Step title="Download">
-        <GithubDownload />
+        Open the [latest release](https://github.com/mirurobotics/agent/releases/latest) on GitHub, expand the **Assets** section, and download `miru-agent-<version>.msi`.
       </Step>
       <Step title="Install">
 
-        After downloading the package, install it using `dpkg`.
+        Open PowerShell with **Run as administrator** and run the installer, replacing the paths with your own.
 
-        ```bash
-        sudo dpkg -i <...>.deb
+        ```powershell
+        $msi = "C:\path\to\miru-agent-<version>.msi"
+        $log = "C:\path\to\miru-agent-install.log"
+        $p = Start-Process msiexec.exe -ArgumentList '/i',"`"$msi`"",'/qn','/norestart','/l*v',"`"$log`"" -Wait -PassThru
+        $p.ExitCode
         ```
+
+        An exit code of `0` means the agent is installed. An exit code of `3010` means the agent is installed and Windows must be restarted. For any other exit code, check the log file.
+
+        Double-clicking the MSI runs the interactive installer instead.
+
+        The installer registers and starts the `miru-agent` Windows service.
+      </Step>
+      <Step title="Verify">
+
+        Confirm the service is running.
+
+        ```powershell
+        Get-Service miru-agent
+        ```
+
+        The `Status` column shows `Running`.
       </Step>
     </Steps>
   </Tab>
