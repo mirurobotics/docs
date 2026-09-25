@@ -40,10 +40,10 @@
   The instance file path is the absolute file system path where config instances for this schema are written on the device.
 
   <Warning>
-    The Miru Agent ships with out-of-the-box access to `/srv/miru`. To deploy configs to a custom directory, please visit the [File system access](/developers/agent/filesys-access#configs) page.
+    On Linux, the Miru Agent ships with out-of-the-box access to `/srv/miru`. To deploy configs to a custom directory, please visit the [File system access](/developers/agent/filesys-access#configs) page.
   </Warning>
 
- This annotation is optional and defaults to `/srv/miru/configs/{config-type-slug}.{instance-format}`. To share the same schema amongst multiple config instances, declare [instance slots](#param-instance-slots) instead.
+ This annotation is optional and defaults to `/srv/miru/configs/{config-type-slug}.{instance-format}`. The default is a Linux path, so schemas for Windows devices must set an explicit path such as `C:\ProgramData\Robot\configs\mobility.json`. To share the same schema amongst multiple config instances, declare [instance slots](#param-instance-slots) instead.
 
   <CodeGroup>
 
@@ -68,6 +68,14 @@
       - `/srv/miru/configs/mobility.json`
       - `/home/myapp/configs/communication.yaml`
       - `/var/lib/myapp/configs/safety.yaml`
+      - `C:\ProgramData\Robot\configs\mobility.json`
+
+  **Path rules**
+
+  - Paths must be absolute: a Linux path starts with `/`, and a Windows path starts with a drive letter, `:`, and `\` or `/` (for example, `C:\`). UNC and device paths (`\\server\share`, `\\?\`), drive-relative paths (`C:foo`), and root-relative paths (`\foo`) are rejected with `path_not_absolute`.
+  - Windows paths may not contain `<`, `>`, `"`, `|`, `?`, `*`, a `:` after the drive, or a path segment ending in `.` or a space. These are rejected with `invalid_filepath`.
+  - Windows paths are compared case-insensitively, so `C:\Robot\a.json` and `c:\robot\A.json` are the same path.
+  - File extensions are case-sensitive: use `.json`, `.yaml`, or `.yml`, not `.JSON`.
 
 </ParamField>
 
@@ -82,6 +90,8 @@
   </Warning>
 
   This annotation is optional. Omitting it will either use the instance file path annotation, or create a single slot with default values.
+
+  All slots in a schema must target the same operating system: either all Linux paths or all Windows paths. Mixing them fails with `mixed_config_schema_slot_os`.
 
   <CodeGroup>
   ```yaml JSON Schema
