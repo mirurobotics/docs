@@ -114,7 +114,9 @@ Each instance slot is defined by the following fields:
 
   Slot file paths must be unique within a schema. Two slots cannot have the same file path.
 
-  Examples: `/srv/miru/configs/motor-controller-1.json`, `/srv/miru/configs/motor-controller-2.json`, `/srv/miru/configs/motor-controller-3.json`
+  All slot file paths in a schema must target the same operating system: either all Linux paths or all Windows paths (`mixed_config_schema_slot_os`).
+
+  Examples: `/srv/miru/configs/motor-controller-1.json`, `/srv/miru/configs/motor-controller-2.json`, `/srv/miru/configs/motor-controller-3.json`, `C:\ProgramData\Robot\configs\motor-controller-1.json`
 </ParamField>
 
 <ParamField path="required" type="boolean" required>

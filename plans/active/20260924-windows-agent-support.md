@@ -29,7 +29,7 @@ Merge gate: agent GitHub releases currently attach only `agent_Windows_x86_64.zi
 - [x] M1: supported platforms, install, upgrade, uninstall, poor connectivity; test; commit.
 - [x] M2: provisioning, reprovisioning, dashboard dialog notes, legacy script and Ansible notes; test; commit.
 - [x] M3: agent commands, default permissions, security, architecture, file system access, overview; test; commit.
-- [ ] M4: config file paths and file rule globs; test; commit.
+- [x] M4: config file paths and file rule globs; test; commit.
 - [ ] M5: device concepts, Device API Linux-only notes, CLI WSL 2 hint, quick start touch-ups; test; commit.
 - [ ] M6: grep assertions, preview check, push, draft PR, preflight reports CLEAN.
 - [ ] Merge gate: agent release with the MSI exists; asset name and SmartScreen note re-checked; commit; CLEAN again; PR marked ready.
