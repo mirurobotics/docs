@@ -1,16 +1,34 @@
-During installation, the `miru` system user and group are created (no login shell). The
-agent process runs as `miru:miru` under systemd.
+<Tabs>
+  <Tab title="Linux">
+    During installation, the `miru` system user and group are created (no login shell). The
+    agent process runs as `miru:miru` under systemd.
 
-By default, the agent creates and owns the following directories:
+    By default, the agent creates and owns the following directories:
 
-| Path | Purpose |
-|------|---------|
-| `/var/lib/miru` | Agent state, credentials, device identity |
-| `/var/log/miru` | Log files (hourly rotation) |
-| `/srv/miru` | Deployed configuration instance files |
+    | Path | Purpose |
+    |------|---------|
+    | `/var/lib/miru` | Agent state, credentials, device identity |
+    | `/var/log/miru` | Log files (hourly rotation) |
+    | `/srv/miru` | Deployed configuration instance files |
 
-The first two directories are only for internal use by the agent.
+    The first two directories are only for internal use by the agent.
 
-The third directory is the default location for deploying config instances—reading or
-writing to any path inside `/srv/miru` is supported out-of-the-box, no additional
-configuration required.
+    The third directory is the default location for deploying config instances—reading or
+    writing to any path inside `/srv/miru` is supported out-of-the-box, no additional
+    configuration required.
+  </Tab>
+  <Tab title="Windows">
+    The agent runs as the LocalSystem account under the Windows service manager.
+
+    By default, the agent uses the following directories:
+
+    | Path | Purpose |
+    |------|---------|
+    | `%ProgramData%\Miru` | Agent state, credentials, device identity |
+    | `%ProgramData%\Miru\logs` | Log files (hourly rotation) |
+
+    Both directories are only for internal use by the agent. `%ProgramData%\Miru` and everything inside it are restricted to SYSTEM and Administrators.
+
+    There is no default directory for config instances on Windows. The agent writes each config instance to the absolute path set in its [config schema](/cfg-mgmt/concepts/schemas/annotations).
+  </Tab>
+</Tabs>

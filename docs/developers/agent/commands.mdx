@@ -2,7 +2,7 @@
 title: 'Commands'
 ---
 
-The Miru Agent does not (currently) provide a command line interface. However, the agent can be managed using standard `systemd` commands and other standard Linux tools.
+The Miru Agent is managed with the operating system's service tools: `systemd` on Linux and the Windows service manager on Windows.
 
 The [Miru CLI](/developers/cli/overview) is only for managing Miru resources from your development machine's terminal. Please do not attempt to use the `miru` command to manage the agent.
 
@@ -10,103 +10,160 @@ The [Miru CLI](/developers/cli/overview) is only for managing Miru resources fro
 
 To check the version of the agent, run the following command on the device:
 
-```bash
-miru-agent --version
-```
+<Tabs>
+  <Tab title="Linux">
+    ```bash
+    miru-agent --version
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell
+    & "$env:ProgramW6432\Miru\Agent\miru-agent.exe" version
+    ```
+  </Tab>
+</Tabs>
 
 ## Logs
 
-The Miru Agent logs are accessible via [`journalctl`](https://www.freedesktop.org/software/systemd/man/journalctl.html), the standard tool for viewing `systemd` service logs.
+<Tabs>
+  <Tab title="Linux">
+    The Miru Agent logs are accessible via [`journalctl`](https://www.freedesktop.org/software/systemd/man/journalctl.html), the standard tool for viewing `systemd` service logs.
 
-### View all
+    ### View all
 
-By default, `journalctl` truncates each line's output to the size of the terminal window. We recommend using the `--no-pager` flag to view the full log output for each line.
+    By default, `journalctl` truncates each line's output to the size of the terminal window. We recommend using the `--no-pager` flag to view the full log output for each line.
 
-```bash
-journalctl -u miru --no-pager
-```
+    ```bash
+    journalctl -u miru --no-pager
+    ```
 
-### Tail in real-time
+    ### Tail in real-time
 
-Tail the logs and watch new entries as they appear.
+    Tail the logs and watch new entries as they appear.
 
-```bash
-journalctl -u miru -f --no-pager
-```
+    ```bash
+    journalctl -u miru -f --no-pager
+    ```
 
-### Recent logs
+    ### Recent logs
 
-View only the most recent log entries (e.g., the last 100 lines).
+    View only the most recent log entries (e.g., the last 100 lines).
 
-```bash
-journalctl -u miru -n 100 --no-pager
-```
+    ```bash
+    journalctl -u miru -n 100 --no-pager
+    ```
 
-### Filter by time
+    ### Filter by time
 
-View logs from a specific time period.
+    View logs from a specific time period.
 
-```bash
-# Logs from the last hour
-journalctl -u miru --since "1 hour ago" --no-pager
+    ```bash
+    # Logs from the last hour
+    journalctl -u miru --since "1 hour ago" --no-pager
 
-# Logs from today
-journalctl -u miru --since today --no-pager
+    # Logs from today
+    journalctl -u miru --since today --no-pager
 
-# Logs from a specific date/time range
-journalctl -u miru --since "2024-01-15 09:00:00" --until "2024-01-15 12:00:00" --no-pager
-```
+    # Logs from a specific date/time range
+    journalctl -u miru --since "2024-01-15 09:00:00" --until "2024-01-15 12:00:00" --no-pager
+    ```
 
-### Filter by priority
+    ### Filter by priority
 
-View only logs of a specific priority level (e.g., errors).
+    View only logs of a specific priority level (e.g., errors).
 
-```bash
-# Show only errors and above
-journalctl -u miru -p err --no-pager
+    ```bash
+    # Show only errors and above
+    journalctl -u miru -p err --no-pager
 
-# Show warnings and above
-journalctl -u miru -p warning --no-pager
-```
+    # Show warnings and above
+    journalctl -u miru -p warning --no-pager
+    ```
 
-<Tip>
-  Combine flags for more targeted output. For example, `journalctl -u miru -f -n 50 --no-pager` will tail the last 50 lines and then follow new entries in real-time.
-</Tip>
+    <Tip>
+      Combine flags for more targeted output. For example, `journalctl -u miru -f -n 50 --no-pager` will tail the last 50 lines and then follow new entries in real-time.
+    </Tip>
+  </Tab>
+  <Tab title="Windows">
+    The agent writes logs to files in `%ProgramData%\Miru\logs`, one file per hour (`miru.log.YYYY-MM-DD-HH`). Logs are not written to the Windows Event Log.
 
+    **Tail in real-time**
 
-## Systemd
+    From PowerShell opened as administrator, tail the most recent log file and watch new entries as they appear. The command follows a single hourly file, so re-run it after the log rotates, or run the agent in the foreground (below) for continuous output.
 
-The Miru Agent runs as a [`systemd`](https://en.wikipedia.org/wiki/Systemd) service named `miru`, allowing you to manage the service using standard `systemctl` commands.
+    ```powershell
+    Get-ChildItem "$env:ProgramData\Miru\logs" | Sort-Object LastWriteTime | Select-Object -Last 1 | Get-Content -Wait -Tail 100
+    ```
 
-You can find the agent's `systemd` service files on your file system at the following paths:
+    **Run in the foreground**
 
-- `/lib/systemd/system/miru.service`
-- `/lib/systemd/system/miru.socket`
+    To print logs to the terminal, stop the service and run the agent in the foreground from PowerShell opened as administrator. Press Ctrl-C to stop the agent, then start the service again.
+
+    ```powershell
+    Stop-Service miru-agent
+    & "$env:ProgramW6432\Miru\Agent\miru-agent.exe" --console
+    Start-Service miru-agent
+    ```
+
+    To override the log level in the foreground, set the `RUST_LOG` environment variable (for example, `$env:RUST_LOG = "debug"`) before running the agent.
+  </Tab>
+</Tabs>
+
+## Service management
+
+<Tabs>
+  <Tab title="Linux">
+    The Miru Agent runs as a [`systemd`](https://en.wikipedia.org/wiki/Systemd) service named `miru`, allowing you to manage the service using standard `systemctl` commands.
+
+    You can find the agent's `systemd` service files on your file system at the following paths:
+
+    - `/lib/systemd/system/miru.service`
+    - `/lib/systemd/system/miru.socket`
+  </Tab>
+  <Tab title="Windows">
+    The Miru Agent runs as a Windows service named `miru-agent` (display name "Miru Agent"). The service runs as LocalSystem, starts automatically on boot, and restarts 10 seconds after each of its first three failures. The failure count resets after one day.
+
+    Manage the service from PowerShell opened as administrator.
+  </Tab>
+</Tabs>
 
 ### Status
 
-To check the status of the agent, use the `status` command.
+<Tabs>
+  <Tab title="Linux">
+    To check the status of the agent, use the `status` command.
 
-```bash
-systemctl status miru
-```
+    ```bash
+    systemctl status miru
+    ```
 
-Depending on the state of the agent, you will see outputs similar to the following:
+    Depending on the state of the agent, you will see outputs similar to the following:
 
-<Tabs >
-  <Tab title="Active">
-    The agent is running as expected. 
+    <Tabs >
+      <Tab title="Active">
+        The agent is running as expected. 
 
-    <Frame>
-      ![Systemd Status Running](https://assets.mirurobotics.com/docs/v04/images/agent/commands/systemctl-status:running.png)
-    </Frame>
+        <Frame>
+          ![Systemd Status Running](https://assets.mirurobotics.com/docs/v04/images/agent/commands/systemctl-status:running.png)
+        </Frame>
+      </Tab>
+      <Tab title="Inactive">
+        The agent is not running. Unless you've manually stopped the agent, this should not happen.
+
+        <Frame>
+          ![Systemd Status Inactive](https://assets.mirurobotics.com/docs/v04/images/agent/commands/systemctl-status:dead.png)
+        </Frame>
+      </Tab>
+    </Tabs>
   </Tab>
-  <Tab title="Inactive">
-    The agent is not running. Unless you've manually stopped the agent, this should not happen.
+  <Tab title="Windows">
+    To check the status of the agent, use `Get-Service`.
 
-    <Frame>
-      ![Systemd Status Inactive](https://assets.mirurobotics.com/docs/v04/images/agent/commands/systemctl-status:dead.png)
-    </Frame>
+    ```powershell
+    Get-Service miru-agent
+    ```
+
+    The `Status` column shows `Running` when the agent is running as expected and `Stopped` when it is not running.
   </Tab>
 </Tabs>
 
@@ -114,9 +171,18 @@ Depending on the state of the agent, you will see outputs similar to the followi
 
 Restarting the agent stops and starts the agent, giving it a fresh start. If you're experiencing unexpected behavior, restarting the agent is a good place to begin.
 
-```bash
-systemctl restart miru
-```
+<Tabs>
+  <Tab title="Linux">
+    ```bash
+    systemctl restart miru
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell
+    Restart-Service miru-agent
+    ```
+  </Tab>
+</Tabs>
 
 <Info>
   If the agent is not running, restarting it will start it.
@@ -128,9 +194,20 @@ systemctl restart miru
 
 Note that stopping the agent will prevent any new deployments from reaching the device until the agent is started again.
 
-```bash
-systemctl stop miru
-```
+<Tabs>
+  <Tab title="Linux">
+    ```bash
+    systemctl stop miru
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell
+    Stop-Service miru-agent
+    ```
+
+    Stopping the service can take up to 30 seconds.
+  </Tab>
+</Tabs>
 
 <Info>
   If the agent is not running, stopping it does nothing.
@@ -141,9 +218,18 @@ systemctl stop miru
 
 `start` starts the agent if it has been stopped.
 
-```bash
-systemctl start miru
-```
+<Tabs>
+  <Tab title="Linux">
+    ```bash
+    systemctl start miru
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell
+    Start-Service miru-agent
+    ```
+  </Tab>
+</Tabs>
 
 <Info>
   If the agent is already running, starting it does nothing.
@@ -155,9 +241,18 @@ Disabling the agent prevents it from starting automatically on boot.
 
 This does not immediately [stop](/developers/agent/commands#stop) the agent—it will still run if it is currently running. However, it will not be able to start on next system boot.
 
-```bash
-systemctl disable miru
-```
+<Tabs>
+  <Tab title="Linux">
+    ```bash
+    systemctl disable miru
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell
+    Set-Service miru-agent -StartupType Disabled
+    ```
+  </Tab>
+</Tabs>
 
 ### Enable
 
@@ -165,7 +260,36 @@ Enabling the agent allows it to start automatically on boot. This is the default
 
 Enabling the agent will not immediately start it—it will still need to be [started](/developers/agent/commands#start) manually.
 
-```bash
-systemctl enable miru
-```
+<Tabs>
+  <Tab title="Linux">
+    ```bash
+    systemctl enable miru
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell
+    Set-Service miru-agent -StartupType Automatic
+    ```
+  </Tab>
+</Tabs>
 
+## Provisioning status
+
+To check whether the machine is provisioned, run `provision --check`.
+
+<Tabs>
+  <Tab title="Linux">
+    ```bash
+    sudo -u miru /usr/sbin/miru-agent provision --check
+    ```
+  </Tab>
+  <Tab title="Windows">
+    From PowerShell opened as administrator:
+
+    ```powershell
+    & "$env:ProgramW6432\Miru\Agent\miru-agent.exe" provision --check
+    ```
+  </Tab>
+</Tabs>
+
+The command exits with `0` if the machine is provisioned, `3` if it is not provisioned, and `1` on error.

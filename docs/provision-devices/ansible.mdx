@@ -6,6 +6,10 @@ import Verify from '/snippets/agent/install/verify.mdx';
 
 If you already manage hosts with Ansible, use the official [`mirurobotics.agent`](https://galaxy.ansible.com/ui/repo/published/mirurobotics/agent/) collection instead of minting [provisioning tokens](/provision-devices/provisioning-tokens) yourself. One play installs the agent and registers each host.
 
+<Note>
+  This method supports Linux only.
+</Note>
+
 ## What it does
 
 The collection installs the Miru Agent debian package and provisions the target host in Miru. It is the [provisioning-token](/provision-devices/provisioning-tokens) flow packaged as a role: the API key stays on the Ansible controller, and only a short-lived token reaches each device.

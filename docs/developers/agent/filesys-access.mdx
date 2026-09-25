@@ -4,7 +4,7 @@ title: 'File system access'
 
 import DefaultPermissions from '/snippets/agent/filesys/default-perms.mdx';
 
-The Miru Agent runs as the `miru` system user and needs specific file system permissions
+On Linux the Miru Agent runs as the `miru` system user and needs specific file system permissions
 in the two cases where it touches files on your devices:
 
 - **[Configs](#configs)** — the agent **writes** config instances to disk when it deploys
@@ -14,6 +14,11 @@ in the two cases where it touches files on your devices:
 
 This page covers the agent's default permissions, how to grant it access, and how to
 check the permissions are correctly set.
+
+<Note>
+  The Unix permission sections and the `check-miru-access.sh` script apply to Linux only.
+  For Windows, see [Windows](#windows).
+</Note>
 
 ## Default permissions
 
@@ -152,6 +157,16 @@ entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case
 | `/var/log/robot` | read (`r`), write (`w`), execute (`x`) |
 | `/var/log` | execute (`x`) |
 | `/var` | execute (`x`) |
+
+## Windows
+
+On Windows, the agent runs as the LocalSystem account and can read and write most paths
+without additional configuration. To grant access explicitly, use `icacls`. For example,
+to give the agent modify access to a config directory and everything inside it:
+
+```powershell
+icacls "C:\ProgramData\Robot\configs" /grant "SYSTEM:(OI)(CI)M"
+```
 
 ## Testing access
 

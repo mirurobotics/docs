@@ -4,7 +4,10 @@ description: "Subscribe to real-time events from the Miru Agent via Server-Sent 
 ---
 
 import EventSdkSupport from '/snippets/device-api/event-sdk-support.mdx';
+import LinuxOnly from '/snippets/device-api/linux-only.mdx';
 import StabilityGuarantees from '/snippets/device-api/stability-guarantees.mdx';
+
+<LinuxOnly />
 
 The Miru Agent exposes a Server-Sent Events (SSE) stream at the `/events` endpoint that pushes notifications to your application in real time. Instead of polling the deployments endpoint, your application can open a single, long-lived connection and react to state changes as they happen.
 

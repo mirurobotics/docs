@@ -54,3 +54,17 @@ To reprovision a device, click the ellipsis (...) next to the device you want to
 Once the `miru-agent` package is installed, continue to the reprovisioning step.
 
 <Reprovision />
+
+### Windows reprovisioning
+
+The dialog shows a Linux command. On a Windows machine, open the reprovision dialog, copy the token (the value after `MIRU_PROVISIONING_TOKEN=`), and within 5 minutes run the following from PowerShell opened as administrator. Make sure to replace `<token>` with the copied token.
+
+```powershell
+Stop-Service miru-agent
+$env:MIRU_PROVISIONING_TOKEN = "<token>"
+& "$env:ProgramW6432\Miru\Agent\miru-agent.exe" reprovision
+Remove-Item Env:MIRU_PROVISIONING_TOKEN
+Start-Service miru-agent
+```
+
+On success, the output includes `Successfully reprovisioned this device as <name>!`.

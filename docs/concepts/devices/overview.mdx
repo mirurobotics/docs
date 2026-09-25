@@ -15,7 +15,7 @@ import DeviceDef from '/snippets/definitions/device.mdx';
 
 <DeviceDef />
 
-Configurations are deployed to devices via the Miru Agent, a lightweight `systemd` service that runs on your devices, handling the deployment lifecycle of configurations. Visit the [Miru Agent](/developers/agent/overview) documentation for more information.
+Configurations are deployed to devices via the Miru Agent, a lightweight background service (a `systemd` service on Linux, a Windows service on Windows) that runs on your devices, handling the deployment lifecycle of configurations. Visit the [Miru Agent](/developers/agent/overview) documentation for more information.
 
 ## Properties
 
@@ -64,6 +64,46 @@ Configurations are deployed to devices via the Miru Agent, a lightweight `system
   The agent version exists only if the device has a status of `online` or `offline`. If the device is `inactive` or `activating`, the agent version is `null`.
 
   Examples: `v0.6.0`
+</ParamField>
+
+<ParamField path="os" type="enum">
+  <MutableBadge /> {' '} <NullableBadge />
+
+  The operating system family of the device. Reported by the agent; empty until the agent reports it.
+
+  Allowed values: `linux`, `windows`
+</ParamField>
+
+<ParamField path="arch" type="enum">
+  <MutableBadge /> {' '} <NullableBadge />
+
+  The CPU architecture of the device. Reported by the agent; empty until the agent reports it.
+
+  Allowed values: `x86_64`, `aarch64`
+</ParamField>
+
+<ParamField path="hostname" type="string">
+  <MutableBadge /> {' '} <NullableBadge />
+
+  The hostname of the device. Reported by the agent; empty until the agent reports it.
+
+  Examples: `robot-11`
+</ParamField>
+
+<ParamField path="os_version" type="string">
+  <MutableBadge /> {' '} <NullableBadge />
+
+  The human-readable operating system version of the device. Reported by the agent; empty until the agent reports it.
+
+  Examples: `Ubuntu 22.04`, `Windows 11 Pro`
+</ParamField>
+
+<ParamField path="kernel_version" type="string">
+  <MutableBadge /> {' '} <NullableBadge />
+
+  The operating system kernel version of the device. Reported by the agent; empty until the agent reports it.
+
+  Examples: `5.15.0-91-generic`
 </ParamField>
 
 <ParamField path="current release" type="Release">

@@ -5,9 +5,9 @@ and when a matching file is considered finished.
   An absolute glob pattern that selects the files this rule manages.
 
   Must satisfy the following criteria:
-  - Absolute — it starts with `/`
+  - Absolute — it starts with `/` (Linux) or a drive letter such as `C:\` (Windows)
   - At most 1024 bytes, with no control characters
-  - No `..` segments, and no empty segments (`//` or a trailing `/`)
+  - No `..` segments, and no empty segments (`//` or a trailing `/`); Windows patterns treat both `\` and `/` as separators
 
   <Warning>
     You must grant the Miru Agent read access to matching files and their containing
@@ -15,7 +15,7 @@ and when a matching file is considered finished.
     [file system access](/developers/agent/filesys-access#data-uploads) for details.
   </Warning>
 
-  Example: `/var/log/robot/*.log`
+  Examples: `/var/log/robot/*.log`, `C:\ProgramData\Robot\logs\*.log`
 
   See [glob patterns](/data-uploads/concepts/file-rules/rule-definition#glob-patterns) for
   supported syntax, examples, and matching behavior.
