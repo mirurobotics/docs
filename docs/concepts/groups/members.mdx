@@ -5,68 +5,53 @@ title: "Manage members"
 import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge, GroupManagerBadge } from '/snippets/components/role-badges.jsx';
 
-## Add a member  <AdminBadge />  <GroupManagerBadge />
+A group's members are the people who can work on its devices. That includes owners,
+admins, workspace operators and provisioners, and anyone with a role on the group or a
+group above it. They're listed in the **Members** card of the group's details pane on
+the [Groups page](https://app.mirurobotics.com/groups).
+
+## Add members  <AdminBadge />  <GroupManagerBadge />
 
 <PlatformUnsupportedBadge />
 
-To add a member to a group, navigate to the [Groups page](https://app.mirurobotics.com/groups), click the ellipses (...) on the group you want to add a member to, and select **Members** from the dropdown.
+To add members, click the add members icon on the **Members** card.
 
 <Frame>
-  ![Group Members Dropdown](https://assets.mirurobotics.com/docs/v04/images/groups/ellipses-dropdown.png)
+  ![Group Members Card](https://assets.mirurobotics.com/docs/v04/images/groups/members/members-card.png)
 </Frame>
 
-A dialog will appear with a list of the members who can currently access the group.
-
-<Frame>
-  ![Group Members Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/member-dialog.png)
-</Frame>
-
-To add a member, input the name of the member you want to add in the search bar at the top, and select the member.
-
-<Frame>
-  ![Group Members Search](https://assets.mirurobotics.com/docs/v04/images/groups/member-dialog-search.png)
-</Frame>
+A dialog will appear—search by name, select the people you want to add, and click
+**Add**. New members join with the [operator](/admin/users/access-control#operator) role.
 
 ## Edit a member's access  <AdminBadge />  <GroupManagerBadge />
 
 <PlatformUnsupportedBadge />
 
-To edit a member's access to a group, navigate to the [Groups page](https://app.mirurobotics.com/groups), click the ellipses (...) on the group you want to edit, and select **Members** from the dropdown.
+To edit a member's access, click the role button next to them and check the roles you
+want: **Manager**, **Operator**, or **Provisioner**.
 
 <Frame>
-  ![Group Members Dropdown](https://assets.mirurobotics.com/docs/v04/images/groups/ellipses-dropdown.png)
+  ![Edit Member Menu](https://assets.mirurobotics.com/docs/v04/images/groups/members/edit-menu.png)
 </Frame>
 
-A dialog will appear with a list of the members who can currently access the group. Find the member you want to edit, click their role, and select the desired roles from the dropdown.
+Roles from the member's workspace role or a parent group are locked. Hover over one to
+see where it comes from. Owners and admins show their user type instead of roles.
+
+To see all of a member's access, click their name or select **Manage access**. A panel
+will appear with their workspace roles and every group they have a role on. To change a
+role they inherit from a parent group, change it on that group in the panel.
 
 <Frame>
-  ![Group Members Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/member-dialog.png)
-</Frame>
-
-If the roles are not editable, that member's access is set in some ancestor group or at the workspace level. To edit the member's access at a higher level, click the **Manage access** button.
-
-<Frame>
-  ![Group Members Manage Access](https://assets.mirurobotics.com/docs/v04/images/groups/edit-member-dropdown.png)
-</Frame>
-
-A panel will appear with the member's workspace roles and all of their group roles. Use the dropdowns to edit the member's access as needed.
-
-<Frame>
-  ![Group Members Access Panel](https://assets.mirurobotics.com/docs/v04/images/groups/member-access-panel.png)
+  ![Member Access Panel](https://assets.mirurobotics.com/docs/v04/images/groups/members/access-panel.png)
 </Frame>
 
 ## Remove a member  <AdminBadge />  <GroupManagerBadge />
 
 <PlatformUnsupportedBadge />
 
-To remove a member from a group, navigate to the [Groups page](https://app.mirurobotics.com/groups), click the ellipses (...) on the group you want to remove a member from, and select **Members** from the dropdown.
+To remove a member, click the role button next to them and select **Remove access**.
+This removes only the roles given on this group.
 
 <Frame>
-  ![Group Members Dropdown](https://assets.mirurobotics.com/docs/v04/images/groups/ellipses-dropdown.png)
-</Frame>
-
-A dialog will appear with a list of the members who can currently access the group. Find the member you want to remove, click the ellipses (...) next to their name, and select **Remove access**.
-
-<Frame>
-  ![Group Members Remove Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/edit-member-dropdown.png)
+  ![Remove Member Menu](https://assets.mirurobotics.com/docs/v04/images/groups/members/remove-menu.png)
 </Frame>
