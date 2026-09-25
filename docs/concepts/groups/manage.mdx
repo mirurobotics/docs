@@ -2,59 +2,68 @@
 title: "Manage groups"
 ---
 
-import { PlatformApiBadge, PlatformApiLink, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
+import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge, GroupManagerBadge } from '/snippets/components/role-badges.jsx';
-import MoveDevice from '/snippets/devices/move.mdx';
 
 ## View a group
 
 <PlatformApiBadge endpoint="groups/get" />
 
-To view your workspace's groups, navigate to the [Groups page](https://app.mirurobotics.com/groups).
+To view a group, navigate to the [Groups page](https://app.mirurobotics.com/groups) and
+click the group in the tree. The page has three panes:
+
+- **Tree:** Navigate your groups like a file directory
+- **Devices:** View, filter, and organize the selected group's devices
+- **Details:** The group's properties and [members](/concepts/groups/members)
+
+<Frame>
+  ![Group Page](https://assets.mirurobotics.com/docs/v04/images/groups/manage/page.png)
+</Frame>
 
 ## Create a group  <AdminBadge />  <GroupManagerBadge />
 
 <PlatformApiBadge endpoint="groups/create" />
 
-Go to the [Groups page](https://app.mirurobotics.com/groups) and navigate into the group you want to create a group inside of. Click the **+ Group** button in the top right corner.
+Admins can create a top-level group by clicking the plus **(+)** at the top of the tree.
+To create a subgroup, hover over the parent group and click its plus **(+)**.
 
 <Frame>
-  ![Group Page](https://assets.mirurobotics.com/docs/v04/images/groups/page.png)
+  ![Create Group](https://assets.mirurobotics.com/docs/v04/images/groups/manage/create-group.png)
 </Frame>
 
-Fill in the fields, then click **Create**.
+A dialog will appear—enter a name and click **Create**.
 
-<Frame>
-  ![Create Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/create-dialog.png)
-</Frame>
-
-## Edit a group  <AdminBadge />  <GroupManagerBadge />
+## Rename a group  <AdminBadge />  <GroupManagerBadge />
 
 <PlatformApiBadge endpoint="groups/update" />
 
-Navigate to the [Groups page](https://assets.mirurobotics.com/docs/v04/images/groups/page.png), click the ellipses (...) on the group you want to edit, and hit **Edit**.
+To rename a group, click the ellipses **(...)** on the group in the tree, or right-click
+it, and hit **Rename**.
 
 <Frame>
-  ![Group Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/groups/ellipses-dropdown.png)
+  ![Rename Group Menu](https://assets.mirurobotics.com/docs/v04/images/groups/manage/rename-menu.png)
 </Frame>
 
-Update the desired fields, then click **Save**.
-
-<Frame>
-  ![Edit Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/edit-dialog.png)
-</Frame>
+A dialog will appear—enter the new name and click **Rename**.
 
 ## Move a group  <AdminBadge />  <GroupManagerBadge />
 
 <PlatformApiBadge endpoint="groups/move" />
 
-To move a group to a new parent group—or to the top level by setting `parent_id` to `null`—use the <PlatformApiLink endpoint="groups/move">move group endpoint »</PlatformApiLink>
+To move a group, click the ellipses **(...)** on the group in the tree, or right-click
+it, and hit **Move**. Its subgroups and devices move with it.
 
-## Move a device  <AdminBadge />  <GroupManagerBadge />
+<Frame>
+  ![Move Group Menu](https://assets.mirurobotics.com/docs/v04/images/groups/manage/move-menu.png)
+</Frame>
 
-<PlatformUnsupportedBadge />
+A dialog will appear—select the new parent group and click **Move**. To move the group
+to the top level, click the selected group again to clear it. Only admins can move a
+group to the top level.
 
-<MoveDevice />
+<Frame>
+  ![Move Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/manage/move-dialog.png)
+</Frame>
 
 ## Delete a group  <AdminBadge />  <GroupManagerBadge />
 
@@ -62,14 +71,13 @@ To move a group to a new parent group—or to the top level by setting `parent_i
 
 A group can only be deleted if it has no subgroups and no assigned devices. If you need to delete a group that still contains devices or subgroups, first move or reassign its contents.
 
-To delete a group, click the ellipses (...) on the group you want to delete and select **Delete**.
+Deleting a group also removes its members' roles on it and the device views saved on it.
+
+To delete a group, click the ellipses **(...)** on the group in the tree, or right-click
+it, and hit **Delete**.
 
 <Frame>
-  ![Group Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/groups/ellipses-dropdown.png)
+  ![Delete Group Menu](https://assets.mirurobotics.com/docs/v04/images/groups/manage/delete-menu.png)
 </Frame>
 
-A confirmation dialog will appear. Hit **Delete** to confirm the deletion.
-
-<Frame>
-  ![Delete Group Dialog](https://assets.mirurobotics.com/docs/v04/images/groups/delete-dialog.png)
-</Frame>
+A dialog will appear—click **Delete** to confirm.
