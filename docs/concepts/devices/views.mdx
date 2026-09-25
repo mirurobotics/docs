@@ -2,11 +2,12 @@
 title: "Device views"
 ---
 
-import { PlatformApiBadge } from '/snippets/components/platform-api-link.jsx';
+import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { ViewerBadge } from '/snippets/components/role-badges.jsx';
 
 The [Devices page](https://app.mirurobotics.com/devices) lists every device in your
-workspace. Use search, filters, and display options to find the devices you need.
+workspace. Use search, filters, and display options to find the devices you need, and
+save them as views to come back to later.
 
 ## Search devices  <ViewerBadge />
 
@@ -46,3 +47,35 @@ sort it by name or status, switch to compact rows, or show and hide columns.
 <Frame>
   ![Device Display Options](https://assets.mirurobotics.com/docs/v04/images/devices/views/display-menu.png)
 </Frame>
+
+## Saved views  <ViewerBadge />
+
+<PlatformUnsupportedBadge />
+
+A saved view keeps a search, filters, grouping, sort order, and visible columns so you can
+return to them in one click. Saved views appear as tabs above the list, after **Active**
+and **Archived**. Each group on the [Groups page](https://app.mirurobotics.com/groups) has
+its own saved views, separate from these.
+
+<Frame>
+  ![Saved Device Views](https://assets.mirurobotics.com/docs/v04/images/devices/views/saved-views.png)
+</Frame>
+
+### Save a view
+
+Search and filter the list, then click **Save** next to the filter chips. Name the view
+and click **Save**. A view needs at least one search or filter.
+
+Views are shared with the workspace by default. Turn off **Share with workspace** to keep
+a view to yourself; private views show a lock icon. Anyone who can see a shared view can
+edit or delete it.
+
+### Update a view
+
+When you change the view you're on, a dot appears on its tab. Click **Save** to keep the
+changes, or **Discard** to undo them.
+
+### Edit, duplicate, or delete a view
+
+Right-click a view's tab to edit its name, description, or sharing, duplicate it, or
+delete it. Deleting a shared view removes it for everyone.
