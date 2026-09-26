@@ -3,7 +3,7 @@ title: "Manage groups"
 ---
 
 import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
-import { AdminBadge, GroupManagerBadge } from '/snippets/components/role-badges.jsx';
+import { AdminBadge, GroupManagerBadge, ViewerBadge } from '/snippets/components/role-badges.jsx';
 
 ## View a group
 
@@ -13,12 +13,25 @@ To view a group, navigate to the [Groups page](https://app.mirurobotics.com/grou
 click the group in the tree. The page has three panes:
 
 - **Tree:** Navigate your groups like a file directory
-- **Devices:** View, filter, and organize the selected group's devices
+- **Devices:** View, filter, and organize the selected group's
+  [devices](#view-devices-in-a-group)
 - **Details:** The group's properties and [members](/concepts/groups/members)
 
 <Frame>
   ![Group Page](https://assets.mirurobotics.com/docs/v04/images/groups/manage/page.png)
 </Frame>
+
+## View devices in a group  <ViewerBadge />
+
+The middle pane lists the devices assigned to the group. Devices in its subgroups aren't
+included; open a subgroup to see them.
+
+The list works like the one on the Devices page: you can
+[search, filter, and save views](/concepts/devices/views) and use
+[bulk actions](/concepts/devices/manage#bulk-actions). Views saved here appear only in
+this group.
+
+To create a device in the group, click **+ Device** in the top right.
 
 ## Create a group  <AdminBadge />  <GroupManagerBadge />
 
