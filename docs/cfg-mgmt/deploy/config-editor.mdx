@@ -49,13 +49,30 @@ The **Draft** panel lists your pending changes:
   one to jump to it.
 - **Changes:** each value you added, modified, or deleted, with its old and new values.
   Click a change to jump to it, or hover over it and click the undo icon to discard it.
-- **Removed:** slots you removed from the draft.
+- **Removed:** [slots](#instance-slots) you removed from the draft.
 
 The icons next to **Changes** hide the old and new values and discard every change.
 
 <Frame>
   ![Change list](https://assets.mirurobotics.com/docs/v04/images/editor/change-list.png)
 </Frame>
+
+### Instance slots
+
+A config type with several
+[instance slots](/cfg-mgmt/concepts/schemas/annotations#instance-slots) shows as a
+folder in the config panel, with one file per slot. A device's first draft includes only
+its required slots.
+
+To add an optional slot, hover over the folder, click the plus **(+)**, and pick the
+slot.
+
+<Frame>
+  ![Add a slot](https://assets.mirurobotics.com/docs/v04/images/editor/add-slot-menu.png)
+</Frame>
+
+To remove one, right-click its file and hit **Remove file**; hit **Restore file** to
+bring it back. Removed slots are listed under **Removed** and aren't deployed.
 
 ### Validation
 
