@@ -43,20 +43,17 @@ default configuration.
 
 ### Change list
 
-The controls panel shows a **change list** that summarizes every modification in
-the current draft. Changes are grouped by file, with each file section showing
-its name and a change count (e.g., "3 changes") or "New file" for newly added
-files. Within each section, individual changes are listed with:
+The **Draft** panel lists your pending changes:
 
-- The **type** of change — added, modified, or deleted — color-coded green,
-  yellow, or red respectively.
-- The **JSON path** of the affected value (e.g., `settings > network > ip`).
-  Long paths are truncated; hover to see the full path.
+- **Errors:** syntax and schema errors. Click one to jump to it.
+- **Changes:** each value you added, modified, or deleted, with its old and new values.
+  Click a change to jump to it, or hover over it and click the undo icon to discard it.
+- **Removed:** slots you removed from the draft.
 
-Files with no changes show a "No changes" label.
+The icons next to **Changes** hide the old and new values and discard every change.
 
 <Frame>
-  ![Draft Changelog](https://assets.mirurobotics.com/docs/v04/images/devices/editor/draft-changelog.png)
+  ![Change list](https://assets.mirurobotics.com/docs/v04/images/editor/change-list.png)
 </Frame>
 
 ### Deploying changes
