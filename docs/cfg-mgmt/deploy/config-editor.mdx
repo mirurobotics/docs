@@ -45,7 +45,8 @@ default configuration.
 
 The **Draft** panel lists your pending changes:
 
-- **Errors:** syntax and schema errors. Click one to jump to it.
+- **Errors:** syntax and schema errors, described in [Validation](#validation). Click
+  one to jump to it.
 - **Changes:** each value you added, modified, or deleted, with its old and new values.
   Click a change to jump to it, or hover over it and click the undo icon to discard it.
 - **Removed:** slots you removed from the draft.
@@ -55,6 +56,12 @@ The icons next to **Changes** hide the old and new values and discard every chan
 <Frame>
   ![Change list](https://assets.mirurobotics.com/docs/v04/images/editor/change-list.png)
 </Frame>
+
+### Validation
+
+As you type, Miru checks each file's syntax and validates JSON and YAML files against
+their [schema](/cfg-mgmt/concepts/schemas/validation). Errors are underlined in the file
+and listed under **Errors**.
 
 ### Deploying changes
 
@@ -82,12 +89,10 @@ Click the **Deploy** button to start the deployment process.
 </Steps>
 
 <Note>
-    The Deploy button is disabled when:
-    - The device is offline.
-    - The draft has no changes.
-    - Any file contains JSON syntax errors.
-
-    Hover over the disabled button to see the reason.
+  **Deploy** stays disabled while a file has errors, when there are no changes, when
+  every config is removed, or when the device is offline (unless
+  [offline deployments](#editor-settings) are allowed). Hover over the **Deploy**
+  button to see why.
 </Note>
 
 ---
