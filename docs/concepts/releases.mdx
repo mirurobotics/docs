@@ -10,7 +10,7 @@ import { AdminBadge, PublisherBadge } from '/snippets/components/role-badges.jsx
 import ReleaseDef from '/snippets/definitions/release.mdx';
 import SemVer from '/snippets/releases/semver.mdx';
 
-<Framed background="https://assets.mirurobotics.com/docs/v04/images/releases/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/releases/header:page.png" borderWidth="36px 0 0 56px" innerRadius="8px 0 0 0" />
+<Framed background="https://assets.mirurobotics.com/docs/v04/images/releases/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/releases/hero.png" borderWidth="36px 0 0 56px" innerRadius="8px 0 0 0" />
 
 <ReleaseDef />
 
@@ -43,10 +43,17 @@ import SemVer from '/snippets/releases/semver.mdx';
 
 <PlatformApiBadge endpoint="releases/get" />
 
-To view a release and its schemas, click into the release from the releases page and switch to the **Overview** tab at the top.
+To view a release, click into it from the
+[Releases page](https://app.mirurobotics.com/releases) and open the **Overview** tab:
+
+- **Active** and **Staged:** how many devices are on this release, and how many have a
+  deployment staged for it.
+- **Schemas:** the release's config schemas. Click one to view it.
+- **File Rules:** the release's
+  [file rules](/data-uploads/concepts/file-rules/overview#view-a-file-rule).
 
 <Frame>
-  ![Release Overview](https://assets.mirurobotics.com/docs/v04/images/releases/overview.png)
+  ![Release Overview](https://assets.mirurobotics.com/docs/v04/images/releases/overview-tab.png)
 </Frame>
 
 ## Create a release  <PublisherBadge />
@@ -64,17 +71,14 @@ Of course, since releases require a unique version, the duplicated release must 
 
 Duplicating a release does not duplicate the release's deployments—only the release, its schemas, and git information are duplicated.
 
-To duplicate a release, click the ellipses (...) on the release you want to duplicate and select **Duplicate**.
+To duplicate a release, click the ellipses **(...)** on the release, or right-click it,
+and select **Duplicate**.
 
 <Frame>
-  ![Release Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/releases/active-ellipses-dropdown.png)
+  ![Release Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/releases/duplicate-menu.png)
 </Frame>
 
 A dialog will appear—input the new version name and hit **Create**.
-
-<Frame>
-  ![Duplicate Release Dialog](https://assets.mirurobotics.com/docs/v04/images/releases/duplicate-dialog.png)
-</Frame>
 
 ## Archive a release  <PublisherBadge />
 
@@ -86,17 +90,14 @@ New devices cannot be deployed with an archived release and existing devices can
 
 Archiving a release retains its config schemas and deployment history, and releases can be unarchived at any time.
 
-To archive a release, click the ellipses (...) on the release and select **Archive**.
+To archive a release, click the ellipses **(...)** on the release, or right-click it, and
+select **Archive**.
 
 <Frame>
-  ![Archive Release Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/releases/active-ellipses-dropdown.png)
+  ![Archive Release Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/releases/archive-menu.png)
 </Frame>
 
 A dialog will appear. Hit **Archive** to confirm the archive.
-
-<Frame>
-  ![Archive Release Dialog](https://assets.mirurobotics.com/docs/v04/images/releases/archive-dialog.png)
-</Frame>
 
 ## Unarchive a release
 
@@ -104,17 +105,14 @@ A dialog will appear. Hit **Archive** to confirm the archive.
 
 Unarchiving a release makes it available for any device to deploy from it again.
 
-Find the release among the archived releases, click the ellipses (...), and select **Unarchive**.
+Find the release among the archived releases, click the ellipses **(...)**, or
+right-click it, and select **Unarchive**.
 
 <Frame>
-  ![Unarchive Release Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/releases/archived-ellipses-dropdown.png)
+  ![Unarchive Release Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/releases/unarchive-menu.png)
 </Frame>
 
 A dialog will appear. Hit **Unarchive** to confirm the unarchive.
-
-<Frame>
-  ![Unarchive Release Dialog](https://assets.mirurobotics.com/docs/v04/images/releases/unarchive-dialog.png)
-</Frame>
 
 ## Delete a release  <AdminBadge />
 
@@ -122,14 +120,11 @@ A dialog will appear. Hit **Unarchive** to confirm the unarchive.
 
 Deleting a release is only possible if no deployments have been delivered to any device with that release. Otherwise, the release cannot be deleted.
 
-To delete a release, click the ellipses (...) on the release you want to delete and hit **Delete**.
+To delete a release, click the ellipses **(...)** on the release, or right-click it, and
+hit **Delete**.
 
 <Frame>
-  ![Release Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/releases/ellipses-dropdown.png)
+  ![Release Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/releases/delete-menu.png)
 </Frame>
 
 A confirmation dialog will appear. Hit **Delete** to confirm the deletion.
-
-<Frame>
-  ![Delete Release Dialog](https://assets.mirurobotics.com/docs/v04/images/releases/delete-dialog.png)
-</Frame>
