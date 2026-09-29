@@ -8,7 +8,7 @@ import { AdminBadge } from '/snippets/components/role-badges.jsx';
 
 <Framed 
 background="https://assets.mirurobotics.com/docs/v04/images/apikeys/background.jpeg" 
-image="https://assets.mirurobotics.com/docs/v04/images/apikeys/header:page.png" 
+image="https://assets.mirurobotics.com/docs/v04/images/apikeys/hero.png" 
 borderWidth="28px"
 innerRadius="10px"
 outerRadius="12px"
@@ -22,15 +22,25 @@ Your API keys carry many privileges, so be sure to keep them secure! Do not shar
 
 <PlatformUnsupportedBadge />
 
-To create an API key, navigate to the [Secrets page](https://app.mirurobotics.com/settings/secrets) in the dashboard and click **New API Key** in the top right.
+To create an API key, navigate to the
+[API Keys page](https://app.mirurobotics.com/settings/secrets) and click **New API Key**
+in the top right.
 
 <Frame>
-  ![Create API Key Dialog](https://assets.mirurobotics.com/docs/v04/images/apikeys/create-dialog.png)
+  ![New API Key Button](https://assets.mirurobotics.com/docs/v04/images/apikeys/create-button-v2.png)
 </Frame>
 
-Provide a name for the API key, select the desired scopes, then click **Create**. For a full reference of available scopes, see the Platform API [Authorization](/developers/platform-api/authz) page.
+The **Create API Key** page will open. Enter a name and an optional description, then
+select the key's scopes: each row is a resource, and selecting `manage` covers the rest
+of its row. Click **Create**. For a full reference of available scopes, see the Platform
+API [Authorization](/developers/platform-api/authz) page.
 
-Once an API key has been created, it can never be retrieved again. If you lose your API key, you must create a new one.
+<Frame>
+  ![Create API Key Page](https://assets.mirurobotics.com/docs/v04/images/apikeys/create-page.png)
+</Frame>
+
+A dialog will appear with the new key. Copy it before clicking **Done**. It can never be
+retrieved again; if you lose it, create a new one.
 
 ## View API keys
 
