@@ -65,11 +65,8 @@ Releases are created via the CLI — visit the config management [create a relea
 
 ## Duplicate a release  <PublisherBadge />
 
-Duplicating a release creates a new release with the same config schemas and git information as the original.
-
-Of course, since releases require a unique version, the duplicated release must have a *different version* from the original release.
-
-Duplicating a release does not duplicate the release's deployments—only the release, its schemas, and git information are duplicated.
+Duplicating a release creates a new release with the same config schemas, file rules,
+and git information, under a new version. Deployments aren't copied.
 
 To duplicate a release, click the ellipses **(...)** on the release, or right-click it,
 and select **Duplicate**.
