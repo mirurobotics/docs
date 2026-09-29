@@ -75,8 +75,9 @@ When there are changes, click the header to expand a per-file breakdown.
   ![Compare Summary](https://assets.mirurobotics.com/docs/v04/images/devices/compare/summary.png)
 </Frame>
 
-Each file section shows the file name and a label — **ADDED**, **REMOVED**, or
-a change count (e.g. "5 changes"). Within a section, every change lists:
+Each file section shows the file name and a label — **ADDED**, **REMOVED**,
+**DIFFERENT FORMAT**, or a change count (e.g. "5 changes"). Within a section, every
+change lists:
 
 - The **type** of change — added, modified, or deleted — color-coded green,
   yellow, or red respectively.
@@ -100,8 +101,14 @@ Each card shows the file name and a status badge:
 - **UNCHANGED** — No differences between the two deployments.
 - **ADDED** (green) — The file exists only in the head deployment.
 - **REMOVED** (red) — The file exists only in the base deployment.
+- **DIFFERENT FORMAT** — The file has a different format in each deployment (for
+  example, JSON and YAML). Miru doesn't diff across formats.
 - For files with changes, a compact per-operation count — using **D** for deleted,
   **M** for modified, and **A** for added, each color-coded.
+
+Files from a config type with several
+[instance slots](/cfg-mgmt/concepts/schemas/annotations#instance-slots) show the slot
+name first, then the config type.
 
 The first changed file is expanded by default. Expand any file to see the
 inline diff, with changes highlighted by color:
@@ -113,6 +120,9 @@ inline diff, with changes highlighted by color:
 
 Long runs of unchanged lines are collapsed into a summary row (e.g. "75
 unchanged lines"); click it to reveal the hidden lines.
+
+If Miru can't diff a file, the card says why above the file, for example "This file
+couldn't be parsed."
 
 <Info>
     The toolbar has an expand/collapse-all toggle.
