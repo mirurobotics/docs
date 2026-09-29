@@ -7,7 +7,7 @@ import { OperatorBadge } from '/snippets/components/role-badges.jsx';
 
 <Framed 
     background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg" 
-    image="https://assets.mirurobotics.com/docs/v04/images/devices/editor/config-editor-v3.png" 
+    image="https://assets.mirurobotics.com/docs/v04/images/editor/hero.png" 
     borderWidth="30px 30px 0 0" 
     innerRadius="0 8px 0 0" 
 />
@@ -20,26 +20,21 @@ tab at the top.
 
 ## Layout
 
-The editor is split into two resizable panels:
+The editor has three resizable panels:
 
-- **Editor panel** — A code editor for editing configuration files or viewing
-  historical versions.
-- **Controls panel** — Controls what the editor displays and provides actions
-  like deploying changes or browsing deployment history.
-
-<Frame>
-  ![Config Editor Layout](https://assets.mirurobotics.com/docs/v04/images/devices/editor/layout-temp.png)
-</Frame>
-
-
+- **Config panel:** the device's config files. Each file shows how many changes it has,
+  or its errors in red.
+- **Code editor:** the open files, as tabs. Hover over a tab and click the x **(×)** to
+  close it.
+- **Draft and History:** your pending changes and past deployments, described below.
 
 ---
 
 ## Draft
 
-When the **Draft** tab is selected in the controls panel, the editor enters
-edit mode. You can modify any configuration file directly in the editor.
-Changes are tracked locally until you deploy them.
+When the **Draft** tab is selected, the editor enters edit mode. You can modify any
+configuration file directly in the editor. Changes are tracked locally until you
+deploy them.
 
 A draft is automatically created when you open the editor. If the device has
 existing deployments, the draft is based on the most recent one. If this is a
@@ -48,21 +43,42 @@ default configuration.
 
 ### Change list
 
-The controls panel shows a **change list** that summarizes every modification in
-the current draft. Changes are grouped by file, with each file section showing
-its name and a change count (e.g., "3 changes") or "New file" for newly added
-files. Within each section, individual changes are listed with:
+The **Draft** panel lists your pending changes:
 
-- The **type** of change — added, modified, or deleted — color-coded green,
-  yellow, or red respectively.
-- The **JSON path** of the affected value (e.g., `settings > network > ip`).
-  Long paths are truncated; hover to see the full path.
+- **Errors:** syntax and schema errors, described in [Validation](#validation). Click
+  one to jump to it.
+- **Changes:** each value you added, modified, or deleted, with its old and new values.
+  Click a change to jump to it, or hover over it and click the undo icon to discard it.
+- **Removed:** [slots](#instance-slots) you removed from the draft.
 
-Files with no changes show a "No changes" label.
+The icons next to **Changes** hide the old and new values and discard every change.
 
 <Frame>
-  ![Draft Changelog](https://assets.mirurobotics.com/docs/v04/images/devices/editor/draft-changelog.png)
+  ![Change list](https://assets.mirurobotics.com/docs/v04/images/editor/change-list.png)
 </Frame>
+
+### Instance slots
+
+A config type with several
+[instance slots](/cfg-mgmt/concepts/schemas/annotations#instance-slots) shows as a
+folder in the config panel, with one file per slot. A device's first draft includes only
+its required slots.
+
+To add an optional slot, hover over the folder, click the plus **(+)**, and pick the
+slot.
+
+<Frame>
+  ![Add a slot](https://assets.mirurobotics.com/docs/v04/images/editor/add-slot-menu.png)
+</Frame>
+
+To remove one, right-click its file and hit **Remove file**; hit **Restore file** to
+bring it back. Removed slots are listed under **Removed** and aren't deployed.
+
+### Validation
+
+As you type, Miru checks each file's syntax and validates JSON and YAML files against
+their [schema](/cfg-mgmt/concepts/schemas/validation). Errors are underlined in the file
+and listed under **Errors**.
 
 ### Deploying changes
 
@@ -90,12 +106,10 @@ Click the **Deploy** button to start the deployment process.
 </Steps>
 
 <Note>
-    The Deploy button is disabled when:
-    - The device is offline.
-    - The draft has no changes.
-    - Any file contains JSON syntax errors.
-
-    Hover over the disabled button to see the reason.
+  **Deploy** stays disabled while a file has errors, when there are no changes, when
+  every config is removed, or when the device is offline (unless
+  [offline deployments](#editor-settings) are allowed). Hover over the **Deploy**
+  button to see why.
 </Note>
 
 ---
@@ -107,7 +121,7 @@ displays past deployments.
 
 ### Deployment list
 
-The controls panel shows all deployments grouped by release version. Within
+The **History** tab lists all deployments grouped by release version. Within
 each group, deployments are listed from most recent to oldest with each entry showing:
 
 - Description

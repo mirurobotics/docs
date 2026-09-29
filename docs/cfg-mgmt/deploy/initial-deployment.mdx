@@ -15,25 +15,16 @@ To create a device's initial deployment, navigate to the
 [Devices page](https://app.mirurobotics.com/devices).
 
 <Frame>
-  ![Initial Deployment Devices Page](https://assets.mirurobotics.com/docs/v04/images/devices/init-dpl-devices-page.png)
+  ![Initial Deployment Devices Page](https://assets.mirurobotics.com/docs/v04/images/editor/init/devices-page.png)
 </Frame>
 
-Only devices that have been [provisioned](/provision-devices/overview), but never deployed to, are candidates for an initial deployment.
-
-You can identify these devices by their **Release** column. If their release
-column displays a placeholder button of **Set** instead of a release version
-(i.e. `v1.0.0`, `v1.1.0`, etc.), then the device is a candidate for an initial
-deployment. Continue by clicking into the device you want to initialize. 
+Only devices that have been [provisioned](/provision-devices/overview), but never deployed to, are candidates for an initial deployment. Click the device you want to initialize.
 
 ## Set the release
 
-Since the device doesn't have a current release, a dialog will appear prompting you
-to select a release. The selected release will be used to create the device's 
-initial deployment.
-
-<Frame>
-  ![Set Release Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/editor/set-release.png)
-</Frame>
+The editor opens with the **Set Release** dialog. Choose the release for the device's
+first deployment and click **Select**. If the dialog doesn't appear, click **Select a
+release** in the editor.
 
 <Note>
   If no releases are shown, you will need to
@@ -48,7 +39,7 @@ first deployment, it automatically fills with default values from your release's
 config schemas.
 
 <Frame>
-  ![First Draft](https://assets.mirurobotics.com/docs/v04/images/devices/editor/first-draft.png)
+  ![First Draft](https://assets.mirurobotics.com/docs/v04/images/editor/init/first-draft.png)
 </Frame>
 
 <Info>
@@ -58,36 +49,32 @@ For a detailed overview of the editor interface see the
 
 ## Deploy
 
-Once you are satisfied with the configuration, click the **Deploy** button in
-the controls panel header to open the deploy dialog.
+Once you're satisfied with the configuration, click **Deploy** to open the deploy
+dialog.
 
 <Steps>
   <Step title="Review changes">
-    The deploy dialog opens with a summary of all changes. For a
-    first deployment, every file is listed as added.
+    For a first deployment, every file is listed as added.
   </Step>
   <Step title="Add a description">
-    Enter a description for this deployment (e.g., "init deployment").
-    This field is required.
+    For example, `init: baseline lidar, urdf, mobility and perception configs`.
   </Step>
   <Step title="Confirm the device name">
-    Type the device name exactly as shown to confirm.
+    Skipped when [Skip deploy confirmation](/cfg-mgmt/deploy/config-editor#editor-settings)
+    is on.
   </Step>
   <Step title="Deploy">
-    Click **Deploy** to queue the configurations for deployment.
+    The deployment is [queued](/concepts/deployments/status#activity-status) until the
+    device is online to receive it.
   </Step>
 </Steps>
-
-<Frame>
-  ![Initial Deployment Deploy Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/editor/init-deploy-dialog.png)
-</Frame>
 
 After a successful deployment, the editor switches to the **History** tab and
 displays the new deployment. The deployment status will turn green, indicating that the
 device has received the configurations.
 
 <Frame>
-  ![Initial Deployment History](https://assets.mirurobotics.com/docs/v04/images/devices/editor/init-deployment-history.png)
+  ![Initial Deployment History](https://assets.mirurobotics.com/docs/v04/images/editor/init/history.png)
 </Frame>
 
 ## Summary

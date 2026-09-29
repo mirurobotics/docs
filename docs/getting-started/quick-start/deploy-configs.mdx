@@ -10,7 +10,7 @@ Navigate back to the [Devices page](https://app.mirurobotics.com/devices) and cl
   ![Provisioned Device](https://assets.mirurobotics.com/docs/v04/images/devices/provisioned-device.png)
 </Frame>
 
-Select the release we just created and hit **Next**.
+The **Set Release** dialog opens. Select the release we just created and click **Select**.
 
 <Frame>
   ![Set Release Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/editor/set-release-dialog.png)
@@ -43,17 +43,14 @@ cat /srv/miru/configs/mobility.json
 
 You should find that the editor's content is identical to the config instance on the machine.
 
-## Patch a deployment
+## Update the configs
 
-To edit a config instance, make some changes to the current deployment in the editor. As edits are made, a log on the right maintains a list of all changes, categorizing them by their type: `added`, `deleted`, or `modified`.
+To edit a config instance, make some changes in the editor. The **Draft** panel on the
+right lists each change as added, modified, or deleted.
 
 <Frame>
   ![Deployment Editor Modifications](https://assets.mirurobotics.com/docs/v04/images/devices/editor/modifications.png)
 </Frame>
-
-<Warning>
-  Only the latest deployment may be edited; all others are read-only.
-</Warning>
 
 Once you are satisfied with the edits, click **Deploy** in the top right.
 
