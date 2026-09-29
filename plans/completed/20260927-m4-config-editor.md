@@ -48,7 +48,7 @@ M4 is the largest milestone. Most issues edit the same page (`config-editor.mdx`
 - [x] ENG-1392: initial deployment release selection steps (2026-09-28)
 - [x] ENG-1403: skipped, then canceled at Armel's call; nothing shipped (2026-09-28)
 - [x] ENG-1404: refresh the deploy configs quick start (2026-09-28)
-- [x] Final: all commits on the branch, plan updated and folded into its commit
+- [x] Final: all commits on the branch, plan updated and folded into its commit. Merged as #213 (`08f54ae`).
 
 ## Surprises & Discoveries
 
@@ -141,7 +141,7 @@ M4 decisions:
 
 ## Outcomes & Retrospective
 
-Complete 2026-09-28. Eight commits on `docs/m4-config-editor` over `origin/main`: the M2/M3 plan move, this plan, and one commit each for ENG-1393, 1394, 1395, 1396, 1392 and 1404, each subject the Linear title with `Refs`. Those six issues are Done in Linear; ENG-1397 and ENG-1403 are Canceled. `./scripts/lint.sh`, `pnpm validate` and `mint broken-links` pass at the head. Nothing is pushed.
+Complete 2026-09-28. Eight commits on `docs/m4-config-editor` over `origin/main`: the M2/M3 plan move, this plan, and one commit each for ENG-1393, 1394, 1395, 1396, 1392 and 1404, each subject the Linear title with `Refs`. Those six issues are Done in Linear; ENG-1397 and ENG-1403 are Canceled. `./scripts/lint.sh`, `pnpm validate` and `mint broken-links` pass at the head. Merged as #213 (`08f54ae`).
 
 What shipped, versus the plan:
 
