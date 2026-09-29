@@ -28,6 +28,8 @@ Some resources have additional granular scopes beyond the standard tiers (e.g. `
 
 ## Scopes by resource
 
+<div className="scope-tables">
+
 ### Config instances
 
 | Scope | Permissions |
@@ -42,7 +44,7 @@ Some resources have additional granular scopes beyond the standard tiers (e.g. `
 |-------|-------------|
 | `config_schemas:manage` | all operations |
 | `config_schemas:read` | get, list |
-| `config_schemas:write` | create, update |
+| `config_schemas:write` | create |
 
 ### Config types
 
@@ -58,9 +60,9 @@ Some resources have additional granular scopes beyond the standard tiers (e.g. `
 |-------|-------------|
 | `deployments:manage` | all operations |
 | `deployments:read` | get, list |
-| `deployments:write` | create |
-| `deployments:stage` | stage |
-| `deployments:deploy` | deploy |
+| `deployments:write` | create, stage, deploy, archive |
+| `deployments:stage` | create, stage |
+| `deployments:deploy` | create, deploy |
 | `deployments:archive` | archive |
 
 ### Devices
@@ -71,7 +73,14 @@ Some resources have additional granular scopes beyond the standard tiers (e.g. `
 | `devices:read` | get, list, ping |
 | `devices:provision` | create, activate, reactivate, list |
 | `devices:write` | create, update |
-| `devices:delete` | delete |
+
+### File rules
+
+| Scope | Permissions |
+|-------|-------------|
+| `file_rules:manage` | all operations |
+| `file_rules:read` | get, list |
+| `file_rules:write` | create |
 
 ### Git commits
 
@@ -103,6 +112,16 @@ Some resources have additional granular scopes beyond the standard tiers (e.g. `
 | `releases:manage` | all operations |
 | `releases:read` | get, list |
 | `releases:write` | create, update |
+
+### Upload collections
+
+| Scope | Permissions |
+|-------|-------------|
+| `upload_collections:manage` | all operations |
+| `upload_collections:read` | get, list |
+| `upload_collections:write` | create, update |
+
+</div>
 
 ## Principle of least privilege
 

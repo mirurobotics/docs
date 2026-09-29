@@ -40,35 +40,50 @@ import BucketDef from '/snippets/definitions/bucket.mdx';
 
 <PlatformUnsupportedBadge />
 
-To view a bucket, navigate to the [Buckets page](https://app.mirurobotics.com/settings/buckets).
+To view a bucket, navigate to the
+[Buckets page](https://app.mirurobotics.com/settings/buckets) and click the bucket. Its
+details show the provider, its connection details (region, Role ARN and External ID for
+AWS; service account for GCS), and when and by whom it was created.
 
 <Frame>
-  ![Bucket Page](https://assets.mirurobotics.com/docs/v04/images/buckets/page.png)
+  ![Buckets Page](https://assets.mirurobotics.com/docs/v04/images/buckets/list.png)
 </Frame>
 
 ## Connect a bucket  <PublisherBadge />
 
 <PlatformUnsupportedBadge />
 
-To connect a bucket, visit the [Connect buckets](/data-uploads/concepts/buckets#connect-a-bucket) page.
+To connect a bucket, follow the [GCS](/data-uploads/connect-a-bucket/gcs) or
+[AWS S3](/data-uploads/connect-a-bucket/aws) guide.
+
+## Verification
+
+When you connect a bucket or change its Role ARN, Miru checks its access before saving:
+
+- It uploads an empty object under `.miru/probe/`, then tries to delete it. With the
+  write-only access the connect guides grant, the object stays in the bucket.
+- For AWS buckets, it also confirms your role can't be assumed without the external ID.
+
+If a check fails, the bucket isn't saved.
 
 ## Edit a bucket  <PublisherBadge />
 
 <PlatformUnsupportedBadge />
 
-Editing a bucket allows you to update a bucket's authentication configuration. However, it does not allow you to change the bucket's name. To upload to a new bucket, you must create a new bucket connection.
+Only an AWS bucket's **Role ARN** can be edited; GCS buckets have nothing to edit. To
+upload to a different bucket, connect a new one.
 
-Navigate to the [Buckets page](https://app.mirurobotics.com/settings/buckets), click the ellipsis (…) next to the bucket you want to edit, and select **Edit**.
-
-<Frame>
-  ![Bucket Ellipsis Dropdown](https://assets.mirurobotics.com/docs/v04/images/buckets/ellipsis-dropdown.png)
-</Frame>
-
-Update the desired fields, then click **Save**.
+To edit a bucket, click the ellipses **(...)** on the bucket and select **Edit**.
 
 <Frame>
-  ![Bucket Edited](https://assets.mirurobotics.com/docs/v04/images/buckets/edit-dialog.png)
+  ![Edit Bucket Menu](https://assets.mirurobotics.com/docs/v04/images/buckets/edit-menu.png)
 </Frame>
+
+A dialog will appear. Update the **Role ARN** and click **Save**.
+
+<Note>
+  Miru [verifies](#verification) the bucket again before saving.
+</Note>
 
 ## Delete a bucket  <PublisherBadge />
 
@@ -76,17 +91,13 @@ Update the desired fields, then click **Save**.
 
 Deleting a bucket is only possible if there are no file rules associated with the bucket. Otherwise, you must archive the bucket instead.
 
-Navigate to the [Buckets page](https://app.mirurobotics.com/settings/buckets), click the ellipsis (…) next to the bucket you want to delete, and select **Delete**.
+To delete a bucket, click the ellipses **(...)** on the bucket and select **Delete**.
 
 <Frame>
-  ![Bucket Ellipsis Dropdown](https://assets.mirurobotics.com/docs/v04/images/buckets/ellipsis-dropdown.png)
+  ![Delete Bucket Menu](https://assets.mirurobotics.com/docs/v04/images/buckets/delete-menu.png)
 </Frame>
 
-Click **Delete** to confirm.
-
-<Frame>
-  ![Bucket Deleted](https://assets.mirurobotics.com/docs/v04/images/buckets/delete-dialog.png)
-</Frame>
+A confirmation dialog will appear. Click **Delete** to confirm.
 
 ## Archive a bucket  <PublisherBadge />
 
@@ -94,15 +105,11 @@ Click **Delete** to confirm.
 
 Archiving a bucket prevents any data uploads from being written to the bucket. However, it does not delete the bucket itself, and can be unarchived at any time.
 
-Navigate to the [Buckets page](https://app.mirurobotics.com/settings/buckets), click the ellipsis (…) next to the bucket you want to archive, and select **Archive**.
+To archive a bucket, click the ellipses **(...)** on the bucket and select **Archive**.
 
 <Frame>
-  ![Bucket Ellipsis Dropdown](https://assets.mirurobotics.com/docs/v04/images/buckets/ellipsis-dropdown.png)
+  ![Archive Bucket Menu](https://assets.mirurobotics.com/docs/v04/images/buckets/archive-menu.png)
 </Frame>
 
-Click **Archive** to confirm.
-
-<Frame>
-  ![Bucket Archived](https://assets.mirurobotics.com/docs/v04/images/buckets/archive-dialog.png)
-</Frame>
+A confirmation dialog will appear. Click **Archive** to confirm.
 

@@ -37,6 +37,17 @@
   margin-top: 1.5rem;
 }
 
+/* Platform API scope tables: one table per resource, so fix the column widths
+   to line the Permissions column up across them */
+.scope-tables table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.scope-tables th:first-child {
+  width: 55%;
+}
+
 /* Center mermaid diagrams horizontally */
 .mermaid {
   display: flex;

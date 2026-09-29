@@ -8,7 +8,7 @@ import { AdminBadge } from '/snippets/components/role-badges.jsx';
 
 <Framed 
 background="https://assets.mirurobotics.com/docs/v04/images/apikeys/background.jpeg" 
-image="https://assets.mirurobotics.com/docs/v04/images/apikeys/header:page.png" 
+image="https://assets.mirurobotics.com/docs/v04/images/apikeys/hero.png" 
 borderWidth="28px"
 innerRadius="10px"
 outerRadius="12px"
@@ -22,30 +22,61 @@ Your API keys carry many privileges, so be sure to keep them secure! Do not shar
 
 <PlatformUnsupportedBadge />
 
-To create an API key, navigate to the [Secrets page](https://app.mirurobotics.com/settings/secrets) in the dashboard and click **New API Key** in the top right.
+To create an API key, navigate to the
+[API Keys page](https://app.mirurobotics.com/settings/secrets) and click **New API Key**
+in the top right.
 
 <Frame>
-  ![Create API Key Dialog](https://assets.mirurobotics.com/docs/v04/images/apikeys/create-dialog.png)
+  ![New API Key Button](https://assets.mirurobotics.com/docs/v04/images/apikeys/create-button-v2.png)
 </Frame>
 
-Provide a name for the API key, select the desired scopes, then click **Create**. For a full reference of available scopes, see the Platform API [Authorization](/developers/platform-api/authz) page.
+The **Create API Key** page will open. Enter a name and an optional description, then
+select the key's scopes: each row is a resource, and selecting `manage` covers the rest
+of its row. Click **Create**. For a full reference of available scopes, see the Platform
+API [Authorization](/developers/platform-api/authz) page.
 
-Once an API key has been created, it can never be retrieved again. If you lose your API key, you must create a new one.
+<Frame>
+  ![Create API Key Page](https://assets.mirurobotics.com/docs/v04/images/apikeys/create-page.png)
+</Frame>
+
+A dialog will appear with the new key. Copy it before clicking **Done**. It can never be
+retrieved again; if you lose it, create a new one.
 
 ## View API keys
 
 <PlatformUnsupportedBadge />
 
-To view your existing API keys, navigate to the [Secrets page](https://app.mirurobotics.com/settings/secrets).
+To view your workspace's API keys, navigate to the
+[API Keys page](https://app.mirurobotics.com/settings/secrets). Each key is listed by
+name; click a key to expand it and see its details:
+
+- **Last used:** when the key was last used, or Never used.
+- **Description:** what the key is for, or None.
+- **Created:** when the key was created.
+- **Created by:** who created the key.
+- **Scopes:** what the key can access.
 
 <Frame>
-  ![API Keys Page](https://assets.mirurobotics.com/docs/v04/images/apikeys/page.png)
+  ![API Key Details](https://assets.mirurobotics.com/docs/v04/images/apikeys/details.png)
 </Frame>
 
-To see the scopes of an API key, hover over the information icon in the **Scopes** column of the API key you want to view.
+## Edit an API key  <AdminBadge />
+
+<PlatformUnsupportedBadge />
+
+To edit an API key, click the ellipses **(...)** on the key, or right-click it, and
+select **Edit**.
 
 <Frame>
-  ![API Key Scopes Popup](https://assets.mirurobotics.com/docs/v04/images/apikeys/scopes-popup.png)
+  ![Edit API Key Menu](https://assets.mirurobotics.com/docs/v04/images/apikeys/edit-menu.png)
+</Frame>
+
+The **Edit API Key** page will open. Change the key's name, description, or scopes, then
+click **Save**. The key itself doesn't change, so anything using it keeps working with
+the new scopes.
+
+<Frame>
+  ![Edit API Key Page](https://assets.mirurobotics.com/docs/v04/images/apikeys/edit-page.png)
 </Frame>
 
 ## Delete an API key  <AdminBadge />
@@ -54,14 +85,11 @@ To see the scopes of an API key, hover over the information icon in the **Scopes
 
 Deleting an API key immediately revokes it. Attempting to authenticate with a deleted API key will fail. Furthermore, deleting an API key is irreversible. Once an API key is deleted, it cannot be recovered.
 
-To delete an API key, click the ellipsis (...) on the API key you want to delete and select **Delete**.
+To delete an API key, click the ellipses **(...)** on the key, or right-click it, and
+select **Delete**.
 
 <Frame>
-  ![API Key Ellipses Dropdown](https://assets.mirurobotics.com/docs/v04/images/apikeys/ellipses-dropdown.png)
+  ![Delete API Key Menu](https://assets.mirurobotics.com/docs/v04/images/apikeys/delete-menu.png)
 </Frame>
 
 A confirmation dialog will appear. Hit **Delete** to confirm the deletion.
-
-<Frame>
-  ![API Key Delete Dialog](https://assets.mirurobotics.com/docs/v04/images/apikeys/delete-dialog.png)
-</Frame>
