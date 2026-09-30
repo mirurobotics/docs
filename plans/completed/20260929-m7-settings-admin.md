@@ -47,7 +47,7 @@ After this milestone, each of those sections matches frontend `origin/prod` and 
 - [ ] ENG-1411: invite fields and the invite acceptance page (canceled)
 - [ ] ENG-1412: removing logo and avatar, link editor settings (canceled)
 - [x] ENG-1429: sync the Platform API scope table with production scopes (added during M7)
-- [x] Final: all commits on the branch, plan updated and folded into its commit
+- [x] Final: all commits on the branch, plan updated and folded into its commit. Merged as #218 (`e950a27`).
 
 ## Surprises & Discoveries
 
@@ -181,7 +181,7 @@ M5 plan move, this plan, one each for ENG-1405, 1406, 1407, 1408, 1409 and 1429,
 the dialog-sentence sweep. ENG-1405 to 1409 and ENG-1429 are Done; ENG-1410, 1411 and
 1412 are Canceled. `./scripts/lint.sh`, `pnpm validate` and `mint broken-links` pass
 at the head. The frontend dev mock is back to Armel's baseline (same stat and
-checksums).
+checksums). Merged as #218 (`e950a27`).
 
 What shipped, versus the plan:
 
