@@ -2,24 +2,53 @@
 title: 'Authentication'
 ---
 
-import LoginInstructions from '/snippets/references/cli/login.mdx';
-
-The CLI supports two ways to authenticate: an interactive login for your development machine, and an API key for non-interactive use such as CI pipelines, scripts, and AI agents.
+The CLI authenticates in one of two ways: `miru login` on your development machine, or
+an API key for CI pipelines, scripts, and AI agents.
 
 ## Interactive login
 
-<LoginInstructions />
+Run the `login` command:
+
+```bash
+miru login
+```
+
+The CLI opens the **Authorize Device** page in your browser. If the code matches the one
+in your terminal and the device and location are yours, click **Allow**.
+
+<Frame>
+  ![Authorize Device](https://assets.mirurobotics.com/docs/v04/images/cli/authorize-device.png)
+</Frame>
+
+The terminal then shows who you're logged in as:
+
+```bash
+$ miru login
+
+Visit https://app.mirurobotics.com/oauth/device?user_code=BDKZ-LQXS
+
+Confirm this code is shown in your browser: BDKZ-LQXS
+
+◐ Waiting for authentication...
+Successfully authenticated as Armel
+  Type         User
+  User Type    Admin
+  Auth Source  Token stored by miru login
+  Workspace    Acme Robotics
+```
+
+On a machine without a browser, run `miru login --no-browser` and open the printed URL
+on any device.
 
 ## API key
 
-Instead of using the `login` command, you can export the `MIRU_API_KEY` environment variable to authenticate the CLI via API key.
+To authenticate without `miru login`, set the `MIRU_API_KEY` environment variable:
 
 ```bash
 export MIRU_API_KEY=<your-api-key>
 ```
 
-No `login` is required when `MIRU_API_KEY` is set.
-
-To create an API key, follow the instructions in the [API keys](/admin/apikeys#create-an-api-key) section. To determine which scopes the key needs, find the command you want to run in the [CLI Reference](/references/cli/release-create) and consult its **API key scopes** section.
-
-For using the CLI in a CI pipeline, see the [CI/CD guide](/developers/ci/overview).
+To create a key, see [Create an API key](/admin/apikeys#create-an-api-key). Each
+command's page in the [CLI reference](/references/cli/release-create) lists the scopes
+it needs under **API key scopes**. For CI pipelines, see the
+[CI/CD guide](/developers/ci/overview).
