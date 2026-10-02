@@ -2,31 +2,38 @@
 title: "Authentication"
 ---
 
-import Permissions from '/snippets/agent/permissions.mdx';
+This page details how to authenticate to the Device API from an application running on the device. 
 
-## Connecting
+If you use a [Miru Device SDK](/developers/device-api/sdks), the SDK handles the authentication for you as long as you [grant file system access](#granting-access) to the application.
 
-The transport the Device API is served over depends on the device's operating system:
-
-| Operating system | Transport | Base URL |
-|------------------|-----------|----------|
-| Linux | Unix socket at `/run/miru/miru.sock` | `http://localhost/{version}/` |
-| Windows | Loopback TCP (port `6478` by default) | `http://localhost:{port}/{version}/` |
-
-On Windows, every request must also include a bearer token.
+## Local Server
 
 <Tabs>
   <Tab title="Linux">
-    <Permissions />
+    On Linux, the Miru Agent serves API requests over the Unix socket `/run/miru/miru.sock`. The socket exists only on the device, so other machines cannot connect to it.
+
+    **Authenticate to the Server**
+
+    Opening the socket is the credential. The agent accepts every request from a process that can connect to `/run/miru/miru.sock`.
+
+    **Example**
+
+    ```bash
+    curl --unix-socket /run/miru/miru.sock \
+      --request GET \
+      --url http://localhost/v0.2/health
+    ```
+
+    The `localhost` host is only the HTTP request target. `curl` sends the request through the socket.
   </Tab>
   <Tab title="Windows">
-    <Note>
-      The Device API on Windows requires Miru Agent `v0.11.0` or later.
-    </Note>
+    On Windows, the Miru Agent serves API requests over loopback TCP (localhost). The agent only listens on `127.0.0.1`, so the API is not reachable from other machines. 
+    
+    By default, the agent listens on port `6478`. However, if the port is already in use, the agent will use a random OS-assigned port.
 
-    The Miru Agent serves API requests over loopback TCP on port `6478` by default. The agent only listens on `127.0.0.1`, so the API is not reachable from other machines. Clients should read the port from the discovery file rather than hard-coding it.
+    **Authenticate to the Server**
 
-    Every request must include a bearer token in the `Authorization` header. The agent generates a new token each time it starts and writes it, along with the port, to the discovery file `C:\ProgramData\Miru\device-api\device-api.json`:
+    Access to the API is restricted by an authentication token. The agent generates a new token each time it starts and writes it, along with the port, to the discovery file `C:\ProgramData\Miru\device-api\device-api.json`.
 
     ```json
     {
@@ -34,6 +41,10 @@ On Windows, every request must also include a bearer token.
       "token": "<token>"
     }
     ```
+
+    Every request must include a bearer token in the `Authorization` header. 
+
+    **Example**
 
     To call the API, read the port and token from the discovery file and pass the token as a bearer token:
 
@@ -46,12 +57,49 @@ On Windows, every request must also include a bearer token.
 
     Requests without a valid token are rejected with `401 Unauthorized`. Since the token changes whenever the agent restarts, clients should re-read the discovery file after receiving a `401` and retry. The discovery file only exists while the agent is serving the API, so a missing file means the agent is not running.
 
+  </Tab>
+</Tabs>
+
+<Tip>
+  If using a [Device SDK](/developers/device-api/sdks), the authentication complexities are handled for you as long as you [grant file system access](#granting-access) to the application running the SDK.
+</Tip>
+
+## Granting access
+
+<Tabs>
+  <Tab title="Linux">
+
+    Any access to the socket must be executed with a user who is a member of the `miru` group.
+
     <Note>
-      The agent also rejects requests whose `Host` header is not `localhost:<port>` or `127.0.0.1:<port>`, and requests with an `Origin` header from any other origin. This prevents web pages open in a browser on the device from calling the API.
+      Access to the socket is granted to the `root` user, but this is not recommended for security best practices.
     </Note>
 
-    ### Granting access
+    To add a user to the `miru` group, run
 
+    ```bash
+    sudo usermod -a -G miru <username>
+    ```
+
+    To add the current user to the `miru` group, run
+
+    ```bash
+    sudo usermod -a -G miru $USER
+    ```
+
+    <Warning>
+      You must log out of your desktop or SSH session and log back in for group changes to take effect permanently.
+    </Warning>
+
+    To temporarily run the current shell session as a member of the `miru` group, run
+
+    ```bash
+    newgrp miru
+    ```
+
+    Any new shell sessions will require you to run `newgrp miru` again until you've logged out of your desktop or SSH session and logged back in.
+  </Tab>
+  <Tab title="Windows">
     Access to the discovery file, and therefore to the API, is restricted to SYSTEM, Administrators, and members of the local `Miru Agent Users` group, which the installer creates empty.
 
     To grant an application access, add the user or service account it runs as to the `Miru Agent Users` group from an elevated PowerShell session:
@@ -59,6 +107,9 @@ On Windows, every request must also include a bearer token.
     ```powershell
     Add-LocalGroupMember -Group "Miru Agent Users" -Member "<username>"
     ```
+    <Warning>
+      Do not add broad groups such as `Users`, `Authenticated Users`, or `Everyone` to `Miru Agent Users`. Any account that can read the discovery file can call every Device API endpoint.
+    </Warning>
 
     For an application that runs as a Windows service, add its service account:
 
@@ -66,13 +117,7 @@ On Windows, every request must also include a bearer token.
     Add-LocalGroupMember -Group "Miru Agent Users" -Member "NT SERVICE\<service-name>"
     ```
 
-    <Warning>
-      Group changes take effect the next time the user signs in, or the next time the service starts. Sign out and back in, or restart the application's service, after adding it to the group.
-    </Warning>
-
-    <Warning>
-      Do not add broad groups such as `Users`, `Authenticated Users`, or `Everyone` to `Miru Agent Users`. Any account that can read the discovery file can call every Device API endpoint.
-    </Warning>
+    Group changes take effect the next time the user signs in, or the next time the service starts. Sign out and back in, or restart the application's service, after adding it to the group.
 
     To revoke access, remove the account from the group:
 

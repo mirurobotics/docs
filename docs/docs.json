@@ -213,9 +213,9 @@
                 "group": "Device API",
                 "pages": [
                   "developers/device-api/overview",
+                  "developers/device-api/authn",
                   "developers/device-api/sdks",
                   "developers/device-api/versions",
-                  "developers/device-api/authn",
                   "developers/device-api/events"
                 ]
               },
