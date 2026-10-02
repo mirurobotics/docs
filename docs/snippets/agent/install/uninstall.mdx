@@ -17,18 +17,18 @@ import RemoveApt from '/snippets/apt/remove.mdx';
     </Info>
   </Tab>
   <Tab title="Windows">
-    Uninstall **Miru Agent** from **Settings > Apps > Installed apps**, or run the following from PowerShell opened with **Run as administrator**, using the MSI of the installed version.
+    You can uninstall the **Miru Agent** from **Settings > Apps > Installed apps**.
+    
+    To programmatically uninstall the agent, run the following from PowerShell opened with **Run as administrator**, using the MSI of the installed version.
 
     ```powershell
     Start-Process msiexec.exe -ArgumentList '/x','"C:\path\to\miru-agent-<version>.msi"','/qn','/norestart' -Wait -PassThru
     ```
 
-    <Warning>
-        Uninstalling keeps `%ProgramData%\Miru`, which holds the agent's settings, device identity, keys, and logs. For a clean removal, delete it afterwards. The machine must then be provisioned again.
+    Uninstalling keeps `%ProgramData%\Miru`, which holds the agent's settings, device identity, keys, and logs. For a complete removal, delete this directory after uninstalling the agent.
 
-        ```powershell
-        Remove-Item -Recurse -Force "$env:ProgramData\Miru"
-        ```
-    </Warning>
+    ```powershell
+    Remove-Item -Recurse -Force "$env:ProgramData\Miru"
+    ```
   </Tab>
 </Tabs>
