@@ -30,9 +30,7 @@ To connect via curl, use the `--no-buffer` flag to ensure events are printed as 
     ```
   </Tab>
   <Tab title="Windows">
-    Run the following in PowerShell. Use `curl.exe` rather than `curl`, which is an alias for `Invoke-WebRequest` in Windows PowerShell.
-
-    ```powershell
+    ```powershell PowerShell
     $api = Get-Content "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
     curl.exe --no-buffer `
       --request GET `
@@ -165,7 +163,7 @@ Pass the cursor in one of two ways:
         ```
       </Tab>
       <Tab title="Windows">
-        ```powershell
+        ```powershell PowerShell
         $api = Get-Content "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
         curl.exe --no-buffer `
           --request GET `
@@ -188,7 +186,7 @@ Pass the cursor in one of two ways:
         ```
       </Tab>
       <Tab title="Windows">
-        ```powershell
+        ```powershell PowerShell
         $api = Get-Content "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
         curl.exe --no-buffer `
           --request GET `
@@ -215,7 +213,7 @@ To subscribe to specific event types, pass a comma-separated list via the `types
     ```
   </Tab>
   <Tab title="Windows">
-    ```powershell
+    ```powershell PowerShell
     $api = Get-Content "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
     curl.exe --no-buffer `
       --request GET `
