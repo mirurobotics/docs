@@ -29,7 +29,7 @@ If you use a [Miru Device SDK](/developers/device-api/sdks), the SDK handles the
   <Tab title="Windows">
     On Windows, the Miru Agent serves API requests over loopback TCP (localhost). The agent only listens on `127.0.0.1`, so the API is not reachable from other machines. 
     
-    By default, the agent listens on port `6478`. However, if the port is already in use, the agent will use a random OS-assigned port.
+    By default, the agent listens on port `6478`. If the port is already in use, the Device API is unavailable and the agent logs an error.
 
     **Authenticate to the Server**
 
