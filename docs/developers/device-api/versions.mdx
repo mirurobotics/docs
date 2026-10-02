@@ -9,13 +9,14 @@ import StabilityGuarantees from '/snippets/device-api/stability-guarantees.mdx';
 import BreakingChanges from '/snippets/references/apis/breaking.mdx';
 import NonBreakingChanges from '/snippets/references/apis/non-breaking.mdx';
 
+
 The Device API adheres to [semantic versioning](https://semver.org/), which was chosen so that on-device applications can easily determine API version compatibility.
 
 The Device API is currently in beta, signified by the `v0` prefix. There is no established release cadence for the Device API—features are simply released as soon as they are ready.
 
 ## URL format
 
-The Device API uses the URL format `http://localhost/{version}/`, where `{version}` is the breaking change alias for the API version. On Linux, requests are sent over the Unix socket at `/run/miru/miru.sock`. On Windows, requests are sent over loopback TCP, so the URL includes the port: `http://localhost:{port}/{version}/` (see [Authentication](/developers/device-api/authn)).
+The Device API is served from the unix socket at `/run/miru/miru.sock` with the URL format `http://localhost/{version}/`, where `{version}` is the breaking change alias for the API version.
 
 Beta releases use breaking change aliases that include the major and minor version numbers (e.g. `v0.2`, `v0.3`, etc.). Stable releases use breaking change aliases that include the major version number only (e.g. `v1`, `v2`, etc.).
 

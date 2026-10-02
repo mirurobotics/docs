@@ -16,34 +16,19 @@ Use polling (via `GET /v0.2/deployments/current`) when your application only nee
 
 ## Connecting
 
-The Device API is served over a Unix socket on Linux and over loopback TCP on Windows.
+The Device API is served over a Unix socket. 
 
-To connect via curl, use the `--no-buffer` flag to ensure events are printed as they arrive:
+To connect via curl, use the `--unix-socket` flag with the `--no-buffer` flag to ensure events are printed as they arrive:
 
-<Tabs>
-  <Tab title="Linux">
-    ```bash
-    curl --no-buffer \
-      --unix-socket /run/miru/miru.sock \
-      --request GET \
-      --url http://localhost/v0.2/events
-    ```
-  </Tab>
-  <Tab title="Windows">
-    Run the following in PowerShell. Use `curl.exe` rather than `curl`, which is an alias for `Invoke-WebRequest` in Windows PowerShell.
-
-    ```powershell
-    $api = Get-Content "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
-    curl.exe --no-buffer `
-      --request GET `
-      --url "http://localhost:$($api.port)/v0.2/events" `
-      --header "Authorization: Bearer $($api.token)"
-    ```
-  </Tab>
-</Tabs>
+```bash
+curl --no-buffer \
+  --unix-socket /run/miru/miru.sock \
+  --request GET \
+  --url http://localhost/v0.2/events
+```
 
 <Warning>
-Ensure you have proper permissions to access the Device API. See [Authentication](/developers/device-api/authn) for more details.
+Ensure you have proper permissions to access the Unix socket. See [Authentication](/developers/device-api/authn) for more details.
 </Warning>
 
 ## SDK support
@@ -155,49 +140,24 @@ Pass the cursor in one of two ways:
 
 1. **Query parameter** — `?after=<id>` (takes precedence)
 
-    <Tabs>
-      <Tab title="Linux">
-        ```bash
-        curl --no-buffer \
-          --unix-socket /run/miru/miru.sock \
-          --request GET \
-          --url http://localhost/v0.2/events?after=42
-        ```
-      </Tab>
-      <Tab title="Windows">
-        ```powershell
-        $api = Get-Content "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
-        curl.exe --no-buffer `
-          --request GET `
-          --url "http://localhost:$($api.port)/v0.2/events?after=42" `
-          --header "Authorization: Bearer $($api.token)"
-        ```
-      </Tab>
-    </Tabs>
+    ```bash
+    # Resume from event 42 using the query parameter
+    curl --no-buffer \
+      --unix-socket /run/miru/miru.sock \
+      --request GET \
+      --url http://localhost/v0.2/events?after=42
+    ```
 
 2. **HTTP header** — `Last-Event-ID: <id>` (standard SSE reconnection header)
 
-    <Tabs>
-      <Tab title="Linux">
-        ```bash
-        curl --no-buffer \
-          --unix-socket /run/miru/miru.sock \
-          --request GET \
-          --url http://localhost/v0.2/events \
-          --header "Last-Event-ID: 42"
-        ```
-      </Tab>
-      <Tab title="Windows">
-        ```powershell
-        $api = Get-Content "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
-        curl.exe --no-buffer `
-          --request GET `
-          --url "http://localhost:$($api.port)/v0.2/events" `
-          --header "Authorization: Bearer $($api.token)" `
-          --header "Last-Event-ID: 42"
-        ```
-      </Tab>
-    </Tabs>
+    ```bash
+    # Resume from event 42 using the Last-Event-ID header
+    curl --no-buffer \
+      --unix-socket /run/miru/miru.sock \
+      --request GET \
+      --url http://localhost/v0.2/events \
+      --header "Last-Event-ID: 42"
+    ```
 
 ### Type filtering
 
@@ -205,25 +165,12 @@ It's often the case that clients only need to subscribe to a subset of all possi
 
 To subscribe to specific event types, pass a comma-separated list via the `types` query parameter:
 
-<Tabs>
-  <Tab title="Linux">
-    ```bash
-    curl --no-buffer \
-      --unix-socket /run/miru/miru.sock \
-      --request GET \
-      --url http://localhost/v0.2/events?types=deployment.deployed,deployment.removed
-    ```
-  </Tab>
-  <Tab title="Windows">
-    ```powershell
-    $api = Get-Content "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
-    curl.exe --no-buffer `
-      --request GET `
-      --url "http://localhost:$($api.port)/v0.2/events?types=deployment.deployed,deployment.removed" `
-      --header "Authorization: Bearer $($api.token)"
-    ```
-  </Tab>
-</Tabs>
+```bash
+curl --no-buffer \
+  --unix-socket /run/miru/miru.sock \
+  --request GET \
+  --url http://localhost/v0.2/events?types=deployment.deployed,deployment.removed
+```
 
 If `types` is omitted, all event types are sent.
 
