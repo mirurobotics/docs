@@ -116,11 +116,21 @@ Each instance slot is defined by the following fields:
 
   All slot file paths in a schema must target the same operating system: either all Linux paths or all Windows paths. The operating system is inferred from the file path.
 
-  Examples: 
-    - `/srv/miru/configs/motor-controller-1.json`
-    - `/srv/miru/configs/motor-controller-2.json`
-    - `C:\ProgramData\Miru\configs\motor-controller-1.json`
-    - `C:\ProgramData\Miru\configs\motor-controller-2.json`
+
+  <Tabs>
+    <Tab title="Linux">
+      Examples:
+
+      - `/srv/miru/configs/motor-controller-1.json`
+      - `/srv/miru/configs/motor-controller-2.json`
+    </Tab>
+    <Tab title="Windows">
+      Examples:
+
+      - `C:\ProgramData\Miru\configs\motor-controller-1.json`
+      - `C:\ProgramData\Miru\configs\motor-controller-2.json`
+    </Tab>
+  </Tabs>
 </ParamField>
 
 <ParamField path="required" type="boolean" required>
