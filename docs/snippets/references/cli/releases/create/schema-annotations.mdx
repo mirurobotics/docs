@@ -39,13 +39,9 @@
 <ParamField path="instance file path">
   The instance file path is the absolute file system path where config instances for this schema are written on the device.
 
-  <Warning>
-    On Linux, the Miru Agent ships with out-of-the-box access to `/srv/miru`. To deploy configs to a custom directory, please visit the [File system access](/developers/agent/filesys-access#configs) page.
-  </Warning>
+  This annotation is optional and defaults to `/srv/miru/configs/{config-type-slug}.{instance-format}`. The default is a Linux path, so schemas for Windows devices must set an explicit path such as `C:\ProgramData\Miru\configs\mobility.json`. 
 
- This annotation is optional and defaults to `/srv/miru/configs/{config-type-slug}.{instance-format}`. The default is a Linux path, so schemas for Windows devices must set an explicit path such as `C:\ProgramData\Miru\configs\mobility.json`. 
- 
- To share the same schema amongst multiple config instances, declare [instance slots](#param-instance-slots) instead.
+  To share the same schema amongst multiple config instances, declare [instance slots](#param-instance-slots) instead.
 
   <CodeGroup>
 
@@ -55,30 +51,35 @@
 
   
   ```cue CUE
-  @miru(instance_filepath="/srv/miru/configs/{config-type-slug}.json")
+  @miru(instance_filepath="/srv/miru/configs/mobility.json")
   ```
 
   
   ```yaml Opaque
-  instance_filepath: "/srv/miru/configs/{config-type-slug}.json"
+  instance_filepath: "C:\ProgramData\Miru\configs\communication.yaml"
   ```
 
   </CodeGroup>
 
-
   <Tabs>
+
     <Tab title="Linux">
-      Examples:
+      <Warning>
+        The Miru Agent ships with out-of-the-box access to `/srv/miru`. To deploy configs to a custom directory, please visit the [File system access](/developers/agent/filesys-access#configs) page.
+      </Warning>
 
       - `/srv/miru/configs/mobility.json`
       - `/home/myapp/configs/communication.yaml`
     </Tab>
     <Tab title="Windows">
-      Examples:
+      <Warning>
+        The Miru Agent ships with out-of-the-box access to `%ProgramData%\Miru\configs`. To deploy configs to a custom directory, please visit the [File system access](/developers/agent/filesys-access#configs) page.
+      </Warning>
 
       - `C:\ProgramData\Miru\configs\mobility.json`
       - `C:\ProgramData\MyApp\configs\communication.yaml`
     </Tab>
+
   </Tabs>
 
 </ParamField>
