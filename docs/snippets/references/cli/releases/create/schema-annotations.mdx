@@ -43,7 +43,7 @@
     On Linux, the Miru Agent ships with out-of-the-box access to `/srv/miru`. To deploy configs to a custom directory, please visit the [File system access](/developers/agent/filesys-access#configs) page.
   </Warning>
 
- This annotation is optional and defaults to `/srv/miru/configs/{config-type-slug}.{instance-format}`. The default is a Linux path, so schemas for Windows devices must set an explicit path such as `C:\ProgramData\Robot\configs\mobility.json`. 
+ This annotation is optional and defaults to `/srv/miru/configs/{config-type-slug}.{instance-format}`. The default is a Linux path, so schemas for Windows devices must set an explicit path such as `C:\ProgramData\Miru\configs\mobility.json`. 
  
  To share the same schema amongst multiple config instances, declare [instance slots](#param-instance-slots) instead.
 
@@ -69,7 +69,7 @@
 
       - `/srv/miru/configs/mobility.json`
       - `/home/myapp/configs/communication.yaml`
-      - `C:\ProgramData\Robot\configs\mobility.json`
+      - `C:\ProgramData\Miru\configs\mobility.json`
 
 </ParamField>
 
