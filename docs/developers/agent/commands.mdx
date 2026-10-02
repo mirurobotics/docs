@@ -18,7 +18,7 @@ To check the version of the agent, run the following command on the device:
   </Tab>
   <Tab title="Windows">
     ```powershell PowerShell
-    & "$env:ProgramW6432\Miru\Agent\miru-agent.exe" version
+    & "$env:ProgramW6432\Miru\Agent\miru-agent.exe" --version
     ```
   </Tab>
 </Tabs>
@@ -92,7 +92,7 @@ To check the version of the agent, run the following command on the device:
     From PowerShell opened as administrator, tail the most recent log file and watch new entries as they appear. The command follows a single hourly file, so re-run it after the log rotates.
 
     ```powershell PowerShell
-    Get-ChildItem "$env:ProgramData\Miru\logs" | Sort-Object LastWriteTime | Select-Object -Last 1 | Get-Content -Wait -Tail 100
+    Get-ChildItem "$env:ProgramData\Miru\logs" -Filter 'miru.log.*' | Sort-Object LastWriteTime | Select-Object -Last 1 | Get-Content -Wait -Tail 100
     ```
   </Tab>
 </Tabs>
