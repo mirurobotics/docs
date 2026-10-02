@@ -6,8 +6,8 @@ import Install from '/snippets/agent/install/install.mdx';
 import Verify from '/snippets/agent/install/verify.mdx';
 import { Framed } from '/snippets/components/framed.jsx';
 import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+import CmdBreakdownLinux from '/snippets/devices/provision/provision-cmd-breakdown-linux.mdx';
 import CmdBreakdownWindows from '/snippets/devices/provision/provision-cmd-breakdown-windows.mdx';
-import CmdBreakdown from '/snippets/devices/provision/provision-cmd-breakdown.mdx';
 
 <Framed 
   background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg" 
@@ -82,7 +82,7 @@ provisioning_token = client.provisioning_tokens.create()
 
     The command can be broken into the following components:
 
-    <CmdBreakdown />
+    <CmdBreakdownLinux />
   </Tab>
   <Tab title="Windows">
     After retrieving the provisioning token, run the following commands from PowerShell opened with **Run as administrator**. Make sure to replace `<token>` with the actual token.
