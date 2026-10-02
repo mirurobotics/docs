@@ -20,6 +20,10 @@ On Windows, every request must also include a bearer token.
     <Permissions />
   </Tab>
   <Tab title="Windows">
+    <Note>
+      The Device API on Windows requires Miru Agent `v0.11.0` or later.
+    </Note>
+
     The Miru Agent serves API requests over loopback TCP on port `6478` by default. The agent only listens on `127.0.0.1`, so the API is not reachable from other machines. Clients should read the port from the discovery file rather than hard-coding it.
 
     Every request must include a bearer token in the `Authorization` header. The agent generates a new token each time it starts and writes it, along with the port, to the discovery file `C:\ProgramData\Miru\device-api\device-api.json`:
