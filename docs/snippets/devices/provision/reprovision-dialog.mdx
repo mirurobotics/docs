@@ -1,18 +1,28 @@
+import CmdBreakdownWindows from '/snippets/devices/provision/reprovision-cmd-breakdown-windows.mdx';
 import CmdBreakdown from '/snippets/devices/provision/reprovision-cmd-breakdown.mdx';
 
-The dialog will present a pre-authenticated command that invokes the `miru-agent` binary with a short-lived (5 minutes) token to reprovision the device for your workspace.
+The dialog will present a pre-authenticated command that invokes the `miru-agent` binary with a short-lived (5 minutes) token to reprovision the device for your workspace. Select the tab for the device's operating system.
 
 <Frame>
   ![Reprovision Miru Agent Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/reprovision-dialog.png)
 </Frame>
 
-<CmdBreakdown />
+<Tabs>
+  <Tab title="Linux">
+    The command can be broken into the following components:
 
-To reprovision the device, copy the command from the dialog and paste it into the terminal of the machine you want to reprovision.
+    <CmdBreakdown />
 
-<Note>
-  The dashboard generates a Linux command. On Windows, copy the token (the value after `MIRU_PROVISIONING_TOKEN=`) and within 5 minutes run the Windows command from [Windows reprovisioning](/provision-devices/reprovision#windows-reprovisioning) in PowerShell opened as administrator.
-</Note>
+    To reprovision the device, copy the command from the dialog and paste it into the terminal of the machine you want to reprovision.
+  </Tab>
+  <Tab title="Windows">
+    The command can be broken into the following components:
+
+    <CmdBreakdownWindows />
+
+    To reprovision the device, copy the command from the dialog and paste it into PowerShell opened with **Run as administrator** on the machine you want to reprovision. On success, the output includes `Successfully reprovisioned this device as <name>!`.
+  </Tab>
+</Tabs>
 
 <Tip>
   For more information about Miru's authentication model, visit the [agent security](/developers/agent/security) documentation.

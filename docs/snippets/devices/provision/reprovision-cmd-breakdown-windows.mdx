@@ -1,0 +1,5 @@
+- `Stop-Service miru-agent` stops the `miru-agent` service.
+- `$env:MIRU_PROVISIONING_TOKEN = "<token>"` sets the token that authenticates the request.
+- `& "$env:ProgramW6432\Miru\Agent\miru-agent.exe" reprovision` executes the `miru-agent` binary with the `reprovision` command.
+- `Remove-Item Env:MIRU_PROVISIONING_TOKEN` clears the token from the PowerShell session.
+- `Start-Service miru-agent` starts the `miru-agent` service.

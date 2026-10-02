@@ -1,18 +1,28 @@
+import CmdBreakdownWindows from '/snippets/devices/provision/provision-cmd-breakdown-windows.mdx';
 import CmdBreakdown from '/snippets/devices/provision/provision-cmd-breakdown.mdx';
 
-The dialog will present a pre-authenticated command that invokes the `miru-agent` binary with a short-lived token (5 minutes) to provision the device for your workspace
+The dialog will present a pre-authenticated command that invokes the `miru-agent` binary with a short-lived token (5 minutes) to provision the device for your workspace. Select the tab for the device's operating system.
 
 <Frame>
   ![Provision Miru Agent Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/provision-dialog-v2.png)
 </Frame>
 
-<CmdBreakdown />
+<Tabs>
+  <Tab title="Linux">
+    The command can be broken into the following components:
 
-To provision the device, copy the command from the dialog and paste it into the terminal of the machine you want to provision.
+    <CmdBreakdown />
 
-<Note>
-  The dashboard generates a Linux command. On Windows, copy the token (the value after `MIRU_PROVISIONING_TOKEN=`) and within 5 minutes run the Windows command from [provisioning tokens](/provision-devices/provisioning-tokens#provision-the-device) in PowerShell opened as administrator.
-</Note>
+    To provision the device, copy the command from the dialog and paste it into the terminal of the machine you want to provision.
+  </Tab>
+  <Tab title="Windows">
+    The command can be broken into the following components:
+
+    <CmdBreakdownWindows />
+
+    To provision the device, copy the command from the dialog and paste it into PowerShell opened with **Run as administrator** on the machine you want to provision.
+  </Tab>
+</Tabs>
 
 <Tip>
   For more information about Miru's authentication model, visit the [agent security](/developers/agent/security) documentation.
