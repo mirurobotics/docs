@@ -15,7 +15,7 @@ The Device API is currently in beta, signified by the `v0` prefix. There is no e
 
 ## URL format
 
-The Device API uses the URL format `http://localhost/{version}/`, where `{version}` is the breaking change alias for the API version. On Linux, requests are sent over the Unix socket at `/run/miru/miru.sock`. On Windows, requests are sent over loopback TCP, so the URL includes the port: `http://localhost:{port}/{version}/` (see [Authentication](/developers/device-api/authn)).
+The Device API uses the URL format `http://localhost/{version}/`, where `{version}` is the breaking change alias for the API version. On Linux, requests are sent over the Unix socket at `/run/miru/miru.sock`. On Windows, requests are sent over loopback TCP, so the URL uses the loopback address and port: `http://127.0.0.1:{port}/{version}/` (see [Authentication](/developers/device-api/authn)).
 
 Beta releases use breaking change aliases that include the major and minor version numbers (e.g. `v0.2`, `v0.3`, etc.). Stable releases use breaking change aliases that include the major version number only (e.g. `v1`, `v2`, etc.).
 

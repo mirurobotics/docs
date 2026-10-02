@@ -51,7 +51,7 @@ If you use a [Miru Device SDK](/developers/device-api/sdks), the SDK handles the
     ```powershell
     $api = Get-Content "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
     Invoke-RestMethod `
-      -Uri "http://localhost:$($api.port)/v0.2/health" `
+      -Uri "http://127.0.0.1:$($api.port)/v0.2/health" `
       -Headers @{ Authorization = "Bearer $($api.token)" }
     ```
 

@@ -34,7 +34,7 @@ To connect via curl, use the `--no-buffer` flag to ensure events are printed as 
     $api = Get-Content "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
     curl.exe --no-buffer `
       --request GET `
-      --url "http://localhost:$($api.port)/v0.2/events" `
+      --url "http://127.0.0.1:$($api.port)/v0.2/events" `
       --header "Authorization: Bearer $($api.token)"
     ```
   </Tab>
@@ -167,7 +167,7 @@ Pass the cursor in one of two ways:
         $api = Get-Content "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
         curl.exe --no-buffer `
           --request GET `
-          --url "http://localhost:$($api.port)/v0.2/events?after=42" `
+          --url "http://127.0.0.1:$($api.port)/v0.2/events?after=42" `
           --header "Authorization: Bearer $($api.token)"
         ```
       </Tab>
@@ -190,7 +190,7 @@ Pass the cursor in one of two ways:
         $api = Get-Content "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
         curl.exe --no-buffer `
           --request GET `
-          --url "http://localhost:$($api.port)/v0.2/events" `
+          --url "http://127.0.0.1:$($api.port)/v0.2/events" `
           --header "Authorization: Bearer $($api.token)" `
           --header "Last-Event-ID: 42"
         ```
@@ -217,7 +217,7 @@ To subscribe to specific event types, pass a comma-separated list via the `types
     $api = Get-Content "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
     curl.exe --no-buffer `
       --request GET `
-      --url "http://localhost:$($api.port)/v0.2/events?types=deployment.deployed,deployment.removed" `
+      --url "http://127.0.0.1:$($api.port)/v0.2/events?types=deployment.deployed,deployment.removed" `
       --header "Authorization: Bearer $($api.token)"
     ```
   </Tab>
