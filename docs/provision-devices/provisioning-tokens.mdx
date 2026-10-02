@@ -6,6 +6,7 @@ import AptInstall from '/snippets/agent/install/apt.mdx';
 import Verify from '/snippets/agent/install/verify.mdx';
 import { Framed } from '/snippets/components/framed.jsx';
 import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
+import CmdBreakdownWindows from '/snippets/devices/provision/provision-cmd-breakdown-windows.mdx';
 import CmdBreakdown from '/snippets/devices/provision/provision-cmd-breakdown.mdx';
 
 <Framed 
@@ -101,7 +102,11 @@ provisioning_token = client.provisioning_tokens.create()
     Remove-Item Env:MIRU_PROVISIONING_TOKEN
     ```
 
-    The agent reads the token only from the `MIRU_PROVISIONING_TOKEN` environment variable, which the last command clears. Administrator rights are required because `%ProgramData%\Miru` is restricted to SYSTEM and Administrators.
+    The commands can be broken into the following components:
+
+    <CmdBreakdownWindows />
+
+    Administrator rights are required because `%ProgramData%\Miru` is restricted to Local System, Administrators, and the agent's service account.
   </Tab>
 </Tabs>
 
