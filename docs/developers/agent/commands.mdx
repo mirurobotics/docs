@@ -17,7 +17,7 @@ To check the version of the agent, run the following command on the device:
     ```
   </Tab>
   <Tab title="Windows">
-    ```powershell
+    ```powershell PowerShell
     & "$env:ProgramW6432\Miru\Agent\miru-agent.exe" version
     ```
   </Tab>
@@ -91,7 +91,7 @@ To check the version of the agent, run the following command on the device:
 
     From PowerShell opened as administrator, tail the most recent log file and watch new entries as they appear. The command follows a single hourly file, so re-run it after the log rotates.
 
-    ```powershell
+    ```powershell PowerShell
     Get-ChildItem "$env:ProgramData\Miru\logs" | Sort-Object LastWriteTime | Select-Object -Last 1 | Get-Content -Wait -Tail 100
     ```
   </Tab>
@@ -109,9 +109,7 @@ To check the version of the agent, run the following command on the device:
     - `/lib/systemd/system/miru.socket`
   </Tab>
   <Tab title="Windows">
-    The Miru Agent runs as a Windows service named `miru-agent` (display name "Miru Agent"). The service runs as the virtual account `NT SERVICE\miru-agent`, starts automatically on boot, and restarts 10 seconds after each of its first three failures. The failure count resets after one day.
-
-    Manage the service from PowerShell opened as administrator.
+    The Miru Agent runs as a Windows service named `miru-agent` (display name "Miru Agent"). The service runs as the virtual account `NT SERVICE\miru-agent`.
   </Tab>
 </Tabs>
 
@@ -125,29 +123,12 @@ To check the version of the agent, run the following command on the device:
     systemctl status miru
     ```
 
-    Depending on the state of the agent, you will see outputs similar to the following:
-
-    <Tabs >
-      <Tab title="Active">
-        The agent is running as expected. 
-
-        <Frame>
-          ![Systemd Status Running](https://assets.mirurobotics.com/docs/v04/images/agent/commands/systemctl-status:running.png)
-        </Frame>
-      </Tab>
-      <Tab title="Inactive">
-        The agent is not running. Unless you've manually stopped the agent, this should not happen.
-
-        <Frame>
-          ![Systemd Status Inactive](https://assets.mirurobotics.com/docs/v04/images/agent/commands/systemctl-status:dead.png)
-        </Frame>
-      </Tab>
-    </Tabs>
+    The service is `active (running)` when the agent is running as expected and `inactive (dead)` when it is not running.
   </Tab>
   <Tab title="Windows">
     To check the status of the agent, use `Get-Service`.
 
-    ```powershell
+    ```powershell PowerShell
     Get-Service miru-agent
     ```
 
@@ -166,7 +147,7 @@ Restarting the agent stops and starts the agent, giving it a fresh start. If you
     ```
   </Tab>
   <Tab title="Windows">
-    ```powershell
+    ```powershell PowerShell
     Restart-Service miru-agent
     ```
   </Tab>
@@ -189,11 +170,9 @@ Note that stopping the agent will prevent any new deployments from reaching the 
     ```
   </Tab>
   <Tab title="Windows">
-    ```powershell
+    ```powershell PowerShell
     Stop-Service miru-agent
     ```
-
-    Stopping the service can take up to 30 seconds.
   </Tab>
 </Tabs>
 
@@ -213,7 +192,7 @@ Note that stopping the agent will prevent any new deployments from reaching the 
     ```
   </Tab>
   <Tab title="Windows">
-    ```powershell
+    ```powershell PowerShell
     Start-Service miru-agent
     ```
   </Tab>
@@ -236,7 +215,7 @@ This does not immediately [stop](/developers/agent/commands#stop) the agent—it
     ```
   </Tab>
   <Tab title="Windows">
-    ```powershell
+    ```powershell PowerShell
     Set-Service miru-agent -StartupType Disabled
     ```
   </Tab>
@@ -255,7 +234,7 @@ Enabling the agent will not immediately start it—it will still need to be [sta
     ```
   </Tab>
   <Tab title="Windows">
-    ```powershell
+    ```powershell PowerShell
     Set-Service miru-agent -StartupType Automatic
     ```
   </Tab>
@@ -274,7 +253,7 @@ To check whether the machine is provisioned, run `provision --check`.
   <Tab title="Windows">
     From PowerShell opened as administrator:
 
-    ```powershell
+    ```powershell PowerShell
     & "$env:ProgramW6432\Miru\Agent\miru-agent.exe" provision --check
     ```
   </Tab>
