@@ -2,7 +2,7 @@
 title: "Provisioning tokens"
 ---
 
-import AptInstall from '/snippets/agent/install/apt.mdx';
+import Install from '/snippets/agent/install/install.mdx';
 import Verify from '/snippets/agent/install/verify.mdx';
 import { Framed } from '/snippets/components/framed.jsx';
 import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
@@ -31,16 +31,7 @@ Unlike the dashboard, which requires manual interaction with the web interface f
 
 Before provisioning a device via provisioning tokens, you must first install the `miru-agent` package onto the target machine.
 
-<Tabs>
-  <Tab title="Linux">
-    The recommended method is via `apt` (shown below). However, you can also manually download the package from GitHub. Visit the [agent installation](/developers/agent/install) documentation for more information.
-
-    <AptInstall />
-  </Tab>
-  <Tab title="Windows">
-    Install the MSI installer by following the [agent installation](/developers/agent/install#install) documentation.
-  </Tab>
-</Tabs>
+<Install />
 
 ## Create a provisioning token
 
@@ -121,7 +112,7 @@ If the machine you're provisioning on has already been provisioned, the provisio
 
 To reassociate the machine with an existing Miru device, follow the [reprovisioning](/provision-devices/reprovision) documentation.
 
-To provision the machine as a brand new Miru device (never been provisioned in Miru before), first [uninstall](/developers/agent/install#uninstall) the `miru-agent` package before continuing with the provisioning process. On Windows, also delete `%ProgramData%\Miru` after uninstalling, as described in the [uninstall](/developers/agent/install#uninstall) instructions.
+To provision the machine as a brand new Miru device (never been provisioned in Miru before), first [uninstall](/developers/agent/install#uninstall) the `miru-agent` package before continuing with the provisioning process.
 
 ### Arguments
 
@@ -132,10 +123,6 @@ The provision command supports the following parameters to tune your installatio
 
   Default: `hostname`
 </ParamField>
-
-<Tip>
-  To check whether a machine is provisioned, run `provision --check`. It exits with `0` if provisioned, `3` if not provisioned, and `1` on error. See [provisioning status](/developers/agent/commands#provisioning-status).
-</Tip>
 
 ## Verify installation
 
