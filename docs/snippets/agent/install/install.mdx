@@ -29,44 +29,44 @@ import GithubDownload from '/snippets/agent/install/github-download.mdx';
     </Tabs>
   </Tab>
   <Tab title="Windows">
-    The Miru Agent for Windows is distributed as an MSI installer.
+    The Miru Agent for Windows is distributed as an MSI installer. 
+    
+    Windows is only supported for Miru Agent [v0.11.0](/changelog/agent#v0-11-0) and later. Earlier releases do not include an MSI installer.
 
-    <Warning>
-      Windows is supported in Miru Agent `v0.11.0` and later. Earlier releases do not include an MSI installer.
-    </Warning>
+    <Tabs>
+      <Tab title="Manual">
+        <Steps>
+          <Step title="Download">
 
-    <Steps>
-      <Step title="Download">
+            Find your desired release version from the [releases page](https://github.com/mirurobotics/agent/releases) on GitHub, expand the **Assets** section, and download `miru-agent-<version>.msi`.
+          </Step>
+          <Step title="Install">
 
-        Find your desired release version from the [releases page](https://github.com/mirurobotics/agent/releases) on GitHub, expand the **Assets** section, and download `miru-agent-<version>.msi`.
-      </Step>
-      <Step title="Install">
+            Double-click the MSI in your Downloads folder and follow the installer. It registers and starts the `miru-agent` Windows service.
+          </Step>
+        </Steps>
+      </Tab>
+      <Tab title="Programmatic">
+        <Steps>
+          <Step title="Download">
 
-        Open PowerShell with **Run as administrator** and run the installer, replacing the paths with your own.
+            Find your desired release version from the [releases page](https://github.com/mirurobotics/agent/releases) on GitHub, expand the **Assets** section, and download `miru-agent-<version>.msi`.
+          </Step>
+          <Step title="Install">
 
-        ```powershell
-        $msi = "C:\path\to\miru-agent-<version>.msi"
-        $log = "C:\path\to\miru-agent-install.log"
-        $p = Start-Process msiexec.exe -ArgumentList '/i',"`"$msi`"",'/qn','/norestart','/l*v',"`"$log`"" -Wait -PassThru
-        $p.ExitCode
-        ```
+            Open PowerShell with **Run as administrator** and run the installer, replacing the paths with your own.
 
-        An exit code of `0` means the agent is installed. An exit code of `3010` means the agent is installed and Windows must be restarted. For any other exit code, check the log file.
+            ```powershell
+            msiexec /i "C:\path\to\miru-agent-<version>.msi" `
+              /qn `
+              /norestart `
+              /l*v "C:\path\to\miru-agent-install.log"
+            ```
 
-        Double-clicking the MSI runs the interactive installer instead.
-
-        The installer registers and starts the `miru-agent` Windows service.
-      </Step>
-      <Step title="Verify">
-
-        Confirm the service is running.
-
-        ```powershell
-        Get-Service miru-agent
-        ```
-
-        The `Status` column shows `Running`.
-      </Step>
-    </Steps>
+            `$LASTEXITCODE` is `0` when the agent is installed. `3010` means the agent is installed and Windows must be restarted. For any other exit code, check the log file.
+          </Step>
+        </Steps>
+      </Tab>
+    </Tabs>
   </Tab>
 </Tabs>
