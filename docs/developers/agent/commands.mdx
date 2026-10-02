@@ -89,23 +89,11 @@ To check the version of the agent, run the following command on the device:
 
     **Tail in real-time**
 
-    From PowerShell opened as administrator, tail the most recent log file and watch new entries as they appear. The command follows a single hourly file, so re-run it after the log rotates, or run the agent in the foreground (below) for continuous output.
+    From PowerShell opened as administrator, tail the most recent log file and watch new entries as they appear. The command follows a single hourly file, so re-run it after the log rotates.
 
     ```powershell
     Get-ChildItem "$env:ProgramData\Miru\logs" | Sort-Object LastWriteTime | Select-Object -Last 1 | Get-Content -Wait -Tail 100
     ```
-
-    **Run in the foreground**
-
-    To print logs to the terminal, stop the service and run the agent in the foreground from PowerShell opened as administrator. Press Ctrl-C to stop the agent, then start the service again.
-
-    ```powershell
-    Stop-Service miru-agent
-    & "$env:ProgramW6432\Miru\Agent\miru-agent.exe" --console
-    Start-Service miru-agent
-    ```
-
-    To override the log level in the foreground, set the `RUST_LOG` environment variable (for example, `$env:RUST_LOG = "debug"`) before running the agent.
   </Tab>
 </Tabs>
 
@@ -121,7 +109,7 @@ To check the version of the agent, run the following command on the device:
     - `/lib/systemd/system/miru.socket`
   </Tab>
   <Tab title="Windows">
-    The Miru Agent runs as a Windows service named `miru-agent` (display name "Miru Agent"). The service runs as LocalSystem, starts automatically on boot, and restarts 10 seconds after each of its first three failures. The failure count resets after one day.
+    The Miru Agent runs as a Windows service named `miru-agent` (display name "Miru Agent"). The service runs as the virtual account `NT SERVICE\miru-agent`, starts automatically on boot, and restarts 10 seconds after each of its first three failures. The failure count resets after one day.
 
     Manage the service from PowerShell opened as administrator.
   </Tab>

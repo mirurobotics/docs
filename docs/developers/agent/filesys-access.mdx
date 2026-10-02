@@ -160,13 +160,36 @@ entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case
 
 ## Windows
 
-On Windows, the agent runs as the LocalSystem account and can read and write most paths
-without additional configuration. To grant access explicitly, use `icacls`. For example,
-to give the agent modify access to a config directory and everything inside it:
+On Windows, the agent runs as the virtual account `NT SERVICE\miru-agent`, which has no
+administrator rights. The installer grants it access to `%ProgramData%\Miru` only, which
+includes the default config directory `%ProgramData%\Miru\configs`. Any other path the
+agent uses must be granted to it explicitly with `icacls`, from PowerShell opened as
+administrator after the agent is installed.
+
+**Configs** — to deploy config instances outside `%ProgramData%\Miru\configs`, grant the
+agent modify access to the target directory. Modify access is required because a deploy
+creates a temporary folder and a backup file next to the target.
 
 ```powershell
-icacls "C:\ProgramData\Robot\configs" /grant "SYSTEM:(OI)(CI)M"
+icacls "C:\robot\configs" /grant "NT SERVICE\miru-agent:(OI)(CI)M"
 ```
+
+**Data uploads** — grant the agent read access to each source directory, plus delete
+access if the file rule has a `retention` block.
+
+```powershell
+# Read only
+icacls "D:\robot\logs" /grant "NT SERVICE\miru-agent:(OI)(CI)RX"
+
+# Read and delete
+icacls "D:\robot\logs" /grant "NT SERVICE\miru-agent:(OI)(CI)(RX,D)"
+```
+
+<Note>
+  The `NT SERVICE\miru-agent` account name resolves only once the agent is installed. To
+  grant access before installing, use the service SID instead: `sc.exe showsid miru-agent`
+  prints it, and `icacls` accepts it as `*<SID>`.
+</Note>
 
 ## Testing access
 
