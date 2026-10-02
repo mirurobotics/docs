@@ -60,7 +60,7 @@ import GithubDownload from '/snippets/agent/install/github-download.mdx';
             msiexec /i "C:\path\to\miru-agent-<version>.msi" `
               /qn `
               /norestart `
-              /l*v "C:\path\to\miru-agent-install.log"
+              /l*v "C:\path\to\miru-agent-install.log" | Out-Null
             ```
 
             `$LASTEXITCODE` is `0` when the agent is installed. `3010` means the agent is installed and Windows must be restarted. For any other exit code, check the log file.
