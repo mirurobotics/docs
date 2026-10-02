@@ -6,9 +6,14 @@ import Verify from '/snippets/agent/install/verify.mdx';
 
 If you already manage hosts with Ansible, use the official [`mirurobotics.agent`](https://galaxy.ansible.com/ui/repo/published/mirurobotics/agent/) collection instead of minting [provisioning tokens](/provision-devices/provisioning-tokens) yourself. One play installs the agent and registers each host.
 
-<Note>
-  This method supports Linux only.
-</Note>
+## Supported platforms and versions
+
+Installing the Miru Agent with the Ansible collection requires:
+
+- Miru Agent `v0.10.2` and above
+- Linux machine
+
+If you are installing a Miru Agent release prior to `v0.10.2` or are using a Windows machine, please use a different [provisioning method](/provision-devices/overview).
 
 ## What it does
 
