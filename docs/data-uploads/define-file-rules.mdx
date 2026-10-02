@@ -45,11 +45,6 @@ retention:
   require_upload: true
 ```
 
-<Info>
-  For Windows devices, wrap the `glob` path in single quotes to prevent YAML from treating the backslashes as escapes.
-</Info>
-
-
 Both `upload` and `retention` are optional and independent. A rule with only `retention` uploads nothing and simply reclaims disk on the device:
 
 ```yaml scratch-cleanup.yaml
