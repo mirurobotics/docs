@@ -57,7 +57,7 @@ If a token refresh fails due to a transient network issue, the agent retries aut
   <Tab title="Windows">
     The agent's identity is bound to the RSA key pair generated on-device during [provisioning](/provision-devices/overview). Currently, these credentials are protected at rest through file system permissions.
 
-    All credential files are stored under `%ProgramData%\Miru\auth\`. The directory's access control list grants access only to SYSTEM and Administrators. The private key never leaves the device—it is used locally to sign token requests but is never transmitted over the network.
+    All credential files are stored under `%ProgramData%\Miru\auth\`. The directory's access control list grants access only to Local System, Administrators, and the agent's service account. The private key never leaves the device—it is used locally to sign token requests but is never transmitted over the network.
   </Tab>
 </Tabs>
 
@@ -117,7 +117,7 @@ The agent can only create Unix domain sockets and IPv4/IPv6 connections. All oth
 
 </Dropdown>
 
-On Windows, the agent runs as a Windows service under the LocalSystem account. The systemd hardening directives above apply to Linux only and have no Windows equivalent.
+On Windows, the agent runs as a Windows service under the virtual account `NT SERVICE\miru-agent`. The account has no administrator rights and holds only the bypass traverse checking privilege, so it cannot impersonate other accounts. It can only access `%ProgramData%\Miru` and the folders explicitly granted to it (see [File system access](/developers/agent/filesys-access#windows)). The systemd hardening directives above apply to Linux only.
 
 ## Transport security
 

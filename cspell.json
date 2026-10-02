@@ -71,6 +71,7 @@
     "rustls",
     "sandboxing",
     "setfacl",
+    "showsid",
     "signBlob",
     "signable",
     "subfolders",
