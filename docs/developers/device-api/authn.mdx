@@ -3,8 +3,77 @@ title: "Authentication"
 ---
 
 import Permissions from '/snippets/agent/permissions.mdx';
-import LinuxOnly from '/snippets/device-api/linux-only.mdx';
 
-<LinuxOnly />
+## Connecting
 
-<Permissions />
+The transport the Device API is served over depends on the device's operating system:
+
+| Operating system | Transport | Base URL |
+|------------------|-----------|----------|
+| Linux | Unix socket at `/run/miru/miru.sock` | `http://localhost/{version}/` |
+| Windows | Loopback TCP (port `6478` by default) | `http://localhost:{port}/{version}/` |
+
+On Windows, every request must also include a bearer token.
+
+<Tabs>
+  <Tab title="Linux">
+    <Permissions />
+  </Tab>
+  <Tab title="Windows">
+    The Miru Agent serves API requests over loopback TCP on port `6478` by default. The agent only listens on `127.0.0.1`, so the API is not reachable from other machines. Clients should read the port from the discovery file rather than hard-coding it.
+
+    Every request must include a bearer token in the `Authorization` header. The agent generates a new token each time it starts and writes it, along with the port, to the discovery file `C:\ProgramData\Miru\device-api\device-api.json`:
+
+    ```json
+    {
+      "port": 6478,
+      "token": "<token>"
+    }
+    ```
+
+    To call the API, read the port and token from the discovery file and pass the token as a bearer token:
+
+    ```powershell
+    $api = Get-Content "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
+    Invoke-RestMethod `
+      -Uri "http://localhost:$($api.port)/v0.2/health" `
+      -Headers @{ Authorization = "Bearer $($api.token)" }
+    ```
+
+    Requests without a valid token are rejected with `401 Unauthorized`. Since the token changes whenever the agent restarts, clients should re-read the discovery file after receiving a `401` and retry. The discovery file only exists while the agent is serving the API, so a missing file means the agent is not running.
+
+    <Note>
+      The agent also rejects requests whose `Host` header is not `localhost:<port>` or `127.0.0.1:<port>`, and requests with an `Origin` header from any other origin. This prevents web pages open in a browser on the device from calling the API.
+    </Note>
+
+    ### Granting access
+
+    Access to the discovery file, and therefore to the API, is restricted to SYSTEM, Administrators, and members of the local `Miru Agent Users` group, which the installer creates empty.
+
+    To grant an application access, add the user or service account it runs as to the `Miru Agent Users` group from an elevated PowerShell session:
+
+    ```powershell
+    Add-LocalGroupMember -Group "Miru Agent Users" -Member "<username>"
+    ```
+
+    For an application that runs as a Windows service, add its service account:
+
+    ```powershell
+    Add-LocalGroupMember -Group "Miru Agent Users" -Member "NT SERVICE\<service-name>"
+    ```
+
+    <Warning>
+      Group changes take effect the next time the user signs in, or the next time the service starts. Sign out and back in, or restart the application's service, after adding it to the group.
+    </Warning>
+
+    <Warning>
+      Do not add broad groups such as `Users`, `Authenticated Users`, or `Everyone` to `Miru Agent Users`. Any account that can read the discovery file can call every Device API endpoint.
+    </Warning>
+
+    To revoke access, remove the account from the group:
+
+    ```powershell
+    Remove-LocalGroupMember -Group "Miru Agent Users" -Member "<username>"
+    ```
+  </Tab>
+</Tabs>
