@@ -68,14 +68,30 @@ literally; on Windows, `\` is a path separator. To match a literal
 
 **Examples**
 
-| Pattern | Matches |
-| --- | --- |
-| `/var/log/robot/*.log` | `.log` files directly inside `/var/log/robot` |
-| `/var/log/robot/*/*.log` | `.log` files exactly one directory below `/var/log/robot` |
-| `/var/log/robot/**/*.log` | `.log` files in `/var/log/robot` and all of its subdirectories |
-| `/var/log/robot/**/*` | Every file in `/var/log/robot` and all of its subdirectories |
-| `/var/log/robot/run-[0-9].log` | `run-0.log` through `run-9.log` in `/var/log/robot` |
-| `C:\ProgramData\App\logs\*.log` | `.log` files directly inside `C:\ProgramData\App\logs` (Windows) |
+<Tabs>
+  <Tab title="Linux">
+
+    | Pattern | Matches |
+    | --- | --- |
+    | `/var/log/robot/*.log` | `.log` files directly inside `/var/log/robot` |
+    | `/var/log/robot/*/*.log` | `.log` files exactly one directory below `/var/log/robot` |
+    | `/var/log/robot/**/*.log` | `.log` files in `/var/log/robot` and all of its subdirectories |
+    | `/var/log/robot/**/*` | Every file in `/var/log/robot` and all of its subdirectories |
+    | `/var/log/robot/run-[0-9].log` | `run-0.log` through `run-9.log` in `/var/log/robot` |
+
+  </Tab>
+  <Tab title="Windows">
+
+    | Pattern | Matches |
+    | --- | --- |
+    | `C:\ProgramData\App\logs\*.log` | `.log` files directly inside `C:\ProgramData\App\logs` |
+    | `C:\ProgramData\App\logs\*\*.log` | `.log` files exactly one directory below `C:\ProgramData\App\logs` |
+    | `C:\ProgramData\App\logs\**\*.log` | `.log` files in `C:\ProgramData\App\logs` and all of its subdirectories |
+    | `C:\ProgramData\App\logs\**\*` | Every file in `C:\ProgramData\App\logs` and all of its subdirectories |
+    | `C:\ProgramData\App\logs\run-[0-9].log` | `run-0.log` through `run-9.log` in `C:\ProgramData\App\logs` |
+
+  </Tab>
+</Tabs>
 
 **Matching behavior**
 
