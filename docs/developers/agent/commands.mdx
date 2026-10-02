@@ -29,7 +29,7 @@ To check the version of the agent, run the following command on the device:
   <Tab title="Linux">
     The Miru Agent logs are accessible via [`journalctl`](https://www.freedesktop.org/software/systemd/man/journalctl.html), the standard tool for viewing `systemd` service logs.
 
-    ### View all
+    **View all**
 
     By default, `journalctl` truncates each line's output to the size of the terminal window. We recommend using the `--no-pager` flag to view the full log output for each line.
 
@@ -37,7 +37,7 @@ To check the version of the agent, run the following command on the device:
     journalctl -u miru --no-pager
     ```
 
-    ### Tail in real-time
+    **Tail in real-time**
 
     Tail the logs and watch new entries as they appear.
 
@@ -45,7 +45,7 @@ To check the version of the agent, run the following command on the device:
     journalctl -u miru -f --no-pager
     ```
 
-    ### Recent logs
+    **Recent logs**
 
     View only the most recent log entries (e.g., the last 100 lines).
 
@@ -53,7 +53,7 @@ To check the version of the agent, run the following command on the device:
     journalctl -u miru -n 100 --no-pager
     ```
 
-    ### Filter by time
+    **Filter by time**
 
     View logs from a specific time period.
 
@@ -68,7 +68,7 @@ To check the version of the agent, run the following command on the device:
     journalctl -u miru --since "2024-01-15 09:00:00" --until "2024-01-15 12:00:00" --no-pager
     ```
 
-    ### Filter by priority
+    **Filter by priority**
 
     View only logs of a specific priority level (e.g., errors).
 
