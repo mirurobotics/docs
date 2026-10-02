@@ -18,7 +18,7 @@
     configuration required.
   </Tab>
   <Tab title="Windows">
-    The agent runs as a Windows service under the virtual account `NT SERVICE\miru-agent`, the Windows counterpart of the Linux `miru` user. The account has no administrator rights.
+    The agent runs as a Windows service under the virtual account `NT SERVICE\miru-agent`. The account has no administrator rights.
 
     By default, the installer creates the following directories:
 
@@ -30,6 +30,8 @@
 
     The first two directories are only for internal use by the agent and are restricted to Local System, Administrators, and the agent's service account.
 
-    The third directory is the default location for deploying config instances—writing to any path inside `%ProgramData%\Miru\configs` is supported out-of-the-box, and members of the local `Miru Agent Users` group can read the deployed files. Windows devices have no default config instance path, so each [config schema](/cfg-mgmt/concepts/schemas/annotations) must set an absolute path, such as `C:\ProgramData\Miru\configs\mobility.json`.
+    The third directory is the default location for deploying config instances—writing to any path inside `%ProgramData%\Miru\configs` is supported out-of-the-box. 
+    
+    For security, only members of the local `Miru Agent Users` group can read from `%ProgramData%\Miru\configs`. 
   </Tab>
 </Tabs>
