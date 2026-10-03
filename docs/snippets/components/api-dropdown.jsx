@@ -20,22 +20,25 @@ export const Dropdown = ({
                 <span className="font-bold text-gray-100 text-md">
                     {title}
                 </span>
-                <svg
-                    className={cn(
-                        "transition-transform duration-200 opacity-50 flex-shrink-0",
-                        isOpen && 'rotate-90'
-                    )}
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                >
-                    <polyline points="6 4 10 8 6 12"></polyline>
-                </svg>
+                {/* Clips the rotating chevron so it never overflows the page's scroll container. */}
+                <span className="flex flex-shrink-0 w-4 h-4 overflow-hidden">
+                    <svg
+                        className={cn(
+                            "transition-transform duration-200 opacity-50 flex-shrink-0",
+                            isOpen && 'rotate-90'
+                        )}
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
+                        <polyline points="6 4 10 8 6 12"></polyline>
+                    </svg>
+                </span>
             </button>
 
             {isOpen && (
