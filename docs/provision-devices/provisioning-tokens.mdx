@@ -88,8 +88,8 @@ provisioning_token = client.provisioning_tokens.create()
     After retrieving the provisioning token, run the following commands from PowerShell opened with **Run as administrator**. Make sure to replace `<token>` with the actual token.
 
     ```powershell
-    $env:MIRU_PROVISIONING_TOKEN = "<token>"
-    & "$env:ProgramW6432\Miru\Agent\miru-agent.exe" provision
+    $env:MIRU_PROVISIONING_TOKEN = "<token>"; `
+    & "$env:ProgramW6432\Miru\Agent\miru-agent.exe" provision; `
     Remove-Item Env:MIRU_PROVISIONING_TOKEN
     ```
 

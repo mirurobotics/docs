@@ -25,8 +25,8 @@ import RemoveApt from '/snippets/apt/remove.mdx';
         Uninstall the agent from PowerShell opened with **Run as administrator**, using the MSI of the installed version.
 
         ```powershell
-        $msi = "C:\path\to\miru-agent-<version>.msi"
-        $p = Start-Process msiexec.exe -ArgumentList '/x',"`"$msi`"",'/qn','/norestart' -Wait -PassThru
+        $msi = "C:\path\to\miru-agent-<version>.msi"; `
+        $p = Start-Process msiexec.exe -ArgumentList '/x',"`"$msi`"",'/qn','/norestart' -Wait -PassThru; `
         $p.ExitCode
         ```
 
