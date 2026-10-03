@@ -31,7 +31,7 @@ To connect via curl, use the `--no-buffer` flag to ensure events are printed as 
   </Tab>
   <Tab title="Windows">
     ```powershell PowerShell
-    $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
+    $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
     curl.exe --no-buffer `
       --request GET `
       --url "http://127.0.0.1:$($api.port)/v0.2/events" `
@@ -164,7 +164,7 @@ Pass the cursor in one of two ways:
       </Tab>
       <Tab title="Windows">
         ```powershell PowerShell
-        $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
+        $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
         curl.exe --no-buffer `
           --request GET `
           --url "http://127.0.0.1:$($api.port)/v0.2/events?after=42" `
@@ -187,7 +187,7 @@ Pass the cursor in one of two ways:
       </Tab>
       <Tab title="Windows">
         ```powershell PowerShell
-        $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
+        $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
         curl.exe --no-buffer `
           --request GET `
           --url "http://127.0.0.1:$($api.port)/v0.2/events" `
@@ -214,7 +214,7 @@ To subscribe to specific event types, pass a comma-separated list via the `types
   </Tab>
   <Tab title="Windows">
     ```powershell PowerShell
-    $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
+    $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
     curl.exe --no-buffer `
       --request GET `
       --url "http://127.0.0.1:$($api.port)/v0.2/events?types=deployment.deployed,deployment.removed" `
