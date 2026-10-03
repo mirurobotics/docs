@@ -56,6 +56,9 @@ fi
 # add Unix socket curl examples to the device-api.yaml file
 python3 add_unix_socket_curl.py "$DEVICE_API_FILE"
 
+# add Windows PowerShell examples to the device-api.yaml file
+python3 add_powershell_samples.py "$DEVICE_API_FILE"
+
 # insert the scopes into the platform-api.yaml file
 python3 inject_scopes.py "$PLATFORM_API_FILE"
 
