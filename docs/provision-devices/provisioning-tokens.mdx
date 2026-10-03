@@ -52,7 +52,7 @@ export MIRU_API_KEY=<api-key>
 
 curl --request POST \
   --url https://api.mirurobotics.com/beta/provisioning_tokens \
-  --header 'Miru-Version: 2026-05-06.rainier' \
+  --header 'Miru-Version: 2026-08-17.everglades' \
   --header "X-API-Key: $MIRU_API_KEY"
 ```
 
@@ -60,7 +60,7 @@ curl --request POST \
 $env:MIRU_API_KEY = "<api-key>"; `
 $provisioningToken = Invoke-RestMethod -Method Post `
   -Uri "https://api.mirurobotics.com/beta/provisioning_tokens" `
-  -Headers @{ "Miru-Version" = "2026-05-06.rainier"; "X-API-Key" = $env:MIRU_API_KEY }; `
+  -Headers @{ "Miru-Version" = "2026-08-17.everglades"; "X-API-Key" = $env:MIRU_API_KEY }; `
 $provisioningToken.token
 ```
 
