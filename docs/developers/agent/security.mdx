@@ -43,14 +43,23 @@ If a token refresh fails due to a transient network issue, the agent retries aut
 
 ### Credential storage
 
-The agent's identity is bound to the RSA key pair generated on-device during [provisioning](/provision-devices/overview). Currently, these credentials are protected at rest through file system permissions:
+<Tabs>
+  <Tab title="Linux">
+    The agent's identity is bound to the RSA key pair generated on-device during [provisioning](/provision-devices/overview). Currently, these credentials are protected at rest through file system permissions:
 
-| File | Permissions | Access |
-|------|------------|--------|
-| Private key | `0600` | Owner (miru) read/write only |
-| Public key | `0640` | Owner read/write, group read-only |
+    | File | Permissions | Access |
+    |------|------------|--------|
+    | Private key | `0600` | Owner (miru) read/write only |
+    | Public key | `0640` | Owner read/write, group read-only |
 
-All credential files are stored under `/var/lib/miru/auth/`, owned by `miru:miru`. The private key never leaves the device—it is used locally to sign token requests but is never transmitted over the network.
+    All credential files are stored under `/var/lib/miru/auth/`, owned by `miru:miru`. The private key never leaves the device—it is used locally to sign token requests but is never transmitted over the network.
+  </Tab>
+  <Tab title="Windows">
+    The agent's identity is bound to the RSA key pair generated on-device during [provisioning](/provision-devices/overview). Currently, these credentials are protected at rest through file system permissions.
+
+    All credential files are stored under `%ProgramData%\Miru\auth\`. The directory's access control list grants access only to Local System, Administrators, and the agent's service account. The private key never leaves the device—it is used locally to sign token requests but is never transmitted over the network.
+  </Tab>
+</Tabs>
 
 Sensitive values are handled in memory using a secrecy library that minimizes exposure and zeroizes data when it is no longer needed. Tokens are redacted in log output to prevent accidental credential leakage through logs.
 
@@ -74,39 +83,71 @@ This prevents lateral access between devices. Even if two devices run the same a
 
 ## Process sandboxing
 
-The agent runs as a [systemd](https://en.wikipedia.org/wiki/Systemd) service with extensive hardening directives that restrict what the process can access. 
+<Tabs>
+  <Tab title="Linux">
+    The agent runs as a [systemd](https://en.wikipedia.org/wiki/Systemd) service with extensive hardening directives that restrict what the process can access.
 
-<Dropdown title="Dedicated user">
+    <Dropdown title="Dedicated user">
 
-The agent runs as an unprivileged `miru` system user and group. The user has no login shell (`/bin/false`) and cannot be used for interactive access.
+    The agent runs as an unprivileged `miru` system user and group. The user has no login shell (`/bin/false`) and cannot be used for interactive access.
 
-You can find the agent's service unit file on [GitHub](https://github.com/mirurobotics/agent/blob/main/build/debian/miru.service) in the agent repository.
+    You can find the agent's service unit file on [GitHub](https://github.com/mirurobotics/agent/blob/main/build/debian/miru.service) in the agent repository.
 
-</Dropdown>
+    </Dropdown>
 
-<Dropdown title="No privilege escalation">
+    <Dropdown title="No privilege escalation">
 
-`NoNewPrivileges` is enabled, preventing the process from gaining additional privileges through setuid binaries or other mechanisms.
+    `NoNewPrivileges` is enabled, preventing the process from gaining additional privileges through setuid binaries or other mechanisms.
 
-</Dropdown>
+    </Dropdown>
 
-<Dropdown title="Kernel isolation">
+    <Dropdown title="Kernel isolation">
 
-The agent cannot load kernel modules, modify kernel tunables (`/proc/sys`, `/sys`), or alter control groups. Other processes are hidden from the agent's view of `/proc`.
+    The agent cannot load kernel modules, modify kernel tunables (`/proc/sys`, `/sys`), or alter control groups. Other processes are hidden from the agent's view of `/proc`.
 
-</Dropdown>
+    </Dropdown>
 
-<Dropdown title="Device restrictions">
+    <Dropdown title="Device restrictions">
 
-Access to `/dev` is limited to essential pseudo-devices. Physical hardware devices are inaccessible.
+    Access to `/dev` is limited to essential pseudo-devices. Physical hardware devices are inaccessible.
 
-</Dropdown>
+    </Dropdown>
 
-<Dropdown title="Network restrictions">
+    <Dropdown title="Network restrictions">
 
-The agent can only create Unix domain sockets and IPv4/IPv6 connections. All other socket types (Netlink, packet sockets, etc.) are blocked.
+    The agent can only create Unix domain sockets and IPv4/IPv6 connections. All other socket types (Netlink, packet sockets, etc.) are blocked.
 
-</Dropdown>
+    </Dropdown>
+  </Tab>
+  <Tab title="Windows">
+
+    The agent runs as a Windows service with a restricted account and permissions that limit what the process can access.
+
+    <Dropdown title="Virtual account">
+
+    The agent runs as a Windows service under the virtual account `NT SERVICE\miru-agent`. The account exists only on the device, has no password, and cannot be used to sign in. The service does not run on the interactive desktop.
+
+    You can find the agent's service definition on [GitHub](https://github.com/mirurobotics/agent/blob/main/build/windows/miru-agent.wxs) in the agent repository.
+
+    </Dropdown>
+
+    <Dropdown title="Limited privileges">
+
+    The service token holds only the bypass traverse checking privilege (`SeChangeNotifyPrivilege`). The installer removes the other privileges Windows assigns to a service by default, including impersonation (`SeImpersonatePrivilege`). The account is not an administrator.
+
+    </Dropdown>
+
+    <Dropdown title="File system scope">
+
+    The installer grants the account access to `%ProgramData%\Miru`. That folder is owned by Local System and does not inherit permissions from `%ProgramData%`. The account can read, write, and traverse the folder, and it cannot delete the folder or change its permissions.
+
+    `logs`, `auth`, `tmp`, `device-api`, and `configs` each contain an `installer-sentinel` folder that only Local System and Administrators can access, so the service cannot remove it.
+
+    Any other path must be granted explicitly. See [File system access](/developers/agent/filesys-access#windows).
+
+    </Dropdown>
+  </Tab>
+</Tabs>
 
 ## Transport security
 
@@ -121,21 +162,48 @@ Agent versions prior to [v0.10.3](/changelog/agent#v0-10-3) use port 8883 for MQ
 
 ## Network posture
 
-The agent initiates all connections outbound. No inbound ports need to be opened on the device and no listening network sockets are created.
+### External
 
-The only local interface is a Unix domain socket at `/run/miru/miru.sock`, used by applications on the same device to query the agent's [REST API](/developers/device-api/overview). This socket is not accessible over the network.
+All external connections are outbound and initiated by the agent. No inbound ports need to be opened on the device.
+
+### On the device
+
+Applications on the same device reach the agent through its [Device API](/developers/device-api/overview). That interface is not reachable from other machines.
+
+<Tabs>
+  <Tab title="Linux">
+    The agent creates no listening network sockets. The Device API is a Unix domain socket at `/run/miru/miru.sock`.
+  </Tab>
+  <Tab title="Windows">
+    The Device API is a TCP listener bound to the loopback address `127.0.0.1` (port `6478` by default). The agent never listens on any other address.
+  </Tab>
+</Tabs>
 
 ## Local API access control
 
-The agent's local REST API is exposed through a Unix domain socket, not a TCP port. It is not possible to access the agent's local API over a network—it is only accessible from processes running on the same device as the agent.
+The agent's local API is only accessible from processes running on the same device as the agent. It is not possible to access it over a network.
 
-Access is controlled through file system permissions:
+<Tabs>
+  <Tab title="Linux">
+    The local API is exposed through a Unix domain socket, not a TCP port. Access is controlled through file system permissions:
 
-- **Socket permissions** — the socket is created with mode `0660`, restricting access to the `miru` user and group
-- **Socket activation** — `systemd` manages the socket lifecycle, creating it before the agent starts and removing it when the agent stops
-- **Group-based access** — applications that need to query the agent are added to the `miru` group
+    - **Socket permissions** — the socket is created with mode `0660`, restricting access to the `miru` user and group
+    - **Socket activation** — `systemd` manages the socket lifecycle, creating it before the agent starts and removing it when the agent stops
+    - **Group-based access** — applications that need to query the agent are added to the `miru` group
 
-This means only processes running as the `miru` user or in the `miru` group can communicate with the agent's local API. Other users and processes on the device cannot access it.
+    This means only processes running as the `miru` user or in the `miru` group can communicate with the agent's local API. Other users and processes on the device cannot access it.
+  </Tab>
+  <Tab title="Windows">
+    The local API is exposed over loopback TCP and every request must carry a bearer token:
+
+    - **Bearer token** — the agent generates a random token each time it starts and rejects requests without it with `401 Unauthorized`. The token is never written to the agent's logs
+    - **Discovery file** — the agent writes the port and token to `%ProgramData%\Miru\device-api\device-api.json` while the API is being served and removes it when the agent stops
+    - **Group-based access** — the discovery file is readable only by Local System, Administrators, the agent's service account, and members of the local `Miru Agent Users` group. Applications that need to query the agent are added to this group
+    - **Browser protection** — requests whose `Host` or `Origin` header is not the agent's loopback address are rejected with `403 Forbidden`, which blocks web pages open on the device from calling the API
+
+    This means only processes running as members of `Miru Agent Users` (or as Local System or an administrator) can read the token and communicate with the agent's local API. See [Authentication](/developers/device-api/authn) for setup instructions.
+  </Tab>
+</Tabs>
 
 {/* ## Installation
 
