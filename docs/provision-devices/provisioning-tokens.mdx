@@ -2,11 +2,12 @@
 title: "Provisioning tokens"
 ---
 
-import AptInstall from '/snippets/agent/install/apt.mdx';
+import Install from '/snippets/agent/install/install.mdx';
 import Verify from '/snippets/agent/install/verify.mdx';
 import { Framed } from '/snippets/components/framed.jsx';
 import { PlatformApiLink } from '/snippets/components/platform-api-link.jsx';
-import CmdBreakdown from '/snippets/devices/provision/provision-cmd-breakdown.mdx';
+import CmdBreakdownLinux from '/snippets/devices/provision/provision-cmd-breakdown-linux.mdx';
+import CmdBreakdownWindows from '/snippets/devices/provision/provision-cmd-breakdown-windows.mdx';
 
 <Framed 
   background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg" 
@@ -30,9 +31,7 @@ Unlike the dashboard, which requires manual interaction with the web interface f
 
 Before provisioning a device via provisioning tokens, you must first install the `miru-agent` package onto the target machine.
 
-The recommended method is via `apt` (shown below). However, you can also manually download the package from GitHub. Visit the [agent installation](/developers/agent/install) documentation for more information.
-
-<AptInstall />
+<Install />
 
 ## Create a provisioning token
 
@@ -53,8 +52,16 @@ export MIRU_API_KEY=<api-key>
 
 curl --request POST \
   --url https://api.mirurobotics.com/beta/provisioning_tokens \
-  --header 'Miru-Version: 2026-05-06.rainier' \
+  --header 'Miru-Version: 2026-08-17.everglades' \
   --header "X-API-Key: $MIRU_API_KEY"
+```
+
+```powershell powershell
+$env:MIRU_API_KEY = "<api-key>"; `
+$provisioningToken = Invoke-RestMethod -Method Post `
+  -Uri "https://api.mirurobotics.com/beta/provisioning_tokens" `
+  -Headers @{ "Miru-Version" = "2026-08-17.everglades"; "X-API-Key" = $env:MIRU_API_KEY }; `
+$provisioningToken.token
 ```
 
 ```python python
@@ -72,16 +79,35 @@ provisioning_token = client.provisioning_tokens.create()
 
 ## Provision the device
 
-After retrieving the provisioning token, run the following command. Make sure to replace `<token>` with the actual token.
+<Tabs>
+  <Tab title="Linux">
+    After retrieving the provisioning token, run the following command. Make sure to replace `<token>` with the actual token.
 
-```bash
-sudo -u miru MIRU_PROVISIONING_TOKEN=<token> \
-  /usr/sbin/miru-agent provision
-```
+    ```bash
+    sudo -u miru MIRU_PROVISIONING_TOKEN=<token> \
+      /usr/sbin/miru-agent provision
+    ```
 
-The command can be broken into the following components:
+    The command can be broken into the following components:
 
-<CmdBreakdown />
+    <CmdBreakdownLinux />
+  </Tab>
+  <Tab title="Windows">
+    After retrieving the provisioning token, run the following commands from PowerShell opened with **Run as administrator**. Make sure to replace `<token>` with the actual token.
+
+    ```powershell
+    $env:MIRU_PROVISIONING_TOKEN = "<token>"; `
+    & "$env:ProgramW6432\Miru\Agent\miru-agent.exe" provision; `
+    Remove-Item Env:MIRU_PROVISIONING_TOKEN
+    ```
+
+    The commands can be broken into the following components:
+
+    <CmdBreakdownWindows />
+
+    Administrator rights are required because `%ProgramData%\Miru` is restricted to Local System, Administrators, and the agent's service account.
+  </Tab>
+</Tabs>
 
 Provisioning performs the following actions:
 
@@ -101,9 +127,9 @@ To provision the machine as a brand new Miru device (never been provisioned in M
 The provision command supports the following parameters to tune your installation:
 
 <ParamField path="--device-name" type="string">
-  The name of the device in the Miru dashboard; defaults to `$HOSTNAME`.
+  The name of the device in the Miru dashboard; defaults to the machine's hostname (the output of `hostname`).
 
-  Default: `$HOSTNAME`
+  Default: `hostname`
 </ParamField>
 
 ## Verify installation

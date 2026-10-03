@@ -12,6 +12,10 @@ Navigate back to the [Devices page](https://app.mirurobotics.com/devices) and cl
 
 The **Set Release** dialog opens. Select the release we just created and click **Select**.
 
+<Note>
+  A release can only be deployed to devices running the operating system its file paths target. Make sure the release was created from the getting-started folder (`linux/` or `windows/`) that matches the device's operating system.
+</Note>
+
 <Frame>
   ![Set Release Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/editor/set-release-dialog.png)
 </Frame>
@@ -34,12 +38,24 @@ Finally, click **Deploy** in the top right, provide a description, and confirm t
 
 ## Verify the deployment
 
-To verify the config instances seen in the editor are deployed to the device, open a terminal on the machine being deployed to and run `cat` on the file path of a given config instance.
+To verify the config instances seen in the editor are deployed to the device, print the contents of a config instance on the machine being deployed to.
 
+<Tabs>
+  <Tab title="Linux">
+    Open a terminal on the device and run `cat` on the file path of a given config instance.
 
-```bash
-cat /srv/miru/configs/mobility.json
-```
+    ```bash
+    cat /srv/miru/configs/mobility.json
+    ```
+  </Tab>
+  <Tab title="Windows">
+    Open PowerShell on the device as administrator, or as a member of the `Miru Agent Users` group, and run `Get-Content` on the file path of a given config instance.
+
+    ```powershell PowerShell
+    Get-Content 'C:\ProgramData\Miru\configs\mobility.json'
+    ```
+  </Tab>
+</Tabs>
 
 You should find that the editor's content is identical to the config instance on the machine.
 

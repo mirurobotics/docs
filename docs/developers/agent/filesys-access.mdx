@@ -325,8 +325,15 @@ group's permissions without touching the path:
 
 ```bash
 sudo usermod -aG <group> miru
-sudo systemctl restart miru
 ```
+
+<Warning>
+  The agent only picks up a new group when it starts, so restart it after adding the group:
+
+  ```bash
+  sudo systemctl restart miru
+  ```
+</Warning>
 
 #### Set the group or owner
 

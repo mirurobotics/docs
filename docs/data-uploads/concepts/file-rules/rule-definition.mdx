@@ -44,7 +44,7 @@ File rule glob patterns select the files that Miru manages on a device.
 
 Every pattern must:
 
-- Be absolute, starting with `/`
+- Be absolute, (e.g. start with `/` on Linux or a drive letter such as `C:\` on Windows)
 - Be at most 1024 bytes and contain no control characters
 - Contain no `..` segments or empty segments (`//` or a trailing `/`)
 
@@ -55,32 +55,50 @@ rule for each pattern.
 
 | Syntax | Matches |
 | --- | --- |
-| `*` | any characters within one path segment; never crosses a `/` |
+| `*` | any characters within one path segment; never crosses a separator (e.g. `/`) |
 | `**` | zero or more directories at any depth; must be a whole path segment on its own (`/var/log/**/*.log` is valid but `**.log`, `run**`, and `***` are invalid) |
 | `?` | one character |
 | `[abc]`, `[a-z]` | one character from the set or range |
 | `[!abc]`, `[!a-z]` | one character not in the set or range |
 
 Brace expansion (`{a,b}`), backslash escapes (`\*`), and extended patterns such as
-`!(x)` are not supported. Braces and backslashes match literally. To match a literal
+`!(x)` are not supported. Braces match literally. On Linux, backslashes also match
+literally; on Windows, `\` is a path separator. To match a literal
 `*`, `?`, or `[`, wrap it in brackets: `[*]`, `[?]`, or `[[]`.
 
 **Examples**
 
-| Pattern | Matches |
-| --- | --- |
-| `/var/log/robot/*.log` | `.log` files directly inside `/var/log/robot` |
-| `/var/log/robot/*/*.log` | `.log` files exactly one directory below `/var/log/robot` |
-| `/var/log/robot/**/*.log` | `.log` files in `/var/log/robot` and all of its subdirectories |
-| `/var/log/robot/**/*` | Every file in `/var/log/robot` and all of its subdirectories |
-| `/var/log/robot/run-[0-9].log` | `run-0.log` through `run-9.log` in `/var/log/robot` |
+<Tabs>
+  <Tab title="Linux">
+
+    | Pattern | Matches |
+    | --- | --- |
+    | `/var/log/robot/*.log` | `.log` files directly inside `/var/log/robot` |
+    | `/var/log/robot/*/*.log` | `.log` files exactly one directory below `/var/log/robot` |
+    | `/var/log/robot/**/*.log` | `.log` files in `/var/log/robot` and all of its subdirectories |
+    | `/var/log/robot/**/*` | Every file in `/var/log/robot` and all of its subdirectories |
+    | `/var/log/robot/run-[0-9].log` | `run-0.log` through `run-9.log` in `/var/log/robot` |
+
+  </Tab>
+  <Tab title="Windows">
+
+    | Pattern | Matches |
+    | --- | --- |
+    | `C:\ProgramData\App\logs\*.log` | `.log` files directly inside `C:\ProgramData\App\logs` |
+    | `C:\ProgramData\App\logs\*\*.log` | `.log` files exactly one directory below `C:\ProgramData\App\logs` |
+    | `C:\ProgramData\App\logs\**\*.log` | `.log` files in `C:\ProgramData\App\logs` and all of its subdirectories |
+    | `C:\ProgramData\App\logs\**\*` | Every file in `C:\ProgramData\App\logs` and all of its subdirectories |
+    | `C:\ProgramData\App\logs\run-[0-9].log` | `run-0.log` through `run-9.log` in `C:\ProgramData\App\logs` |
+
+  </Tab>
+</Tabs>
 
 **Matching behavior**
 
 - a trailing `**` matches only directories, so `/var/log/robot/**` matches no files — use `/var/log/robot/**/*` instead
 - only regular files match; a directory never matches even if its name does
 - symbolic links to files and directories are followed
-- matching is case-sensitive (`*.log` does not match `APP.LOG`)
+- matching is case-sensitive (`*.log` does not match `APP.LOG`); on Windows, path segments without wildcards follow the file system and match regardless of case, but segments with wildcards remain case-sensitive
 - `*` and `**` match hidden files and directories whose names start with `.`
 - keep the part of the pattern before the first wildcard as specific as possible; a broad pattern such as `/**/*.log` walks large parts of the file system on every scan
 
