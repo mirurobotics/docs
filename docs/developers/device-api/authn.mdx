@@ -67,60 +67,84 @@ If you use a [Miru Device SDK](/developers/device-api/sdks), the SDK handles the
 
 <Tabs>
   <Tab title="Linux">
-
     Any access to the socket must be executed with a user who is a member of the `miru` group.
 
     <Note>
       Access to the socket is granted to the `root` user, but this is not recommended for security best practices.
     </Note>
 
-    To add a user to the `miru` group, run
+    <Steps>
+      <Step title="Add the user to the miru group">
+        ```bash
+        sudo usermod -a -G miru <username>
+        ```
 
-    ```bash
-    sudo usermod -a -G miru <username>
-    ```
+        To add the current user, use `$USER` as the username.
+      </Step>
+      <Step title="Sign out and sign back in">
+        <Warning>
+          Group membership is only read when a session starts. Until you log out of your desktop or SSH session and log back in, the user still can't access the socket.
+        </Warning>
 
-    To add the current user to the `miru` group, run
+        For an application that runs as a `systemd` service, restart its service instead.
 
-    ```bash
-    sudo usermod -a -G miru $USER
-    ```
+        To use the new group in the current shell without signing out, run `newgrp miru`. It only applies to that shell; other shells, including new ones, still need you to sign out and back in.
+      </Step>
+      <Step title="Verify the group membership">
+        ```bash
+        id -nG
+        ```
 
-    <Warning>
-      You must log out of your desktop or SSH session and log back in for group changes to take effect permanently.
-    </Warning>
-
-    To temporarily run the current shell session as a member of the `miru` group, run
-
-    ```bash
-    newgrp miru
-    ```
-
-    Any new shell sessions will require you to run `newgrp miru` again until you've logged out of your desktop or SSH session and logged back in.
+        The output includes `miru`.
+      </Step>
+    </Steps>
   </Tab>
   <Tab title="Windows">
     Access to the discovery file, and therefore to the API, is restricted to SYSTEM, Administrators, and members of the local `Miru Agent Users` group, which the installer creates empty.
 
-    To grant an application access, add the user or service account it runs as to the `Miru Agent Users` group from an elevated PowerShell session:
+    <Steps>
+      <Step title="Add the account to the Miru Agent Users group">
+        From an elevated PowerShell session, add the user or service account the application runs as:
 
-    ```powershell
-    Add-LocalGroupMember -Group "Miru Agent Users" -Member "<username>"
-    ```
-    <Warning>
-      Do not add broad groups such as `Users`, `Authenticated Users`, or `Everyone` to `Miru Agent Users`. Any account that can read the discovery file can call every Device API endpoint.
-    </Warning>
+        ```powershell PowerShell
+        Add-LocalGroupMember -Group "Miru Agent Users" -Member "<username>"
+        ```
 
-    For an application that runs as a Windows service, add its service account:
+        For an application that runs as a Windows service, add its service account:
 
-    ```powershell
-    Add-LocalGroupMember -Group "Miru Agent Users" -Member "NT SERVICE\<service-name>"
-    ```
+        ```powershell PowerShell
+        Add-LocalGroupMember -Group "Miru Agent Users" -Member "NT SERVICE\<service-name>"
+        ```
 
-    Group changes take effect the next time the user signs in, or the next time the service starts. Sign out and back in, or restart the application's service, after adding it to the group.
+        <Warning>
+          Do not add broad groups such as `Users`, `Authenticated Users`, or `Everyone` to `Miru Agent Users`. Any account that can read the discovery file can call every Device API endpoint.
+        </Warning>
+      </Step>
+      <Step title="Sign out and sign back in">
+        <Warning>
+          Windows only reads group membership when an account signs in. Until the user signs out of Windows and signs back in, the account still can't access the API. Closing PowerShell or locking the screen isn't enough.
+        </Warning>
 
-    To revoke access, remove the account from the group:
+        For a service account, restart the application's service instead:
 
-    ```powershell
+        ```powershell PowerShell
+        Restart-Service <service-name>
+        ```
+      </Step>
+      <Step title="Verify the group membership">
+        After signing back in, run the following as the user:
+
+        ```powershell PowerShell
+        whoami /groups | Select-String "Miru Agent Users"
+        ```
+
+        The output includes a line for `Miru Agent Users`.
+      </Step>
+    </Steps>
+
+    To revoke access, remove the account from the group. Removal also takes effect at the account's next sign-in or service restart.
+
+    ```powershell PowerShell
     Remove-LocalGroupMember -Group "Miru Agent Users" -Member "<username>"
     ```
   </Tab>
