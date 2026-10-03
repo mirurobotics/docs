@@ -193,8 +193,8 @@
                   "developers/agent/architecture",
                   {
                     "group": "File system access",
-                    "root": "developers/agent/filesys-access",
                     "pages": [
+                      "developers/agent/filesys-access/overview",
                       "developers/agent/filesys-access/linux",
                       "developers/agent/filesys-access/windows"
                     ]
@@ -596,7 +596,11 @@
     },
     {
       "source": "/developers/agent/file-permissions",
-      "destination": "/developers/agent/filesys-access"
+      "destination": "/developers/agent/filesys-access/overview"
+    },
+    {
+      "source": "/developers/agent/filesys-access",
+      "destination": "/developers/agent/filesys-access/overview"
     },
     {
       "source": "/developers/cli/login",
