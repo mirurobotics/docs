@@ -24,6 +24,106 @@ git clone https://github.com/mirurobotics/getting-started.git
 
 The repository provides the same schemas in two schema languages, [JSON Schema](/cfg-mgmt/concepts/schemas/languages/jsonschema) and [CUE](/cfg-mgmt/concepts/schemas/languages/cue). Use the selector at the top of the page to follow along in either language. If you're unfamiliar with schema languages, we recommend starting with CUE.
 
+<View title="CUE">
+
+## Define the schemas
+
+<SchemasIntro />
+
+<Tabs>
+  <Tab title="Linux">
+    **Empty Schemas**
+    <EmptyCueSchemasLinux />
+
+    **Strict Schemas**
+    <StrictCueSchemasLinux />
+  </Tab>
+  <Tab title="Windows">
+    Windows file paths escape each backslash (`\\`), because CUE treats a backslash in a double-quoted string as the start of an escape sequence.
+
+    **Empty Schemas**
+    <EmptyCueSchemasWindows />
+
+    **Strict Schemas**
+    <StrictCueSchemasWindows />
+  </Tab>
+</Tabs>
+
+### Schema annotations
+
+<SchemaAnnotations />
+
+## Set up the CLI
+
+<CliSetup />
+
+## Create a release
+
+With the CLI setup, we are ready to create a release in Miru.
+
+Navigate to the root of the [getting-started](https://github.com/mirurobotics/getting-started) repository and create the release with the schema set you chose for your device's operating system.
+
+<Tabs>
+  <Tab title="Linux">
+    <CodeGroup>
+
+    ```bash Empty Schemas
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./linux/cue/empty-schemas/
+    ```
+
+    ```bash Strict Schemas
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./linux/cue/strict-schemas/
+    ```
+
+    </CodeGroup>
+  </Tab>
+  <Tab title="Windows">
+    <CodeGroup>
+
+    ```bash Empty Schemas
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./windows/cue/empty-schemas/
+    ```
+
+    ```bash Strict Schemas
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./windows/cue/strict-schemas/
+    ```
+
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+Upon a successful creation, you'll see a confirmation message similar to the following:
+
+```bash
+$ miru release create \
+  --version v1.0.0 \
+  --schemas ./{os}/cue/{schema-type}/
+
+◐ Creating release v1.0.0
+
+  ✓ Pushed git commit (new)
+    1c7f7a8 · mirurobotics/getting-started
+
+  ◐ Pushing schemas
+    ✓ Mobility · SCH-D5nFP (new)
+    ✓ Planning · SCH-37QAr (new)
+    ✓ Communication · SCH-9WfCx (new)
+
+✓ Created release v1.0.0
+```
+
+<ViewRelease />
+
+</View>
+
 <View title="JSON Schema">
 
 ## Define the schemas
@@ -124,102 +224,4 @@ $ miru release create \
 
 </View>
 
-<View title="CUE">
 
-## Define the schemas
-
-<SchemasIntro />
-
-<Tabs>
-  <Tab title="Linux">
-    **Empty Schemas**
-    <EmptyCueSchemasLinux />
-
-    **Strict Schemas**
-    <StrictCueSchemasLinux />
-  </Tab>
-  <Tab title="Windows">
-    Windows file paths escape each backslash (`\\`), because CUE treats a backslash in a double-quoted string as the start of an escape sequence.
-
-    **Empty Schemas**
-    <EmptyCueSchemasWindows />
-
-    **Strict Schemas**
-    <StrictCueSchemasWindows />
-  </Tab>
-</Tabs>
-
-### Schema annotations
-
-<SchemaAnnotations />
-
-## Set up the CLI
-
-<CliSetup />
-
-## Create a release
-
-With the CLI setup, we are ready to create a release in Miru.
-
-Navigate to the root of the [getting-started](https://github.com/mirurobotics/getting-started) repository and create the release with the schema set you chose for your device's operating system.
-
-<Tabs>
-  <Tab title="Linux">
-    <CodeGroup>
-
-    ```bash Empty Schemas
-    miru release create \
-      --version "v1.0.0" \
-      --schemas ./linux/cue/empty-schemas/
-    ```
-
-    ```bash Strict Schemas
-    miru release create \
-      --version "v1.0.0" \
-      --schemas ./linux/cue/strict-schemas/
-    ```
-
-    </CodeGroup>
-  </Tab>
-  <Tab title="Windows">
-    <CodeGroup>
-
-    ```bash Empty Schemas
-    miru release create \
-      --version "v1.0.0" \
-      --schemas ./windows/cue/empty-schemas/
-    ```
-
-    ```bash Strict Schemas
-    miru release create \
-      --version "v1.0.0" \
-      --schemas ./windows/cue/strict-schemas/
-    ```
-
-    </CodeGroup>
-  </Tab>
-</Tabs>
-
-Upon a successful creation, you'll see a confirmation message similar to the following:
-
-```bash
-$ miru release create \
-  --version v1.0.0 \
-  --schemas ./{os}/cue/{schema-type}/
-
-◐ Creating release v1.0.0
-
-  ✓ Pushed git commit (new)
-    1c7f7a8 · mirurobotics/getting-started
-
-  ◐ Pushing schemas
-    ✓ Mobility · SCH-D5nFP (new)
-    ✓ Planning · SCH-37QAr (new)
-    ✓ Communication · SCH-9WfCx (new)
-
-✓ Created release v1.0.0
-```
-
-<ViewRelease />
-
-</View>

@@ -1,6 +1,12 @@
-Each of the above schemas carries two annotations, metadata that Miru uses to process the schema and deploy its config instances:
+import ConfigType from '/snippets/cfg-mgmt/schemas/annotations/config-type.mdx';
+import InstanceFilePath from '/snippets/cfg-mgmt/schemas/annotations/instance-file-path.mdx';
 
-- **[Config type](/cfg-mgmt/concepts/schemas/annotations#param-config-type)** (required) - the config type the schema belongs to, such as `mobility`.
-- **[Instance file path](/cfg-mgmt/concepts/schemas/annotations#param-instance-file-path)** - the absolute path on the device where the Miru Agent writes the config instance, such as `/srv/miru/configs/mobility.json` on Linux or `C:\ProgramData\Miru\configs\mobility.json` on Windows.
+Each of the above schemas carries the following annotations:
 
-Miru supports more annotations, such as instance slots and instance formats. For the full list and their syntax in each schema language, visit the [annotations](/cfg-mgmt/concepts/schemas/annotations) documentation.
+<ConfigType />
+
+<InstanceFilePath />
+
+Miru supports more annotations, such as [instance slots](/cfg-mgmt/concepts/schemas/annotations#param-instance-slots) and [instance formats](/cfg-mgmt/concepts/schemas/annotations#param-instance-format). However, this tutorial only covers the two annotations above. 
+
+For the full list and their syntax in each schema language, visit the [annotations](/cfg-mgmt/concepts/schemas/annotations) documentation.
