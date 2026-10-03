@@ -191,7 +191,14 @@
                   "developers/agent/commands",
                   "developers/agent/security",
                   "developers/agent/architecture",
-                  "developers/agent/filesys-access"
+                  {
+                    "group": "File system access",
+                    "root": "developers/agent/filesys-access",
+                    "pages": [
+                      "developers/agent/filesys-access/linux",
+                      "developers/agent/filesys-access/windows"
+                    ]
+                  }
                 ]
               },
               {
