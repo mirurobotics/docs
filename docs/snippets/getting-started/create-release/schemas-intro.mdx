@@ -1,0 +1,12 @@
+Releases are defined by the config schemas they contain. Each schema sets the file path where the Miru Agent writes its config instance on the device, and a release can only be deployed to devices running the operating system its file paths target.
+
+The getting-started repository has a folder for each operating system: 
+- `linux/` writes config instances to `/srv/miru/configs/`
+- `windows/` writes config instances to `C:\ProgramData\Miru\configs\`
+
+Each folder contains two sets of schemas:
+
+- Empty schemas - regard all config instances as valid
+- Strict schemas - constrain the valid fields, types, and values for instances of the config type they belong to
+
+For this tutorial, select the tab for the operating system of the device you'll deploy to and choose one of its schema sets to create your release with. If you don't currently use a schema, we recommend starting with an empty schema and gradually adding constraints as needed.
