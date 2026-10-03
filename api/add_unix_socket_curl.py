@@ -4,6 +4,7 @@ Add Unix socket curl examples to device API endpoints.
 
 This script automatically adds curl examples using Unix sockets to all
 endpoints in the device API spec that don't already have curl examples.
+The Unix socket only exists on Linux, so the examples are labeled for Linux.
 """
 
 import sys
@@ -124,6 +125,7 @@ def add_curl_examples_to_spec(spec_path):
             # Format as YAML literal block scalar to preserve newlines
             curl_example = {
                 'lang': 'curl',
+                'label': 'curl (Linux)',
                 'source': curl_cmd
             }
             
