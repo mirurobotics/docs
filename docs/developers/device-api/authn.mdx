@@ -49,8 +49,7 @@ If you use a [Miru Device SDK](/developers/device-api/sdks), the SDK handles the
     To call the API, read the port and token from the discovery file and pass the token as a bearer token:
 
     ```powershell
-    $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
-    Invoke-RestMethod `
+    $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json Invoke-RestMethod `
       -Uri "http://127.0.0.1:$($api.port)/v0.2/health" `
       -Headers @{ Authorization = "Bearer $($api.token)" }
     ```
