@@ -49,6 +49,7 @@
     "journalctl",
     "keypair",
     "keyrings",
+    "mgmt",
     "mintable",
     "mirurobotics",
     "msiexec",

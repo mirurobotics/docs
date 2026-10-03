@@ -1,0 +1,476 @@
+<CodeGroup>
+```yaml Communication expandable
+x-miru-config-type: "communication"
+x-miru-instance-filepath: 'C:\ProgramData\Miru\configs\communication.json'
+$schema: "http://json-schema.org/draft/2020-12/schema"
+type: object
+required:
+  - control_loop_rate_hz
+  - watchdog_timeout_ms
+  - network
+  - logging
+  - error_handling
+properties:
+  control_loop_rate_hz:
+    type: integer
+    description: Control loop frequency in Hertz
+    minimum: 1
+    maximum: 1000
+    default: 50
+  watchdog_timeout_ms:
+    type: integer
+    description: Watchdog timeout duration in milliseconds
+    minimum: 100
+    maximum: 5000
+    default: 500
+  network:
+    type: object
+    required:
+      - max_latency_ms
+      - connection_timeout_ms
+      - reconnect_attempts
+      - reconnect_interval_ms
+      - heartbeat_interval_ms
+    properties:
+      max_latency_ms:
+        type: integer
+        description: Maximum acceptable network latency in milliseconds
+        minimum: 10
+        maximum: 1000
+        default: 100
+      connection_timeout_ms:
+        type: integer
+        description: Connection timeout duration in milliseconds
+        minimum: 100
+        maximum: 10000
+        default: 2000
+      reconnect_attempts:
+        type: integer
+        description: Number of reconnection attempts
+        minimum: 1
+        maximum: 10
+        default: 3
+      reconnect_interval_ms:
+        type: integer
+        description: Interval between reconnection attempts in milliseconds
+        minimum: 100
+        maximum: 5000
+        default: 1000
+      heartbeat_interval_ms:
+        type: integer
+        description: Interval between heartbeat messages in milliseconds
+        minimum: 50
+        maximum: 1000
+        default: 250
+  logging:
+    type: object
+    required:
+      - enable_packet_logging
+      - log_level
+      - max_log_size_mb
+      - retain_logs_days
+    properties:
+      enable_packet_logging:
+        type: boolean
+        description: Enable or disable packet logging
+        default: true
+      log_level:
+        type: string
+        description: Logging level
+        enum: ["debug", "info", "warn", "error"]
+        default: "info"
+      max_log_size_mb:
+        type: integer
+        description: Maximum log file size in megabytes
+        minimum: 1
+        maximum: 1024
+        default: 100
+      retain_logs_days:
+        type: integer
+        description: Number of days to retain log files
+        minimum: 1
+        maximum: 90
+        default: 30
+  error_handling:
+    type: object
+    required:
+      - max_consecutive_failures
+      - failure_timeout_ms
+      - enable_auto_recovery
+    properties:
+      max_consecutive_failures:
+        type: integer
+        description: Maximum number of consecutive failures allowed
+        minimum: 1
+        maximum: 20
+        default: 5
+      failure_timeout_ms:
+        type: integer
+        description: Timeout duration for failure handling in milliseconds
+        minimum: 100
+        maximum: 30000
+        default: 5000
+      enable_auto_recovery:
+        type: boolean
+        description: Enable or disable automatic recovery from failures
+        default: true
+```
+
+```yaml Mobility expandable
+x-miru-config-type: "mobility"
+x-miru-instance-filepath: 'C:\ProgramData\Miru\configs\mobility.json'
+$schema: "http://json-schema.org/draft/2020-12/schema"
+type: object
+properties:
+  max_linear_speed_mps:
+    type: number
+    minimum: 0.1
+    maximum: 5.0
+    default: 1.2
+  max_angular_speed_radps:
+    type: number
+    minimum: 0.2
+    maximum: 3.0
+    default: 1.0
+  obstacle_avoidance_enabled:
+    type: boolean
+    default: true
+  navigation_mode:
+    type: string
+    enum: [conservative, balanced, aggressive]
+    default: balanced
+  telemetry:
+    type: object
+    properties:
+      upload_interval_sec:
+        type: integer
+        minimum: 10
+        maximum: 300
+        default: 60
+      heartbeat_interval_sec:
+        type: integer
+        minimum: 1
+        maximum: 60
+        default: 10
+    required:
+      - upload_interval_sec
+      - heartbeat_interval_sec
+required:
+  - max_linear_speed_mps
+  - max_angular_speed_radps
+  - obstacle_avoidance_enabled
+  - navigation_mode
+  - telemetry
+```
+
+```yaml Planning expandable
+x-miru-config-type: "planning"
+x-miru-instance-filepath: 'C:\ProgramData\Miru\configs\planning.json'
+$schema: "http://json-schema.org/draft/2020-12/schema"
+type: object
+required:
+  - planning_frequency_hz
+  - control_frequency_hz
+  - planning_timeout_s
+  - path_following
+  - trajectory
+  - local_planner
+  - global_planner
+  - obstacle_avoidance
+  - smoothing
+  - recovery
+properties:
+  planning_frequency_hz:
+    type: number
+    description: Planning loop frequency in Hertz
+    minimum: 1.0
+    maximum: 100.0
+    default: 20.0
+  control_frequency_hz:
+    type: number
+    description: Control loop frequency in Hertz
+    minimum: 10.0
+    maximum: 200.0
+    default: 50.0
+  planning_timeout_s:
+    type: number
+    description: Planning timeout in seconds
+    minimum: 0.1
+    maximum: 5.0
+    default: 1.0
+  path_following:
+    type: object
+    required:
+      - lookahead_distance_m
+      - lookahead_time_s
+      - path_tolerance_m
+      - goal_tolerance_m
+      - heading_tolerance_rad
+      - min_lookahead_distance_m
+      - max_lookahead_distance_m
+    properties:
+      lookahead_distance_m:
+        type: number
+        description: Look-ahead distance in meters
+        minimum: 0.1
+        maximum: 2.0
+        default: 0.3
+      lookahead_time_s:
+        type: number
+        description: Look-ahead time in seconds
+        minimum: 0.1
+        maximum: 2.0
+        default: 0.5
+      path_tolerance_m:
+        type: number
+        description: Path following tolerance in meters
+        minimum: 0.01
+        maximum: 0.5
+        default: 0.05
+      goal_tolerance_m:
+        type: number
+        description: Goal reaching tolerance in meters
+        minimum: 0.01
+        maximum: 0.5
+        default: 0.1
+      heading_tolerance_rad:
+        type: number
+        description: Heading tolerance in radians
+        minimum: 0.01
+        maximum: 0.5  # About 28.6 degrees
+        default: 0.05
+      min_lookahead_distance_m:
+        type: number
+        description: Minimum look-ahead distance in meters
+        minimum: 0.05
+        maximum: 1.0
+        default: 0.1
+      max_lookahead_distance_m:
+        type: number
+        description: Maximum look-ahead distance in meters
+        minimum: 0.2
+        maximum: 5.0
+        default: 0.5
+  trajectory:
+    type: object
+    required:
+      - max_path_velocity_mps
+      - min_path_velocity_mps
+      - path_acceleration_mps2
+      - path_deceleration_mps2
+      - max_centripetal_acceleration_mps2
+      - path_jerk_mps3
+    properties:
+      max_path_velocity_mps:
+        type: number
+        description: Maximum path velocity in meters per second
+        minimum: 0.2
+        maximum: 5.0
+        default: 1.5
+      min_path_velocity_mps:
+        type: number
+        description: Minimum path velocity in meters per second
+        minimum: 0.05
+        maximum: 0.5
+        default: 0.1
+      path_acceleration_mps2:
+        type: number
+        description: Path acceleration in meters per second squared
+        minimum: 0.1
+        maximum: 3.0
+        default: 1.0
+      path_deceleration_mps2:
+        type: number
+        description: Path deceleration in meters per second squared
+        minimum: 0.1
+        maximum: 4.0
+        default: 1.2
+      max_centripetal_acceleration_mps2:
+        type: number
+        description: Maximum centripetal acceleration in meters per second squared
+        minimum: 0.1
+        maximum: 2.0
+        default: 0.5
+      path_jerk_mps3:
+        type: number
+        description: Path jerk in meters per second cubed
+        minimum: 0.1
+        maximum: 5.0
+        default: 0.5
+  local_planner:
+    type: object
+    required:
+      - min_samples
+      - max_samples
+      - sampling_time_s
+      - resolution_m
+      - horizon_m
+    properties:
+      min_samples:
+        type: integer
+        description: Minimum number of samples
+        minimum: 5
+        maximum: 100
+        default: 10
+      max_samples:
+        type: integer
+        description: Maximum number of samples
+        minimum: 10
+        maximum: 500
+        default: 50
+      sampling_time_s:
+        type: number
+        description: Sampling time in seconds
+        minimum: 0.1
+        maximum: 2.0
+        default: 0.8
+      resolution_m:
+        type: number
+        description: Resolution in meters
+        minimum: 0.01
+        maximum: 0.5
+        default: 0.05
+      horizon_m:
+        type: number
+        description: Planning horizon in meters
+        minimum: 0.5
+        maximum: 10.0
+        default: 2.0
+  global_planner:
+    type: object
+    required:
+      - grid_resolution_m
+      - inflation_radius_m
+      - cost_scaling_factor
+      - lethal_cost_value
+      - neutral_cost_value
+    properties:
+      grid_resolution_m:
+        type: number
+        description: Grid resolution in meters
+        minimum: 0.01
+        maximum: 0.5
+        default: 0.1
+      inflation_radius_m:
+        type: number
+        description: Inflation radius in meters
+        minimum: 0.1
+        maximum: 2.0
+        default: 0.5
+      cost_scaling_factor:
+        type: number
+        description: Cost scaling factor
+        minimum: 0.1
+        maximum: 10.0
+        default: 2.0
+      lethal_cost_value:
+        type: integer
+        description: Lethal cost value
+        minimum: 100
+        maximum: 255
+        default: 253
+      neutral_cost_value:
+        type: integer
+        description: Neutral cost value
+        minimum: 0
+        maximum: 100
+        default: 50
+  obstacle_avoidance:
+    type: object
+    required:
+      - min_obstacle_distance_m
+      - max_obstacle_distance_m
+      - obstacle_inflation_m
+      - dynamic_obstacle_velocity_threshold_mps
+    properties:
+      min_obstacle_distance_m:
+        type: number
+        description: Minimum obstacle distance in meters
+        minimum: 0.1
+        maximum: 1.0
+        default: 0.5
+      max_obstacle_distance_m:
+        type: number
+        description: Maximum obstacle distance in meters
+        minimum: 0.5
+        maximum: 5.0
+        default: 2.0
+      obstacle_inflation_m:
+        type: number
+        description: Obstacle inflation in meters
+        minimum: 0.05
+        maximum: 1.0
+        default: 0.2
+      dynamic_obstacle_velocity_threshold_mps:
+        type: number
+        description: Dynamic obstacle velocity threshold in meters per second
+        minimum: 0.05
+        maximum: 2.0
+        default: 0.2
+  smoothing:
+    type: object
+    required:
+      - curve_weight
+      - smooth_weight
+      - tolerance
+      - max_iterations
+    properties:
+      curve_weight:
+        type: number
+        description: Curve weight for smoothing
+        minimum: 0.0
+        maximum: 1.0
+        default: 0.3
+      smooth_weight:
+        type: number
+        description: Smooth weight for smoothing
+        minimum: 0.0
+        maximum: 1.0
+        default: 0.3
+      tolerance:
+        type: number
+        description: Smoothing tolerance
+        minimum: 0.0001
+        maximum: 0.1
+        default: 0.01
+      max_iterations:
+        type: integer
+        description: Maximum smoothing iterations
+        minimum: 5
+        maximum: 1000
+        default: 10
+  recovery:
+    type: object
+    required:
+      - enable_backoff
+      - backoff_distance_m
+      - enable_rotation_in_place
+      - max_rotation_angle_rad
+      - clear_costmap_before_recovery
+    properties:
+      enable_backoff:
+        type: boolean
+        description: Enable backoff recovery behavior
+        default: true
+      backoff_distance_m:
+        type: number
+        description: Backoff distance in meters
+        minimum: 0.1
+        maximum: 2.0
+        default: 0.3
+      enable_rotation_in_place:
+        type: boolean
+        description: Enable rotation in place recovery
+        default: true
+      max_rotation_angle_rad:
+        type: number
+        description: Maximum rotation angle in radians
+        minimum: 0.1
+        maximum: 6.28318  # 2π
+        default: 1.57     # π/2
+      clear_costmap_before_recovery:
+        type: boolean
+        description: Clear costmap before recovery attempt
+        default: true
+```
+</CodeGroup>
