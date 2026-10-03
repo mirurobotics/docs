@@ -83,41 +83,71 @@ This prevents lateral access between devices. Even if two devices run the same a
 
 ## Process sandboxing
 
-The agent runs as a [systemd](https://en.wikipedia.org/wiki/Systemd) service with extensive hardening directives that restrict what the process can access. 
+<Tabs>
+  <Tab title="Linux">
+    The agent runs as a [systemd](https://en.wikipedia.org/wiki/Systemd) service with extensive hardening directives that restrict what the process can access.
 
-<Dropdown title="Dedicated user">
+    <Dropdown title="Dedicated user">
 
-The agent runs as an unprivileged `miru` system user and group. The user has no login shell (`/bin/false`) and cannot be used for interactive access.
+    The agent runs as an unprivileged `miru` system user and group. The user has no login shell (`/bin/false`) and cannot be used for interactive access.
 
-You can find the agent's service unit file on [GitHub](https://github.com/mirurobotics/agent/blob/main/build/debian/miru.service) in the agent repository.
+    You can find the agent's service unit file on [GitHub](https://github.com/mirurobotics/agent/blob/main/build/debian/miru.service) in the agent repository.
 
-</Dropdown>
+    </Dropdown>
 
-<Dropdown title="No privilege escalation">
+    <Dropdown title="No privilege escalation">
 
-`NoNewPrivileges` is enabled, preventing the process from gaining additional privileges through setuid binaries or other mechanisms.
+    `NoNewPrivileges` is enabled, preventing the process from gaining additional privileges through setuid binaries or other mechanisms.
 
-</Dropdown>
+    </Dropdown>
 
-<Dropdown title="Kernel isolation">
+    <Dropdown title="Kernel isolation">
 
-The agent cannot load kernel modules, modify kernel tunables (`/proc/sys`, `/sys`), or alter control groups. Other processes are hidden from the agent's view of `/proc`.
+    The agent cannot load kernel modules, modify kernel tunables (`/proc/sys`, `/sys`), or alter control groups. Other processes are hidden from the agent's view of `/proc`.
 
-</Dropdown>
+    </Dropdown>
 
-<Dropdown title="Device restrictions">
+    <Dropdown title="Device restrictions">
 
-Access to `/dev` is limited to essential pseudo-devices. Physical hardware devices are inaccessible.
+    Access to `/dev` is limited to essential pseudo-devices. Physical hardware devices are inaccessible.
 
-</Dropdown>
+    </Dropdown>
 
-<Dropdown title="Network restrictions">
+    <Dropdown title="Network restrictions">
 
-The agent can only create Unix domain sockets and IPv4/IPv6 connections. All other socket types (Netlink, packet sockets, etc.) are blocked.
+    The agent can only create Unix domain sockets and IPv4/IPv6 connections. All other socket types (Netlink, packet sockets, etc.) are blocked.
 
-</Dropdown>
+    </Dropdown>
+  </Tab>
+  <Tab title="Windows">
 
-On Windows, the agent runs as a Windows service under the virtual account `NT SERVICE\miru-agent`. The account has no administrator rights and holds only the bypass traverse checking privilege, so it cannot impersonate other accounts. It can only access `%ProgramData%\Miru` and the folders explicitly granted to it (see [File system access](/developers/agent/filesys-access#windows)). The systemd hardening directives above apply to Linux only.
+    The agent runs as a Windows service with extensive hardening directives that restrict what the process can access.
+
+    <Dropdown title="Virtual account">
+
+    The agent runs as a Windows service under the virtual account `NT SERVICE\miru-agent`. The account exists only on the device, has no password, and cannot be used to sign in. The service does not run on the interactive desktop.
+
+    You can find the agent's service definition on [GitHub](https://github.com/mirurobotics/agent/blob/main/build/windows/miru-agent.wxs) in the agent repository.
+
+    </Dropdown>
+
+    <Dropdown title="Limited privileges">
+
+    The service token holds only the bypass traverse checking privilege (`SeChangeNotifyPrivilege`). The installer removes the other privileges Windows assigns to a service by default, including impersonation (`SeImpersonatePrivilege`). The account is not an administrator.
+
+    </Dropdown>
+
+    <Dropdown title="File system scope">
+
+    The installer grants the account access to `%ProgramData%\Miru`. That folder is owned by Local System and does not inherit permissions from `%ProgramData%`. The account can read, write, and traverse the folder, and it cannot delete the folder or change its permissions.
+
+    `logs`, `auth`, `tmp`, `device-api`, and `configs` each contain an `installer-sentinel` folder that only Local System and Administrators can access, so the service cannot remove it.
+
+    Any other path must be granted explicitly. See [File system access](/developers/agent/filesys-access#windows).
+
+    </Dropdown>
+  </Tab>
+</Tabs>
 
 ## Transport security
 
@@ -132,14 +162,20 @@ Agent versions prior to [v0.10.3](/changelog/agent#v0-10-3) use port 8883 for MQ
 
 ## Network posture
 
-The agent initiates all connections outbound. No inbound ports need to be opened on the device.
+### External
+
+All external connections are outbound and initiated by the agent. No inbound ports need to be opened on the device.
+
+### On the device
+
+Applications on the same device reach the agent through its [Device API](/developers/device-api/overview). That interface is not reachable from other machines.
 
 <Tabs>
   <Tab title="Linux">
-    The agent creates no listening network sockets. The only local interface is a Unix domain socket at `/run/miru/miru.sock`, used by applications on the same device to query the agent's [Device API](/developers/device-api/overview). This socket is not accessible over the network.
+    The agent creates no listening network sockets. The Device API is a Unix domain socket at `/run/miru/miru.sock`.
   </Tab>
   <Tab title="Windows">
-    The only local interface is a TCP listener bound to the loopback address `127.0.0.1` (port `6478` by default), used by applications on the same device to query the agent's [Device API](/developers/device-api/overview). The agent never listens on a non-loopback interface, so the listener is not accessible over the network.
+    The Device API is a TCP listener bound to the loopback address `127.0.0.1` (port `6478` by default). The agent never listens on any other address.
   </Tab>
 </Tabs>
 
