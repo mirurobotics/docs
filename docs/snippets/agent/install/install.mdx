@@ -46,27 +46,24 @@ import GithubDownload from '/snippets/agent/install/github-download.mdx';
           </Step>
         </Steps>
       </Tab>
-      <Tab title="Command line">
+      <Tab title="Programmatic">
         <Steps>
-          <Step title="Download and install">
+          <Step title="Download">
 
-            Open PowerShell with **Run as administrator** and run the following, replacing `<version>` with the agent version to install, such as `0.11.0`. The command downloads the MSI from the [releases page](https://github.com/mirurobotics/agent/releases) and installs it silently.
-
-            ```powershell PowerShell
-            $version = "<version>"; `
-            Invoke-WebRequest "https://github.com/mirurobotics/agent/releases/download/v$version/miru-agent-$version.msi" -OutFile "$env:TEMP\miru-agent.msi"; `
-            Start-Process msiexec.exe -ArgumentList "/i `"$env:TEMP\miru-agent.msi`" /qn /norestart" -Wait
-            ```
+            Find your desired release version from the [releases page](https://github.com/mirurobotics/agent/releases) on GitHub, expand the **Assets** section, and download `miru-agent-<version>.msi`.
           </Step>
-          <Step title="Verify">
+          <Step title="Install">
 
-            Confirm the `miru-agent` service is running.
+            Open PowerShell with **Run as administrator** and run the installer, replacing the paths with your own.
 
-            ```powershell PowerShell
-            Get-Service miru-agent
+            ```powershell
+            msiexec /i "C:\path\to\miru-agent-<version>.msi" `
+              /qn `
+              /norestart `
+              /l*v "C:\path\to\miru-agent-install.log" | Out-Null
             ```
 
-            The `Status` column shows `Running`. If the service is missing or not running, run the install again with `/l*v C:\miru-agent-install.log` added to the `msiexec.exe` arguments and check that log.
+            `$LASTEXITCODE` is `0` when the agent is installed. `3010` means the agent is installed and Windows must be restarted. For any other exit code, check the log file.
           </Step>
         </Steps>
       </Tab>
