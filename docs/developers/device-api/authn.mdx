@@ -100,8 +100,6 @@ If you use a [Miru Device SDK](/developers/device-api/sdks), the SDK handles the
   <Tab title="Windows">
     Access to the discovery file, and therefore to the API, is restricted to SYSTEM, Administrators, and members of the local `Miru Agent Users` group, which the installer creates empty.
 
-    The same group controls who can read deployed configs in `%ProgramData%\Miru\configs`. Unlike on Linux, an application must be in `Miru Agent Users` to read its configs, even if it never calls the Device API. See [Reading configs](/developers/agent/filesys-access/windows#reading-configs).
-
     <Steps>
       <Step title="Add the account to the Miru Agent Users group">
         From an elevated PowerShell session, add the user or service account the application runs as:
