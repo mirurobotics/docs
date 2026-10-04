@@ -36,11 +36,11 @@ configuration required.
 
 ## Configs
 
-When the agent deploys a release, it **writes** config instances to disk. 
+When the agent deploys a release, it **writes** config instances to disk.
 
 `%ProgramData%\Miru\configs` is
 the default location and works out-of-the-box — deploying to any path inside `%ProgramData%\Miru\configs`
-requires no additional configuration. 
+requires no additional configuration.
 
 To deploy to a path outside `%ProgramData%\Miru\configs`, you must
 grant `NT SERVICE\miru-agent` modify access to that folder.
@@ -73,9 +73,11 @@ the glob matches in.
 
 ### Required permissions
 
-Grant `NT SERVICE\miru-agent` read and execute (`RX`) on the folder the glob matches in. For a file rule whose `source.glob` is `D:\robot\logs\*.log`, that folder is `D:\robot\logs`.
+Grant `NT SERVICE\miru-agent` read and execute (`RX`) on the folder the glob matches in, with the `(OI)` inheritance flag. For a file rule whose `source.glob` is `D:\robot\logs\*.log`, that folder is `D:\robot\logs`.
 
-For a glob that matches files in subfolders, such as `D:\robot\logs\**\*.log`, include `(CI)` on the folder grant so the access applies to every subfolder.
+`RX` on the folder lets the agent list it, and `(OI)` passes the read access down to the files in it. Without `(OI)`, the agent can match the files but not read them, and they are silently skipped.
+
+For a glob that matches files in subfolders, such as `D:\robot\logs\**\*.log`, also include `(CI)` so the access applies to every subfolder. The `(OI)(CI)RX` grant under [Granting access](#granting-access) covers both.
 
 ### Deleting local files
 
@@ -108,7 +110,7 @@ icacls "D:\robot\logs" /grant "NT SERVICE\miru-agent:(OI)(CI)(RX,D)"
 
 ### Locking down a custom folder
 
-A new folder created at the root of `C:\` inherits modify access for every signed-in user, so any local account could change your configs. 
+A new folder created at the root of `C:\` inherits modify access for every signed-in user, so any local account could change your configs.
 
 To restrict a custom config folder, replace its inherited permissions so that only Local System and Administrators can change it, members of `Miru Agent Users` can read it, and the agent can modify it:
 

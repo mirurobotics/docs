@@ -33,11 +33,11 @@ configuration required.
 
 ## Configs
 
-When the agent deploys a release, it **writes** config instances to disk. 
+When the agent deploys a release, it **writes** config instances to disk.
 
 `/srv/miru` is
 the default location and works out-of-the-box — deploying to any path inside `/srv/miru`
-requires no additional configuration. 
+requires no additional configuration.
 
 To deploy to a path outside `/srv/miru`, you must
 grant the `miru` user read and write access to that path.
@@ -194,7 +194,7 @@ For standard Unix permissions, there are three approaches, in order of preferenc
 
 When the target files already belong to a group with the access you need — common for
 upload sources produced by another application — adding `miru` to that group is the least
-invasive option. 
+invasive option.
 
 We recommend starting there. Otherwise, grant the `miru` group access directly.
 
