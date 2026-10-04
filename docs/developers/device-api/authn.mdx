@@ -33,7 +33,7 @@ If you use a [Miru Device SDK](/developers/device-api/sdks), the SDK handles the
 
     **Authenticate to the Server**
 
-    Access to the API is restricted by an authentication token. The agent generates a new token each time it starts and writes it, along with the port, to the discovery file `C:\ProgramData\Miru\device-api\device-api.json`.
+    Access to the API is restricted by an authentication token. The agent generates a new token each time it starts and writes it, along with the port, to the discovery file `C:\ProgramData\Miru\Agent\device-api\device-api.json`.
 
     ```json
     {
@@ -49,7 +49,7 @@ If you use a [Miru Device SDK](/developers/device-api/sdks), the SDK handles the
     To call the API, read the port and token from the discovery file and pass the token as a bearer token:
 
     ```powershell
-    $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; Invoke-RestMethod `
+    $api = Get-Content -Raw "$env:ProgramData\Miru\Agent\device-api\device-api.json" | ConvertFrom-Json; Invoke-RestMethod `
       -Uri "http://127.0.0.1:$($api.port)/v0.2/health" `
       -Headers @{ Authorization = "Bearer $($api.token)" }
     ```
