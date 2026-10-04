@@ -22,22 +22,22 @@ import RemoveApt from '/snippets/apt/remove.mdx';
         Uninstall the **Miru Agent** from **Settings > Apps > Installed apps**.
       </Tab>
       <Tab title="Command line">
-        Uninstall the agent from PowerShell opened with **Run as administrator**, using the MSI of the installed version.
+        Open PowerShell with **Run as administrator** and run the following. It looks up the installed Miru Agent and uninstalls it silently, so you don't need the original MSI.
 
-        ```powershell
-        $msi = "C:\path\to\miru-agent-<version>.msi"; `
-        $p = Start-Process msiexec.exe -ArgumentList '/x',"`"$msi`"",'/qn','/norestart' -Wait -PassThru; `
-        $p.ExitCode
+        ```powershell PowerShell
+        $app = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where-Object DisplayName -eq "Miru Agent"; `
+        Start-Process msiexec.exe -ArgumentList "/x $($app.PSChildName) /qn /norestart" -Wait
         ```
 
-        An exit code of `0` means the agent was removed. An exit code of `3010` means it was removed and Windows must be restarted.
+        To confirm the agent is removed, run `Get-Service miru-agent`, which reports that it cannot find a service named `miru-agent`.
       </Tab>
     </Tabs>
 
-    Uninstalling keeps `%ProgramData%\Miru`, which holds the agent's settings, device identity, keys, and logs. For a complete removal, delete this directory after uninstalling the agent.
+    Uninstalling keeps `%ProgramData%\Miru`, which holds the agent's settings, device identity, keys, and logs, and the `Miru Agent Users` group and its members. For a complete removal, delete both after uninstalling the agent:
 
-    ```powershell
-    Remove-Item -Recurse -Force "$env:ProgramData\Miru"
+    ```powershell PowerShell
+    Remove-Item -Recurse -Force "$env:ProgramData\Miru"; `
+    Remove-LocalGroup "Miru Agent Users"
     ```
   </Tab>
 </Tabs>
