@@ -57,7 +57,7 @@ If a token refresh fails due to a transient network issue, the agent retries aut
   <Tab title="Windows">
     The agent's identity is bound to the RSA key pair generated on-device during [provisioning](/provision-devices/overview). Currently, these credentials are protected at rest through file system permissions.
 
-    All credential files are stored under `%ProgramData%\Miru\auth\`. The directory's access control list grants access only to Local System, Administrators, and the agent's service account. The private key never leaves the device—it is used locally to sign token requests but is never transmitted over the network.
+    All credential files are stored under `%ProgramData%\Miru\Agent\auth\`. The directory's access control list grants access only to Local System, Administrators, and the agent's service account. The private key never leaves the device—it is used locally to sign token requests but is never transmitted over the network.
   </Tab>
 </Tabs>
 
@@ -139,7 +139,7 @@ This prevents lateral access between devices. Even if two devices run the same a
 
     <Dropdown title="File system scope">
 
-    The installer grants the account access to `%ProgramData%\Miru`. That folder is owned by Local System and does not inherit permissions from `%ProgramData%`. The account can read, write, and traverse the folder, and it cannot delete the folder or change its permissions.
+    The installer grants the account access to its private state folder, `%ProgramData%\Miru\Agent`, and to the shared `%ProgramData%\Miru\configs` and `%ProgramData%\Miru\device-api` folders. These folders are owned by Local System and do not inherit permissions from `%ProgramData%`. The account can read, write, and traverse them, and it cannot delete them or change their permissions.
 
     `logs`, `auth`, `tmp`, `device-api`, and `configs` each contain an `installer-sentinel` folder that only Local System and Administrators can access, so the service cannot remove it.
 
