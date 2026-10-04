@@ -87,10 +87,14 @@ For a glob that matches files in subfolders, such as `D:\robot\logs\**\*.log`, a
 
 If a file rule has a [`retention`](/data-uploads/concepts/file-rules/rule-definition#retention) block,
 the agent removes each matching file once its retention guarantee ends. Deleting a file
-requires **delete (`D`)** on the file itself, or delete-child (`DC`) on its folder. We recommend
+requires **delete (`D`)** on the file itself, or delete-child (`DC`) on its folder. 
+
+We recommend
 the first: grant `RX` and `D` on `D:\robot\logs` with the
 `(OI)` inheritance flag, which passes the access down to the files in the folder (see the read-and-delete
-grant under [Granting access](#granting-access)). A `D` grant on the folder alone, without `(OI)`,
+grant under [Granting access](#granting-access)). 
+
+A `D` grant on the folder alone, without `(OI)`,
 doesn't let the agent delete the files.
 
 ## Granting access
@@ -131,7 +135,9 @@ icacls "C:\robot\configs" /grant "NT SERVICE\miru-agent:(OI)(CI)M"
 - `*S-1-5-18` is Local System and `*S-1-5-32-544` is the built-in Administrators group; `icacls` accepts these well-known security identifiers on any Windows language.
 - The parent folder is locked down too, so other accounts can't rename or replace the config folder.
 
-If a folder already existed, the script keeps any permissions that were set on it directly (for example `Users:(OI)(CI)M` added by hand), because it only removes inherited permissions and replaces the ones it lists. Check each folder afterwards and remove any other accounts:
+If a folder already existed, the script keeps any permissions that were set on it directly (for example `Users:(OI)(CI)M` added by hand), because it only removes inherited permissions and replaces the ones it lists. 
+
+Check each folder afterwards and remove any other accounts:
 
 ```powershell PowerShell
 icacls "C:\robot\configs"
