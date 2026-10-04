@@ -27,9 +27,12 @@ By default, the agent creates and owns the following directories:
 
 The first two directories are only for internal use by the agent.
 
-The third directory is the default location for deploying config instances—reading or
-writing to any path inside `/srv/miru` is supported out-of-the-box, no additional
-configuration required.
+The third directory is the default location for deploying config instances—the agent can
+write to any path inside `/srv/miru` out-of-the-box, no additional configuration required.
+
+Any local account can read configs deployed to `/srv/miru`, so applications don't need to be
+in the `miru` group to read them. This differs from Windows, where only members of the
+`Miru Agent Users` group can read deployed configs. See [Reading configs](#reading-configs).
 
 ## Configs
 
@@ -104,6 +107,22 @@ To write to a given file, the `miru` user requires the following Unix permission
       special permissions. Other directories, such as `/home/myapp`, will not grant
       `miru` user access by default and must be specifically configured.
     </Info>
+
+### Reading configs
+
+Applications read deployed configs as their own account, not as `miru`.
+
+`/srv/miru` has mode `0755` and the agent creates configs with mode `0644`, so every local
+account can read configs deployed there. Joining the `miru` group is only needed to use the
+[Device API](/developers/device-api/authn#granting-access), not to read configs.
+
+For a config outside `/srv/miru`, the application's account needs read (`r`) on the file and
+execute (`x`) on every directory along the path to it.
+
+<Note>
+  On Windows, reading deployed configs requires membership in the `Miru Agent Users` group.
+  See [Reading configs on Windows](/developers/agent/filesys-access/windows#reading-configs).
+</Note>
 
 ## Data uploads
 

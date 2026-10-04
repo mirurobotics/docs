@@ -29,6 +29,8 @@
 
       - `/srv/miru/configs/mobility.json`
       - `/home/myapp/configs/communication.yaml`
+
+      Any local account can read configs deployed to `/srv/miru`.
     </Tab>
     <Tab title="Windows">
       <Warning>
@@ -37,6 +39,8 @@
 
       - `C:\ProgramData\Miru\configs\mobility.json`
       - `C:\ProgramData\MyApp\configs\communication.yaml`
+
+      Only members of the local `Miru Agent Users` group (and administrators) can read configs deployed to `%ProgramData%\Miru\configs`. See [Reading configs](/developers/agent/filesys-access/windows#reading-configs).
     </Tab>
   </Tabs>
 </ParamField>

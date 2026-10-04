@@ -34,9 +34,9 @@ The third directory is the default location for deploying config instances—the
 write to any path inside `%ProgramData%\Miru\configs` out-of-the-box, no additional
 configuration required.
 
-Only members of the local `Miru Agent Users` group can read from `%ProgramData%\Miru\configs`.
-To let an application read its configs, add the account it runs as to the group, as described in
-[Granting access](/developers/device-api/authn#granting-access) for the Device API.
+Only Local System, Administrators, the agent, and members of the local `Miru Agent Users` group
+can read from `%ProgramData%\Miru\configs`. This differs from Linux, where any local account can
+read configs deployed to `/srv/miru`. See [Reading configs](#reading-configs).
 
 ## Configs
 
@@ -66,6 +66,31 @@ To write a config instance, `NT SERVICE\miru-agent` needs modify (`M`) access on
   If the folder does not yet exist, create it yourself and grant access on it. The agent
   creates a missing folder only when it can create folders in the nearest folder that
   already exists.
+</Note>
+
+### Reading configs
+
+Applications read deployed configs as their own account, not as `NT SERVICE\miru-agent`.
+
+Unlike `/srv/miru` on Linux, `%ProgramData%\Miru\configs` is not readable by every local account.
+Only Local System, Administrators, the agent, and members of the local `Miru Agent Users` group
+can read it. To let an application read its configs, add the account it runs as to the group:
+
+```powershell PowerShell
+Add-LocalGroupMember -Group "Miru Agent Users" -Member "<username>"
+```
+
+The account must then sign out and back in, or its service must be restarted, before the
+membership takes effect. Membership also grants access to the Device API. See
+[Granting access](/developers/device-api/authn#granting-access) for the full steps.
+
+For a custom config folder, the application's account needs read and execute (`RX`) on the
+folder. A new folder under `C:\` inherits read access for every local user. To limit reading
+to `Miru Agent Users`, see [Locking down a custom folder](#locking-down-a-custom-folder).
+
+<Note>
+  On Linux, any local account can read configs deployed to `/srv/miru`. See
+  [Reading configs on Linux](/developers/agent/filesys-access/linux#reading-configs).
 </Note>
 
 ## Data uploads
