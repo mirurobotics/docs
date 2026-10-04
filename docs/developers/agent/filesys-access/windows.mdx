@@ -81,7 +81,10 @@ For a glob that matches files in subfolders, such as `D:\robot\logs\**\*.log`, i
 
 If a file rule has a [`retention`](/data-uploads/concepts/file-rules/rule-definition#retention) block,
 the agent removes each matching file once its retention guarantee ends. Deleting a file
-requires **delete (`D`)** on its folder, so grant `RX` and `D` on `D:\robot\logs` in that case.
+requires **delete (`D`)** on the file itself, so grant `RX` and `D` on `D:\robot\logs` with the
+`(OI)` inheritance flag, which passes the access down to the files in the folder (see the read-and-delete
+grant under [Granting access](#granting-access)). A `D` grant on the folder alone, without `(OI)`,
+doesn't let the agent delete the files.
 
 ## Granting access
 
