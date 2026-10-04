@@ -69,8 +69,6 @@ If you use a [Miru Device SDK](/developers/device-api/sdks), the SDK handles the
   <Tab title="Linux">
     Any access to the socket must be executed with a user who is a member of the `miru` group.
 
-    The `miru` group only controls access to the Device API. Configs deployed to `/srv/miru` are readable by every local account, so an application that only reads its configs doesn't need to join the group.
-
     <Note>
       Access to the socket is granted to the `root` user, but this is not recommended for security best practices.
     </Note>
