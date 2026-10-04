@@ -141,7 +141,7 @@ This prevents lateral access between devices. Even if two devices run the same a
 
     The installer grants the account access to its private state folder, `%ProgramData%\Miru\Agent`, and to the shared `%ProgramData%\Miru\configs` and `%ProgramData%\Miru\device-api` folders. These folders are owned by Local System and do not inherit permissions from `%ProgramData%`. The account can read, write, and traverse them, and it cannot delete them or change their permissions.
 
-    `logs`, `auth`, `tmp`, `device-api`, and `configs` each contain an `installer-sentinel` folder that only Local System and Administrators can access, so the service cannot remove it.
+    `%ProgramData%\Miru\Agent\logs`, `%ProgramData%\Miru\Agent\auth`, `%ProgramData%\Miru\Agent\tmp`, `%ProgramData%\Miru\device-api`, and `%ProgramData%\Miru\configs` each contain an `installer-sentinel` folder that only Local System and Administrators can access, so the service cannot remove it.
 
     Any other path must be granted explicitly. See [File system access on Windows](/developers/agent/filesys-access/windows).
 
