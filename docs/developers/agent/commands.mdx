@@ -85,14 +85,14 @@ To check the version of the agent, run the following command on the device:
     </Tip>
   </Tab>
   <Tab title="Windows">
-    The agent writes logs to files in `%ProgramData%\Miru\logs`, one file per hour (`miru.log.YYYY-MM-DD-HH`). Logs are not written to the Windows Event Log.
+    The agent writes logs to files in `%ProgramData%\Miru\Agent\logs`, one file per hour (`miru.log.YYYY-MM-DD-HH`). Logs are not written to the Windows Event Log.
 
     **Tail in real-time**
 
     From PowerShell opened as administrator, tail the most recent log file and watch new entries as they appear. The command follows a single hourly file, so re-run it after the log rotates.
 
     ```powershell PowerShell
-    Get-ChildItem "$env:ProgramData\Miru\logs" -Filter 'miru.log.*' | Sort-Object LastWriteTime | Select-Object -Last 1 | Get-Content -Wait -Tail 100
+    Get-ChildItem "$env:ProgramData\Miru\Agent\logs" -Filter 'miru.log.*' | Sort-Object LastWriteTime | Select-Object -Last 1 | Get-Content -Wait -Tail 100
     ```
   </Tab>
 </Tabs>
