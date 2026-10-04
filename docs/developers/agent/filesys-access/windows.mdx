@@ -106,17 +106,43 @@ icacls "C:\robot\configs" /grant "NT SERVICE\miru-agent:(OI)(CI)M"
 
 ### Reading configs from your application
 
-Applications read deployed configs with the permissions of the account they run as. Add that account to the local `Miru Agent Users` group, which can read `%ProgramData%\Miru\configs` and any custom folder locked down as shown above:
+Applications read deployed configs with the permissions of the account they run as. Give that account access through the local `Miru Agent Users` group, which can read `%ProgramData%\Miru\configs` and any custom folder locked down as shown above.
 
-```powershell PowerShell
-# A user account
-Add-LocalGroupMember -Group "Miru Agent Users" -Member "robot-operator"
+<Steps>
+  <Step title="Add the account to the Miru Agent Users group">
+    From PowerShell opened as administrator, add the user account the application runs as:
 
-# A Windows service's account
-Add-LocalGroupMember -Group "Miru Agent Users" -Member "NT SERVICE\RobotApp"
-```
+    ```powershell PowerShell
+    Add-LocalGroupMember -Group "Miru Agent Users" -Member "robot-operator"
+    ```
 
-Membership takes effect the next time the user signs in, or the next time the application's service starts. Remove access with `Remove-LocalGroupMember`. The same group grants access to the [Device API](/developers/device-api/authn).
+    For an application that runs as a Windows service, add its service account:
+
+    ```powershell PowerShell
+    Add-LocalGroupMember -Group "Miru Agent Users" -Member "NT SERVICE\RobotApp"
+    ```
+  </Step>
+  <Step title="Sign out and sign back in">
+    Windows only reads group membership when an account signs in. Until the user signs out of Windows and signs back in, the application still can't read the configs. Closing PowerShell or locking the screen isn't enough.
+
+    For a service account, restart the application's service instead:
+
+    ```powershell PowerShell
+    Restart-Service RobotApp
+    ```
+  </Step>
+  <Step title="Verify the group membership">
+    After signing back in, run the following as the user:
+
+    ```powershell PowerShell
+    whoami /groups | Select-String "Miru Agent Users"
+    ```
+
+    The output includes a line for `Miru Agent Users`.
+  </Step>
+</Steps>
+
+The same group grants access to the [Device API](/developers/device-api/authn).
 
 <Warning>
   Don't add broad groups such as `Users`, `Authenticated Users`, or `Everyone` to `Miru Agent Users`, or grant them access to config folders. Configs may hold secrets, and group members can also call every Device API endpoint.
