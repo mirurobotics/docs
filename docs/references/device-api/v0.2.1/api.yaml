@@ -79,7 +79,7 @@ paths:
       - lang: powershell
         label: PowerShell (Windows)
         source: |-
-          $api = Get-Content -Raw "$env:ProgramData\Miru\Agent\device-api\device-api.json" | ConvertFrom-Json; `
+          $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           Invoke-RestMethod -Method Get `
             -Uri "http://127.0.0.1:$($api.port)/v0.2/health" `
             -Headers @{ Authorization = "Bearer $($api.token)" }
@@ -115,7 +115,7 @@ paths:
       - lang: powershell
         label: PowerShell (Windows)
         source: |-
-          $api = Get-Content -Raw "$env:ProgramData\Miru\Agent\device-api\device-api.json" | ConvertFrom-Json; `
+          $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           Invoke-RestMethod -Method Get `
             -Uri "http://127.0.0.1:$($api.port)/v0.2/version" `
             -Headers @{ Authorization = "Bearer $($api.token)" }
@@ -153,7 +153,7 @@ paths:
       - lang: powershell
         label: PowerShell (Windows)
         source: |-
-          $api = Get-Content -Raw "$env:ProgramData\Miru\Agent\device-api\device-api.json" | ConvertFrom-Json; `
+          $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           Invoke-RestMethod -Method Get `
             -Uri "http://127.0.0.1:$($api.port)/v0.2/deployments/{deployment_id}" `
             -Headers @{ Authorization = "Bearer $($api.token)" }
@@ -191,7 +191,7 @@ paths:
       - lang: powershell
         label: PowerShell (Windows)
         source: |-
-          $api = Get-Content -Raw "$env:ProgramData\Miru\Agent\device-api\device-api.json" | ConvertFrom-Json; `
+          $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           Invoke-RestMethod -Method Get `
             -Uri "http://127.0.0.1:$($api.port)/v0.2/deployments/current" `
             -Headers @{ Authorization = "Bearer $($api.token)" }
@@ -227,7 +227,7 @@ paths:
       - lang: powershell
         label: PowerShell (Windows)
         source: |-
-          $api = Get-Content -Raw "$env:ProgramData\Miru\Agent\device-api\device-api.json" | ConvertFrom-Json; `
+          $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           Invoke-RestMethod -Method Get `
             -Uri "http://127.0.0.1:$($api.port)/v0.2/device" `
             -Headers @{ Authorization = "Bearer $($api.token)" }
@@ -263,7 +263,7 @@ paths:
       - lang: powershell
         label: PowerShell (Windows)
         source: |-
-          $api = Get-Content -Raw "$env:ProgramData\Miru\Agent\device-api\device-api.json" | ConvertFrom-Json; `
+          $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           Invoke-RestMethod -Method Post `
             -Uri "http://127.0.0.1:$($api.port)/v0.2/device/sync" `
             -Headers @{ Authorization = "Bearer $($api.token)" }
@@ -301,7 +301,7 @@ paths:
       - lang: powershell
         label: PowerShell (Windows)
         source: |-
-          $api = Get-Content -Raw "$env:ProgramData\Miru\Agent\device-api\device-api.json" | ConvertFrom-Json; `
+          $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           Invoke-RestMethod -Method Get `
             -Uri "http://127.0.0.1:$($api.port)/v0.2/git_commits/{git_commit_id}" `
             -Headers @{ Authorization = "Bearer $($api.token)" }
@@ -341,7 +341,7 @@ paths:
       - lang: powershell
         label: PowerShell (Windows)
         source: |-
-          $api = Get-Content -Raw "$env:ProgramData\Miru\Agent\device-api\device-api.json" | ConvertFrom-Json; `
+          $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           Invoke-RestMethod -Method Get `
             -Uri "http://127.0.0.1:$($api.port)/v0.2/releases/{release_id}" `
             -Headers @{ Authorization = "Bearer $($api.token)" }
@@ -379,7 +379,7 @@ paths:
       - lang: powershell
         label: PowerShell (Windows)
         source: |-
-          $api = Get-Content -Raw "$env:ProgramData\Miru\Agent\device-api\device-api.json" | ConvertFrom-Json; `
+          $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           Invoke-RestMethod -Method Get `
             -Uri "http://127.0.0.1:$($api.port)/v0.2/releases/current" `
             -Headers @{ Authorization = "Bearer $($api.token)" }
@@ -457,7 +457,7 @@ paths:
       - lang: powershell
         label: PowerShell (Windows)
         source: |-
-          $api = Get-Content -Raw "$env:ProgramData\Miru\Agent\device-api\device-api.json" | ConvertFrom-Json; `
+          $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           curl.exe --no-buffer `
             --request GET `
             --url "http://127.0.0.1:$($api.port)/v0.2/events" `

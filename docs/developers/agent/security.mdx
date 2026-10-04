@@ -139,7 +139,7 @@ This prevents lateral access between devices. Even if two devices run the same a
 
     <Dropdown title="File system scope">
 
-    The installer grants the account access to its own folder, `%ProgramData%\Miru\Agent` (which includes the `device-api` folder that `Miru Agent Users` can read), and to the shared `%ProgramData%\Miru\configs` folder. These folders are owned by Local System and do not inherit permissions from `%ProgramData%`. The account can read, write, and traverse them, and it cannot delete them or change their permissions.
+    The installer grants the account access to its private state folder, `%ProgramData%\Miru\Agent`, and to the shared `%ProgramData%\Miru\configs` and `%ProgramData%\Miru\device-api` folders. These folders are owned by Local System and do not inherit permissions from `%ProgramData%`. The account can read, write, and traverse them, and it cannot delete them or change their permissions.
 
     `logs`, `auth`, `tmp`, `device-api`, and `configs` each contain an `installer-sentinel` folder that only Local System and Administrators can access, so the service cannot remove it.
 
@@ -197,7 +197,7 @@ The agent's local API is only accessible from processes running on the same devi
     The local API is exposed over loopback TCP and every request must carry a bearer token:
 
     - **Bearer token** — the agent generates a random token each time it starts and rejects requests without it with `401 Unauthorized`. The token is never written to the agent's logs
-    - **Discovery file** — the agent writes the port and token to `%ProgramData%\Miru\Agent\device-api\device-api.json` while the API is being served and removes it when the agent stops
+    - **Discovery file** — the agent writes the port and token to `%ProgramData%\Miru\device-api\device-api.json` while the API is being served and removes it when the agent stops
     - **Group-based access** — the discovery file is readable only by Local System, Administrators, the agent's service account, and members of the local `Miru Agent Users` group. Applications that need to query the agent are added to this group
     - **Browser protection** — requests whose `Host` or `Origin` header is not the agent's loopback address are rejected with `403 Forbidden`, which blocks web pages open on the device from calling the API
 

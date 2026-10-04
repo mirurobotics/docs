@@ -18,7 +18,7 @@ LANG = 'powershell'
 LABEL = 'PowerShell (Windows)'
 
 READ_DISCOVERY_FILE = (
-    '$api = Get-Content -Raw "$env:ProgramData\\Miru\\Agent\\device-api\\device-api.json"'
+    '$api = Get-Content -Raw "$env:ProgramData\\Miru\\device-api\\device-api.json"'
     ' | ConvertFrom-Json; `'
 )
 METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options']
