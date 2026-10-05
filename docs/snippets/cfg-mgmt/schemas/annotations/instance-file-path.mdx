@@ -26,20 +26,17 @@
       The Miru Agent ships with out-of-the-box access to `/srv/miru`. Any local account can read configs deployed to `/srv/miru`.
 
       <Warning>
-         To deploy configs to a custom directory, visit [File system access](/developers/agent/filesys-access/linux#configs).
+        To deploy configs to a custom directory, visit [File system access](/developers/agent/filesys-access/linux#configs).
       </Warning>
 
       - `/srv/miru/configs/mobility.json`
       - `/home/myapp/configs/communication.yaml`
-
     </Tab>
     <Tab title="Windows">
-      The Miru Agent ships with out-of-the-box access to `%ProgramData%\Miru\configs`. 
-      
-      Only members of the local `Miru Agent Users` group can read configs deployed to `%ProgramData%\Miru\configs`. See [File system access](/developers/agent/filesys-access/windows#configs).
+      The Miru Agent ships with out-of-the-box access to `%ProgramData%\Miru\configs`. Only Local System, Administrators, the agent, and members of the local `Miru Agent Users` group can read configs deployed to `%ProgramData%\Miru\configs`.
 
       <Warning>
-         To deploy configs to a custom directory, please visit the [File system access](/developers/agent/filesys-access/windows#configs) page.
+        To deploy configs to a custom directory, visit [File system access](/developers/agent/filesys-access/windows#configs).
       </Warning>
 
       - `C:\ProgramData\Miru\configs\mobility.json`

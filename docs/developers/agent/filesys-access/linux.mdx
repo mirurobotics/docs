@@ -15,7 +15,7 @@ This page covers the agent's default permissions and how to grant file system ac
 
 **Default config path**
 
-During installation, the agent creates and owns `/srv/miru`. The directory is owned by the `miru` user and group (`miru:miru`), with mode `0755`. 
+During installation, the agent creates and owns `/srv/miru`. The directory is owned by the `miru` user and group (`miru:miru`), with mode `0755`. The agent creates configs inside it with mode `0644` and subdirectories with mode `0755`.
 
 | Account | Read | Write | 
 |---------|------|-------|
