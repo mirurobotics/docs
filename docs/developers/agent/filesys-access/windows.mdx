@@ -75,7 +75,7 @@ files, unless the rule also deletes them, covered next.
 If a file rule has a [`retention`](/data-uploads/concepts/file-rules/rule-definition#retention) block,
 the agent removes each matching file once its retention guarantee ends. Grant delete (`D`) as well as read and execute (`RX`) on that folder, with `(OI)(CI)`.
 
-## Granting access to the agent
+## Granting access
 
 Grant `NT SERVICE\miru-agent` access with [`icacls`](https://learn.microsoft.com/windows-server/administration/windows-commands/icacls) from PowerShell opened as administrator.
 
