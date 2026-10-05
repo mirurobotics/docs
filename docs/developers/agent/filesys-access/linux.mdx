@@ -6,7 +6,7 @@ On Linux the Miru Agent runs as the `miru` system user and needs specific file s
 permissions in the two cases where it touches files on your devices:
 
 - **[Configs](#configs)** — writes config instances to disk when it deploys
-  a release.
+  a release
 - **[Data uploads](#data-uploads)** — reads files to upload them to your bucket
 
 This page covers the agent's default permissions and how to grant file system access.
@@ -46,7 +46,7 @@ To enable the agent to write to these paths, grant the [required permissions](#r
 below. Otherwise, the agent will receive a permission denied error from the operating
 system.
 
-### Required permissions for configs
+### Required permissions
 
 To write to a given file, the `miru` user requires specific permissions to
 
@@ -101,7 +101,7 @@ your bucket.
 
 You must grant the [required permissions](#required-permissions-for-uploads) outlined below. Otherwise, the agent will receive a permission denied error from the operating system.
 
-### Required permissions for uploads
+### Required permissions
 
 To read a file for upload, the `miru` user requires specific permissions to
 
