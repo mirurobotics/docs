@@ -42,7 +42,7 @@ include:
   configurations to a path that does not begin with `/srv/miru/config_instances/`.
 </Warning>
 
-To enable the agent to write to these paths, grant the [required permissions](#required-permissions-for-configs) outlined
+To enable the agent to write to these paths, grant the [required permissions](#required-permissions) outlined
 below. Otherwise, the agent will receive a permission denied error from the operating
 system.
 
@@ -99,7 +99,7 @@ To upload files from disk, the agent **reads** the files matched by a [file
 rule's](/data-uploads/concepts/file-rules/overview) `source.glob` and streams them to
 your bucket. 
 
-You must grant the [required permissions](#required-permissions-for-uploads) outlined below. Otherwise, the agent will receive a permission denied error from the operating system.
+You must grant the [required permissions](#required-permissions-2) outlined below. Otherwise, the agent will receive a permission denied error from the operating system.
 
 ### Required permissions
 
@@ -157,7 +157,7 @@ entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case
 | `/var/log` | execute (`x`) |
 | `/var` | execute (`x`) |
 
-## Granting access to the agent
+## Granting access
 
 There are two common methods for granting a user (the `miru` user) access to a given path:
 
@@ -172,7 +172,7 @@ this case, ACLs may be a better fit. ACLs provide flexibility by allowing you to
 existing permissions for a given path while granting the `miru` user or group the
 required permissions.
 
-**Standard Unix permissions**
+### Standard Unix permissions
 
 For standard Unix permissions, there are three approaches, in order of preference:
 
@@ -186,7 +186,7 @@ invasive option.
 
 We recommend starting there. Otherwise, grant the `miru` group access directly.
 
-### Add miru to an existing group
+#### Add miru to an existing group
 
 Add the `miru` user to a group that already has the required access, so it inherits that
 group's permissions without touching the path:
@@ -201,7 +201,7 @@ The agent only picks up a new group when it starts, so restart it after adding t
 sudo systemctl restart miru
 ```
 
-### Set the group or owner
+#### Set the group or owner
 
 If no group already grants the access you need, set the path's group to `miru`
 (recommended) or transfer ownership to `miru`.
