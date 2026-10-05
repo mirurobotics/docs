@@ -4,6 +4,34 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.11.0
+
+*October 5, 2026*
+
+Miru Agent `v0.11.0` adds **Windows support**. The agent installs from a signed MSI, runs as a Windows service, and serves the [Device API](/developers/device-api/overview) to applications on the device over loopback TCP.
+
+## Features
+
+- Added Windows support for Windows 11 (x64), see [supported platforms](/developers/agent/install#supported-platforms)
+  - Each release now includes a signed MSI installer, `miru-agent-<version>.msi`, and a signed `miru-agent.exe`
+  - The agent runs as the Windows service `miru-agent` under the virtual account `NT SERVICE\miru-agent`, with no administrator rights, and restarts automatically on failure
+  - The [Device API](/developers/device-api/authn) is served on `127.0.0.1:6478` and requires a bearer token that changes each time the agent starts; the agent writes the port and token to `%ProgramData%\Miru\device-api\device-api.json`
+  - The installer creates the `Miru Agent Users` group whose members can call the Device API and read configs deployed to `%ProgramData%\Miru\configs`; see [file system access](/developers/agent/filesys-access/windows)
+- Devices now report their operating system, CPU architecture, hostname, OS version, and kernel version when provisioned or reprovisioned, and report changes to them on later syncs
+
+## Improvements
+
+- On Linux, the systemd unit now applies additional hardening directives (`LockPersonality`, `RestrictNamespaces`, `SystemCallArchitectures=native`, `ProtectClock`, and `ProtectKernelLogs`)
+
+## Fixes
+
+- On Linux, `/var/lib/miru` is now mode `0700`, so other local accounts can no longer read the agent's state, including its access token
+- On Linux, `/var/log/miru` is now mode `0750`, to restrict access to the agent's log files to the `miru` group
+- The agent now exits with status `1` when it fails to start, so `systemctl status miru` reports `failed` instead of `inactive`
+- The agent now stops with an error instead of crashing when it can't open its log file
+
+---
+
 # v0.10.3
 
 *September 17, 2026*
