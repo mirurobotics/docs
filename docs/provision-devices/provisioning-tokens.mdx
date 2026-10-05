@@ -120,7 +120,7 @@ If the machine you're provisioning on has already been provisioned, the provisio
 
 To reassociate the machine with an existing Miru device, follow the [reprovisioning](/provision-devices/reprovision) documentation.
 
-To provision the machine as a brand new Miru device (never been provisioned in Miru before), first [uninstall](/developers/agent/install#uninstall) the `miru-agent` package before continuing with the provisioning process.
+To provision the machine as a brand new Miru device (never been provisioned in Miru before), first [uninstall](/developers/agent/install#uninstall) the `miru-agent` package before continuing with the provisioning process. On Windows, also delete `%ProgramData%\Miru`, which holds the device's identity and is kept when the agent is uninstalled.
 
 ### Arguments
 

@@ -95,7 +95,21 @@ icacls "D:\robot\logs" /grant "NT SERVICE\miru-agent:(OI)(CI)(RX,D)"
 
 </CodeGroup>
 
-These grants add access for the agent and leave the folder's other permissions unchanged. A new folder at the root of `C:\`, such as `C:\robot\configs`, inherits modify access for signed-in users.
+These grants add access for the agent and leave the folder's other permissions unchanged. A new folder at the root of `C:\`, such as `C:\robot\configs`, inherits modify access for signed-in users, so any local user could change the configs the agent deploys there.
+
+### Restricting a config folder
+
+To give a custom config folder the same permissions as the [default config path](#configs), replace its permissions instead of adding to them:
+
+```powershell PowerShell
+icacls "C:\robot\configs" /inheritance:r /grant:r `
+  "SYSTEM:(OI)(CI)F" `
+  "Administrators:(OI)(CI)F" `
+  "NT SERVICE\miru-agent:(OI)(CI)M" `
+  "Miru Agent Users:(OI)(CI)RX"
+```
+
+This removes the permissions the folder inherits, so only these accounts keep access.
 
 ### Granting access before installing
 
