@@ -28,8 +28,6 @@ import RemoveApt from '/snippets/apt/remove.mdx';
         $app = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where-Object DisplayName -eq "Miru Agent"; `
         Start-Process msiexec.exe -ArgumentList "/x $($app.PSChildName) /qn /norestart" -Wait
         ```
-
-        To confirm the agent is removed, run `Get-Service miru-agent`, which reports that it cannot find a service named `miru-agent`.
       </Tab>
     </Tabs>
 
