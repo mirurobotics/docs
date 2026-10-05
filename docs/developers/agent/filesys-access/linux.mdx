@@ -2,65 +2,51 @@
 title: 'Linux'
 ---
 
-Two kinds of file system access matter on a Linux device:
+On Linux the Miru Agent runs as the `miru` system user and needs specific file system
+permissions in the two cases where it touches files on your devices:
 
-- **[Agent access](#agent-access)** — what the Miru Agent, running as the `miru` system user,
-  can read and write. The agent **writes** config instances when it deploys a release and
-  **reads** files to upload them to your bucket.
-- **[Application access](#application-access)** — what your applications, running as their own
-  users, can read. Applications read the configs the agent deploys and call the
-  [Device API](/developers/device-api/overview).
+- **[Configs](#configs)** — writes config instances to disk when it deploys
+  a release.
+- **[Data uploads](#data-uploads)** — reads files to upload them to your bucket
 
-| Account | Needs | Out of the box |
-|---------|-------|----------------|
-| The agent (`miru` user) | Write to config directories, read upload sources | Can write to `/srv/miru`. Other paths must be [granted](#granting-access-to-the-agent). |
-| Your applications | Read configs, call the Device API | Any local user can read `/srv/miru`. Only members of the `miru` group can call the Device API. |
+This page covers the agent's default permissions and how to grant file system access.
 
-## Agent access
+## Configs
 
-During installation, the `miru` system user and group are created (no login shell). The
-agent process runs as `miru:miru` under systemd.
+**Default config path**
 
-### Default directories
+During installation, the agent creates and owns `/srv/miru`. The directory is owned by the `miru` user and group (`miru:miru`), with mode `0755`. 
 
-The agent creates and owns the following directories:
+| Account | Read | Write | 
+|---------|------|-------|
+| Miru Agent (`miru`) | Yes | Yes |
+| All other accounts | Yes | No |
 
-| Path | Purpose |
-|------|---------|
-| `/var/lib/miru` | Agent state, credentials, device identity |
-| `/var/log/miru` | Log files (hourly rotation) |
-| `/srv/miru` | Deployed configuration instance files |
+Deploying configs to `/srv/miru` requires no additional configuration. The agent holds write access and all applications can read the configs.
 
-The first two directories are only for internal use by the agent.
+<Info>
+  `/srv/miru` is world-readable. For stricter security configurations, consider using a custom config path.
+</Info>
 
-The third directory is the default location for deploying config instances—the agent can
-write to any path inside `/srv/miru` out-of-the-box, no additional configuration required.
-Who else can read it is covered under [Reading configs](#reading-configs).
+**Custom config paths**
 
-### Configs
+The Miru Agent also supports writing configs to arbitrary file system paths. Some examples
+include:
 
-When the agent deploys a release, it **writes** config instances to disk.
-
-To deploy to a path outside `/srv/miru`, you must
-grant the `miru` user read and write access to that path.
+- `/etc/myapp/configs/mobility.json`
+- `/home/myapp/configs/communication.yaml`
+- `/var/lib/myapp/configs/safety.yaml`
 
 <Warning>
   You must use Miru Agent [v0.8.0](/changelog/agent#v0-8-0) or later to deploy
   configurations to a path that does not begin with `/srv/miru/config_instances/`.
 </Warning>
 
-The Miru Agent supports writing config instances to arbitrary file system paths. Some
-examples include:
+To enable the agent to write to these paths, grant the [required permissions](#required-permissions) outlined
+below. Otherwise, the agent will receive a permission denied error from the operating
+system.
 
-- `/etc/myapp/configs/mobility.json`
-- `/home/myapp/configs/communication.yaml`
-- `/var/lib/myapp/configs/safety.yaml`
-
-However, to do so, you must grant the `miru` user access to the specified target path.
-Otherwise, the Miru Agent will receive a permission denied error from the operating
-system when attempting to write to these file paths.
-
-**Required permissions**
+### Required permissions
 
 To write to a given file, the `miru` user requires specific permissions to
 
@@ -107,15 +93,15 @@ To write to a given file, the `miru` user requires the following Unix permission
       `miru` user access by default and must be specifically configured.
     </Info>
 
-### Data uploads
+## Data uploads
 
-To upload data, the agent **reads** the files matched by a
-[file rule's](/data-uploads/concepts/file-rules/overview) `source.glob` and streams them to
-your bucket. The `miru` user needs read access to the files themselves, read and execute
-on the directory that contains them (to list and match the glob), and execute access to
-traverse the remaining directories along the path.
+To upload files from disk, the agent **reads** the files matched by a [file
+rule's](/data-uploads/concepts/file-rules/overview) `source.glob` and streams them to
+your bucket. 
 
-**Required permissions**
+You must grant the [required permissions](#required-permissions) outlined below. Otherwise, the agent will receive a permission denied error from the operating system.
+
+### Required permissions
 
 To read a file for upload, the `miru` user requires specific permissions to
 
@@ -157,7 +143,7 @@ To read a given file, the `miru` user requires the following Unix permissions:
 Uploads are read-only — the `miru` user does **not** need write access to the source
 files, unless the rule also deletes them, covered next.
 
-**Deleting local files**
+### Deleting local files
 
 If a file rule has a [`retention`](/data-uploads/concepts/file-rules/rule-definition#retention) block,
 the agent removes each matching file once its retention guarantee ends. Deleting a file
@@ -171,9 +157,9 @@ entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case
 | `/var/log` | execute (`x`) |
 | `/var` | execute (`x`) |
 
-### Granting access to the agent
+## Granting access to the agent
 
-There are two common methods for granting the agent (`miru` user) access to a given path:
+There are two common methods for granting a user (the `miru` user) access to a given path:
 
 1. Standard Unix permissions - basic owner/group/other mode bits on a file or directory
 2. ACLs - per-user or per-group access rules beyond mode bits
@@ -200,7 +186,7 @@ invasive option.
 
 We recommend starting there. Otherwise, grant the `miru` group access directly.
 
-#### Add miru to an existing group
+### Add miru to an existing group
 
 Add the `miru` user to a group that already has the required access, so it inherits that
 group's permissions without touching the path:
@@ -215,7 +201,7 @@ The agent only picks up a new group when it starts, so restart it after adding t
 sudo systemctl restart miru
 ```
 
-#### Set the group or owner
+### Set the group or owner
 
 If no group already grants the access you need, set the path's group to `miru`
 (recommended) or transfer ownership to `miru`.
@@ -300,7 +286,7 @@ If no group already grants the access you need, set the path's group to `miru`
   </Tab>
 </Tabs>
 
-#### ACLs
+### ACLs
 
 When you cannot change the ownership or the group of a path (e.g., a directory shared
 between multiple services), use POSIX Access Control Lists (ACLs) for fine-grained
@@ -343,28 +329,3 @@ sudo setfacl -m u:miru:rwx /path/to/dir
 ```
 
 </CodeGroup>
-
-## Application access
-
-Your applications don't run as the agent. Each one reads configs and calls the Device API as
-the user it runs as, such as a login user or a service's user.
-
-### Reading configs
-
-`/srv/miru` has mode `0755` and the agent creates configs with mode `0644`, so every local
-user can read configs deployed there. Applications don't need to join the `miru` group to
-read their configs.
-
-For a config outside `/srv/miru`, the application's user needs read (`r`) on the file and
-execute (`x`) on every directory along the path to it.
-
-<Note>
-  On Windows, reading deployed configs requires membership in the `Miru Agent Users` group.
-  See [Reading configs on Windows](/developers/agent/filesys-access/windows#reading-configs).
-</Note>
-
-### Device API access
-
-Only members of the `miru` group can use the Device API socket. Add the application's user to
-the group with `usermod`, then sign out and back in, or restart the application's service.
-See [Device API authentication](/developers/device-api/authn#granting-access) for the full steps.
