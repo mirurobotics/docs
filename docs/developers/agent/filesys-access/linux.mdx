@@ -42,11 +42,11 @@ include:
   configurations to a path that does not begin with `/srv/miru/config_instances/`.
 </Warning>
 
-To enable the agent to write to these paths, grant the [required permissions](#required-permissions) outlined
+To enable the agent to write to these paths, grant the [required permissions](#required-permissions-for-configs) outlined
 below. Otherwise, the agent will receive a permission denied error from the operating
 system.
 
-### Required permissions
+### Required permissions for configs
 
 To write to a given file, the `miru` user requires specific permissions to
 
@@ -99,9 +99,9 @@ To upload files from disk, the agent **reads** the files matched by a [file
 rule's](/data-uploads/concepts/file-rules/overview) `source.glob` and streams them to
 your bucket. 
 
-You must grant the [required permissions](#required-permissions) outlined below. Otherwise, the agent will receive a permission denied error from the operating system.
+You must grant the [required permissions](#required-permissions-for-uploads) outlined below. Otherwise, the agent will receive a permission denied error from the operating system.
 
-### Required permissions
+### Required permissions for uploads
 
 To read a file for upload, the `miru` user requires specific permissions to
 
