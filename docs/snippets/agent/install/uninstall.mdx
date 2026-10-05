@@ -22,22 +22,24 @@ import RemoveApt from '/snippets/apt/remove.mdx';
         Uninstall the **Miru Agent** from **Settings > Apps > Installed apps**.
       </Tab>
       <Tab title="Programmatic">
-        Uninstall the agent from PowerShell opened with **Run as administrator**, using the MSI of the installed version.
+        Open PowerShell with **Run as administrator** and run the following. It looks up the installed Miru Agent and uninstalls it silently, so you don't need the original MSI.
 
-        ```powershell
-        $msi = "C:\path\to\miru-agent-<version>.msi"; `
-        $p = Start-Process msiexec.exe -ArgumentList '/x',"`"$msi`"",'/qn','/norestart' -Wait -PassThru; `
-        $p.ExitCode
+        ```powershell PowerShell
+        $app = @(Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where-Object DisplayName -eq "Miru Agent"); `
+        if ($app.Count -ne 1) { throw "Expected one Miru Agent installation, found $($app.Count)" }; `
+        msiexec /x $app[0].PSChildName /qn /norestart | Out-Null; `
+        $LASTEXITCODE
         ```
 
-        An exit code of `0` means the agent was removed. An exit code of `3010` means it was removed and Windows must be restarted.
+        `$LASTEXITCODE` is `0` when the agent is uninstalled. `3010` means the agent is uninstalled and Windows must be restarted. If the Miru Agent isn't installed, the command stops with an error before running `msiexec`.
       </Tab>
     </Tabs>
 
-    Uninstalling keeps `%ProgramData%\Miru`, which holds the agent's settings, device identity, keys, and logs. For a complete removal, delete this directory after uninstalling the agent.
+    Uninstalling keeps `%ProgramData%\Miru`, which holds the agent's settings, device identity, keys, and logs, and the `Miru Agent Users` group and its members. For a complete removal, delete both after uninstalling the agent:
 
-    ```powershell
-    Remove-Item -Recurse -Force "$env:ProgramData\Miru"
+    ```powershell PowerShell
+    Remove-Item -Recurse -Force "$env:ProgramData\Miru"; `
+    Remove-LocalGroup "Miru Agent Users"
     ```
   </Tab>
 </Tabs>
