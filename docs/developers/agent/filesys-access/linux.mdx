@@ -2,61 +2,49 @@
 title: 'Linux'
 ---
 
-On Linux the Miru Agent runs as the `miru` system user and needs specific file system permissions
-in the two cases where it touches files on your devices:
+On Linux the Miru Agent runs as the `miru` system user and needs specific file system
+permissions in the two cases where it touches files on your devices:
 
-- **[Configs](#configs)** — the agent **writes** config instances to disk when it deploys
-  a release.
-- **[Data uploads](#data-uploads)** — the agent **reads** files on the device to upload
-  them to your bucket.
+- **[Configs](#configs)** — writes config instances to disk when it deploys
+  a release
+- **[Data uploads](#data-uploads)** — reads files to upload them to your bucket
 
 This page covers the agent's default permissions and how to grant file system access.
 
-## Default permissions
-
-During installation, the `miru` system user and group are created (no login shell). The
-agent process runs as `miru:miru` under systemd.
-
-By default, the agent creates and owns the following directories:
-
-| Path | Purpose |
-|------|---------|
-| `/var/lib/miru` | Agent state, credentials, device identity |
-| `/var/log/miru` | Log files (hourly rotation) |
-| `/srv/miru` | Deployed configuration instance files |
-
-The first two directories are only for internal use by the agent.
-
-The third directory is the default location for deploying config instances—reading or
-writing to any path inside `/srv/miru` is supported out-of-the-box, no additional
-configuration required.
-
 ## Configs
 
-When the agent deploys a release, it **writes** config instances to disk.
+**Default config path**
 
-`/srv/miru` is
-the default location and works out-of-the-box — deploying to any path inside `/srv/miru`
-requires no additional configuration.
+During installation, the agent creates and owns `/srv/miru`. The directory is owned by the `miru` user and group (`miru:miru`), with mode `0755`. The agent creates configs inside it with mode `0644` and subdirectories with mode `0755`.
 
-To deploy to a path outside `/srv/miru`, you must
-grant the `miru` user read and write access to that path.
+| Account | Read | Write | 
+|---------|------|-------|
+| Miru Agent (`miru`) | Yes | Yes |
+| All other accounts | Yes | No |
+
+Deploying configs to `/srv/miru` requires no additional configuration. The agent holds write access and all applications can read the configs.
+
+<Info>
+  `/srv/miru` is world-readable. For stricter security configurations, consider using a custom config path.
+</Info>
+
+**Custom config paths**
+
+The Miru Agent also supports writing configs to arbitrary file system paths. Some examples
+include:
+
+- `/etc/myapp/configs/mobility.json`
+- `/home/myapp/configs/communication.yaml`
+- `/var/lib/myapp/configs/safety.yaml`
 
 <Warning>
   You must use Miru Agent [v0.8.0](/changelog/agent#v0-8-0) or later to deploy
   configurations to a path that does not begin with `/srv/miru/config_instances/`.
 </Warning>
 
-The Miru Agent supports writing config instances to arbitrary file system paths. Some
-examples include:
-
-- `/etc/myapp/configs/mobility.json`
-- `/home/myapp/configs/communication.yaml`
-- `/var/lib/myapp/configs/safety.yaml`
-
-However, to do so, you must grant the `miru` user access to the specified target path.
-Otherwise, the Miru Agent will receive a permission denied error from the operating
-system when attempting to write to these file paths.
+To enable the agent to write to these paths, grant the [required permissions](#required-permissions) outlined
+below. Otherwise, the agent will receive a permission denied error from the operating
+system.
 
 ### Required permissions
 
@@ -107,11 +95,11 @@ To write to a given file, the `miru` user requires the following Unix permission
 
 ## Data uploads
 
-To upload data, the agent **reads** the files matched by a
-[file rule's](/data-uploads/concepts/file-rules/overview) `source.glob` and streams them to
-your bucket. The `miru` user needs read access to the files themselves, read and execute
-on the directory that contains them (to list and match the glob), and execute access to
-traverse the remaining directories along the path.
+To upload files from disk, the agent **reads** the files matched by a [file
+rule's](/data-uploads/concepts/file-rules/overview) `source.glob` and streams them to
+your bucket. 
+
+You must grant the [required permissions](#required-permissions-2) outlined below. Otherwise, the agent will receive a permission denied error from the operating system.
 
 ### Required permissions
 
@@ -171,7 +159,7 @@ entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case
 
 ## Granting access
 
-There are two common methods for granting the `miru` user access to a given path:
+There are two common methods for granting a user (the `miru` user) access to a given path:
 
 1. Standard Unix permissions - basic owner/group/other mode bits on a file or directory
 2. ACLs - per-user or per-group access rules beyond mode bits
