@@ -26,6 +26,7 @@ Miru Agent `v0.11.0` adds **Windows support**. The agent installs from a signed 
 ## Fixes
 
 - On Linux, `/var/lib/miru` is now mode `0700`, so other local accounts can no longer read the agent's state, including its access token
+- On Linux, `/var/log/miru` is now mode `0750`, to restrict access to the agent's log files to the `miru` group
 - The agent now exits with status `1` when it fails to start, so `systemctl status miru` reports `failed` instead of `inactive`
 - The agent now stops with an error instead of crashing when it can't open its log file
 
