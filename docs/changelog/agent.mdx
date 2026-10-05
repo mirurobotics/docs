@@ -4,6 +4,39 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.11.0
+
+*October 5, 2026*
+
+Miru Agent `v0.11.0` adds **Windows support**. The agent installs from a signed MSI, runs as a Windows service, and serves the [Device API](/developers/device-api/overview) to applications on the device over loopback TCP. To get started, visit the [installation](/developers/agent/install) documentation.
+
+On Linux, `v0.11.0` makes the agent's state and log directories private to the agent. Applications that read the agent's log files directly may need to be added to the `miru` group; see the breaking changes below.
+
+## Breaking changes
+
+- On Linux, `/var/log/miru` is now mode `0750`, so accounts outside the `miru` group can no longer read the agent's log files. If a log shipper such as Fluent Bit tails `/var/log/miru/*.log`, add its account to the `miru` group with `sudo usermod -a -G miru <account>` and restart it, or read the logs from `journalctl -u miru` instead
+
+## Features
+
+- Added Windows support for Windows 11 (x64). See [supported platforms](/developers/agent/install#supported-platforms)
+  - Each release now includes a signed MSI installer, `miru-agent-<version>.msi`, and a signed `miru-agent.exe`
+  - The agent runs as the Windows service `miru-agent` under the virtual account `NT SERVICE\miru-agent`, with no administrator rights, and restarts automatically on failure. See [commands](/developers/agent/commands) to manage it
+  - The Device API is served on `127.0.0.1:6478` and requires a bearer token that changes each time the agent starts. The agent writes the port and token to `%ProgramData%\Miru\device-api\device-api.json`. See [authentication](/developers/device-api/authn)
+  - The installer creates the local `Miru Agent Users` group. Its members can call the Device API and read configs deployed to `%ProgramData%\Miru\configs`, the default config location on Windows. See [file system access](/developers/agent/filesys-access/windows)
+- Devices now report their operating system, CPU architecture, hostname, OS version, and kernel version when provisioned or reprovisioned, and report changes to them on later syncs
+
+## Improvements
+
+- On Linux, the systemd unit now applies additional hardening directives (`LockPersonality`, `RestrictNamespaces`, `SystemCallArchitectures=native`, `ProtectClock`, and `ProtectKernelLogs`)
+
+## Fixes
+
+- On Linux, `/var/lib/miru` is now mode `0700`, so other local accounts can no longer read the agent's state, including its access token
+- The agent now exits with status `1` when it fails to start, so `systemctl status miru` reports `failed` instead of `inactive`
+- The agent now stops with an error instead of crashing when it can't open its log file
+
+---
+
 # v0.10.3
 
 *September 17, 2026*
