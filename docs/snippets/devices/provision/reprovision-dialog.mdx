@@ -1,7 +1,7 @@
 import CmdBreakdownLinux from '/snippets/devices/provision/reprovision-cmd-breakdown-linux.mdx';
 import CmdBreakdownWindows from '/snippets/devices/provision/reprovision-cmd-breakdown-windows.mdx';
 
-The dialog will present a pre-authenticated command that invokes the `miru-agent` binary with a short-lived (5 minutes) token to reprovision the device for your workspace. Make sure to follow the instructions for the device's operating system.
+The dialog will present a pre-authenticated command that invokes the `miru-agent` binary with a short-lived (5 minutes) token to reprovision the device for your workspace. It opens on the tab for the device's reported operating system, or on **Linux** if the operating system isn't known yet. Select the tab for the machine you want to reprovision, which may differ from the reported operating system if you're transferring the device to a new machine.
 
 <Tabs>
   <Tab title="Linux">
@@ -13,7 +13,7 @@ The dialog will present a pre-authenticated command that invokes the `miru-agent
 
     <CmdBreakdownLinux />
 
-    To reprovision the device, copy the command from the dialog and paste it into the terminal of the machine you want to reprovision.
+    To reprovision the device, click **Copy command** in the dialog and paste the command into the terminal of the machine you want to reprovision.
   </Tab>
   <Tab title="Windows">
     <Frame>
@@ -24,7 +24,7 @@ The dialog will present a pre-authenticated command that invokes the `miru-agent
 
     <CmdBreakdownWindows />
 
-    To reprovision the device, copy the command from the dialog and paste it into PowerShell opened with **Run as administrator** on the machine you want to reprovision.
+    To reprovision the device, click **Copy command** in the dialog and paste the command into PowerShell opened with **Run as administrator** on the machine you want to reprovision.
   </Tab>
 </Tabs>
 
