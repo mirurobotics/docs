@@ -282,7 +282,7 @@ Expect the grep to find both headings and the in-page link, and lint to end with
 
 The commit is signed by the repo's git config. Verify with `git log -1 --show-signature`.
 
-**Milestone 2.** Edit the five files described in Plan of Work. Test step, from `$DOCS`:
+**Milestone 2.** Edit the six files described in Plan of Work. Test step, from `$DOCS`:
 
     grep -rn '/provision-dialog-v2\.png\|/reprovision-dialog\.png\|/install-dialog-v2\.png\|header:provision-dialog\.png\|header:reprovision-dialog\.png' docs --include=*.mdx | grep -v changelog/
     grep -n '^import Install' docs/provision-devices/reprovision.mdx
