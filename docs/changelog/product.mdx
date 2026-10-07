@@ -10,6 +10,111 @@ import { LazyVideo } from '/snippets/components/lazy-video.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
 <div className="changelog-page">
+  <Update label="October 7, 2026">
+    ## Windows Support
+
+    The Miru Agent now supports **Windows 11 (x64)**.
+
+    * **Signed installer:** Install, upgrade, and uninstall the agent with a signed MSI.
+      The agent runs as the `miru-agent` Windows service without administrator rights
+    * **Device API:** Applications on the device call the [Device API](/developers/device-api/authn) over loopback TCP
+    * **System info:** All devices now report their operating system,
+      CPU architecture, hostname, OS version, and kernel version, shown on the device
+      page
+
+    Windows support requires [Miru Agent v0.11.0](/changelog/agent#v0-11-0) or later.
+
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-10-07/windows-install.png" background="https://assets.mirurobotics.com/docs/changelog/26-10-07/background.jpg" innerRadius="8px" />
+
+    [Install the agent »](/developers/agent/install)
+
+    ## Release Migrations
+
+    Moving a device to a new release no longer means copying its configs over by hand.
+    Migrating a device now automatically updates its configs to be compatible with the new release:
+
+    * **Update defaults:** Parameters which match the old release's default move
+      to the new release's default; parameters which are custom to the device are unchanged
+    * **Add new parameters:** Parameters that have a default in the new release but are missing from the device's config are added with that default
+    * **Remove stale parameters:** Parameters which are not in the new
+      release are deleted, including free-form entries
+
+    Every migrated parameter shows up as a change in the release editor, so you can review
+    and edit it before staging. Migration is optional — you can skip it by clicking **Open without changes**.
+
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-10-07/release-migrations.png" background="https://assets.mirurobotics.com/docs/changelog/26-10-07/background.jpg" innerRadius="8px" />
+
+    [Stage a deployment »](/cfg-mgmt/deploy/staging-area#stage-a-deployment)
+
+    <Separator />
+
+    <Dropdown title="Improvements">
+      <DropdownItem>
+        **Releases version sorting:** Releases are now sorted by version following semantic versioning, so `v0.10` sorts above `v0.9`. This applies to the Releases
+        list and to ordering devices by their current release.
+      </DropdownItem>
+
+      <DropdownItem>
+        **No agent filter:** Filter the device list to devices with no agent,
+        such as devices that haven't been provisioned yet.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Duplicating a release copies its file rules:** A duplicated release now
+        keeps the file rules of the release it was copied from.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Archive devices with deployments:** Devices that have deployments can
+        no longer be deleted, which keeps their deployment history intact.
+        Archive them instead.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Faster provisioning dialog:** The provisioning token loads when you
+        hover over the button, so the dialog opens on the command immediately.
+      </DropdownItem>
+    </Dropdown>
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+      <DropdownItem>
+        **Archived device status:** Archived devices no longer change back to
+        `offline` or `online` when their connection drops or reconnects.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Uploads to archived buckets:** Devices could keep uploading to an
+        archived bucket. Archived buckets now reject new uploads until they're
+        unarchived.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Provisioning archived devices:** Provisioning an archived device brought
+        it back without its deployment. It's now rejected with a prompt to
+        [reprovision](/provision-devices/reprovision) the device, which fully
+        restores it.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Live device updates:** Hovering over a group could stop live status
+        updates on the device list from appearing.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Device descriptions:** A device's description is now read-only for
+        users who can't edit the device, and hidden when it's empty.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Bulk archive limit:** Bulk archive is disabled when more than 100
+        devices are selected, the most that can be archived at once, and the
+        tooltip says why.
+      </DropdownItem>
+    </Dropdown>
+  </Update>
+
   {/* INTENTIONAL: two distinct releases shipped on September 23, 2026
       ("Device Views" and "CLI Commands" below). The duplicate date label is
       deliberate — do NOT merge, rename, or re-date either <Update> block. */}
