@@ -14,6 +14,52 @@ import { Separator } from '/snippets/components/separator.jsx';
       ("Device Views" and "CLI Commands" below). The duplicate date label is
       deliberate — do NOT merge, rename, or re-date either <Update> block. */}
 
+  <Update label="October 7, 2026">
+    ## Windows Support
+
+    The Miru Agent now runs on **Windows 11 (x64)**. Windows devices are provisioned,
+    deployed to, and monitored from the same dashboard as your Linux devices.
+
+    * **Signed installer:** Install, upgrade, and uninstall the agent with a signed MSI.
+      The agent runs as the `miru-agent` Windows service without administrator rights
+      and restarts automatically on failure
+    * **PowerShell provisioning:** The provision and reprovision dialogs show a
+      PowerShell command for Windows devices
+    * **Windows config paths:** Schemas can write config instances to Windows paths,
+      such as `C:\ProgramData\Miru\configs\motor-controller.json`. A release can only
+      be deployed to devices running the operating system its file paths target
+    * **Device API:** Applications on the device call the Device API over loopback
+      TCP with a bearer token
+    * **System info:** Linux and Windows devices now report their operating system,
+      CPU architecture, hostname, OS version, and kernel version, shown on the device
+      page
+
+    Windows support requires [Miru Agent v0.11.0](/changelog/agent#v0-11-0) or later.
+
+    [Install the agent »](/developers/agent/install)
+
+    ## Release Migrations
+
+    Moving a device to a new release no longer means copying its configs over by hand.
+    When you stage a release for a device running a different release, Miru migrates
+    the device's current configs to the new release's schemas.
+
+    Choose how the configs carry over before the editor opens:
+
+    * **Update unchanged defaults:** Settings still at the old release's default move
+      to the new release's default. Values you changed are kept
+    * **Add new settings:** Settings the new release has a default for, but a config is
+      missing, are added with that default
+    * **Remove settings that have no default:** Settings without a default in the new
+      release are deleted, including free-form entries. Off by default
+
+    Every migrated value shows up as a change in the release editor, so you can review
+    and edit it before staging. To skip the migration, uncheck every option and click
+    **Open without changes**.
+
+    [Stage a deployment »](/cfg-mgmt/deploy/staging-area#stage-a-deployment)
+  </Update>
+
   <Update label="September 23, 2026">
     ## Device Views
 
