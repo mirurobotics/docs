@@ -28,18 +28,49 @@ You can see it working in a local `mint dev` preview on port 3336.
 
 ## Progress
 
-- [ ] Milestone 0: frontend harness set up and screenshots captured.
-- [ ] Milestone 1: release migration docs written and committed.
-- [ ] Milestone 2: provisioning snippets and pages updated and committed.
+- [x] Milestone 0: frontend harness set up and screenshots captured (2026-10-07). Fresh `$S/frontend` clone of `origin/main` at `b6b5f814`; seven PNGs staged under `docs/images/` (gitignored); dev server on `:3334` stopped.
+- [x] Milestone 1: release migration docs written and committed (2026-10-07, `f5c5583`).
+- [x] Milestone 2: provisioning snippets and pages updated and committed (2026-10-07, `8f69e0f`).
 - [ ] Milestone 3: local validation passed, branch pushed, draft PR opened, preflight `CLEAN`.
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds.)
+- The earlier scratch frontend clone and `shot.mjs` were gone, so both were rebuilt from scratch (`$S/frontend`, `$S/shot/shot.mjs`). Frontend `origin/main` was still `b6b5f814`, so the copy quoted in Context and Orientation was used unchanged.
+- `shot.mjs` as sketched never finished: `waitForFunction(... every animation not running)` timed out because the device status dot has an infinite `pulse` animation. Fix: before that wait, pause every animation with `iterations === Infinity` and set its `currentTime = 0` (first frame, dot fully opaque).
+- The broad `[role=dialog] *{overflow:visible}` override rendered identically to a narrowed `[role=dialog] [data-slot=dialog-body]{overflow:visible}` override (pixel diff limited to sub-pixel noise). The narrowed override was adopted for the final captures because it leaves the code blocks' `overflow-x-auto` intact.
+- The folded apt block shows about three lines plus a fade and **Show more**, not six: `CodeBlock` collapses to `max-h-24` with a gradient mask whenever the code has more than `collapsedLines` (6) lines. This matches the real app.
+- `.env.local` also needed `NEXT_PUBLIC_SUPABASE_ANON_KEY`; a fake placeholder was used.
+- Captured sizes: provision dialogs 1152px wide (Linux 1152x1200, Windows 1152x820), reprovision dialogs 1152x648 (Linux) and 1152x688 (Windows), headers 1664x1204 (provision) and 1664x1032 (reprovision), migration dialog 1024x920.
 
 ## Decision Log
 
-(Add entries as work proceeds.)
+- Decision: Follow the migration dialog copy on frontend `main` (PR #95, "parameters" wording) for both the docs text and the screenshot; do not use the pre-#95 "settings" fallback from `dd2d65ab`.
+  Rationale: The docs follow the shipped code; "parameters" also matches the changelog and the rest of the docs.
+  Date/Author: 2026-10-07, user via orchestrator.
+- Decision: The error card's button is documented as **Try again**.
+  Rationale: That is the `ErrorCard` default `retryText` used by `MigrationBoundary`; "Retry" in the original request was wrong.
+  Date/Author: 2026-10-07, user via orchestrator.
+- Decision: Quote the remove option's UI label exactly (**Remove parameters not in v1.6's schema**) but describe what the backend actually does: it removes every parameter with no default in the new release, including free-form entries and declared parameters without a default.
+  Rationale: The PR #95 caption ("Declared parameters are kept, even without a default") contradicts `remove_unknown_fields.go`; the caption mismatch is a frontend follow-up.
+  Date/Author: 2026-10-07, user via orchestrator.
+- Decision: Re-clone frontend into `$S/frontend` from `origin/main` and rebuild the harness and `$S/shot/shot.mjs`, ignoring the unrelated `$S/fe-src`.
+  Rationale: The previous scratch clone and script no longer existed.
+  Date/Author: 2026-10-07, user via orchestrator.
+- Decision: Replace both page-header images with new `header:provision-dialog-v2.png` and `header:reprovision-dialog-v2.png` captures.
+  Rationale: The old headers show the removed two-tab "Install agent | Provision device" dialog.
+  Date/Author: 2026-10-07, user via orchestrator.
+- Decision: Never open the provisioning dialog against production or staging; capture only from the local harness with a fake token (`mirupt_8FAKE...`, masked to `mirupt_8` plus 24 asterisks). No real keys in `.env.local`; harness edits are never committed or pushed.
+  Rationale: Opening the real dialog mints a live provisioning token.
+  Date/Author: 2026-10-07, user via orchestrator.
+- Decision: The PR stays in draft; the orchestrator (not the implementing agent) marks it ready for review.
+  Rationale: Images must be uploaded to R2 first, and marking ready needs GraphQL, which is unreliable here.
+  Date/Author: 2026-10-07, user via orchestrator.
+- Decision: Freeze infinite animations at their first frame and narrow the overflow override to the dialog body in `shot.mjs`.
+  Rationale: See Surprises & Discoveries; the sketched script hung on the status-dot pulse.
+  Date/Author: 2026-10-07, implementing agent.
+- Decision: Commit this plan's progress updates in a separate `docs(plans): ...` commit rather than leaving it uncommitted.
+  Rationale: The plan file is already tracked on the branch, so Milestone 3's "untracked plan file" note no longer applies; `git status --short` should be clean.
+  Date/Author: 2026-10-07, implementing agent.
 
 ## Outcomes & Retrospective
 
@@ -202,8 +233,10 @@ Write `$S/shot/shot.mjs` after running `mkdir -p $S/shot && cd $S/shot && npm in
     await page.goto(url, { waitUntil: 'networkidle0' })
     const dlg = await page.waitForSelector('[role=dialog]')
     // the dialog caps itself at 44rem and scrolls its body; lift the cap so tall dialogs are captured whole
-    await page.addStyleTag({ content: '[role=dialog]{max-height:none!important} [role=dialog] *{overflow:visible!important}' })
+    await page.addStyleTag({ content: '[role=dialog]{max-height:none!important} [role=dialog] [data-slot=dialog-body]{overflow:visible!important}' })
     await page.evaluate(async () => { await document.fonts.ready; document.activeElement?.blur() })
+    // the status-dot pulse is infinite: freeze infinite animations at their first frame or the wait below never ends
+    await page.evaluate(() => document.getAnimations().filter(a => a.effect?.getTiming().iterations === Infinity).forEach(a => { a.pause(); a.currentTime = 0 }))
     await page.waitForFunction(() => document.getAnimations().every(a => a.playState !== 'running'))
     const p = Number(pad)
     if (p === 0) await dlg.screenshot({ path: out })
@@ -273,7 +306,7 @@ Run `cd $DOCS/docs && ../node_modules/.bin/mint dev --port 3336` in the backgrou
 
 On each page, confirm the following. Every new image loads, which you can check with `naturalWidth > 0` on each `img`. Both tabs switch. The new heading shows in the table of contents. The migration link scrolls to the new section. No raw `<version>` text or MDX error appears.
 
-Afterwards, restore the committed URLs with `git -C $DOCS checkout -- docs/`. Then confirm that `git -C $DOCS status --short` shows nothing except this untracked plan file. The plan file is not committed. Stop mint by PID (`ss -ltnp | grep :3336`, then `kill <pid>`).
+Afterwards, restore the committed URLs with `git -C $DOCS checkout -- docs/`. Then confirm that `git -C $DOCS status --short` shows nothing. The plan file is tracked on this branch, and its progress updates are committed. Stop mint by PID (`ss -ltnp | grep :3336`, then `kill <pid>`).
 
 Delivery, from `$DOCS`. Push, and if the push fails with "Internal Server Error", rerun the same command, up to 5 times:
 
