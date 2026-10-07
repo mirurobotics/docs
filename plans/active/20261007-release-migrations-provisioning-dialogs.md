@@ -31,7 +31,9 @@ You can see it working in a local `mint dev` preview on port 3336.
 - [x] Milestone 0: frontend harness set up and screenshots captured (2026-10-07). Fresh `$S/frontend` clone of `origin/main` at `b6b5f814`; seven PNGs staged under `docs/images/` (gitignored); dev server on `:3334` stopped.
 - [x] Milestone 1: release migration docs written and committed (2026-10-07, `f5c5583`).
 - [x] Milestone 2: provisioning snippets and pages updated and committed (2026-10-07, `8f69e0f`).
-- [ ] Milestone 3: local validation passed, branch pushed, draft PR opened, preflight `CLEAN`.
+- [x] Refine pass (2026-10-07, `e9e7220`): fixed the nonexistent "click **Reprovision**" instruction, named **Copy command** in every tab, said which tab the reprovision dialog opens on, and named the source release in the "Update unchanged defaults" bullet.
+- [x] Milestone 3 local validation (2026-10-07): lint passed, `mint validate` passed, render check on `:3336` passed for all four pages (all seven images load, tabs switch, new TOC entry, in-page link scrolls, no raw `<version>`); URLs restored and mint stopped.
+- [ ] Milestone 3 delivery: branch pushed, draft PR opened, preflight `CLEAN`.
 
 ## Surprises & Discoveries
 
@@ -40,6 +42,7 @@ You can see it working in a local `mint dev` preview on port 3336.
 - The broad `[role=dialog] *{overflow:visible}` override rendered identically to a narrowed `[role=dialog] [data-slot=dialog-body]{overflow:visible}` override (pixel diff limited to sub-pixel noise). The narrowed override was adopted for the final captures because it leaves the code blocks' `overflow-x-auto` intact.
 - The folded apt block shows about three lines plus a fade and **Show more**, not six: `CodeBlock` collapses to `max-h-24` with a gradient mask whenever the code has more than `collapsedLines` (6) lines. This matches the real app.
 - `.env.local` also needed `NEXT_PUBLIC_SUPABASE_ANON_KEY`; a fake placeholder was used.
+- The refine pass found that the reprovision dialog has no **Reprovision** button (it opens from the ellipsis menu and offers only **Copy token** / **Copy command**), so the plan's suggested reprovision.mdx sentence was replaced. Removing `<Install />` from reprovision.mdx also dropped the only note on which OS tab to pick, so the reprovision snippet now says which tab the dialog opens on.
 - Captured sizes: provision dialogs 1152px wide (Linux 1152x1200, Windows 1152x820), reprovision dialogs 1152x648 (Linux) and 1152x688 (Windows), headers 1664x1204 (provision) and 1664x1032 (reprovision), migration dialog 1024x920.
 
 ## Decision Log
@@ -171,7 +174,7 @@ Add no Platform API or CLI badge, because the endpoint is frontend-only. Do not 
 - `docs/provision-devices/reprovision.mdx`: the reprovision dialog has no install steps, so the `<Install />` snippet no longer fits.
   - Replace the body of `### Install the \`miru-agent\` package` with one paragraph: if the machine doesn't have the agent installed (a new machine or a clean reinstall), install it first with the [agent installation](/developers/agent/install) docs; the dialog links there as **Agent not installed? Install the Miru agent package**.
   - Remove the now-unused `Install` import. The `importused` linter won't catch a leftover import here, because the heading text contains the word "Install".
-  - Replace "Once the `miru-agent` package is installed, continue to the reprovisioning step." with "Once the `miru-agent` package is installed, click **Reprovision** to open the reprovision dialog."
+  - Replace "Once the `miru-agent` package is installed, continue to the reprovisioning step." with "Once the `miru-agent` package is installed, run the reprovisioning command from the dialog. If you closed the dialog, select **Reprovision** from the device's ellipsis menu again." (The reprovision dialog is opened from the ellipsis menu before the install step and has no **Reprovision** button.)
   - Update the `<Framed>` header image to `header:reprovision-dialog-v2.png`.
 - `docs/provision-devices/dashboard.mdx` and `docs/getting-started/quick-start/provision-device.mdx`: change "Once the `miru-agent` package is installed, continue to the provisioning step." to "Once the `miru-agent` package is installed, run the provisioning command from the same dialog." In `dashboard.mdx`, also update the `<Framed>` header image to `header:provision-dialog-v2.png`.
 
