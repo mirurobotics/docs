@@ -10,10 +10,6 @@ import { LazyVideo } from '/snippets/components/lazy-video.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
 <div className="changelog-page">
-  {/* INTENTIONAL: two distinct releases shipped on September 23, 2026
-      ("Device Views" and "CLI Commands" below). The duplicate date label is
-      deliberate — do NOT merge, rename, or re-date either <Update> block. */}
-
   <Update label="October 7, 2026">
     ## Windows Support
 
@@ -38,7 +34,7 @@ import { Separator } from '/snippets/components/separator.jsx';
     Migrating a device now automatically updates its configs to be compatible with the new release:
 
     * **Update defaults:** Parameters which match the old release's default move
-      to the new release's default; parameters which are custom to the device are unchanged 
+      to the new release's default; parameters which are custom to the device are unchanged
     * **Add new parameters:** Parameters the new release has a default for, but are missing from the device's config, are added with that default
     * **Remove stale parameters:** Parameters which are not in the new
       release are deleted, including free-form entries
@@ -118,6 +114,10 @@ import { Separator } from '/snippets/components/separator.jsx';
       </DropdownItem>
     </Dropdown>
   </Update>
+
+  {/* INTENTIONAL: two distinct releases shipped on September 23, 2026
+      ("Device Views" and "CLI Commands" below). The duplicate date label is
+      deliberate — do NOT merge, rename, or re-date either <Update> block. */}
 
   <Update label="September 23, 2026">
     ## Device Views
