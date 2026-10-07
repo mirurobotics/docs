@@ -73,8 +73,12 @@ device you want to create a staged deployment for.
   to stage deployments for are unavailable for selection.
 </Note>
 
-After selecting a device, the release editor opens. The editor is pre-filled with the
-device's current configurations when available. If the device does not have a current
+If the device is running a different release, the **Migrate configs** dialog opens
+before the editor. See [Migrate configs to a new release](#migrate-configs-to-a-new-release).
+
+After selecting a device (and choosing migration options, if asked), the release editor
+opens. The editor is pre-filled with the device's current configurations when available,
+migrated if you chose to migrate them. If the device does not have a current
 deployment, the editor uses the release schema default values instead.
 
 <Frame>
@@ -105,6 +109,47 @@ list for the selected device.
 
 To stage a deployment programmatically, set the `target_status` field to `staged` when
 using the <PlatformApiLink endpoint="deployments/create">create deployment endpoint »</PlatformApiLink>
+
+## Migrate configs to a new release  <OperatorBadge />
+
+When you stage a deployment for a device that is running a different release, the
+**Migrate configs** dialog opens before the release editor. It lets you choose how the
+device's current configs move to the new release's schemas. The dialog is skipped when
+the device has no current deployment (the editor uses the schema defaults instead), when
+the device is already running the release, and when you
+[patch](#patch-a-deployment) a staged deployment.
+
+<Frame>
+  ![Migrate Configs Dialog](https://assets.mirurobotics.com/docs/v04/images/releases/stage/migrate-dialog.png)
+</Frame>
+
+In this example, the device `wall-e` runs `v1.5` and is being staged onto `v1.6`, so
+the dialog is titled **Migrate configs to v1.6**. It offers three options:
+
+- **Update unchanged defaults** (on by default): parameters still set to the current
+  release's default value are changed to the new release's default. Values you changed
+  are kept.
+- **Add new parameters** (on by default): parameters the new release has a default for
+  are added to configs that are missing them. This also re-adds parameters that were
+  removed on purpose.
+- **Remove parameters not in v1.6's schema** (off by default): removes every parameter
+  that has no default in the new release, including free-form entries. Parameters the
+  new release declares without a default are removed too.
+
+Click **Continue** to open the release editor with the migrated configs. If you clear
+every option, the button reads **Open without changes**, and the editor opens with the
+device's current configs as they are. Click **Cancel** to return to the staging area.
+
+Migrated values only seed the release editor, so you can review every change before you
+click **Stage**. Migration changes nothing on the device or its current deployment.
+Configs that migration doesn't change are carried over exactly, and YAML comments are
+kept in the configs it does change.
+
+<Note>
+  If migration fails, the dashboard shows **Couldn't migrate configs** with the error.
+  Click **Try again** to retry, or **Open without migrating** to open the editor with
+  the device's current configs.
+</Note>
 
 ## View a deployment
 
