@@ -2,6 +2,140 @@
 title: "Authentication"
 ---
 
-import Permissions from '/snippets/agent/permissions.mdx';
+This page details how to authenticate to the Device API from an application running on the device. 
 
-<Permissions />
+If you use a [Miru Device SDK](/developers/device-api/sdks), the SDK handles the authentication for you as long as you [grant file system access](#granting-access) to the application.
+
+## Local server
+
+<Tabs>
+  <Tab title="Linux">
+    On Linux, the Miru Agent serves API requests over the Unix socket `/run/miru/miru.sock`. The socket exists only on the device, so other machines cannot connect to it.
+
+    **Authenticate to the Server**
+
+    Opening the socket is the credential. The agent accepts every request from a process that can connect to `/run/miru/miru.sock`.
+
+    **Example**
+
+    ```bash
+    curl --unix-socket /run/miru/miru.sock \
+      --request GET \
+      --url http://localhost/v0.2/health
+    ```
+
+    The `localhost` host is only the HTTP request target. `curl` sends the request through the socket.
+  </Tab>
+  <Tab title="Windows">
+    On Windows, the Miru Agent serves API requests over loopback TCP (localhost). The agent only listens on `127.0.0.1`, so the API is not reachable from other machines. 
+    
+    By default, the agent listens on port `6478`. If the port is already in use, the Device API is unavailable and the agent logs an error.
+
+    **Authenticate to the Server**
+
+    Access to the API is restricted by an authentication token. The agent generates a new token each time it starts and writes it, along with the port, to the discovery file `C:\ProgramData\Miru\device-api\device-api.json`.
+
+    ```json
+    {
+      "port": 6478,
+      "token": "<token>"
+    }
+    ```
+
+    Every request must include a bearer token in the `Authorization` header. 
+
+    **Example**
+
+    To call the API, read the port and token from the discovery file and pass the token as a bearer token:
+
+    ```powershell
+    $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; Invoke-RestMethod `
+      -Uri "http://127.0.0.1:$($api.port)/v0.2/health" `
+      -Headers @{ Authorization = "Bearer $($api.token)" }
+    ```
+
+    Requests without a valid token are rejected with `401 Unauthorized`. Since the token changes whenever the agent restarts, clients should re-read the discovery file after receiving a `401` and retry. The discovery file only exists while the agent is serving the API, so a missing file means the agent is not running.
+
+  </Tab>
+</Tabs>
+
+<Tip>
+  If using a [Device SDK](/developers/device-api/sdks), the authentication complexities are handled for you as long as you [grant file system access](#granting-access) to the application running the SDK.
+</Tip>
+
+## Granting access
+
+<Tabs>
+  <Tab title="Linux">
+    Any access to the socket must be executed with a user who is a member of the `miru` group.
+
+    <Note>
+      Access to the socket is granted to the `root` user, but this is not recommended for security best practices.
+    </Note>
+
+    <Steps>
+      <Step title="Add the user to the miru group">
+        ```bash
+        sudo usermod -a -G miru <username>
+        ```
+
+        To add the current user, use `$USER` as the username.
+      </Step>
+      <Step title="Sign out and sign back in">
+        Group membership is only read when a session starts. Until you log out of your desktop or SSH session and log back in, the user still can't access the socket.
+
+        For an application that runs as a `systemd` service, restart its service instead.
+
+        To use the new group in the current shell without signing out, run `newgrp miru`. It only applies to that shell; other shells, including new ones, still need you to sign out and back in.
+      </Step>
+      <Step title="Verify the group membership">
+        ```bash
+        id -nG
+        ```
+
+        The output includes `miru`.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Windows">
+    Access to the discovery file, and therefore to the API, is restricted to SYSTEM, Administrators, and members of the local `Miru Agent Users` group, which the installer creates empty.
+
+    <Steps>
+      <Step title="Add the account to the Miru Agent Users group">
+        From an elevated PowerShell session, add the user or service account the application runs as:
+
+        ```powershell PowerShell
+        Add-LocalGroupMember -Group "Miru Agent Users" -Member "<username>"
+        ```
+
+        For an application that runs as a Windows service, add its service account:
+
+        ```powershell PowerShell
+        Add-LocalGroupMember -Group "Miru Agent Users" -Member "NT SERVICE\<service-name>"
+        ```
+
+        <Warning>
+          Do not add broad groups such as `Users`, `Authenticated Users`, or `Everyone` to `Miru Agent Users`. Any account that can read the discovery file can call every Device API endpoint.
+        </Warning>
+      </Step>
+      <Step title="Sign out and sign back in">
+        Windows only reads group membership when an account signs in. Until the user signs out of Windows and signs back in, the account still can't access the API. Closing PowerShell or locking the screen isn't enough.
+
+        For a service account, restart the application's service instead:
+
+        ```powershell PowerShell
+        Restart-Service <service-name>
+        ```
+      </Step>
+      <Step title="Verify the group membership">
+        After signing back in, run the following as the user:
+
+        ```powershell PowerShell
+        whoami /groups | Select-String "Miru Agent Users"
+        ```
+
+        The output includes a line for `Miru Agent Users`.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>

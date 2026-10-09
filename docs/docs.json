@@ -191,7 +191,13 @@
                   "developers/agent/commands",
                   "developers/agent/security",
                   "developers/agent/architecture",
-                  "developers/agent/filesys-access"
+                  {
+                    "group": "File system access",
+                    "pages": [
+                      "developers/agent/filesys-access/linux",
+                      "developers/agent/filesys-access/windows"
+                    ]
+                  }
                 ]
               },
               {
@@ -213,9 +219,9 @@
                 "group": "Device API",
                 "pages": [
                   "developers/device-api/overview",
+                  "developers/device-api/authn",
                   "developers/device-api/sdks",
                   "developers/device-api/versions",
-                  "developers/device-api/authn",
                   "developers/device-api/events"
                 ]
               },
@@ -589,7 +595,15 @@
     },
     {
       "source": "/developers/agent/file-permissions",
-      "destination": "/developers/agent/filesys-access"
+      "destination": "/developers/agent/filesys-access/linux"
+    },
+    {
+      "source": "/developers/agent/filesys-access",
+      "destination": "/developers/agent/filesys-access/linux"
+    },
+    {
+      "source": "/developers/agent/filesys-access/overview",
+      "destination": "/developers/agent/filesys-access/linux"
     },
     {
       "source": "/developers/cli/login",

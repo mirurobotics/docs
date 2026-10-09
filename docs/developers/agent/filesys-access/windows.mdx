@@ -1,0 +1,155 @@
+---
+title: 'Windows'
+---
+
+On Windows the Miru Agent runs as the `NT SERVICE\miru-agent` virtual account and needs specific file
+system permissions in the two cases where it touches files on your devices:
+
+- **[Configs](#configs)** — writes config instances to disk when it deploys
+  a release
+- **[Data uploads](#data-uploads)** — reads files to upload them to your bucket
+
+This page covers the agent's default permissions and how to grant file system access.
+
+## Configs
+
+### Default config path
+
+During installation, the installer creates `%ProgramData%\Miru\configs`. The folder is owned by Local System and does not inherit permissions from `%ProgramData%`.
+
+| Account | Read | Write |
+|---------|------|-------|
+| Miru Agent (`NT SERVICE\miru-agent`) | Yes | Yes |
+| Local System and Administrators | Yes | Yes |
+| `Miru Agent Users` group members | Yes | No |
+| All other accounts | No | No |
+
+Deploying configs to `%ProgramData%\Miru\configs` requires no additional configuration to the Miru Agent. However, accessing applications must be granted membership in the `Miru Agent Users` group, which the installer creates empty. 
+
+To do so, open PowerShell as administrator and run:
+
+```powershell PowerShell
+Add-LocalGroupMember -Group "Miru Agent Users" -Member "<username>"
+```
+
+<Info>
+  Replace `<username>` with the actual username
+</Info>
+
+The account must then sign out and back in, or its service must be restarted, before the membership takes effect. 
+
+### Custom config paths
+
+The Miru Agent also supports writing configs to arbitrary file system paths. Some examples
+include:
+
+- `C:\ProgramData\MyApp\configs\mobility.json`
+- `C:\robot\configs\communication.yaml`
+
+To enable the agent to write to these paths, grant `NT SERVICE\miru-agent` modify (`M`) on the folder that holds the file, with `(OI)(CI)`.
+
+Follow the instructions in [Granting access](#granting-access) to grant the permission.
+
+<Info>
+  If the folder does not yet exist, create it yourself and grant access on it. The agent
+  creates a missing folder only when it can create folders in the nearest folder that
+  already exists.
+</Info>
+
+## Data uploads
+
+To upload files from disk, the agent **reads** the files matched by a [file
+rule's](/data-uploads/concepts/file-rules/overview) `source.glob` and streams them to
+your bucket.
+
+You must grant the [required permissions](#required-permissions) outlined below. Otherwise, the agent can't read the files and they are not uploaded.
+
+### Required permissions
+
+`NT SERVICE\miru-agent` needs read and execute (`RX`) on the folder the glob matches in, with `(OI)(CI)`.
+
+Follow the instructions in [Granting access](#granting-access) to grant the permission.
+
+Uploads are read-only — the agent does **not** need write access to the source
+files, unless the rule also deletes them, covered next.
+
+### Deleting local files
+
+If a file rule has a [`retention`](/data-uploads/concepts/file-rules/rule-definition#retention) block,
+the agent removes each matching file once its retention guarantee ends. Grant delete (`D`) as well as read and execute (`RX`) on that folder, with `(OI)(CI)`.
+
+Follow the instructions in [Granting access](#granting-access) to grant the permission.
+
+## Granting access
+
+Grant `NT SERVICE\miru-agent` access with [`icacls`](https://learn.microsoft.com/windows-server/administration/windows-commands/icacls) from PowerShell opened as administrator.
+
+<CodeGroup>
+
+```powershell PowerShell read-only
+icacls "C:\path\to\folder" /grant "NT SERVICE\miru-agent:(OI)(CI)RX"
+```
+
+```powershell PowerShell read-write
+icacls "C:\path\to\folder" /grant "NT SERVICE\miru-agent:(OI)(CI)M"
+```
+
+```powershell PowerShell read-delete
+icacls "C:\path\to\folder" /grant "NT SERVICE\miru-agent:(OI)(CI)(RX,D)"
+```
+
+</CodeGroup>
+
+<Info>
+  Replace `C:\path\to\folder` with the actual folder path
+</Info>
+
+These grants add access for the agent and leave the folder's other permissions unchanged. A new folder at the root of `C:\`, such as `C:\robot\configs`, inherits modify access for signed-in users, so any local user could change the configs the agent deploys there.
+
+### Restricting a config folder
+
+To give a custom config folder the same permissions as the [default config path](#default-config-path), replace its permissions instead of adding to them:
+
+```powershell PowerShell
+icacls "C:\path\to\folder" /inheritance:r /grant:r `
+  "SYSTEM:(OI)(CI)F" `
+  "Administrators:(OI)(CI)F" `
+  "NT SERVICE\miru-agent:(OI)(CI)M" `
+  "Miru Agent Users:(OI)(CI)RX"
+```
+
+<Info>
+  Replace `C:\path\to\folder` with the actual folder path
+</Info>
+
+This removes the permissions the folder inherits, so only these accounts keep access.
+
+### Granting access before installing
+
+The `NT SERVICE\miru-agent` account name only resolves once the agent is installed. To grant access earlier, for example in a machine image, use the service's security identifier instead. `sc.exe` prints it at any time, including before installation:
+
+```powershell PowerShell
+sc.exe showsid miru-agent
+```
+
+Pass the SID to `icacls` with a `*` prefix:
+
+```powershell PowerShell
+icacls "C:\path\to\folder" /grant "*<SID>:(OI)(CI)M"
+```
+
+<Info>
+  Replace `C:\path\to\folder` with the actual folder path
+</Info>
+
+### Removing access
+
+To remove every entry for the agent from a folder:
+
+```powershell PowerShell
+icacls "C:\path\to\folder" /remove "NT SERVICE\miru-agent"
+```
+
+<Info>
+  Replace `C:\path\to\folder` with the actual folder path
+</Info>

@@ -16,19 +16,32 @@ Use polling (via `GET /v0.2/deployments/current`) when your application only nee
 
 ## Connecting
 
-The Device API is served over a Unix socket. 
+The Device API is served over a Unix socket on Linux and over loopback TCP on Windows.
 
-To connect via curl, use the `--unix-socket` flag with the `--no-buffer` flag to ensure events are printed as they arrive:
+To connect via curl, use the `--no-buffer` flag to ensure events are printed as they arrive:
 
-```bash
-curl --no-buffer \
-  --unix-socket /run/miru/miru.sock \
-  --request GET \
-  --url http://localhost/v0.2/events
-```
+<Tabs>
+  <Tab title="Linux">
+    ```bash
+    curl --no-buffer \
+      --unix-socket /run/miru/miru.sock \
+      --request GET \
+      --url http://localhost/v0.2/events
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell PowerShell
+    $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
+    curl.exe --no-buffer `
+      --request GET `
+      --url "http://127.0.0.1:$($api.port)/v0.2/events" `
+      --header "Authorization: Bearer $($api.token)"
+    ```
+  </Tab>
+</Tabs>
 
 <Warning>
-Ensure you have proper permissions to access the Unix socket. See [Authentication](/developers/device-api/authn) for more details.
+Ensure you have proper permissions to access the Device API. See [Authentication](/developers/device-api/authn) for more details.
 </Warning>
 
 ## SDK support
@@ -140,24 +153,49 @@ Pass the cursor in one of two ways:
 
 1. **Query parameter** — `?after=<id>` (takes precedence)
 
-    ```bash
-    # Resume from event 42 using the query parameter
-    curl --no-buffer \
-      --unix-socket /run/miru/miru.sock \
-      --request GET \
-      --url http://localhost/v0.2/events?after=42
-    ```
+    <Tabs>
+      <Tab title="Linux">
+        ```bash
+        curl --no-buffer \
+          --unix-socket /run/miru/miru.sock \
+          --request GET \
+          --url http://localhost/v0.2/events?after=42
+        ```
+      </Tab>
+      <Tab title="Windows">
+        ```powershell PowerShell
+        $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
+        curl.exe --no-buffer `
+          --request GET `
+          --url "http://127.0.0.1:$($api.port)/v0.2/events?after=42" `
+          --header "Authorization: Bearer $($api.token)"
+        ```
+      </Tab>
+    </Tabs>
 
 2. **HTTP header** — `Last-Event-ID: <id>` (standard SSE reconnection header)
 
-    ```bash
-    # Resume from event 42 using the Last-Event-ID header
-    curl --no-buffer \
-      --unix-socket /run/miru/miru.sock \
-      --request GET \
-      --url http://localhost/v0.2/events \
-      --header "Last-Event-ID: 42"
-    ```
+    <Tabs>
+      <Tab title="Linux">
+        ```bash
+        curl --no-buffer \
+          --unix-socket /run/miru/miru.sock \
+          --request GET \
+          --url http://localhost/v0.2/events \
+          --header "Last-Event-ID: 42"
+        ```
+      </Tab>
+      <Tab title="Windows">
+        ```powershell PowerShell
+        $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
+        curl.exe --no-buffer `
+          --request GET `
+          --url "http://127.0.0.1:$($api.port)/v0.2/events" `
+          --header "Authorization: Bearer $($api.token)" `
+          --header "Last-Event-ID: 42"
+        ```
+      </Tab>
+    </Tabs>
 
 ### Type filtering
 
@@ -165,12 +203,25 @@ It's often the case that clients only need to subscribe to a subset of all possi
 
 To subscribe to specific event types, pass a comma-separated list via the `types` query parameter:
 
-```bash
-curl --no-buffer \
-  --unix-socket /run/miru/miru.sock \
-  --request GET \
-  --url http://localhost/v0.2/events?types=deployment.deployed,deployment.removed
-```
+<Tabs>
+  <Tab title="Linux">
+    ```bash
+    curl --no-buffer \
+      --unix-socket /run/miru/miru.sock \
+      --request GET \
+      --url http://localhost/v0.2/events?types=deployment.deployed,deployment.removed
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell PowerShell
+    $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
+    curl.exe --no-buffer `
+      --request GET `
+      --url "http://127.0.0.1:$($api.port)/v0.2/events?types=deployment.deployed,deployment.removed" `
+      --header "Authorization: Bearer $($api.token)"
+    ```
+  </Tab>
+</Tabs>
 
 If `types` is omitted, all event types are sent.
 

@@ -10,6 +10,93 @@ import { LazyVideo } from '/snippets/components/lazy-video.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
 <div className="changelog-page">
+  <Update label="October 9, 2026">
+    ## Windows Support
+
+    The Miru Agent now supports **Windows 11 (x64)**.
+
+    * **Signed installer:** Install, upgrade, and uninstall the agent with a signed MSI.
+      The agent runs as the `miru-agent` Windows service without administrator rights
+    * **Device API:** Applications on the device call the [Device API](/developers/device-api/authn) over loopback TCP
+    * **System info:** All devices now report their operating system,
+      CPU architecture, hostname, OS version, and kernel version, shown on the device
+      page
+
+    Windows support requires [Miru Agent v0.11.0](/changelog/agent#v0-11-0) or later.
+
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-10-09/windows-install.png" background="https://assets.mirurobotics.com/docs/changelog/26-10-09/background.jpg" innerRadius="8px" />
+
+    [Install the agent »](/developers/agent/install)
+
+    <Separator />
+
+    <Dropdown title="Improvements">
+      <DropdownItem>
+        **Releases version sorting:** Releases are now sorted by version following semantic versioning, so `v0.10` sorts above `v0.9`. This applies to the Releases
+        list and to ordering devices by their current release.
+      </DropdownItem>
+
+      <DropdownItem>
+        **No agent filter:** Filter the device list to devices with no agent,
+        such as devices that haven't been provisioned yet.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Duplicating a release copies its file rules:** A duplicated release now
+        keeps the file rules of the release it was copied from.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Archive devices with deployments:** Devices that have deployments can
+        no longer be deleted, which keeps their deployment history intact.
+        Archive them instead.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Faster provisioning dialog:** The provisioning token loads when you
+        hover over the button, so the dialog opens on the command immediately.
+      </DropdownItem>
+    </Dropdown>
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+      <DropdownItem>
+        **Archived device status:** Archived devices no longer change back to
+        `offline` or `online` when their connection drops or reconnects.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Uploads to archived buckets:** Devices could keep uploading to an
+        archived bucket. Archived buckets now reject new uploads until they're
+        unarchived.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Provisioning archived devices:** Provisioning an archived device brought
+        it back without its deployment. It's now rejected with a prompt to
+        [reprovision](/provision-devices/reprovision) the device, which fully
+        restores it.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Live device updates:** Hovering over a group could stop live status
+        updates on the device list from appearing.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Device descriptions:** A device's description is now read-only for
+        users who can't edit the device, and hidden when it's empty.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Bulk archive limit:** Bulk archive is disabled when more than 100
+        devices are selected, the most that can be archived at once, and the
+        tooltip says why.
+      </DropdownItem>
+    </Dropdown>
+  </Update>
+
   {/* INTENTIONAL: two distinct releases shipped on September 23, 2026
       ("Device Views" and "CLI Commands" below). The duplicate date label is
       deliberate — do NOT merge, rename, or re-date either <Update> block. */}
@@ -425,7 +512,7 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     To use upload rules, you'll need to upgrade the Miru Agent and CLI to the following versions (or later):
 
-    * [Miru Agent v0.10.0](/changelog/agent#v0-10-0) — detects files matching upload rules and uploads them to your bucket. Reading source files may require granting the `miru` user [read access](/developers/agent/filesys-access#data-uploads)
+    * [Miru Agent v0.10.0](/changelog/agent#v0-10-0) — detects files matching upload rules and uploads them to your bucket. Reading source files may require granting the `miru` user [read access](/developers/agent/filesys-access/linux#data-uploads)
     * [Miru CLI v0.10.2](/changelog/cli#v0-10-2) — adds the upload rule flags to `miru release create`
 
     <Separator />

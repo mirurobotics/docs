@@ -25,7 +25,16 @@ import SchemaFormats from '/snippets/schemas/formats.mdx';
 
   The absolute file system path where the config instance is written on the device.
 
-  Examples: `/srv/miru/configs/v1/motion-control.json`, `/srv/miru/configs/safety.yaml`
+  <Tabs>
+    <Tab title="Linux">
+      - `/srv/miru/configs/safety.yaml`
+      - `/home/myapp/configs/communication.yaml`
+    </Tab>
+    <Tab title="Windows">
+      - `C:\ProgramData\Miru\configs\safety.yaml`
+      - `C:\ProgramData\MyApp\configs\communication.yaml`
+    </Tab>
+  </Tabs>
 </ParamField>
 
 <ParamField path="slot key" type="string">

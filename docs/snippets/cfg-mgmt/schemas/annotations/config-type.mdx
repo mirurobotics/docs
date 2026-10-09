@@ -1,0 +1,23 @@
+<ParamField path="config type" required>
+  The config type is a required annotation that identifies the config type to which a schema belongs. Below is the syntax for annotating a schema with a [config type slug](/cfg-mgmt/concepts/config-types#param-slug).
+
+  <CodeGroup>
+
+  ```yaml JSON Schema
+  x-miru-config-type: "{config-type-slug}"
+  ```
+
+  ```cue CUE
+  @miru(config_type="{config-type-slug}")
+  ```
+
+  ```yaml Opaque
+  config_type: "{config-type-slug}"
+  ```
+
+  </CodeGroup>
+
+  If the provided config type slug does not yet exist, it is automatically created. To edit a config type after creation, visit the [config types documentation](/cfg-mgmt/concepts/config-types#edit-a-config-type).
+
+  Examples: `mobility`, `communication`, `perception`
+</ParamField>

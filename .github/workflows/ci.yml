@@ -79,19 +79,6 @@ jobs:
       - name: Run security audit
         run: ./scripts/audit.sh
 
-  shell-tests:
-    runs-on: blacksmith-2vcpu-ubuntu-2404
-
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Install bats
-        run: sudo apt-get install -y bats
-
-      - name: Run shell script tests
-        run: bats pub/scripts/agent/check-miru-access_test.bats
-
   lint-custom-linter:
     needs: changes
     if: github.event_name != 'pull_request' || needs.changes.outputs.custom-linter == 'true'

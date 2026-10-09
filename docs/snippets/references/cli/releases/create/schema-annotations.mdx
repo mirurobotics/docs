@@ -1,28 +1,7 @@
-<ParamField path="config type" required>
-  The config type is a required annotation that identifies the config type to which a schema belongs. Below is the syntax for annotating a schema with a [config type slug](/cfg-mgmt/concepts/config-types#param-slug).
+import ConfigType from '/snippets/cfg-mgmt/schemas/annotations/config-type.mdx';
+import InstanceFilePath from '/snippets/cfg-mgmt/schemas/annotations/instance-file-path.mdx';
 
-  <CodeGroup>
-
-  ```yaml JSON Schema
-  x-miru-config-type: "{config-type-slug}"
-  ```
-
-  
-  ```cue CUE
-  @miru(config_type="{config-type-slug}")
-  ```
-
-  
-  ```yaml Opaque
-  config_type: "{config-type-slug}"
-  ```
-
-  </CodeGroup>
-
-  If the provided config type slug does not yet exist, it is automatically created. To edit a config type after creation, visit the [config types documentation](/cfg-mgmt/concepts/config-types#edit-a-config-type).
-
-  Examples: `mobility`, `communication`, `perception`
-</ParamField>
+<ConfigType />
 
 <ParamField path="schema language">
   The schema language declares the language that a schema is written in. This annotation applies to [Opaque](/cfg-mgmt/concepts/schemas/languages/opaque) schemas only, and is required for them.
@@ -36,40 +15,7 @@
   Because an opaque schema is written as JSON or YAML — the same formats as a JSON Schema — this annotation is what distinguishes the two.
 </ParamField>
 
-<ParamField path="instance file path">
-  The instance file path is the absolute file system path where config instances for this schema are written on the device.
-
-  <Warning>
-    The Miru Agent ships with out-of-the-box access to `/srv/miru`. To deploy configs to a custom directory, please visit the [File system access](/developers/agent/filesys-access#configs) page.
-  </Warning>
-
- This annotation is optional and defaults to `/srv/miru/configs/{config-type-slug}.{instance-format}`. To share the same schema amongst multiple config instances, declare [instance slots](#param-instance-slots) instead.
-
-  <CodeGroup>
-
-  ```yaml JSON Schema
-  x-miru-instance-filepath: "/srv/miru/configs/{config-type-slug}.json"
-  ```
-
-  
-  ```cue CUE
-  @miru(instance_filepath="/srv/miru/configs/{config-type-slug}.json")
-  ```
-
-  
-  ```yaml Opaque
-  instance_filepath: "/srv/miru/configs/{config-type-slug}.json"
-  ```
-
-  </CodeGroup>
-
-  Examples: 
-
-      - `/srv/miru/configs/mobility.json`
-      - `/home/myapp/configs/communication.yaml`
-      - `/var/lib/myapp/configs/safety.yaml`
-
-</ParamField>
+<InstanceFilePath />
 
 <ParamField path="instance slots">
 
@@ -82,6 +28,8 @@
   </Warning>
 
   This annotation is optional. Omitting it will either use the instance file path annotation, or create a single slot with default values.
+
+  All slot file paths in a schema must target the same operating system: either all Linux paths or all Windows paths. The operating system is inferred from the file path.
 
   <CodeGroup>
   ```yaml JSON Schema

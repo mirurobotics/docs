@@ -1,7 +1,6 @@
-
 <CodeGroup>
 ```cue Communication expandable
-@miru(config_type="communication",instance_filepath="/srv/miru/configs/communication.yaml")
+@miru(config_type="communication",instance_filepath="/srv/miru/configs/communication.json")
 {
 	control_loop_rate_hz: int & >=1 & <=1000 | *50
 	watchdog_timeout_ms: int & >=100 & <=5000 | *500

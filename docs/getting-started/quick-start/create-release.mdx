@@ -3,13 +3,18 @@ title: "Create a release"
 timestamp: true
 ---
 
-import EmptyCueSchemas from '/snippets/getting-started/empty-cue-schemas.mdx';
-import EmptyJsonSchemas from '/snippets/getting-started/empty-json-schemas.mdx';
-import StrictCueSchemas from '/snippets/getting-started/strict-cue-schemas.mdx';
-import StrictJsonSchemas from '/snippets/getting-started/strict-json-schemas.mdx';
-import InstallCLI from '/snippets/references/cli/install/install.mdx';
-import LoginCLI from '/snippets/references/cli/login.mdx';
-import SchemaAnnotations from '/snippets/references/cli/releases/create/schema-annotations.mdx';
+import CliSetup from '/snippets/getting-started/create-release/cli-setup.mdx';
+import SchemaAnnotations from '/snippets/getting-started/create-release/schema-annotations.mdx';
+import SchemasIntro from '/snippets/getting-started/create-release/schemas-intro.mdx';
+import ViewRelease from '/snippets/getting-started/create-release/view-release.mdx';
+import EmptyCueSchemasLinux from '/snippets/getting-started/empty-cue-schemas-linux.mdx';
+import EmptyCueSchemasWindows from '/snippets/getting-started/empty-cue-schemas-windows.mdx';
+import EmptyJsonSchemasLinux from '/snippets/getting-started/empty-json-schemas-linux.mdx';
+import EmptyJsonSchemasWindows from '/snippets/getting-started/empty-json-schemas-windows.mdx';
+import StrictCueSchemasLinux from '/snippets/getting-started/strict-cue-schemas-linux.mdx';
+import StrictCueSchemasWindows from '/snippets/getting-started/strict-cue-schemas-windows.mdx';
+import StrictJsonSchemasLinux from '/snippets/getting-started/strict-json-schemas-linux.mdx';
+import StrictJsonSchemasWindows from '/snippets/getting-started/strict-json-schemas-windows.mdx';
 
 To keep things simple, we've provided a [getting-started repository](https://github.com/mirurobotics/getting-started) that contains everything you need to create a release. Follow along with us by cloning the repository.
 
@@ -17,99 +22,78 @@ To keep things simple, we've provided a [getting-started repository](https://git
 git clone https://github.com/mirurobotics/getting-started.git
 ```
 
+The repository provides the same schemas in two schema languages, [JSON Schema](/cfg-mgmt/concepts/schemas/languages/jsonschema) and [CUE](/cfg-mgmt/concepts/schemas/languages/cue). Use the selector at the top of the page to follow along in either language. If you're unfamiliar with schema languages, we recommend starting with CUE.
+
+<View title="CUE">
+
 ## Define the schemas
 
-Releases are defined by the config schemas they contain. The getting-started repository contains two sets of schemas for each of [JSON Schema](/cfg-mgmt/concepts/schemas/languages/jsonschema) and [CUE](/cfg-mgmt/concepts/schemas/languages/cue):
-
-- Empty schemas - regard all config instances as valid
-- Strict schemas - constrain the valid fields, types, and values for instances of the config type they belong to
-
-For this tutorial, choose one of these schema sets to create your release with.
-
-If you're unfamiliar with schema languages, we recommend starting with [JSON Schema](/cfg-mgmt/concepts/schemas/languages/jsonschema). If you don't currently use a schema, we recommend starting with an empty schema and gradually adding constraints as needed.
+<SchemasIntro />
 
 <Tabs>
-
-  <Tab title="JSON Schema">
+  <Tab title="Linux">
     **Empty Schemas**
-    <EmptyJsonSchemas />
+    <EmptyCueSchemasLinux />
 
     **Strict Schemas**
-    <StrictJsonSchemas />
+    <StrictCueSchemasLinux />
   </Tab>
+  <Tab title="Windows">
+    Windows file paths escape each backslash (`\\`), because CUE treats a backslash in a double-quoted string as the start of an escape sequence.
 
-  <Tab title="CUE">
     **Empty Schemas**
-    <EmptyCueSchemas />
+    <EmptyCueSchemasWindows />
 
     **Strict Schemas**
-    <StrictCueSchemas />
+    <StrictCueSchemasWindows />
   </Tab>
-
 </Tabs>
 
 ### Schema annotations
 
-Each of the above schema examples carries annotations — metadata that Miru uses to process the schema and deploy config instances to the correct location on the device. The config type is the only required annotation; the rest are described below.
-
 <SchemaAnnotations />
-
 
 ## Set up the CLI
 
-Next, we'll install the CLI—the primary method of creating releases in Miru.
-
-Creating releases via the CLI is a deliberate design choice. We believe a release's schemas should live in a Git repository. This allows them to be versioned alongside the code that uses them and encourages better software development practices.
-
-While this tutorial covers creating releases on your local machine, the CLI can also be used to create releases in a [CI pipeline](/developers/ci/overview).
-
-**Install**
-
-<InstallCLI />
-
-**Login**
-
-<LoginCLI />
+<CliSetup />
 
 ## Create a release
 
 With the CLI setup, we are ready to create a release in Miru.
 
-Navigate to the root of the [getting-started](https://github.com/mirurobotics/getting-started) repository and create the release with a schema set of your choice.
+Navigate to the root of the [getting-started](https://github.com/mirurobotics/getting-started) repository and create the release with the schema set you chose for your device's operating system.
 
 <Tabs>
-  <Tab title="JSON Schema">
+  <Tab title="Linux">
     <CodeGroup>
 
     ```bash Empty Schemas
     miru release create \
       --version "v1.0.0" \
-      --schemas ./jsonschema/empty-schemas/
+      --schemas ./linux/cue/empty-schemas/
     ```
 
-    
     ```bash Strict Schemas
     miru release create \
       --version "v1.0.0" \
-      --schemas ./jsonschema/strict-schemas/
+      --schemas ./linux/cue/strict-schemas/
     ```
 
     </CodeGroup>
   </Tab>
-  <Tab title="CUE">
+  <Tab title="Windows">
     <CodeGroup>
 
     ```bash Empty Schemas
     miru release create \
       --version "v1.0.0" \
-      --schemas ./cue/empty-schemas/
+      --schemas ./windows/cue/empty-schemas/
     ```
 
-    
     ```bash Strict Schemas
     miru release create \
       --version "v1.0.0" \
-      --schemas ./cue/strict-schemas/
+      --schemas ./windows/cue/strict-schemas/
     ```
 
     </CodeGroup>
@@ -121,7 +105,7 @@ Upon a successful creation, you'll see a confirmation message similar to the fol
 ```bash
 $ miru release create \
   --version v1.0.0 \
-  --schemas ./{schema-language}/{schema-type}/
+  --schemas ./{os}/cue/{schema-type}/
 
 ◐ Creating release v1.0.0
 
@@ -136,20 +120,108 @@ $ miru release create \
 ✓ Created release v1.0.0
 ```
 
-<Info>
-  Git metadata is pulled from the local Git repository that the schemas are defined in.
-</Info>
+<ViewRelease />
 
-To view the release in Miru, navigate to the [releases page](https://app.mirurobotics.com/releases) and click into the release.
+</View>
 
-<Frame>
-  ![Releases page](https://assets.mirurobotics.com/docs/v04/images/releases/page.png)
-</Frame>
+<View title="JSON Schema">
 
-Then select the overview tab at the top of the page to view the release's details. 
+## Define the schemas
 
-<Frame>
-  ![Release overview page](https://assets.mirurobotics.com/docs/v04/images/releases/overview.png)
-</Frame>
+<SchemasIntro />
 
-For a more comprehensive guide on creating releases, visit the [define releases](/cfg-mgmt/create-a-release) documentation. For a concise reference of the CLI command, visit the [CLI Reference](/references/cli/release-create).
+<Tabs>
+  <Tab title="Linux">
+    **Empty Schemas**
+    <EmptyJsonSchemasLinux />
+
+    **Strict Schemas**
+    <StrictJsonSchemasLinux />
+  </Tab>
+  <Tab title="Windows">
+    Windows file paths are single-quoted, because YAML treats a backslash in a double-quoted string as the start of an escape sequence.
+
+    **Empty Schemas**
+    <EmptyJsonSchemasWindows />
+
+    **Strict Schemas**
+    <StrictJsonSchemasWindows />
+  </Tab>
+</Tabs>
+
+### Schema annotations
+
+<SchemaAnnotations />
+
+## Set up the CLI
+
+<CliSetup />
+
+## Create a release
+
+With the CLI setup, we are ready to create a release in Miru.
+
+Navigate to the root of the [getting-started](https://github.com/mirurobotics/getting-started) repository and create the release with the schema set you chose for your device's operating system.
+
+<Tabs>
+  <Tab title="Linux">
+    <CodeGroup>
+
+    ```bash Empty Schemas
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./linux/jsonschema/empty-schemas/
+    ```
+
+    ```bash Strict Schemas
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./linux/jsonschema/strict-schemas/
+    ```
+
+    </CodeGroup>
+  </Tab>
+  <Tab title="Windows">
+    <CodeGroup>
+
+    ```bash Empty Schemas
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./windows/jsonschema/empty-schemas/
+    ```
+
+    ```bash Strict Schemas
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./windows/jsonschema/strict-schemas/
+    ```
+
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+Upon a successful creation, you'll see a confirmation message similar to the following:
+
+```bash
+$ miru release create \
+  --version v1.0.0 \
+  --schemas ./{os}/jsonschema/{schema-type}/
+
+◐ Creating release v1.0.0
+
+  ✓ Pushed git commit (new)
+    1c7f7a8 · mirurobotics/getting-started
+
+  ◐ Pushing schemas
+    ✓ Mobility · SCH-D5nFP (new)
+    ✓ Planning · SCH-37QAr (new)
+    ✓ Communication · SCH-9WfCx (new)
+
+✓ Created release v1.0.0
+```
+
+<ViewRelease />
+
+</View>
+
+
