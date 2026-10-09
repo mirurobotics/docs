@@ -54,7 +54,7 @@ def build_mdx(event_type, summary, description, example, schema, schemas):
     lines.append("")
     lines.append(description)
     lines.append("")
-    lines.append("## Event Data")
+    lines.append("## Event data")
     lines.append("")
 
     # ResponseExample
