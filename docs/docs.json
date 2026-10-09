@@ -319,6 +319,92 @@
         "product": "Device API Reference",
         "dropdowns": [
           {
+            "dropdown": "v0.2.2",
+            "groups": [
+              {
+                "group": "Agent",
+                "openapi": {
+                  "source": "references/device-api/v0.2.2/api.yaml",
+                  "directory": "references/device-api/v0.2.2/endpoints"
+                },
+                "pages": [
+                  "GET /health",
+                  "GET /version"
+                ]
+              },
+              {
+                "group": "Deployments",
+                "openapi": {
+                  "source": "references/device-api/v0.2.2/api.yaml",
+                  "directory": "references/device-api/v0.2.2/endpoints"
+                },
+                "pages": [
+                  "GET /deployments/{deployment_id}",
+                  "GET /deployments/current"
+                ]
+              },
+              {
+                "group": "Device",
+                "openapi": {
+                  "source": "references/device-api/v0.2.2/api.yaml",
+                  "directory": "references/device-api/v0.2.2/endpoints"
+                },
+                "pages": [
+                  "GET /device",
+                  "POST /device/sync"
+                ]
+              },
+              {
+                "group": "Events",
+                "openapi": {
+                  "source": "references/device-api/v0.2.2/api.yaml",
+                  "directory": "references/device-api/v0.2.2/endpoints"
+                },
+                "pages": [
+                  {
+                    "group": "Event Types",
+                    "pages": [
+                      "references/device-api/v0.2.2/events/deployment-deployed",
+                      "references/device-api/v0.2.2/events/deployment-removed"
+                    ]
+                  },
+                  "GET /events"
+                ]
+              },
+              {
+                "group": "File Rules",
+                "openapi": {
+                  "source": "references/device-api/v0.2.2/api.yaml",
+                  "directory": "references/device-api/v0.2.2/endpoints"
+                },
+                "pages": [
+                  "GET /file_rules/{file_rule_id}"
+                ]
+              },
+              {
+                "group": "Git Commits",
+                "openapi": {
+                  "source": "references/device-api/v0.2.2/api.yaml",
+                  "directory": "references/device-api/v0.2.2/endpoints"
+                },
+                "pages": [
+                  "GET /git_commits/{git_commit_id}"
+                ]
+              },
+              {
+                "group": "Releases",
+                "openapi": {
+                  "source": "references/device-api/v0.2.2/api.yaml",
+                  "directory": "references/device-api/v0.2.2/endpoints"
+                },
+                "pages": [
+                  "GET /releases/{release_id}",
+                  "GET /releases/current"
+                ]
+              }
+            ]
+          },
+          {
             "dropdown": "v0.2.1",
             "groups": [
               {
@@ -619,7 +705,7 @@
     },
     {
       "source": "/references/device-api/latest/:slug*",
-      "destination": "/references/device-api/v0.2.1/:slug*"
+      "destination": "/references/device-api/v0.2.2/:slug*"
     },
     {
       "source": "/references/platform-api/latest/:slug*",

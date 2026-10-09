@@ -9,6 +9,74 @@ import { DeviceApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
+# v0.2.2
+
+*October 9, 2026*
+
+The `v0.2.2` release exposes [file rules](/data-uploads/concepts/file-rules/overview) to on-device applications. A release now lists the IDs of its file rules, and each rule can be retrieved by ID, so an application can see which files the agent collects and uploads for the current release.
+
+<DeviceApiReleaseLinks version="v0.2.2" />
+
+## New endpoints
+
+<Dropdown title="File rules">
+  - <GET /> `/file_rules/{id}` — get a file rule by ID
+</Dropdown>
+
+## Additive changes
+
+<Dropdown title="Release response">
+The release returned by `GET /releases/current` and `GET /releases/{id}` added the IDs of its file rules and the operating system family it targets (`linux` or `windows`).
+
+```diff
+ {
+   "object": "release",
+   "id": "rls_123",
+   "version": "1.4.0",
+   "git_commit_id": "git_commit_123",
++  "file_rule_ids": ["file_rule_123"],
++  "os": "linux",
+   "created_at": "2026-10-09T00:00:00Z"
+ }
+```
+</Dropdown>
+<Separator />
+<Dropdown title="Version response">
+The `GET /version` response added `api_release_version`, the full Device API version the agent was compiled with. `api_version` remains the breaking change alias.
+
+```diff
+ {
+   "version": "0.11.1",
+   ...
+   "api_version": "v0.2",
++  "api_release_version": "v0.2.2",
+   ...
+ }
+```
+</Dropdown>
+<Separator />
+<Dropdown title="Bearer authentication">
+The specification now declares the bearer token that the agent already requires on loopback TCP (Windows). Requests over the Unix socket (Linux) still need no token. See [Authentication](/developers/device-api/authn).
+</Dropdown>
+
+## Migration steps
+
+<Steps>
+  <Step title="Verify agent compatibility">
+    Ensure all devices are running Miru Agent `v0.11.1` or later. See [compatibility matrix](/developers/device-api/versions#agent-compatibility-matrix).
+  </Step>
+
+  <Step title="Upgrade Python SDK">
+    If you are using the [Python SDK](/developers/device-api/sdks#python), upgrade to version `v0.7.0` or later.
+  </Step>
+
+  <Step title="Integrate the changes">
+    Integrate the new endpoints and fields into your client application.
+  </Step>
+</Steps>
+
+---
+
 # v0.2.1
 
 *April 7, 2026*
@@ -62,6 +130,24 @@ curl --no-buffer \
   --url http://localhost/v0.2/events?types=deployment.deployed
 ```
 </Dropdown>
+
+## Migration steps
+
+<Steps>
+  <Step title="Verify agent compatibility">
+    Ensure all devices are running Miru Agent `v0.7.1` or later. See [compatibility matrix](/developers/device-api/versions#agent-compatibility-matrix).
+  </Step>
+
+  <Step title="Upgrade Python SDK">
+    If you are using the [Python SDK](/developers/device-api/sdks#python), upgrade to version `v0.4.0` or later.
+  </Step>
+
+  <Step title="Integrate the changes">
+    Integrate the new endpoints and fields into your client application.
+  </Step>
+</Steps>
+
+---
 
 # v0.2.0
 

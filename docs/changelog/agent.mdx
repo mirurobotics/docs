@@ -4,6 +4,22 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.11.1
+
+*October 9, 2026*
+
+Miru Agent `v0.11.1` upgrades the Device API to `v0.2.2`, which exposes [file rules](/data-uploads/concepts/file-rules/overview) to on-device applications.
+
+[Device API v0.2.2 changelog »](/changelog/device-api#v0-2-2)
+
+## Features
+
+- Added `GET /v0.2/file_rules/{id}` to the Device API; if the rule isn't stored on the device yet, the agent fetches it from Miru
+- Releases returned by the Device API now include `file_rule_ids` and `os`
+- `GET /v0.2/version` now includes `api_release_version`, the full Device API version the agent serves
+
+---
+
 # v0.11.0
 
 *October 9, 2026*
