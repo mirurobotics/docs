@@ -4,12 +4,11 @@ title: "Reprovision a device"
 
 import { Framed } from '/snippets/components/framed.jsx';
 import { ProvisionerBadge } from '/snippets/components/role-badges.jsx';
-import Install from '/snippets/devices/provision/install-dialog.mdx';
 import Reprovision from '/snippets/devices/provision/reprovision-dialog.mdx';
 
 <Framed 
   background="https://assets.mirurobotics.com/docs/v04/images/devices/background.jpeg" 
-  image="https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/header:reprovision-dialog.png" 
+  image="https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/header:reprovision-dialog-v2.png" 
   innerRadius="12px"
   outerRadius="16px"
 />
@@ -52,10 +51,10 @@ To reprovision a device, click the ellipsis (...) next to the device you want to
 
 ### Install the `miru-agent` package
 
-<Install />
+If the machine doesn't have the `miru-agent` package installed (for example, a new machine or a clean reinstall), install it first by following the [agent installation](/developers/agent/install) documentation.
 
 ### Reprovision the device
 
-Once the `miru-agent` package is installed, continue to the reprovisioning step.
+Once the `miru-agent` package is installed, run the reprovisioning command from the dialog. If you closed the dialog, select **Reprovision** from the device's ellipsis menu again.
 
 <Reprovision />

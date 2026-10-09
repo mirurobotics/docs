@@ -1,11 +1,28 @@
-A dialog will appear prompting you to install the Miru Agent. Select the operating system you want to install the agent on. 
+A dialog will appear prompting you to install the Miru Agent. Select the appropriate operating system to continue.
 
 If the device already has a compatible Miru Agent installed, you can skip this step.
 
-<Frame>
-  ![Install Miru Agent Dialog](https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/install-dialog-v2.png)
-</Frame>
+<Tabs>
+  <Tab title="Linux">
+    Follow the instructions to set up Miru's apt repository and install the `miru-agent` package. If you've already installed the Miru Agent, you can skip these steps.
 
-<Note>
+    <Frame>
+      ![Provision Dialog for Linux](https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/provision-dialog-linux.png)
+    </Frame>
+  </Tab>
+  <Tab title="Windows">
+    Follow the instructions to download the `miru-agent-<version>.msi` installer (v0.11.0 or later) onto the machine being provisioned.
+
+    Install by double-clicking the `miru-agent-<version>.msi` file from your Downloads folder.
+
+    If you've already installed the Miru Agent, you can skip this step.
+
+    <Frame>
+      ![Provision Dialog for Windows](https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/provision-dialog-windows.png)
+    </Frame>
+  </Tab>
+</Tabs>
+
+<Tip>
   For more information about installing the `miru-agent` package, visit the [agent installation](/developers/agent/install) documentation.
-</Note>
+</Tip>
