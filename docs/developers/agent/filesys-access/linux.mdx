@@ -93,6 +93,11 @@ To write to a given file, the `miru` user requires the following Unix permission
       `miru` user access by default and must be specifically configured.
     </Info>
 
+<Tip>
+  To grant these permissions, see [Granting access](#granting-access) and use the
+  **read-write** commands.
+</Tip>
+
 ## Data uploads
 
 To upload files from disk, the agent **reads** the files matched by a [file
@@ -140,6 +145,11 @@ To read a given file, the `miru` user requires the following Unix permissions:
       `miru` user access by default and must be specifically configured.
     </Info>
 
+<Tip>
+  To grant these permissions, see [Granting access](#granting-access) and use the
+  **read-only** commands.
+</Tip>
+
 Uploads are read-only — the `miru` user does **not** need write access to the source
 files, unless the rule also deletes them, covered next.
 
@@ -157,7 +167,18 @@ entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case
 | `/var/log` | execute (`x`) |
 | `/var` | execute (`x`) |
 
+<Tip>
+  To grant these permissions, see [Granting access](#granting-access). Use the
+  **read-only** commands on the file and the **read-write** commands on its directory.
+</Tip>
+
 ## Granting access
+
+<Warning>
+  Replace `<file-path>` and `<dir-path>` in the commands on this page with the path to your
+  own file or directory, for example `/var/lib/myapp/configs`. Keep the quotes. The
+  placeholders don't match any real path, so a command fails until you replace them.
+</Warning>
 
 There are two common methods for granting a user (the `miru` user) access to a given path:
 
@@ -213,15 +234,15 @@ If no group already grants the access you need, set the path's group to `miru`
     <CodeGroup>
 
     ```bash read-only
-    path="/path/to/file.json"
-    sudo chgrp miru $path
-    sudo chmod g+r $path
+    path="<file-path>"
+    sudo chgrp miru "$path"
+    sudo chmod g+r "$path"
     ```
 
     ```bash read-write
-    path="/path/to/file.json"
-    sudo chgrp miru $path
-    sudo chmod g+rw $path
+    path="<file-path>"
+    sudo chgrp miru "$path"
+    sudo chmod g+rw "$path"
     ```
 
     </CodeGroup>
@@ -232,15 +253,15 @@ If no group already grants the access you need, set the path's group to `miru`
     <CodeGroup>
 
     ```bash read-only
-    path="/path/to/file.json"
-    sudo chown miru $path
-    sudo chmod u+r $path
+    path="<file-path>"
+    sudo chown miru "$path"
+    sudo chmod u+r "$path"
     ```
 
     ```bash read-write
-    path="/path/to/file.json"
-    sudo chown miru $path
-    sudo chmod u+rw $path
+    path="<file-path>"
+    sudo chown miru "$path"
+    sudo chmod u+rw "$path"
     ```
 
     </CodeGroup>
@@ -254,15 +275,15 @@ If no group already grants the access you need, set the path's group to `miru`
     <CodeGroup>
 
     ```bash read-only
-    path="/path/to/dir"
-    sudo chgrp miru $path
-    sudo chmod g+rx $path
+    path="<dir-path>"
+    sudo chgrp miru "$path"
+    sudo chmod g+rx "$path"
     ```
 
     ```bash read-write
-    path="/path/to/dir"
-    sudo chgrp miru $path
-    sudo chmod g+rwx $path
+    path="<dir-path>"
+    sudo chgrp miru "$path"
+    sudo chmod g+rwx "$path"
     ```
 
     </CodeGroup>
@@ -271,15 +292,15 @@ If no group already grants the access you need, set the path's group to `miru`
     <CodeGroup>
 
     ```bash read-only
-    path="/path/to/dir"
-    sudo chown miru $path
-    sudo chmod u+rx $path
+    path="<dir-path>"
+    sudo chown miru "$path"
+    sudo chmod u+rx "$path"
     ```
 
     ```bash read-write
-    path="/path/to/dir"
-    sudo chown miru $path
-    sudo chmod u+rwx $path
+    path="<dir-path>"
+    sudo chown miru "$path"
+    sudo chmod u+rwx "$path"
     ```
 
     </CodeGroup>
@@ -305,11 +326,11 @@ Grant the `miru` user read and write access to a file.
 <CodeGroup>
 
 ```bash read-only
-sudo setfacl -m u:miru:r /path/to/file.json
+sudo setfacl -m u:miru:r "<file-path>"
 ```
 
 ```bash read-write
-sudo setfacl -m u:miru:rw /path/to/file.json
+sudo setfacl -m u:miru:rw "<file-path>"
 ```
 
 </CodeGroup>
@@ -321,11 +342,11 @@ Grant the `miru` user read/write/execute access to a directory.
 <CodeGroup>
 
 ```bash read-only
-sudo setfacl -m u:miru:rx /path/to/dir
+sudo setfacl -m u:miru:rx "<dir-path>"
 ```
 
 ```bash read-write
-sudo setfacl -m u:miru:rwx /path/to/dir
+sudo setfacl -m u:miru:rwx "<dir-path>"
 ```
 
 </CodeGroup>

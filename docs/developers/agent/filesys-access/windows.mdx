@@ -49,6 +49,12 @@ below. Otherwise, the agent will receive an access-denied error from the operati
 
 `NT SERVICE\miru-agent` needs modify (`M`) on the folder that holds the file, with `(OI)(CI)`.
 
+<Tip>
+  To grant this permission, run the **read-write** command under [Granting access](#granting-access).
+  To also lock the folder down to the same accounts as the default config path, see
+  [Restricting a config folder](#restricting-a-config-folder).
+</Tip>
+
 <Info>
   If the folder does not yet exist, create it yourself and grant access on it. The agent
   creates a missing folder only when it can create folders in the nearest folder that
@@ -67,6 +73,10 @@ You must grant the [required permissions](#required-permissions-2) outlined belo
 
 `NT SERVICE\miru-agent` needs read and execute (`RX`) on the folder the glob matches in, with `(OI)(CI)`.
 
+<Tip>
+  To grant this permission, run the **read-only** command under [Granting access](#granting-access).
+</Tip>
+
 Uploads are read-only — the agent does **not** need write access to the source
 files, unless the rule also deletes them, covered next.
 
@@ -75,22 +85,32 @@ files, unless the rule also deletes them, covered next.
 If a file rule has a [`retention`](/data-uploads/concepts/file-rules/rule-definition#retention) block,
 the agent removes each matching file once its retention guarantee ends. Grant delete (`D`) as well as read and execute (`RX`) on that folder, with `(OI)(CI)`.
 
+<Tip>
+  To grant this permission, run the **read-delete** command under [Granting access](#granting-access).
+</Tip>
+
 ## Granting access
 
 Grant `NT SERVICE\miru-agent` access with [`icacls`](https://learn.microsoft.com/windows-server/administration/windows-commands/icacls) from PowerShell opened as administrator.
 
+<Warning>
+  Replace `<folder-path>` in the commands on this page with the path to your own folder,
+  for example `C:\robot\configs`. Keep the quotes. `<` and `>` aren't allowed in Windows
+  paths, so a command fails until you replace the placeholder.
+</Warning>
+
 <CodeGroup>
 
 ```powershell PowerShell read-only
-icacls "D:\robot\logs" /grant "NT SERVICE\miru-agent:(OI)(CI)RX"
+icacls "<folder-path>" /grant "NT SERVICE\miru-agent:(OI)(CI)RX"
 ```
 
 ```powershell PowerShell read-write
-icacls "C:\robot\configs" /grant "NT SERVICE\miru-agent:(OI)(CI)M"
+icacls "<folder-path>" /grant "NT SERVICE\miru-agent:(OI)(CI)M"
 ```
 
 ```powershell PowerShell read-delete
-icacls "D:\robot\logs" /grant "NT SERVICE\miru-agent:(OI)(CI)(RX,D)"
+icacls "<folder-path>" /grant "NT SERVICE\miru-agent:(OI)(CI)(RX,D)"
 ```
 
 </CodeGroup>
@@ -102,7 +122,7 @@ These grants add access for the agent and leave the folder's other permissions u
 To give a custom config folder the same permissions as the [default config path](#configs), replace its permissions instead of adding to them:
 
 ```powershell PowerShell
-icacls "C:\robot\configs" /inheritance:r /grant:r `
+icacls "<folder-path>" /inheritance:r /grant:r `
   "SYSTEM:(OI)(CI)F" `
   "Administrators:(OI)(CI)F" `
   "NT SERVICE\miru-agent:(OI)(CI)M" `
@@ -122,7 +142,7 @@ sc.exe showsid miru-agent
 Pass the SID to `icacls` with a `*` prefix:
 
 ```powershell PowerShell
-icacls "C:\robot\configs" /grant "*<SID>:(OI)(CI)M"
+icacls "<folder-path>" /grant "*<SID>:(OI)(CI)M"
 ```
 
 ### Removing access
@@ -130,5 +150,5 @@ icacls "C:\robot\configs" /grant "*<SID>:(OI)(CI)M"
 To remove every entry for the agent from a folder:
 
 ```powershell PowerShell
-icacls "C:\robot\configs" /remove "NT SERVICE\miru-agent"
+icacls "<folder-path>" /remove "NT SERVICE\miru-agent"
 ```
