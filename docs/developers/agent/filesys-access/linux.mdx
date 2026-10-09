@@ -93,6 +93,8 @@ To write to a given file, the `miru` user requires the following Unix permission
       `miru` user access by default and must be specifically configured.
     </Info>
 
+To grant these permissions, follow the instructions in [Granting access](#granting-access).
+
 ## Data uploads
 
 To upload files from disk, the agent **reads** the files matched by a [file
@@ -140,6 +142,8 @@ To read a given file, the `miru` user requires the following Unix permissions:
       `miru` user access by default and must be specifically configured.
     </Info>
 
+To grant these permissions, follow the instructions in [Granting access](#granting-access).
+
 Uploads are read-only — the `miru` user does **not** need write access to the source
 files, unless the rule also deletes them, covered next.
 
@@ -156,6 +160,8 @@ entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case
 | `/var/log/robot` | read (`r`), write (`w`), execute (`x`) |
 | `/var/log` | execute (`x`) |
 | `/var` | execute (`x`) |
+
+To grant these permissions, follow the instructions in [Granting access](#granting-access).
 
 ## Granting access
 
@@ -212,13 +218,13 @@ If no group already grants the access you need, set the path's group to `miru`
   <Tab title="Group access">
     <CodeGroup>
 
-    ```bash read-only
+    ```bash read (r)
     path="/path/to/file.json"
     sudo chgrp miru $path
     sudo chmod g+r $path
     ```
 
-    ```bash read-write
+    ```bash read-write (rw)
     path="/path/to/file.json"
     sudo chgrp miru $path
     sudo chmod g+rw $path
@@ -231,13 +237,13 @@ If no group already grants the access you need, set the path's group to `miru`
 
     <CodeGroup>
 
-    ```bash read-only
+    ```bash read (r)
     path="/path/to/file.json"
     sudo chown miru $path
     sudo chmod u+r $path
     ```
 
-    ```bash read-write
+    ```bash read-write (rw)
     path="/path/to/file.json"
     sudo chown miru $path
     sudo chmod u+rw $path
@@ -247,19 +253,23 @@ If no group already grants the access you need, set the path's group to `miru`
   </Tab>
 </Tabs>
 
+<Info>
+  Replace `path="/path/to/file.json"` with the actual file path
+</Info>
+
 **Directories**
 
 <Tabs>
   <Tab title="Group access">
     <CodeGroup>
 
-    ```bash read-only
+    ```bash read (rx)
     path="/path/to/dir"
     sudo chgrp miru $path
     sudo chmod g+rx $path
     ```
 
-    ```bash read-write
+    ```bash read-write (rwx)
     path="/path/to/dir"
     sudo chgrp miru $path
     sudo chmod g+rwx $path
@@ -270,13 +280,13 @@ If no group already grants the access you need, set the path's group to `miru`
   <Tab title="Transfer ownership">
     <CodeGroup>
 
-    ```bash read-only
+    ```bash read (rx)
     path="/path/to/dir"
     sudo chown miru $path
     sudo chmod u+rx $path
     ```
 
-    ```bash read-write
+    ```bash read-write (rwx)
     path="/path/to/dir"
     sudo chown miru $path
     sudo chmod u+rwx $path
@@ -285,6 +295,10 @@ If no group already grants the access you need, set the path's group to `miru`
     </CodeGroup>
   </Tab>
 </Tabs>
+
+<Info>
+  Replace `path="/path/to/dir"` with the actual directory path
+</Info>
 
 ### ACLs
 
@@ -300,32 +314,44 @@ sudo apt install acl
 
 **Files**
 
-Grant the `miru` user read and write access to a file.
+Grant the `miru` user access to a file.
 
 <CodeGroup>
 
-```bash read-only
+```bash read (r)
 sudo setfacl -m u:miru:r /path/to/file.json
 ```
 
-```bash read-write
+```bash read-write (rw)
 sudo setfacl -m u:miru:rw /path/to/file.json
 ```
 
 </CodeGroup>
 
+<Info>
+  Replace `/path/to/file.json` with the actual file path
+</Info>
+
 **Directories**
 
-Grant the `miru` user read/write/execute access to a directory.
+Grant the `miru` user access to a directory.
 
 <CodeGroup>
 
-```bash read-only
+```bash execute (x)
+sudo setfacl -m u:miru:x /path/to/dir
+```
+
+```bash read (rx)
 sudo setfacl -m u:miru:rx /path/to/dir
 ```
 
-```bash read-write
+```bash read-write (rwx)
 sudo setfacl -m u:miru:rwx /path/to/dir
 ```
 
 </CodeGroup>
+
+<Info>
+  Replace `/path/to/dir` with the actual directory path
+</Info>
