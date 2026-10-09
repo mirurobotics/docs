@@ -51,15 +51,12 @@ Below is a list of the currently supported versions:
 
 Each Miru Agent is compiled with a set of one or more API versions, which is documented in the following table:
 
-| Agent Version  | API Version(s) |
-|----------------|----------------|
-| `v0.11.1+`     | `v0.2.2`       |
-| `v0.11.0`      | `v0.2.1`       |
-| `v0.8.x - v0.10.x` | `v0.2.1`   |
-| `v0.7.1`       | `v0.2.1`       |
-| `v0.7.0`       | `v0.2.0`       |
-| `v0.6.x`       | `v0.1.0`       |
-| `v0.5.x`       | `v0.1.0`       |
+| API Version(s) | Agent Version      |
+|----------------|--------------------|
+| `v0.2.2`       | `v0.11.1+`         |
+| `v0.2.1`       | `v0.7.1 - v0.11.0` |
+| `v0.2.0`       | `v0.7.0`           |
+| `v0.1.0`       | `v0.6.x`          |
 
 Be careful when updating your client application to a new API version. Even if API changes are backward-compatible, if the agent is not compiled with the new features, your client may not work as expected.
 
