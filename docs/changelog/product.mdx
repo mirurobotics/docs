@@ -28,24 +28,6 @@ import { Separator } from '/snippets/components/separator.jsx';
 
     [Install the agent »](/developers/agent/install)
 
-    ## Release Migrations
-
-    Moving a device to a new release no longer means copying its configs over by hand.
-    Migrating a device now automatically updates its configs to be compatible with the new release:
-
-    * **Update defaults:** Parameters which match the old release's default move
-      to the new release's default; parameters which are custom to the device are unchanged
-    * **Add new parameters:** Parameters that have a default in the new release but are missing from the device's config are added with that default
-    * **Remove stale parameters:** Parameters which are not in the new
-      release are deleted, including free-form entries
-
-    Every migrated parameter shows up as a change in the release editor, so you can review
-    and edit it before staging. Migration is optional — you can skip it by clicking **Open without changes**.
-
-    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-10-07/release-migrations.png" background="https://assets.mirurobotics.com/docs/changelog/26-10-07/background.jpg" innerRadius="8px" />
-
-    [Stage a deployment »](/cfg-mgmt/deploy/staging-area#stage-a-deployment)
-
     <Separator />
 
     <Dropdown title="Improvements">
