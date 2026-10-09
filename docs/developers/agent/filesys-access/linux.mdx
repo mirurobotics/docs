@@ -93,7 +93,7 @@ To write to a given file, the `miru` user requires the following Unix permission
       `miru` user access by default and must be specifically configured.
     </Info>
 
-To grant these permissions, follow the instructions in [Granting access](#granting-access). 
+To grant these permissions, follow the instructions in [Granting access](#granting-access).
 
 ## Data uploads
 
@@ -142,7 +142,7 @@ To read a given file, the `miru` user requires the following Unix permissions:
       `miru` user access by default and must be specifically configured.
     </Info>
 
-To grant these permissions, follow the instructions in [Granting access](#granting-access). 
+To grant these permissions, follow the instructions in [Granting access](#granting-access).
 
 Uploads are read-only — the `miru` user does **not** need write access to the source
 files, unless the rule also deletes them, covered next.
@@ -161,7 +161,7 @@ entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case
 | `/var/log` | execute (`x`) |
 | `/var` | execute (`x`) |
 
-To grant these permissions, follow the instructions in [Granting access](#granting-access). 
+To grant these permissions, follow the instructions in [Granting access](#granting-access).
 
 ## Granting access
 
@@ -262,12 +262,6 @@ If no group already grants the access you need, set the path's group to `miru`
 <Tabs>
   <Tab title="Group access">
     <CodeGroup>
-
-    ```bash execute (x)
-    path="/path/to/dir"
-    sudo chgrp miru $path
-    sudo chmod g+x $path
-    ```
 
     ```bash read (rx)
     path="/path/to/dir"
