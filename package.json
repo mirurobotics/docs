@@ -9,10 +9,10 @@
     "test:lint": "./tests/test-lint.sh"
   },
   "devDependencies": {
-    "cspell": "10.3.4",
-    "eslint": "10.11.0",
+    "cspell": "10.3.6",
+    "eslint": "10.12.0",
     "eslint-plugin-mdx": "3.8.1",
-    "mint": "4.2.935"
+    "mint": "4.2.988"
   },
   "pnpm": {
     "overrides": {
@@ -51,7 +51,8 @@
       "source-map-js": ">=1.2.2",
       "@modelcontextprotocol/sdk": ">=1.31.0",
       "postcss-selector-parser": ">=7.1.6 <8",
-      "katex": ">=0.18.2 <0.20"
+      "katex": ">=0.18.2 <0.20",
+      "fflate": ">=0.8.3"
     },
     "auditConfig": {
       "ignoreCves": [
