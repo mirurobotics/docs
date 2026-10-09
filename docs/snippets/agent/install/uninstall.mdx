@@ -35,7 +35,7 @@ import RemoveApt from '/snippets/apt/remove.mdx';
       </Tab>
     </Tabs>
 
-    Uninstalling keeps `%ProgramData%\Miru`, which holds the agent's settings, device identity, keys, and logs, and the `Miru Agent Users` group and its members. For a complete removal, delete both after uninstalling the agent:
+    Uninstalling keeps `%ProgramData%\Miru`, which holds the agent's settings, device identity, keys, and logs, and the `Miru Agent Users` group and its members. For a complete removal, delete both after uninstalling the agent. Deleting `%ProgramData%\Miru` also deletes `%ProgramData%\Miru\configs`, the default location of deployed configs, so back up any configs your applications still read first.
 
     ```powershell PowerShell
     Remove-Item -Recurse -Force "$env:ProgramData\Miru"; `
