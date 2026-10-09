@@ -93,7 +93,7 @@ To write to a given file, the `miru` user requires the following Unix permission
       `miru` user access by default and must be specifically configured.
     </Info>
 
-  To grant these permissions, follow the instructions in [Granting access](#granting-access).
+To grant these permissions, follow the instructions in [Granting access](#granting-access).
 
 ## Data uploads
 
@@ -281,13 +281,13 @@ If no group already grants the access you need, set the path's group to `miru`
     sudo chmod g+x $path
     ```
 
-    ```bash read-only (r)
+    ```bash read (rx)
     path="/path/to/dir"
     sudo chgrp miru $path
     sudo chmod g+rx $path
     ```
 
-    ```bash read-write (rw)
+    ```bash read-write (rwx)
     path="/path/to/dir"
     sudo chgrp miru $path
     sudo chmod g+rwx $path
@@ -304,13 +304,13 @@ If no group already grants the access you need, set the path's group to `miru`
     sudo chmod u+x $path
     ```
 
-    ```bash read (r)
+    ```bash read (rx)
     path="/path/to/dir"
     sudo chown miru $path
     sudo chmod u+rx $path
     ```
 
-    ```bash read-write (rw)
+    ```bash read-write (rwx)
     path="/path/to/dir"
     sudo chown miru $path
     sudo chmod u+rwx $path
@@ -357,7 +357,7 @@ sudo setfacl -m u:miru:rw /path/to/file.json
 </CodeGroup>
 
 <Info>
-  Replace `path="/path/to/file.json"` with the actual file path
+  Replace `/path/to/file.json` with the actual file path
 </Info>
 
 **Directories**
@@ -370,16 +370,16 @@ Grant the `miru` user read/write/execute access to a directory.
 sudo setfacl -m u:miru:x /path/to/dir
 ```
 
-```bash read (r)
+```bash read (rx)
 sudo setfacl -m u:miru:rx /path/to/dir
 ```
 
-```bash read-write
+```bash read-write (rwx)
 sudo setfacl -m u:miru:rwx /path/to/dir
 ```
 
 </CodeGroup>
 
 <Info>
-  Replace `path="/path/to/dir"` with the actual directory path
+  Replace `/path/to/dir` with the actual directory path
 </Info>
