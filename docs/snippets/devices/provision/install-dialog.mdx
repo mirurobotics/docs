@@ -1,24 +1,28 @@
-The **Provision** dialog will appear with **Linux** and **Windows** tabs. It opens on the tab for the device's reported operating system, or on **Linux** if the operating system isn't known yet. Select the tab for the machine you want to install the agent on.
+A dialog will appear prompting you to install the Miru Agent. Select the appropriate operating system to continue.
 
 If the device already has a compatible Miru Agent installed, you can skip this step.
 
 <Tabs>
   <Tab title="Linux">
-    Steps 01 and 02 set up Miru's apt repository and install the `miru-agent` package. Click **Copy** on each step and run the commands in the terminal of the machine you want to provision.
+    Follow the instructions to set up Miru's apt repository and install the `miru-agent` package. If you've already installed the Miru Agent, you can skip these steps.
 
     <Frame>
-      ![Provision Dialog for Linux](https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/provision-dialog-linux.png)
+      ![Provision Dialog for Linux](/images/devices/provisioning/provision-dialog-linux.png)
     </Frame>
   </Tab>
   <Tab title="Windows">
-    Step 01 shows the **Miru Agent for Windows** card. Click **Releases** to open the agent's releases, then download and run the `miru-agent-<version>.msi` installer (v0.11.0 or later) on the machine you want to provision.
+    Follow the instructions to download the `miru-agent-<version>.msi` installer (v0.11.0 or later) onto the machine being provisioned.
+
+    Install by double-clicking the `miru-agent-<version>.msi` file from your Downloads folder.
+
+    If you've already installed the Miru Agent, you can skip this step.
 
     <Frame>
-      ![Provision Dialog for Windows](https://assets.mirurobotics.com/docs/v04/images/devices/provisioning/provision-dialog-windows.png)
+      ![Provision Dialog for Windows](/images/devices/provisioning/provision-dialog-windows.png)
     </Frame>
   </Tab>
 </Tabs>
 
-<Note>
+<Tip>
   For more information about installing the `miru-agent` package, visit the [agent installation](/developers/agent/install) documentation.
-</Note>
+</Tip>
