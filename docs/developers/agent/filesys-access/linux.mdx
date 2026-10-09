@@ -93,7 +93,7 @@ To write to a given file, the `miru` user requires the following Unix permission
       `miru` user access by default and must be specifically configured.
     </Info>
 
-To grant these permissions, follow the instructions in [Granting access](#granting-access). Directories higher up the path only need execute (`x`). For shared or system directories, such as `/var` or `/home`, grant it with an [ACL](#acls) instead of changing their group or owner.
+To grant these permissions, follow the instructions in [Granting access](#granting-access). 
 
 ## Data uploads
 
@@ -142,7 +142,7 @@ To read a given file, the `miru` user requires the following Unix permissions:
       `miru` user access by default and must be specifically configured.
     </Info>
 
-To grant these permissions, follow the instructions in [Granting access](#granting-access). Directories higher up the path only need execute (`x`). For shared or system directories, such as `/var` or `/home`, grant it with an [ACL](#acls) instead of changing their group or owner.
+To grant these permissions, follow the instructions in [Granting access](#granting-access). 
 
 Uploads are read-only — the `miru` user does **not** need write access to the source
 files, unless the rule also deletes them, covered next.
@@ -161,7 +161,7 @@ entry), so grant the `miru` user `r`, `w`, and `x` on the directory in that case
 | `/var/log` | execute (`x`) |
 | `/var` | execute (`x`) |
 
-To grant these permissions, follow the instructions in [Granting access](#granting-access). Directories higher up the path only need execute (`x`). For shared or system directories, such as `/var` or `/home`, grant it with an [ACL](#acls) instead of changing their group or owner.
+To grant these permissions, follow the instructions in [Granting access](#granting-access). 
 
 ## Granting access
 
@@ -305,12 +305,6 @@ If no group already grants the access you need, set the path's group to `miru`
 <Info>
   Replace `path="/path/to/dir"` with the actual directory path
 </Info>
-
-<Warning>
-  Don't change the group or owner of shared or system directories such as `/var`, `/var/lib`
-  or `/home`. Those directories usually only need execute (`x`) so the agent can traverse
-  them. Grant it with an [ACL](#acls) instead, which leaves their existing permissions in place.
-</Warning>
 
 ### ACLs
 
