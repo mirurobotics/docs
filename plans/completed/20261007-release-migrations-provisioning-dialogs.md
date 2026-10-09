@@ -47,6 +47,10 @@ You can see it working in a local `mint dev` preview on port 3336.
 
 ## Decision Log
 
+- Decision: Drop the release migration docs (Milestone 1) from this PR and keep only the provisioning dialog screenshots. `docs/cfg-mgmt/deploy/staging-area.mdx` is restored to the base branch, and the `releases/stage/migrate-dialog.png` asset is no longer needed.
+  Rationale: Release migration is being removed from the application, so it shouldn't be documented.
+  Date/Author: 2026-10-09, user via orchestrator.
+
 - Decision: Follow the migration dialog copy on frontend `main` (PR #95, "parameters" wording) for both the docs text and the screenshot; do not use the pre-#95 "settings" fallback from `dd2d65ab`.
   Rationale: The docs follow the shipped code; "parameters" also matches the changelog and the rest of the docs.
   Date/Author: 2026-10-07, user via orchestrator.
