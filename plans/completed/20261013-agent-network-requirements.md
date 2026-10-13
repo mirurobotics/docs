@@ -17,22 +17,25 @@ Customers configuring firewalls cannot find which endpoints the Miru Agent needs
 
 ## Progress
 
-- [ ] Create `docs/developers/agent/network.mdx`.
-- [ ] Add the page to `docs/docs.json` after `developers/agent/security`.
-- [ ] Add a cross-link in `docs/developers/agent/security.mdx`.
-- [ ] Static validation and commit.
+- [x] (2026-10-13) Create `docs/developers/agent/network.mdx`.
+- [x] (2026-10-13) Add the page to `docs/docs.json` after `developers/agent/security`.
+- [x] (2026-10-13) Add a cross-link in `docs/developers/agent/security.mdx`.
+- [x] (2026-10-13) Static validation and commit.
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds.)
+- Observation: `ci.yml` runs only on `pull_request` and pushes to main/staging/uat/production, and `gh` is not authenticated in this environment, so pushing the feature branch triggers no CI.
+  Evidence: `.github/workflows/ci.yml` `on:` block.
 
 ## Decision Log
 
-(Add entries as work proceeds.)
+- Decision: Note that GitHub may redirect release downloads to other GitHub-owned hosts, without naming them.
+  Rationale: Allowing only `github.com` can break downloads; specific redirect hostnames were not verified.
+  Date/Author: 2026-10-13, Claude.
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+Added `docs/developers/agent/network.mdx`, its nav entry, and a cross-link from `security.mdx`. Static checks passed (JSON valid, link targets and anchors exist, sentence-case headings, no `--`, no bucket endpoints). CI validation did not run; it will run when a pull request is opened.
 
 ## Context and Orientation
 
