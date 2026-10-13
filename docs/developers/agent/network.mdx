@@ -2,24 +2,20 @@
 title: 'Network requirements'
 ---
 
-This page lists the network access the Miru Agent needs so you can configure firewalls on your device's network. All connections are outbound and initiated by the agent. No inbound ports need to be opened on the device.
+This page details the network access required by the Miru Agent so you can configure firewalls on your device's network. All connections are outbound and initiated by the agent. No inbound ports need to be opened on the device.
 
 ## Required endpoints
 
 Allow outbound traffic from the device to the following hosts:
 
-| Host | Port | Protocol | Used for |
-|------|------|----------|----------|
-| `api.mirurobotics.com` | TCP `443` | HTTPS | Provisioning, authentication, and sync cycles |
-| `mqtt.mirurobotics.com` | TCP `443` | MQTT over TLS | Real-time notifications that a deployment is ready |
-
-<Info>
-The agent only connects to `mirurobotics.com` and its subdomains. If your firewall supports wildcard domains, allowing outbound TCP `443` to `*.mirurobotics.com` covers both endpoints.
-</Info>
+| Host | Port | Protocol | 
+|------|------|----------|
+| `api.mirurobotics.com` | TCP `443` | HTTPS | 
+| `mqtt.mirurobotics.com` | TCP `443` | MQTT over TLS |
 
 ## MQTT connection
 
-The connection to `mqtt.mirurobotics.com` is raw MQTT over TLS on port `443`, not HTTPS or WebSocket traffic. The agent does not support HTTP proxies for this connection, so it needs a direct outbound connection to the broker.
+The connection to `mqtt.mirurobotics.com` is raw MQTT over TLS on port `443`, not HTTPS or WebSocket traffic. The agent does not support HTTP proxies for this connection; it needs a direct connection to the broker.
 
 <Warning>
 Firewalls that perform TLS inspection, or that only allow HTTP traffic on port `443`, may drop the MQTT connection. Exempt `mqtt.mirurobotics.com` from these policies.
@@ -29,15 +25,15 @@ If the MQTT connection is blocked, the agent continues to work over HTTPS but lo
 
 ### Older agent versions
 
-Agent versions prior to [v0.10.3](/changelog/agent#v0-10-3) (and prior to [v0.7.2](/changelog/agent#v0-7-2) on the `v0.7` line) connect to `mqtt.mirurobotics.com` on TCP port `8883` instead of `443`. Allow port `8883` for devices running these versions, or upgrade them.
+Agent versions prior to [v0.10.3](/changelog/agent#v0-10-3) connect to `mqtt.mirurobotics.com` on TCP port `8883` instead of `443`. Allow port `8883` for devices running these versions, or upgrade them.
 
 ## Installation and upgrades
 
-The following host is only needed when downloading the agent on the device itself:
+The following host is required when installing or upgrading the agent on the device:
 
-| Host | Port | Used for |
-|------|------|----------|
-| `packages.mirurobotics.com` | TCP `443` | APT installs and upgrades (Linux) |
+| Host | Port | 
+|------|------|
+| `packages.mirurobotics.com` | TCP `443` |
 
 To avoid downloading on the device, download the package on another computer and transfer it. See [Poor connectivity](/developers/agent/install#poor-connectivity).
 
