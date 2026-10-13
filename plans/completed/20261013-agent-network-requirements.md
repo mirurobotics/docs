@@ -32,6 +32,9 @@ Customers configuring firewalls cannot find which endpoints the Miru Agent needs
 - Decision: Note that GitHub may redirect release downloads to other GitHub-owned hosts, without naming them.
   Rationale: Allowing only `github.com` can break downloads; specific redirect hostnames were not verified.
   Date/Author: 2026-10-13, Claude.
+- Decision: Remove the `github.com` row from "Installation and upgrades" (supersedes the decision above).
+  Rationale: Review feedback on PR #248: manual GitHub downloads aren't a supported automated workflow, so the page lists only the APT host.
+  Date/Author: 2026-10-13, Claude.
 
 ## Outcomes & Retrospective
 
