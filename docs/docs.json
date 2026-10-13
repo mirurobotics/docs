@@ -190,7 +190,6 @@
                   "developers/agent/versions",
                   "developers/agent/commands",
                   "developers/agent/security",
-                  "developers/agent/network",
                   "developers/agent/architecture",
                   {
                     "group": "File system access",
@@ -198,7 +197,8 @@
                       "developers/agent/filesys-access/linux",
                       "developers/agent/filesys-access/windows"
                     ]
-                  }
+                  },
+                  "developers/agent/network"
                 ]
               },
               {
