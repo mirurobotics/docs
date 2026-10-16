@@ -30,7 +30,7 @@ To connect via curl, use the `--no-buffer` flag to ensure events are printed as 
     ```
   </Tab>
   <Tab title="Windows">
-    ```powershell PowerShell
+    ```powershell PowerShell wrap
     $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
     curl.exe --no-buffer `
       --request GET `
@@ -76,7 +76,7 @@ Each event is delivered as a standard SSE frame with three fields.
 
 Below is an example of an event frame:
 
-```
+```text wrap
 id: 42
 event: deployment.deployed
 data: {"object":"event","id":42,"type":"deployment.deployed","occurred_at":"2026-03-10T12:00:00Z","data":{"deployment_id":"dpl_123","release_id":"rls_123","status":"deployed","activity_status":"deployed","error_status":"none","target_status":"deployed","deployed_at":"2026-03-10T12:00:00Z"}}
@@ -132,7 +132,7 @@ Every event has a *type*—a string in the form `{resource}.{action}` (e.g. `dep
 
 For example, when a deployment's config instances are written to the device's file system, the agent emits a `deployment.deployed` event:
 
-```
+```text wrap
 event: deployment.deployed
 data: {"object":"event","id":42,"type":"deployment.deployed","occurred_at":"2026-03-10T12:00:00Z","data":{...}}
 ```
@@ -163,7 +163,7 @@ Pass the cursor in one of two ways:
         ```
       </Tab>
       <Tab title="Windows">
-        ```powershell PowerShell highlight={4}
+        ```powershell PowerShell highlight={4} wrap
         $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
         curl.exe --no-buffer `
           --request GET `
@@ -186,7 +186,7 @@ Pass the cursor in one of two ways:
         ```
       </Tab>
       <Tab title="Windows">
-        ```powershell PowerShell highlight={6}
+        ```powershell PowerShell highlight={6} wrap
         $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
         curl.exe --no-buffer `
           --request GET `
@@ -205,7 +205,7 @@ To subscribe to specific event types, pass a comma-separated list via the `types
 
 <Tabs>
   <Tab title="Linux">
-    ```bash highlight={4}
+    ```bash highlight={4} wrap
     curl --no-buffer \
       --unix-socket /run/miru/miru.sock \
       --request GET \
@@ -213,7 +213,7 @@ To subscribe to specific event types, pass a comma-separated list via the `types
     ```
   </Tab>
   <Tab title="Windows">
-    ```powershell PowerShell highlight={4}
+    ```powershell PowerShell highlight={4} wrap
     $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
     curl.exe --no-buffer `
       --request GET `

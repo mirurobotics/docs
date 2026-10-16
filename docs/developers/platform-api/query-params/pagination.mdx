@@ -34,7 +34,7 @@ To specify the limit and offset, add the `limit` and `offset` query parameters t
 
 The following request specifies a limit of 10 and an offset of 0 by appending `?limit=10&offset=0` to the list endpoint URL.
 
-```bash highlight={2}
+```bash highlight={2} wrap
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/config_instances?limit=10&offset=0' \
   --header 'X-API-Key: <api-key>' \
@@ -111,7 +111,7 @@ To paginate a request, continually request the next page until `has_more` is `fa
 
 First, let's request with a limit of 10 and an offset of 0.
 
-```bash highlight={2}
+```bash highlight={2} wrap
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/config_instances?limit=10&offset=0' \
   --header 'X-API-Key: <api-key>' \
