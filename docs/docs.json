@@ -151,8 +151,6 @@
                 "group": "Concepts",
                 "expanded": true,
                 "pages": [
-                  "data-uploads/concepts/buckets",
-                  "data-uploads/concepts/upload-collections",
                   {
                     "group": "File rules",
                     "pages": [
@@ -160,6 +158,8 @@
                       "data-uploads/concepts/file-rules/rule-definition"
                     ]
                   },
+                  "data-uploads/concepts/upload-collections",
+                  "data-uploads/concepts/buckets",
                   "data-uploads/concepts/uploads",
                   "data-uploads/concepts/bundles"
                 ]
