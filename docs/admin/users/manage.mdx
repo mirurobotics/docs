@@ -5,8 +5,6 @@ title: "Manage members"
 import { Framed } from '/snippets/components/framed.jsx';
 import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge } from '/snippets/components/role-badges.jsx';
-import { ROLE_TOOLTIP } from '/snippets/components/users/roles.jsx';
-import { SUSPENDED_TOOLTIP } from '/snippets/components/users/statuses.jsx';
 
 <Framed background="https://assets.mirurobotics.com/docs/v04/images/users/background.jpeg" image="https://assets.mirurobotics.com/docs/v04/images/users/members/header:page2.png" borderWidth="20px" />
 
@@ -14,7 +12,7 @@ import { SUSPENDED_TOOLTIP } from '/snippets/components/users/statuses.jsx';
 
 <PlatformUnsupportedBadge />
 
-To change a member's <Tooltip tip={ROLE_TOOLTIP.tip} cta={ROLE_TOOLTIP.cta} href={ROLE_TOOLTIP.href}>role</Tooltip>, first navigate to the [members](https://app.mirurobotics.com/settings/members) page.
+To change a member's <Tooltip tip="The access role of the user in the workspace." cta="Learn more" href="/admin/users/access-control">role</Tooltip>, first navigate to the [members](https://app.mirurobotics.com/settings/members) page.
 
 Next, click the ellipses (...) of the member you want to change the role of, and hit **Change role**.
 
@@ -32,7 +30,7 @@ Select the new role and hit **Save**.
 
 <PlatformUnsupportedBadge />
 
-Suspending a member immediately revokes their access to the workspace and sets their status to <Tooltip tip={SUSPENDED_TOOLTIP.tip} cta={SUSPENDED_TOOLTIP.cta} href={SUSPENDED_TOOLTIP.href}>suspended</Tooltip>:
+Suspending a member immediately revokes their access to the workspace and sets their status to <Tooltip tip="The member's access was revoked by an admin; they cannot login to the workspace or access any resources" cta="Learn more" href="/admin/users/overview#status">suspended</Tooltip>:
 
 - They are immediately logged out
 - They cannot log in to this workspace or access any resources (signing in with the same email address creates a new workspace with a new account)

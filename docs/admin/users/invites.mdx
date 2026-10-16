@@ -5,8 +5,6 @@ title: "Invites"
 import { MutableBadge, ImmutableBadge } from '/snippets/components/field-badges.jsx';
 import { Framed } from '/snippets/components/framed.jsx';
 import { AdminBadge } from '/snippets/components/role-badges.jsx';
-import { ROLE_TOOLTIP } from '/snippets/components/users/roles.jsx';
-import { LEFT_TOOLTIP } from '/snippets/components/users/statuses.jsx';
 import InviteDef from '/snippets/definitions/invite.mdx';
 
 <Framed 
@@ -40,7 +38,7 @@ import InviteDef from '/snippets/definitions/invite.mdx';
 <ParamField path="role" type="enum">
   <MutableBadge />
 
-  The <Tooltip tip={ROLE_TOOLTIP.tip} cta={ROLE_TOOLTIP.cta} href={ROLE_TOOLTIP.href}>role</Tooltip> of the invitee when they join the workspace. Must be one of the following:
+  The <Tooltip tip="The access role of the user in the workspace." cta="Learn more" href="/admin/users/access-control">role</Tooltip> of the invitee when they join the workspace. Must be one of the following:
 
   - `admin`
   - `member`
@@ -53,7 +51,7 @@ import InviteDef from '/snippets/definitions/invite.mdx';
 
 To invite a member to your workspace, navigate to the [members](https://app.mirurobotics.com/settings/members) page and click **Invite** in the top right corner.
 
-Next, supply the email addresses of the members you want to invite as a comma-separated list, select their <Tooltip tip={ROLE_TOOLTIP.tip} cta={ROLE_TOOLTIP.cta} href={ROLE_TOOLTIP.href}>role</Tooltip>, and hit **Send**.
+Next, supply the email addresses of the members you want to invite as a comma-separated list, select their <Tooltip tip="The access role of the user in the workspace." cta="Learn more" href="/admin/users/access-control">role</Tooltip>, and hit **Send**.
 
 <Frame>
   ![Send Invite Dialog](https://assets.mirurobotics.com/docs/v04/images/invites/send-invite-dialog.png)
@@ -110,7 +108,7 @@ This section covers invites received by users _who already have a Miru account_.
 Since user accounts can only belong to a single workspace, accepting an invite from another workspace transfers you from your current workspace to the workspace you've been invited to:
 
 - You will lose all access to your current workspace
-- Your status in your current workspace will be set to <Tooltip tip={LEFT_TOOLTIP.tip} cta={LEFT_TOOLTIP.cta} href={LEFT_TOOLTIP.href}>left</Tooltip>
+- Your status in your current workspace will be set to <Tooltip tip="The member left the workspace; they cannot login to the workspace or access any resources" cta="Learn more" href="/admin/users/overview#status">left</Tooltip>
 - Logging in gives you access to the workspace you've accepted the invite from
 
 Accepting an invite is reversible if you are _not the only active member_. An admin from the workspace you left can invite you back at any time.

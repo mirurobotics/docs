@@ -5,7 +5,6 @@ description: "Changelog and migration steps for the Platform API"
 ---
 
 import { Dropdown } from '/snippets/components/api-dropdown.jsx';
-import { PlatformApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
@@ -17,7 +16,8 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
 `everglades` also brings the Platform API up to date with three months of configuration changes: config schemas now support instance slots, deployments report more timestamps (queued, deployed, archived), and devices report an `archived` status.
 
-<PlatformApiReleaseLinks version="2026-08-17.everglades" />
+- API reference: [2026-08-17.everglades](/references/platform-api/2026-08-17)
+- OpenAPI spec: [Download YAML](https://assets.mirurobotics.com/docs/openapi/platform/2026-08-17.yaml)
 
 ## New endpoints
 
@@ -355,7 +355,8 @@ _May 12, 2026_
 
 The `rainier` release introduces a provisioning-token flow that replaces the activation-token endpoint, expands supported config-instance content formats, restores the `removing` deployment status, and adds expandable `current_release` / `current_deployment` fields on devices.
 
-<PlatformApiReleaseLinks version="2026-05-06.rainier" />
+- API reference: [2026-05-06.rainier](/references/platform-api/2026-05-06)
+- OpenAPI spec: [Download YAML](https://assets.mirurobotics.com/docs/openapi/platform/2026-05-06.yaml)
 
 ## New endpoints
 
@@ -455,7 +456,8 @@ _March 13, 2026_
 
 The `tetons` release introduces API versioning and overhauls the representation of deployments, config instances, and config schemas. It introduces management of more configuration resources (config types, schemas, and instances), release creation, git commit tracking, and explicit deployment lifecycle actions.
 
-<PlatformApiReleaseLinks version="2026-03-09.tetons" />
+- API reference: [2026-03-09.tetons](/references/platform-api/2026-03-09)
+- OpenAPI spec: [Download YAML](https://assets.mirurobotics.com/docs/openapi/platform/2026-03-09.yaml)
 
 ## New endpoints
 
@@ -822,7 +824,8 @@ _October 21, 2025_
 
 Initial release of the Platform API. This version establishes core API endpoints for managing the deployment pipeline—from defining configurations through releasing and deploying to devices.
 
-<PlatformApiReleaseLinks version="2025-10-21.zion" />
+- API reference: [2025-10-21.zion](/references/platform-api/2025-10-21)
+- OpenAPI spec: [Download YAML](https://assets.mirurobotics.com/docs/openapi/platform/2025-10-21.yaml)
 
 ## Endpoints
 

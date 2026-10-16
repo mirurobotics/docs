@@ -5,7 +5,6 @@ description: "Changelog and migration steps for the Device API"
 ---
 
 import { Dropdown } from '/snippets/components/api-dropdown.jsx';
-import { DeviceApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
@@ -15,7 +14,8 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 The `v0.2.2` release exposes [file rules](/data-uploads/concepts/file-rules/overview) to on-device applications. A release now lists the IDs of its file rules, and each rule can be retrieved by ID, so an application can see which files the agent collects and uploads for the current release.
 
-<DeviceApiReleaseLinks version="v0.2.2" />
+- API reference: [v0.2.2](/references/device-api/v0.2.2)
+- OpenAPI spec: [Download YAML](https://assets.mirurobotics.com/docs/openapi/device/v0.2.2.yaml)
 
 ## New endpoints
 
@@ -83,7 +83,8 @@ The specification now declares the bearer token that the agent already requires 
 
 The `v0.2.1` release adds real-time event streaming via Server-Sent Events (SSE). On-device applications can subscribe to a persistent event stream instead of polling for deployment status changes.
 
-<DeviceApiReleaseLinks version="v0.2.1" />
+- API reference: [v0.2.1](/references/device-api/v0.2.1)
+- OpenAPI spec: [Download YAML](https://assets.mirurobotics.com/docs/openapi/device/v0.2.1.yaml)
 
 ## New endpoints
 
@@ -157,7 +158,8 @@ The `v0.2.0` release expands the Device API from basic device health/version end
 
 The current release version and current deployment endpoints are the most exciting, enabling on-device applications to verify that the release version of the config instances matches the application's software version and programmatically inspect the deployment pipeline from the device itself.
 
-<DeviceApiReleaseLinks version="v0.2.0" />
+- API reference: [v0.2.0](/references/device-api/v0.2.0)
+- OpenAPI spec: [Download YAML](https://assets.mirurobotics.com/docs/openapi/device/v0.2.0.yaml)
 
 ## New endpoints
 
@@ -262,7 +264,8 @@ Furthermore, SDK `v0.3.0` marks the major version rollout of the `v0.2.0` Device
 
 Initial release of the Device API. This version establishes the core on-device integration surface, including health checks, version metadata, device metadata, and a manual sync trigger. 
 
-<DeviceApiReleaseLinks version="v0.1.0" />
+- API reference: [v0.1.0](/references/device-api/v0.1.0)
+- OpenAPI spec: [Download YAML](https://assets.mirurobotics.com/docs/openapi/device/v0.1.0.yaml)
 
 ## Endpoints
 

@@ -7,23 +7,6 @@ export const DropdownItem = ({ children }) => {
     );
 };
 
-export const DropdownGroup = ({ children }) => {
-    const childrenArray = Array.isArray(children) ? children : [children];
-
-    return (
-        <div className="py-3">
-            {childrenArray.map((child, index) => (
-                <div key={index}>
-                    {child}
-                    {index < childrenArray.length - 1 && (
-                        <div className="border-t border-white opacity-10 my-1" />
-                    )}
-                </div>
-            ))}
-        </div>
-    );
-};
-
 export const Dropdown = ({
     title,
     defaultOpen = false,

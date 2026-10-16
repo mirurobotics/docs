@@ -2,7 +2,6 @@
 title: "Deployment status"
 ---
 
-import { ONLINE_TOOLTIP } from '/snippets/components/devices/statuses.jsx';
 import DeploymentStatus from '/snippets/deployments/status.mdx';
 
 A deployment tracks its state with three independent statuses: a [target status](#target-status), an [activity status](#activity-status), and an [error status](#error-status). The activity and error statuses are merged into a single [status](#status).
@@ -55,7 +54,7 @@ There are six possible activity states for a deployment.
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `staged`        | Deployment has been created and is ready to be deployed                                                                         |
 | `drifted`       | Deployment has [drifted](/cfg-mgmt/deploy/staging-area#deployment-drift) and needs to be reviewed                           |
-| `queued`        | Deployment is waiting for the device to be <Tooltip tip={ONLINE_TOOLTIP.tip} cta={ONLINE_TOOLTIP.cta} href={ONLINE_TOOLTIP.href}>online</Tooltip> so it can be delivered to the device |
+| `queued`        | Deployment is waiting for the device to be <Tooltip tip="Device is connected to Miru's servers" cta="Learn more" href="/concepts/devices/overview#status">online</Tooltip> so it can be delivered to the device |
 | `deployed`      | Deployment has been delivered to the device, and its configurations are available for consumption                               |
 | `removing`      | Deployment's configurations are being removed from the device                                                                   |
 | `archived`      | Deployment is available for historical reference, but can never be deployed again                                               |

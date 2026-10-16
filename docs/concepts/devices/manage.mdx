@@ -2,7 +2,6 @@
 title: "Manage devices"
 ---
 
-import { ONLINE_TOOLTIP, OFFLINE_TOOLTIP } from '/snippets/components/devices/statuses.jsx';
 import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge, GroupManagerBadge, ProvisionerBadge, ViewerBadge } from '/snippets/components/role-badges.jsx';
 import MoveDevice from '/snippets/devices/move.mdx';
@@ -55,13 +54,13 @@ A dialog will appear. Update the name or description, then click **Save**.
 
 Pinging a device sends a real-time request to verify whether it is online. Ping requests wait up to 5 seconds for a response from the device before timing out.
 
-<Tooltip tip={ONLINE_TOOLTIP.tip} cta={ONLINE_TOOLTIP.cta} href={ONLINE_TOOLTIP.href}>Online</Tooltip> devices should return a success message similar to the one below.
+<Tooltip tip="Device is connected to Miru's servers" cta="Learn more" href="/concepts/devices/overview#status">Online</Tooltip> devices should return a success message similar to the one below.
 
 <Frame>
   ![Ping Success](https://assets.mirurobotics.com/docs/v04/images/devices/ping-success.png)
 </Frame>
 
-On the other hand, <Tooltip tip={OFFLINE_TOOLTIP.tip} cta={OFFLINE_TOOLTIP.cta} href={OFFLINE_TOOLTIP.href}>offline</Tooltip> devices should return a timeout message similar to the one below.
+On the other hand, <Tooltip tip="Device has lost connection with Miru's servers" cta="Learn more" href="/concepts/devices/overview#status">offline</Tooltip> devices should return a timeout message similar to the one below.
 
 <Frame>
   ![Ping Timeout](https://assets.mirurobotics.com/docs/v04/images/devices/ping-timeout.png)
