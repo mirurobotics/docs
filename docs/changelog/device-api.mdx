@@ -28,7 +28,7 @@ The `v0.2.2` release exposes [file rules](/data-uploads/concepts/file-rules/over
 <Dropdown title="Release response">
 The release returned by `GET /releases/current` and `GET /releases/{id}` added the IDs of its file rules and the operating system family it targets (`linux` or `windows`).
 
-```diff
+```diff nocopy
  {
    "object": "release",
    "id": "rls_123",
@@ -44,7 +44,7 @@ The release returned by `GET /releases/current` and `GET /releases/{id}` added t
 <Dropdown title="Version response">
 The `GET /version` response added `api_release_version`, the full Device API version the agent was compiled with. `api_version` remains the breaking change alias.
 
-```diff
+```diff nocopy
  {
    "version": "0.11.1",
    ...
@@ -180,7 +180,7 @@ The current release version and current deployment endpoints are the most exciti
 <Dropdown title="Base path change">
 The URL version prefix changed from `/v1` to `/v0.2`. Update all request URLs in your client application.
 
-```diff
+```diff nocopy
 - http://localhost/v1/{endpoint}
 + http://localhost/v0.2/{endpoint}
 ```
@@ -190,7 +190,7 @@ The URL version prefix changed from `/v1` to `/v0.2`. Update all request URLs in
 
 The `GET /version` response renamed `commit` to `git_commit`.
 
-```diff
+```diff nocopy
  {
    "version": "0.7.0",
 -  "commit": "abc1234"
@@ -204,7 +204,7 @@ The `GET /version` response renamed `commit` to `git_commit`.
 <Dropdown title="Version response">
 The `GET /version` response added richer information about the agent and API version.
 
-```diff
+```diff nocopy
  {
    "version": "0.7.0",
    ...
@@ -222,7 +222,7 @@ The `GET /version` response added richer information about the agent and API ver
 
 Beginning with the `v0.2.0` Device API release, the Python SDK is published from [python-device-sdk](https://github.com/mirurobotics/python-device-sdk) and uses the `miru_device_sdk` import path.
 
-```diff
+```diff nocopy
 - from miru_agent_sdk import Miru
 + from miru_device_sdk import Miru
 ```
@@ -243,7 +243,7 @@ Furthermore, SDK `v0.3.0` marks the major version rollout of the `v0.2.0` Device
 
     If you are using the [Python SDK](/developers/device-api/sdks#python), migrate from the legacy repository [`python-agent-sdk`](https://github.com/mirurobotics/python-agent-sdk) to [`python-device-sdk`](https://github.com/mirurobotics/python-device-sdk). This migration includes updating imports from `miru_agent_sdk` to `miru_device_sdk`.
 
-```diff
+```diff nocopy
 - from miru_agent_sdk import Miru
 + from miru_device_sdk import Miru
 ```

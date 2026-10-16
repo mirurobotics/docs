@@ -66,7 +66,7 @@ Let's take the example of `order_by=created_at:desc,id:asc`:
 - For any items that have the same `created_at` timestamp, the API uses `id` as a tie-breaker.
 - Last, the tied items are sorted by `id` in ascending order (lowest ID first).
 
-```json highlight={15-16,21-22}
+```json highlight={15-16,21-22} nocopy
 {
   "object": "list",
   "limit": 10,

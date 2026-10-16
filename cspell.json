@@ -55,6 +55,7 @@
     "mirurobotics",
     "msiexec",
     "newgrp",
+    "nocopy",
     "norestart",
     "objectCreator",
     "principalSet",

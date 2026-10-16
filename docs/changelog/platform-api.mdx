@@ -36,7 +36,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   **Config Schema Response**
 
-  ```diff
+  ```diff nocopy
       "id": "cfg_sch_123",
       "config_type_name": "Motion Control",
   -   "instance_filepath": "/srv/miru/configs/motion-control.json",
@@ -52,7 +52,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   Previous `instance_filepath` fields have been converted to the following default slot where the `filepath` field contains the previous value of `instance_filepath`:
 
-  ```diff
+  ```diff nocopy
     {
       "key": "default",
       "name": "Default",
@@ -65,7 +65,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   `instance_slots` is optional when creating a config schema. If you omit it, the server creates a single required slot with key `default`, name `Default`, and a filepath derived from the config type slug and the schema format. We recommend sending an explicit `instance_slots` array.
 
-  ```diff
+  ```diff nocopy
     {
       "config_type_ref": { "slug": "motion-control" },
       "language": "jsonschema",
@@ -91,7 +91,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   Updating a config type no longer accepts a `slug` field — slugs are now immutable.
 
-  ```diff
+  ```diff nocopy
     {
       "name": "Motion Control",
   -   "slug": "motion-control"
@@ -110,7 +110,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
   * Null: asserts the device has no current target deployment
   * Omitted: no concurrency check; the server fills in the device's current target
 
-  ```diff
+  ```diff nocopy
   - "parent_id" accepts a deployment ID or is omitted.
   + "parent_id": "dpl_123"  — present
   + "parent_id": null       — null
@@ -132,7 +132,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   **Config Schema Response**
 
-  ```diff
+  ```diff nocopy
     "id": "cfg_sch_123",
     "config_type_ref": { "slug": "motion-control" },
     "language": "jsonschema",
@@ -142,7 +142,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   <POST /> `/config_schemas`
 
-  ```diff
+  ```diff nocopy
     {
       "config_type_ref": { "slug": "motion-control" },
       "language": "jsonschema",
@@ -159,7 +159,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   **Config Instance Response**
 
-  ```diff
+  ```diff nocopy
       "id": "cfg_inst_123",
       "config_schema_id": "cfg_sch_123",
       "filepath": "/srv/miru/configs/motion-control.json",
@@ -170,7 +170,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   When creating a config instance, `slot_key` is optional if the schema has exactly one slot. Otherwise, `slot_key` is required.
 
-  ```diff
+  ```diff nocopy
     {
       "config_schema_id": "cfg_sch_123",
   +   "slot_key": "controller_2",
@@ -182,7 +182,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   Config instances can now be filtered by their `slot_key`.
 
-  ```diff
+  ```diff nocopy
     GET /config_instances
   + GET /config_instances?slot_key=controller_2
   ```
@@ -195,7 +195,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   **Device Response**
 
-  ```diff
+  ```diff nocopy
       "id": "dvc_123",
       "name": "My Device",
   +   "group_id": "grp_123",
@@ -205,7 +205,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   The full group object can be expanded, and devices can be filtered by group.
 
-  ```diff
+  ```diff nocopy
     GET /devices
   + GET /devices?expand=group
   + GET /devices?group_id=grp_123
@@ -213,7 +213,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   On <GET /> `/groups` and <GET /> `/groups/{group_id}`, a group's `parent` can be expanded.
 
-  ```diff
+  ```diff nocopy
     GET /groups
   + GET /groups?expand=parent
   ```
@@ -226,7 +226,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   **Device Status Enum**
 
-  ```diff
+  ```diff nocopy
       "inactive"
       "activating"
       "online"
@@ -242,7 +242,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   **Device Response**
 
-  ```diff
+  ```diff nocopy
       "id": "dvc_123",
       "name": "My Device",
   +   "description": "Welder on line 3",
@@ -250,7 +250,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   <GET /> `/devices` gained a `status` filter and `status` sort options.
 
-  ```diff
+  ```diff nocopy
     GET /devices
   + GET /devices?status=online
   + GET /devices?order_by=status:asc
@@ -264,7 +264,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   **Config Schema Language Enum**
 
-  ```diff
+  ```diff nocopy
       "jsonschema"
       "cue"
   +   "opaque"
@@ -278,7 +278,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   **Config Instance Response**
 
-  ```diff
+  ```diff nocopy
       "json"
       "yaml"
   +   "xml"
@@ -293,7 +293,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   **Deployment Response**
 
-  ```diff
+  ```diff nocopy
       "id": "dpl_123",
       "device_id": "dvc_123",
   +   "parent_id": "dpl_122",
@@ -301,7 +301,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   The full parent deployment can be expanded, on both <GET /> `/deployments` and <GET /> `/deployments/{deployment_id}`.
 
-  ```diff
+  ```diff nocopy
     GET /deployments
   + GET /deployments?expand=parent
   + GET /deployments/{deployment_id}?expand=parent
@@ -315,7 +315,7 @@ The `everglades` release introduces device groups, allowing you to build your fl
 
   **Deployment Response**
 
-  ```diff
+  ```diff nocopy
       "created_at": "2026-08-17T00:00:00Z",
       "updated_at": "2026-08-17T00:05:00Z",
   +   "queued_at": "2026-08-17T00:01:00Z",
@@ -368,7 +368,7 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
 <Dropdown title="Activation tokens replaced by provisioning tokens">
   The `POST /devices/{device_id}/activation_token` endpoint has been removed. Callers should migrate to `POST /provisioning_tokens` instead.
 
-  ```diff
+  ```diff nocopy
   - POST /devices/{device_id}/activation_token
   + POST /provisioning_tokens
   ```
@@ -381,7 +381,7 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
 <Dropdown title="Instance content enum">
   Config instances now support YAML content in addition to JSON.
 
-  ```diff
+  ```diff nocopy
   # Instance Content format enum
     "json"
   + "yaml"
@@ -393,7 +393,7 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
 <Dropdown title="Deployment activity status">
   `removing` is added back to the `activity_status` and `status` enums. This is a partial reversal of the tetons change, where deployments transitioned directly from `deployed` to `archived`. Deployments can sit in `removing` while config instances are torn down on the device before reaching `archived`.
 
-  ```diff
+  ```diff nocopy
   # status / activity_status enum
     "staged"
     "drifted"
@@ -411,21 +411,21 @@ The `rainier` release introduces a provisioning-token flow that replaces the act
 
   1. Expand the `current_deployment` field on a device.
 
-  ```diff
+  ```diff nocopy
     GET /devices
   + GET /devices?expand=current_deployment
   ```
 
   2. Expand the `current_release` field on a device.
 
-  ```diff
+  ```diff nocopy
     GET /devices
   + GET /devices?expand=current_release
   ```
 
   3. Filter devices by `current_release_id` when listing devices.
 
-  ```diff
+  ```diff nocopy
     GET /devices
   + GET /devices?current_release_id=rls_123
   ```
@@ -520,7 +520,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
 <Dropdown title="Miru-Version header">
   Requests require the `Miru-Version` header.
 
-  ```diff
+  ```diff nocopy
     curl --request GET \
       --url 'https://api.mirurobotics.com/beta/devices' \
       --header 'X-API-Key: <api-key>' \
@@ -533,7 +533,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
 <Dropdown title="Optional total_count">
   When listing resources, the `total_count` field is now omitted from the response if not expanded (i.e. `expand=total_count`) instead of being set to `-1`.
 
-  ```diff
+  ```diff nocopy
     {
       "object": "list",
   -   "total_count": -1,
@@ -547,7 +547,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
 <Dropdown title="Optional instead of nullable expansions">
   If an expansion is not included in the response, the field is omitted instead of being set to `null`. For example, the config instance response previously included `content`, `config_schema`, and `config_type` fields as null if not expanded. Now these fields are omitted if not expanded.
 
-  ```diff
+  ```diff nocopy
     {
       "object": "config_instance",
       "id": "cfg_inst_123",
@@ -567,7 +567,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
   * Renamed `needs_review` to `drifted`.
   * Removed `removing` and `validating`—deployments now transition directly from `deployed` to `archived`.
 
-  ```diff
+  ```diff nocopy
   # activity_status enum values
   - "validating"
     "staged"
@@ -590,7 +590,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
 
   <POST /> `/deployments`
 
-  ```diff
+  ```diff nocopy
     {
       "release_id": "rls_123",
       "target_status": "staged",
@@ -614,7 +614,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
   * Removed `device_id`, `activity_status`, `error_status`, `target_status`, and `status` fields. These fields now exclusively exist in the deployment resource.
   * Removed `updated_at` field. Config instances are immutable.
 
-  ```diff
+  ```diff nocopy
     {
       "object": "config_instance",
       "id": "cfg_inst_123",
@@ -636,7 +636,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
 
   * `content` now returns a string and its data format (e.g. `json`, `yaml`) instead of a raw JSON object.
 
-  ```diff
+  ```diff nocopy
     {
   -   "content": "{...}",
   +   "content": {
@@ -653,7 +653,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
   * Renamed `relative_filepath` to `instance_filepath`.
   * Removed `version`
 
-  ```diff
+  ```diff nocopy
     {
       "id": "cfg_sch_123",
       "config_type_id": "cfg_type_123",
@@ -666,7 +666,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
 
   * `content` is replaced by `documents`, which supports schema languages that can be defined across multiple files.
 
-  ```diff
+  ```diff nocopy
     {
   -   "content": "{...}",
   +   "documents": [
@@ -705,7 +705,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
 <Dropdown title="Expansion Query Parameter">
   Expansions can now be specified using the `expand` query parameter in addition to the `expand[]` query parameter.
 
-  ```diff
+  ```diff nocopy
   curl --request GET \
     --url 'https://api.mirurobotics.com/beta/config_instances?expand=content' \
     --header 'X-API-Key: <api-key>' \
@@ -718,7 +718,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
 <Dropdown title="Config instance response">
   Added the `config_type_name` field, allowing you to retrieve the name of the config type without expanding the config type resource.
 
-  ```diff
+  ```diff nocopy
     {
       "id": "cfg_inst_123",
       "config_schema_id": "cfg_sch_123",
@@ -736,7 +736,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
   * Added the `config_type_name` field, allowing you to retrieve the name of the config type without expanding the config type resource.
   * Added the `format` and `language` fields, supporting multiple schema formats and languages.
 
-  ```diff
+  ```diff nocopy
     {
       "id": "cfg_sch_123",
       "config_type_id": "cfg_type_123",
@@ -754,7 +754,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
 <Dropdown title="Device response">
   Added `agent_version` field, indicating the version of the Miru Agent running on the device.
 
-  ```diff
+  ```diff nocopy
     {
       "id": "dev_123",
       "name": "Robot 11",
@@ -771,7 +771,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
 <Dropdown title="Release response">
   Added `git_commit_id` linking releases to their source commit.
 
-  ```diff
+  ```diff nocopy
     {
       "id": "rls_123",
       "version": "v1.0.0",
@@ -785,7 +785,7 @@ The `tetons` release introduces API versioning and overhauls the representation 
 
 Beginning with the `2026-03-09.tetons` release, the Python SDK is published from [python-platform-sdk](https://github.com/mirurobotics/python-platform-sdk) and uses the `miru_platform_sdk` import path.
 
-```diff
+```diff nocopy
 - from miru_server_sdk import Miru
 + from miru_platform_sdk import Miru
 ```
