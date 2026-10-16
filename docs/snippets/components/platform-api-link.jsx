@@ -27,6 +27,9 @@ export const PlatformApiLink = ({ endpoint, newTab, children }) => {
  * Where a section covers several endpoints, link the primary one and keep the
  * generic label.
  *
+ * Operations with no endpoint use /snippets/badges/platform-unsupported.mdx instead.
+ * Swap it for this badge when the endpoint ships.
+ *
  * Mintlify tags bare MDX anchors with `class="link"`, which underlines them with
  * a border-bottom rather than text-decoration — both have to be cleared here.
  *
@@ -50,29 +53,6 @@ export const PlatformApiBadge = ({ endpoint, label = "Platform API" }) => {
           {label} <Icon icon="arrow-up-right" size={13} color="currentColor" />
         </span>
       </a>
-    </Tooltip>
-  );
-};
-
-/**
- * Inert counterpart to PlatformApiBadge for operations with no Platform API
- * endpoint. Same ghost styling and placement, but no link, arrow, or hover
- * background — it must not read as clickable. The slash icon plus hover tip
- * carry the "not supported" signal.
- *
- * When an endpoint ships for a marked operation, replace this with a
- * PlatformApiBadge — grep the docs for PlatformUnsupportedBadge when new endpoints
- * are released.
- */
-export const PlatformUnsupportedBadge = () => {
-  return (
-    <Tooltip tip="Platform API does not support this operation">
-      <span
-        className="inline-flex items-center gap-1.5 rounded-lg px-2 py-0.5 text-sm text-[rgb(var(--gray-500))] dark:text-[rgb(var(--gray-400))]"
-        style={{ marginLeft: '-0.5rem', cursor: 'default' }}
-      >
-        <Icon icon="ban" size={13} color="currentColor" /> Platform API
-      </span>
     </Tooltip>
   );
 };

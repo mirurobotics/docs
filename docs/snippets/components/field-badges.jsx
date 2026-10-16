@@ -1,3 +1,9 @@
+/*
+ * ImmutableBadge lives in /snippets/badges/immutable.mdx. MDX snippets render on the
+ * server, but Mintlify only expands them on their own line, so badges used inline
+ * (in headings, tables or next to another badge) stay here.
+ */
+
 export const NullableBadge = ({ size = "sm" }) => {
     return (
         <Tooltip tip="Property does not need to be set">
@@ -18,14 +24,6 @@ export const MutableBadge = ({ size = "sm" }) => {
     return (
         <Tooltip tip="Property is automatically updated by the system; cannot be modified directly">
             <Badge icon="feather" color="orange" size={size}>mutable</Badge>
-        </Tooltip>
-    );
-};
-
-export const ImmutableBadge = ({ size = "sm" }) => {
-    return (
-        <Tooltip tip="Property cannot be modified">
-            <Badge icon="lock" color="gray" size={size}>immutable</Badge>
         </Tooltip>
     );
 };
