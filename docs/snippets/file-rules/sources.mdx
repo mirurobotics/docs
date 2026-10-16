@@ -7,7 +7,7 @@ and when a matching file is considered finished.
   Must satisfy the following criteria:
   - Absolute path — it starts with `/` (Linux) or a drive letter such as `C:\` (Windows)
   - At most 1024 bytes, with no control characters
-  - No `..` segments, and no empty segments (`//` or a trailing `/`); Windows patterns treat both `\` and `/` as separators
+  - No `.` or `..` segments, and no empty segments (`//` or a trailing `/`); Windows patterns treat both `\` and `/` as separators
 
   <Warning>
     You must grant the Miru Agent read access to matching files and their containing
@@ -29,6 +29,9 @@ and when a matching file is considered finished.
       </Info>
     </Tab>
   </Tabs>
+
+  A pattern can name parts of a path with captures such as `{recording}`; see
+  [captures](/data-uploads/concepts/file-rules/bundles#captures).
 
   See [glob patterns](/data-uploads/concepts/file-rules/rule-definition#glob-patterns) for
   supported syntax, examples, and matching behavior.

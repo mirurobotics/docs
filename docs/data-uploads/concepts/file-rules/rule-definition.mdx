@@ -46,7 +46,7 @@ Every pattern must:
 
 - Be absolute (e.g. start with `/` on Linux or a drive letter such as `C:\` on Windows)
 - Be at most 1024 bytes and contain no control characters
-- Contain no `..` segments or empty segments (`//` or a trailing `/`)
+- Contain no `.` or `..` segments or empty segments (`//` or a trailing `/`)
 
 Each rule accepts one pattern. To match files that no single pattern covers, define a
 rule for each pattern.
@@ -60,10 +60,13 @@ rule for each pattern.
 | `?` | one character |
 | `[abc]`, `[a-z]` | one character from the set or range |
 | `[!abc]`, `[!a-z]` | one character not in the set or range |
+| `{name}` | like `*`, and records the matched text as a named capture; see [Glob captures](#glob-captures) |
 
-Brace expansion (`{a,b}`), backslash escapes (`\*`), and extended patterns such as
-`!(x)` are not supported. Braces match literally. On Linux, backslashes also match
-literally; on Windows, `\` is a path separator. To match a literal
+Brace expansion is not supported: a brace group containing a comma, such as `{a,b}`,
+matches literally. A brace group without a comma, such as `{Recording}` or `{}`, is read
+as a capture and must be valid (see [Glob captures](#glob-captures)). Backslash escapes
+(`\*`) and extended patterns such as `!(x)` are not supported. On Linux, backslashes
+also match literally; on Windows, `\` is a path separator. To match a literal
 `*`, `?`, or `[`, wrap it in brackets: `[*]`, `[?]`, or `[[]`.
 
 **Examples**
@@ -107,6 +110,14 @@ literally; on Windows, `\` is a path separator. To match a literal
   directories. Files in directories the agent can't read are silently skipped. See
   [File system access on Linux](/developers/agent/filesys-access/linux#data-uploads) or [Windows](/developers/agent/filesys-access/windows#data-uploads) for details.
 </Warning>
+
+### Glob captures
+
+A `{name}` placeholder in a glob matches one path segment like `*` and names that part
+of the path. Captured values can be used as variables in `upload.path` and listed in
+`upload.bundle` to group related uploads into a bundle. Devices match each capture as
+`*`. See [captures](/data-uploads/concepts/file-rules/bundles#captures) for the full
+rules.
 
 ## Uploads
 
