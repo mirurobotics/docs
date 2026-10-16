@@ -15,8 +15,8 @@ in `upload.bundle`, and files whose captured values match join the same bundle.
 <ParamField path="id" type="string">
   <ImmutableBadge />
 
-  The bundle's ID. Bundles have no name. The ID appears as the
-  [`bundle_id`](/data-uploads/concepts/uploads#param-bundle-id) of each upload in the
+  The bundle's ID. Bundles have no name. The ID identifies the
+  [`bundle`](/data-uploads/concepts/uploads#param-bundle) on each upload in the
   bundle and renders the `{bundle_id}` variable in a file rule's `upload.path`.
 
   Example: `upl_bdl_123`
@@ -48,15 +48,12 @@ in `upload.bundle`, and files whose captured values match join the same bundle.
 <ParamField path="capture_keys" type="string[]">
   <ImmutableBadge />
 
-  The capture names from `upload.bundle` of the file rule that created the bundle, in
-  the same order as `capture_values`. Capture names do not affect membership, so uploads
-  from rules that name their captures differently can join the same bundle.
+  The capture keys from `upload.bundle` of the file rule that created the bundle, in
+  the same order as `capture_values`. Capture keys do not affect membership, so uploads
+  from rules that use different capture keys can join the same bundle.
 
   Example: `["recording"]`
 </ParamField>
-
-Bundles also carry the standard `created_at`, `updated_at`, and `workspace_id`
-bookkeeping fields.
 
 ## Membership
 
@@ -64,7 +61,7 @@ Uploads from the same device and the same upload collection whose captured value
 in the order `upload.bundle` lists them, share one bundle. This holds across file rules
 and over time: a file that matches later joins the existing bundle.
 
-- Capture names do not affect matching. Rules that name their captures differently share
+- Capture keys do not affect matching. Rules that use different capture keys share
   a bundle if they list them in the same order with the same values.
 - Order matters. Session `03` with run `05` and session `05` with run `03` are different
   bundles.
@@ -100,7 +97,7 @@ A file in another recording folder, such as `run_43`, lands in a different bundl
 different `{bundle_id}`.
 
 [`upload.bundle`](/data-uploads/concepts/file-rules/rule-definition#param-bundle) lists 1
-to 16 unique capture names and is not sent to devices.
+to 16 unique capture keys and is not sent to devices.
 
 <Info>
   Pushing file rules with `upload.bundle` requires CLI `v0.13.0` or later. See the
@@ -141,8 +138,7 @@ upload:
 ```
 
 `run_42.mcap` and `run_42.yaml` join one bundle because both rules list one capture with
-the value `42` and use the same upload collection, even though the captures are named
-differently.
+the value `42` and use the same upload collection, even though their capture keys differ.
 
 The same works for one rule per sensor folder, for example `/data/{session}/camera/*`
 and `/data/{session}/lidar/*`, both bundled by `session`.

@@ -60,7 +60,7 @@ rule for each pattern.
 | `?` | one character |
 | `[abc]`, `[a-z]` | one character from the set or range |
 | `[!abc]`, `[!a-z]` | one character not in the set or range |
-| `{name}` | like `*`, and records the matched text as a named capture; see [Glob captures](#glob-captures) |
+| `{key}` | like `*`, and records the matched text under a capture key; see [Glob captures](#glob-captures) |
 
 Brace expansion is not supported: a brace group containing a comma, such as `{a,b}`,
 matches literally. A brace group without a comma, such as `{Recording}` or `{}`, is read
@@ -114,18 +114,17 @@ also match literally; on Windows, `\` is a path separator.
 
 ### Glob captures
 
-A capture is a `{name}` placeholder in a glob. It matches exactly like `*` operator: any characters
-within one path segment, including the empty string. 
+A capture is a `{key}` placeholder in a glob, where `key` is the capture key. It matches exactly like the `*` wildcard operator but also records the matched text under that key. This captured value can then be used elsewhere in the rule.
 
-For example, the pattern `/data/recordings/{recording}.mcap` matches the exact same files as `/data/recordings/*.mcap`.
+For example, the pattern `/data/recordings/{recording}.mcap` matches the exact same files as `/data/recordings/*.mcap` but the value of `{recording}` is captured and can be reused.
 
-**Use cases**
+**Examples**
 
 Captured values have two main uses:
 
 <AccordionGroup>
   <Accordion title="Configure the upload path">
-    Reference a capture in [`upload.path`](/data-uploads/concepts/file-rules/rule-definition#param-path) as `{name}`. The matched text is filled in when the object key is rendered.
+    Reference a capture in [`upload.path`](/data-uploads/concepts/file-rules/rule-definition#param-path) as `{key}`. The matched text is filled in with the capture's value on upload.
 
     ```yaml
     name: Recordings
@@ -139,13 +138,13 @@ Captured values have two main uses:
       path: "{device_id}/{recording}/{upload_id}/{file_name}"
     ```
 
-    Device file: `/data/recordings/run_42/camera.mcap`
+    Source file: `/data/recordings/run_42/camera.mcap`
 
-    Object key: `dvc_123/run_42/upl_123/camera.mcap`
+    Upload path: `dvc_123/run_42/upl_123/camera.mcap`
   </Accordion>
 
   <Accordion title="Group related uploads into a bundle">
-    List capture names in [`upload.bundle`](/data-uploads/concepts/file-rules/rule-definition#param-bundle). Uploads from the same device and upload collection with matching capture values are [bundled](/data-uploads/concepts/upload-bundles).
+    List capture keys in [`upload.bundle`](/data-uploads/concepts/file-rules/rule-definition#param-bundle). Uploads from the same device and upload collection with matching capture values are [bundled](/data-uploads/concepts/upload-bundles).
 
     ```yaml
     name: Recordings
@@ -176,9 +175,9 @@ Captured values have two main uses:
   </Accordion>
 </AccordionGroup>
 
-**Naming rules**
+**Key rules**
 
-Capture names must:
+Capture keys must:
 
 - Start with a lowercase letter
 - Contain only lowercase letters, digits, and `_`
@@ -194,20 +193,22 @@ both before and after it.
 
 | Pattern | Reason |
 | --- | --- |
-| `/data/recordings/{recording}/*` | Valid |
-| `/data/{session}/run_{run}.mcap` | Valid |
-| `/data/{recording}_*.mcap` | Invalid: `*` in a capture's segment |
-| `/data/{session}{run}/*` | Invalid: two captures in one segment |
-| `/data/**/{recording}/**/*` | Invalid: `**` before and after the capture |
-| `/data/{Recording}/*` | Invalid: the name must start with a lowercase letter |
-| `/data/{file_name}/*` | Invalid: reuses a built-in variable |
+| `/data/{recording}_*.mcap` | `*` in a capture's segment |
+| `/data/{session}{run}/*` | Two captures in one segment |
+| `/data/**/{recording}/**/*` | `**` before and after the capture |
+| `/data/{Recording}/*` | The key must start with a lowercase letter |
+| `/data/{file_name}/*` | Reuses a built-in variable |
 
 **Valid examples**
 
-| Pattern | 
-| --- | 
-| `/data/recordings/{recording}/*` |
-| `/data/{session}/run_{run}.mcap` | 
+- `/data/recordings/{recording}/*`
+- `/data/{session}/run_{run}.mcap`
+- `/data/{session}/**/*.mcap`
+- `/data/**/run_{run}.mcap`
+- `/data/{session}/cam?.mcap`
+- `/data/{session}/run-[0-9].mcap`
+- `/data/{session}/cam[012].mcap`
+- `/data/{session}/[!._]*`
 
 A capture may match an empty string, so `run_{run}.mcap` also matches `run_.mcap`.
 
