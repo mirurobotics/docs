@@ -10,7 +10,7 @@ import NonBreakingChanges from '/snippets/references/apis/non-breaking.mdx';
 
 The Platform API uses **date-based versioning** with a train name. Each version follows the format:
 
-```
+```text nocopy
 YYYY-MM-DD.<train>
 ```
 
@@ -23,7 +23,7 @@ All changes within a train are backward-compatible. A new train introduces a new
 
 The Platform API uses the `Miru-Version` header to select the API version you want to use.
 
-```bash
+```bash highlight={4}
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/devices' \
   --header 'X-API-Key: <api-key>' \

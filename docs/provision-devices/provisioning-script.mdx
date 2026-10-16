@@ -33,7 +33,7 @@ export MIRU_API_KEY=<api-key>
 
 Execute the [provisioning script](https://github.com/mirurobotics/agent/blob/main/scripts/install/provision.sh) to create and provision a device using your API key.
 
-```bash
+```bash wrap
 curl -fsSL https://raw.githubusercontent.com/mirurobotics/agent/main/scripts/install/provision.sh | sh -s -- \
   --device-name=$HOSTNAME \
   --allow-reactivation=true

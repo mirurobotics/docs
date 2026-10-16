@@ -86,7 +86,7 @@ CLI `v0.11.0` renames the upload rule to the **file rule**. A file rule still sa
 
 The `miru release create` upload rule flags have been renamed. There are no deprecated aliases, so update your invocations and CI pipelines:
 
-```diff
+```diff nocopy
   miru release create \
     --version v1.0.0 \
     --schemas ./schemas/ \
@@ -102,7 +102,7 @@ The `miru release create` upload rule flags have been renamed. There are no depr
 
 The rule file YAML has been restructured. `name` is new and required, `collection_slug` moves under the new optional `upload` block, `destination` is replaced by `upload`, and `delete_policy` is removed in favor of the new optional `retention` block.
 
-```diff
+```diff nocopy
 + name: Robot Logs
 - collection_slug: robot-logs
 
@@ -197,7 +197,7 @@ Note that file paths which do not live in `/srv/miru/config_instances/` require 
 
 The `instance_filepath` annotation has been updated to be an absolute file system path instead of a path relative to `/srv/miru/config_instances/`. Update all schema annotations:
 
-```diff
+```diff nocopy
 # JSON Schema
 - x-miru-instance-filepath: "mobility.json"
 + x-miru-instance-filepath: "/srv/miru/config_instances/mobility.json"
@@ -217,7 +217,7 @@ Because the new default path is outside `/srv/miru/config_instances/`, it requir
 
 We recommend adding the instance file path annotation pointing at the previous default location, `/srv/miru/config_instances/{config-type-slug}.json`, to preserve the old path. Below is an example for the `mobility` config type:
 
-```diff
+```diff nocopy
 # JSON Schema
 + x-miru-instance-filepath: "/srv/miru/config_instances/mobility.json"
 
@@ -303,7 +303,7 @@ Visit the [CI/CD guide](/developers/ci/overview) for more information on using t
 - Removed the `--version` flag
 - Removed the `--allow-duplicate` flag
 
-```diff
+```diff nocopy
 miru schema push schema.json \
 -   --version v1.0.0 \
 -   --allow-duplicate
@@ -338,7 +338,7 @@ miru schema push schema.json \
 
 The `--version` flag is now required when pushing a schema, and JSON Schema annotations were renamed:
 
-```diff
+```diff nocopy
 - "$miru_config_type_slug": "my-config"
 - "$miru_instance_filepath": "/etc/myapp/config.json"
 + "x-miru-config-type": "my-config"

@@ -47,7 +47,7 @@ Once you have an API key, you can create a token using the following code sample
 
 <CodeGroup>
 
-```bash bash
+```bash bash wrap
 export MIRU_API_KEY=<api-key>
 
 curl --request POST \
@@ -56,7 +56,7 @@ curl --request POST \
   --header "X-API-Key: $MIRU_API_KEY"
 ```
 
-```powershell powershell
+```powershell powershell wrap
 $env:MIRU_API_KEY = "<api-key>"; `
 $provisioningToken = Invoke-RestMethod -Method Post `
   -Uri "https://api.mirurobotics.com/beta/provisioning_tokens" `
