@@ -28,7 +28,7 @@ Deploying configs to `%ProgramData%\Miru\configs` requires no additional configu
 
 To do so, open PowerShell as administrator and run:
 
-```powershell PowerShell
+```powershell PowerShell wrap
 Add-LocalGroupMember -Group "Miru Agent Users" -Member "<username>"
 ```
 
@@ -86,15 +86,15 @@ Grant `NT SERVICE\miru-agent` access with [`icacls`](https://learn.microsoft.com
 
 <CodeGroup>
 
-```powershell PowerShell read-only
+```powershell PowerShell read-only wrap
 icacls "C:\path\to\folder" /grant "NT SERVICE\miru-agent:(OI)(CI)RX"
 ```
 
-```powershell PowerShell read-write
+```powershell PowerShell read-write wrap
 icacls "C:\path\to\folder" /grant "NT SERVICE\miru-agent:(OI)(CI)M"
 ```
 
-```powershell PowerShell read-delete
+```powershell PowerShell read-delete wrap
 icacls "C:\path\to\folder" /grant "NT SERVICE\miru-agent:(OI)(CI)(RX,D)"
 ```
 

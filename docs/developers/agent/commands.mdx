@@ -57,7 +57,7 @@ To check the version of the agent, run the following command on the device:
 
     View logs from a specific time period.
 
-    ```bash
+    ```bash wrap
     # Logs from the last hour
     journalctl -u miru --since "1 hour ago" --no-pager
 
@@ -91,7 +91,7 @@ To check the version of the agent, run the following command on the device:
 
     From PowerShell opened as administrator, tail the most recent log file and watch new entries as they appear. The command follows a single hourly file, so re-run it after the log rotates.
 
-    ```powershell PowerShell
+    ```powershell PowerShell wrap
     Get-ChildItem "$env:ProgramData\Miru\Agent\logs" -Filter 'miru.log.*' | Sort-Object LastWriteTime | Select-Object -Last 1 | Get-Content -Wait -Tail 100
     ```
   </Tab>
@@ -255,7 +255,7 @@ To check whether the machine is provisioned, run `provision --check`.
   <Tab title="Windows">
     From PowerShell opened as administrator:
 
-    ```powershell PowerShell
+    ```powershell PowerShell wrap
     & "$env:ProgramW6432\Miru\Agent\miru-agent.exe" provision --check
     ```
   </Tab>

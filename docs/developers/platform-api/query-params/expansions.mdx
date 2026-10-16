@@ -16,7 +16,7 @@ Many response objects reference objects that are not included in the default res
 
 For example, a <PlatformApiLink endpoint="deployments/get">deployment</PlatformApiLink> has the following default response structure:
 
-```json
+```json wrap
 {
   "object": "deployment",
   "id": "dpl_123",
@@ -45,7 +45,7 @@ The following request expands the **`device`** field using **`expand=device`**
 
 <CodeGroup>
 
-```bash Request highlight={2}
+```bash Request highlight={2} wrap
 curl --request GET \
   --url https://api.mirurobotics.com/beta/deployments/dpl_123?expand=device \
   --header 'X-API-Key: <api-key>' \
@@ -53,7 +53,7 @@ curl --request GET \
 ```
 
 
-```json Response highlight={13-23}
+```json Response highlight={13-23} wrap
 {
   "object": "deployment",
   "id": "dpl_123",
@@ -94,7 +94,7 @@ The following request expands both the **`device`** and **`release`** fields of 
 
 <CodeGroup>
 
-```bash Request highlight={2}
+```bash Request highlight={2} wrap
 curl --request GET \
   --url https://api.mirurobotics.com/beta/deployments/dpl_123?expand=device&expand=release \
   --header 'X-API-Key: <api-key>' \
@@ -102,7 +102,7 @@ curl --request GET \
 ```
 
 
-```json Response highlight={13-31}
+```json Response highlight={13-31} wrap
 {
   "object": "deployment",
   "id": "dpl_123",
@@ -149,7 +149,7 @@ The following request expands the **`config_schemas`** inside the **`release`** 
 
 <CodeGroup>
 
-```bash Request highlight={2}
+```bash Request highlight={2} wrap
 curl --request GET \
   --url https://api.mirurobotics.com/beta/deployments/dpl_123?expand=release.config_schemas \
   --header 'X-API-Key: <api-key>' \
@@ -157,7 +157,7 @@ curl --request GET \
 ```
 
 
-```json Response highlight={20-33}
+```json Response highlight={20-33} wrap
 {
   "object": "deployment",
   "id": "dpl_123",
@@ -239,7 +239,7 @@ The following request expands the **`device`** field for every deployment in the
 
 <CodeGroup>
 
-```bash Request highlight={2}
+```bash Request highlight={2} wrap
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/deployments?expand=device' \
   --header 'X-API-Key: <api-key>' \
@@ -295,7 +295,7 @@ To include the actual total count in the response, add `expand=total_count` to t
 
 <CodeGroup>
 
-```bash Request highlight={2}
+```bash Request highlight={2} wrap
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/deployments?expand=total_count' \
   --header 'X-API-Key: <api-key>' \

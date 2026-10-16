@@ -1,5 +1,5 @@
 <CodeGroup>
-```cue Communication expandable highlight={1}
+```cue Communication expandable highlight={1} wrap
 @miru(config_type="communication",instance_filepath="C:\\ProgramData\\Miru\\configs\\communication.json")
 {
 	control_loop_rate_hz: int & >=1 & <=1000 | *50
@@ -28,7 +28,7 @@
 }
 ```
 
-```cue Mobility expandable highlight={1}
+```cue Mobility expandable highlight={1} wrap
 @miru(config_type="mobility",instance_filepath="C:\\ProgramData\\Miru\\configs\\mobility.json")
 {
 	max_linear_speed_mps: number & >=0.1 & <=5.0 | *1.2
@@ -43,7 +43,7 @@
 }
 ```
 
-```cue Planning expandable highlight={1}
+```cue Planning expandable highlight={1} wrap
 @miru(config_type="planning",instance_filepath="C:\\ProgramData\\Miru\\configs\\planning.json")
 {
 	planning_frequency_hz: number & >=1.0 & <=100.0 | *20.0

@@ -16,7 +16,7 @@ Each list endpoint supports its own set of filter names. To see the filters supp
 
 The following uses the `id=dvc_123` filter to include only the device with the `dvc_123` `id`:
 
-```bash highlight={2}
+```bash highlight={2} wrap
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/devices?id=dvc_123' \
   --header 'X-API-Key: <api-key>' \
@@ -31,7 +31,7 @@ To filter by multiple values, specify the filter values as a `|` separated list:
 
 Thus, to filter devices by multiple ids, you can use the `id` filter with a `|` separated list of ids: `id=dvc_123|dvc_456|dvc_789`.
 
-```bash highlight={2}
+```bash highlight={2} wrap
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/devices?id=dvc_123|dvc_456|dvc_789' \
   --header 'X-API-Key: <api-key>' \
@@ -44,7 +44,7 @@ You can combine filters using `&`. All filters are combined with AND logic, so r
 
 The following request filters the device list to include only the devices with the IDs `dvc_123` and `dvc_456` and the name `Robot A`: `id=dvc_123|dvc_456&name=Robot%20A`.
 
-```bash highlight={2}
+```bash highlight={2} wrap
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/devices?id=dvc_123|dvc_456&name=Robot%20A' \
   --header 'X-API-Key: <api-key>' \
@@ -59,7 +59,7 @@ For example, spaces are URL encoded as `%20`. Browsers and client applications w
 
 The following request filters the device list to only include devices named `My Device Name` using the `name=My%20Device%20Name` filter.
 
-```bash highlight={2}
+```bash highlight={2} wrap
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/devices?name=My%20Device%20Name' \
   --header 'X-API-Key: <api-key>' \

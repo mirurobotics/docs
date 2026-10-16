@@ -98,7 +98,7 @@ connect a bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
   <Step title="Grant the service account write access">
     Grant Miru's uploader service account permission to create objects on your bucket.
 
-    ```bash
+    ```bash wrap
     gcloud storage buckets add-iam-policy-binding "gs://${BUCKET_NAME}" \
       --member="serviceAccount:${SERVICE_ACCOUNT_EMAIL}" \
       --role="roles/storage.objectCreator"

@@ -24,7 +24,7 @@ import RemoveApt from '/snippets/apt/remove.mdx';
       <Tab title="Programmatic">
         Open PowerShell with **Run as administrator** and run the following. It looks up the installed Miru Agent and uninstalls it silently, so you don't need the original MSI.
 
-        ```powershell PowerShell
+        ```powershell PowerShell wrap
         $app = @(Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where-Object DisplayName -eq "Miru Agent"); `
         if ($app.Count -ne 1) { throw "Expected one Miru Agent installation, found $($app.Count)" }; `
         msiexec /x $app[0].PSChildName /qn /norestart | Out-Null; `
