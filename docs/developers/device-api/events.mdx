@@ -155,7 +155,7 @@ Pass the cursor in one of two ways:
 
     <Tabs>
       <Tab title="Linux">
-        ```bash
+        ```bash highlight={4}
         curl --no-buffer \
           --unix-socket /run/miru/miru.sock \
           --request GET \
@@ -163,7 +163,7 @@ Pass the cursor in one of two ways:
         ```
       </Tab>
       <Tab title="Windows">
-        ```powershell PowerShell
+        ```powershell PowerShell highlight={4}
         $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
         curl.exe --no-buffer `
           --request GET `
@@ -177,7 +177,7 @@ Pass the cursor in one of two ways:
 
     <Tabs>
       <Tab title="Linux">
-        ```bash
+        ```bash highlight={5}
         curl --no-buffer \
           --unix-socket /run/miru/miru.sock \
           --request GET \
@@ -186,7 +186,7 @@ Pass the cursor in one of two ways:
         ```
       </Tab>
       <Tab title="Windows">
-        ```powershell PowerShell
+        ```powershell PowerShell highlight={6}
         $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
         curl.exe --no-buffer `
           --request GET `
@@ -205,7 +205,7 @@ To subscribe to specific event types, pass a comma-separated list via the `types
 
 <Tabs>
   <Tab title="Linux">
-    ```bash
+    ```bash highlight={4}
     curl --no-buffer \
       --unix-socket /run/miru/miru.sock \
       --request GET \
@@ -213,7 +213,7 @@ To subscribe to specific event types, pass a comma-separated list via the `types
     ```
   </Tab>
   <Tab title="Windows">
-    ```powershell PowerShell
+    ```powershell PowerShell highlight={4}
     $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
     curl.exe --no-buffer `
       --request GET `

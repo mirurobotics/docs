@@ -47,7 +47,7 @@ retention:
 
 Both `upload` and `retention` are optional and independent. A rule with only `retention` uploads nothing and simply reclaims disk on the device:
 
-```yaml scratch-cleanup.yaml
+```yaml scratch-cleanup.yaml highlight={6-7}
 name: Scratch Cleanup
 
 source:
@@ -78,7 +78,7 @@ File rules ride along with `miru release create` — the same command that creat
 - `--file-rule <file>` — a single file rule YAML file
 - `--file-rules <dir>` — a directory of file rule YAML files
 
-```bash
+```bash highlight={4}
 $ miru release create \
   --version v1.0.0 \
   --schemas ./schemas/ \

@@ -127,7 +127,7 @@ bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
     
     The external ID is the guard against the [confused deputy](https://docs.aws.amazon.com/IAM/latest/UserGuide/confused-deputy.html) problem: another tenant of the same Miru service cannot trick Miru into assuming your role without presenting your specific external ID.
 
-    ```bash
+    ```bash highlight={10,12-14}
     INTERNAL_ROLE_NAME="MiruUploaderRole"
     MIRU_EXTERNAL_ROLE_ARN="arn:aws:iam::008971655189:role/MiruS3IntegrationRole"
 
@@ -163,7 +163,7 @@ bucket to Miru, you must hold the <PublisherBadge size="sm"/> role.
     multipart uploads, and the abort permission lets a failed multipart upload
     clean up after itself. 
 
-    ```bash
+    ```bash highlight={8-9}
     cat > put-policy.json <<EOF
     {
       "Version": "2012-10-17",

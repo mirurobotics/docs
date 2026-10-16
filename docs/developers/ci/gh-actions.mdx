@@ -24,7 +24,7 @@ You can find the CLI changelog in the [CLI changelog](/changelog/cli).
 
 After installing the Miru CLI, specify the `MIRU_API_KEY` environment variable to authenticate the CLI. Then, run any CLI commands you need to perform.
 
-```yaml
+```yaml highlight={10-11}
 steps:
   - uses: actions/checkout@v6
 
@@ -47,7 +47,7 @@ Pinning to a specific CLI version ensures a stable and predictable environment. 
 
 To pin to a specific version, use the `version` input with the exact CLI version number:
 
-```yaml
+```yaml highlight={7}
 steps:
   - uses: actions/checkout@v6
 
@@ -61,7 +61,7 @@ steps:
 
 Pinning to a minor version installs the latest release within that minor version range (e.g., `v0.10` installs the latest `v0.10.x`). This automatically picks up backwards-compatible bug fixes, but may introduce unexpected changes.
 
-```yaml
+```yaml highlight={7}
 steps:
   - uses: actions/checkout@v6
 
@@ -103,7 +103,7 @@ The following GitHub Actions workflow creates a release when a tag is pushed to 
 
 To use the workflow, place it in the `.github/workflows` directory of your repository (e.g., `.github/workflows/create-miru-release.yml`).
 
-```yaml .github/workflows/create-miru-release.yml
+```yaml .github/workflows/create-miru-release.yml highlight={3-6,23-25}
 name: Create Miru Release
 
 on:

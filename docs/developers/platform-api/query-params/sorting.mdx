@@ -40,7 +40,7 @@ For endpoints that support single-field sorting, add the `order_by` query parame
 
 The following request sorts config instances by descending creation date using the query parameter `order_by=created_at:desc`.
 
-```bash
+```bash highlight={2}
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/config_instances?order_by=created_at:desc' \
   --header 'X-API-Key: <api-key>' \
@@ -49,7 +49,7 @@ curl --request GET \
 
 The following request sorts config instances by ascending creation date using the query parameter `order_by=created_at:asc`.
 
-```bash
+```bash highlight={2}
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/config_instances?order_by=created_at:asc' \
   --header 'X-API-Key: <api-key>' \
@@ -66,7 +66,7 @@ Let's take the example of `order_by=created_at:desc,id:asc`:
 - For any items that have the same `created_at` timestamp, the API uses `id` as a tie-breaker.
 - Last, the tied items are sorted by `id` in ascending order (lowest ID first).
 
-```json
+```json highlight={15-16,21-22}
 {
   "object": "list",
   "limit": 10,
@@ -105,7 +105,7 @@ All devices are sorted by creation date (`created_at`) in descending order. Sinc
 
 The following request sorts devices by descending creation date and then by ascending ID:
 
-```bash
+```bash highlight={2}
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/devices?order_by=created_at:desc,id:asc' \
   --header 'X-API-Key: <api-key>' \

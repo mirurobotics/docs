@@ -103,7 +103,7 @@ Two event types are emitted for deployment lifecycle transitions:
 <Dropdown title="Event replay">
 The SSE events endpoint supports cursor-based replay via the `?after=<id>` query parameter or the `Last-Event-ID` HTTP header, allowing clients to resume from a known position after reconnection.
 
-```bash
+```bash highlight={5,12}
 # Resume from event ID 42 using the query parameter
 curl --no-buffer \
   --unix-socket /run/miru/miru.sock \
@@ -122,7 +122,7 @@ curl --no-buffer \
 <Dropdown title="Event filtering">
 SSE events can be filtered by type using the `?types=` query parameter.
 
-```bash
+```bash highlight={5}
 # Only receive deployment.deployed events
 curl --no-buffer \
   --unix-socket /run/miru/miru.sock \
