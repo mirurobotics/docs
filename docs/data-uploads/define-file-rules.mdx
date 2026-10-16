@@ -5,6 +5,8 @@ title: "Define file rules"
 import Retention from '/snippets/file-rules/retention.mdx';
 import Sources from '/snippets/file-rules/sources.mdx';
 import Upload from '/snippets/file-rules/upload.mdx';
+import RecordingsBundle from '/snippets/file-rules/recordings-bundle.mdx';
+import BundleCliVersion from '/snippets/file-rules/bundle-cli-version.mdx';
 
 File rules are an optional part of a release. They define which files on your devices Miru manages — where they are uploaded, how long they are kept, or both. This page covers defining file rules and including them when creating a release.
 
@@ -81,27 +83,13 @@ To group related files, such as every file from one recording, into a single
 3. Optionally, add `{bundle_id}` to `upload.path` so each bundle's files share an object
    key prefix.
 
-```yaml recordings.yaml
-name: Recordings
-
-source:
-  glob: "/data/recordings/{recording}/*"
-
-upload:
-  collection_slug: recordings
-  bucket: my-uploads-bucket
-  path: "{device_id}/{recording}/{bundle_id}/{upload_id}/{file_name}"
-  bundle:
-    - recording
-```
+<RecordingsBundle />
 
 Add the rule to a release as described [below](#add-file-rules-to-a-release). Once the
 release is deployed, the files from each recording on a device share one bundle and land
-under one `{bundle_id}` prefix in your bucket, such as `dvc_123/run_42/upl_bdl_123/`.
+under one `{bundle_id}` prefix in your bucket, such as `upl_bdl_123/`.
 
-<Info>
-  Pushing file rules with `upload.bundle` requires CLI `v0.12.2` or later.
-</Info>
+<BundleCliVersion />
 
 Files that need different rules, such as `.mcap` and `.yaml` files with different
 stability windows, can still share a bundle. See

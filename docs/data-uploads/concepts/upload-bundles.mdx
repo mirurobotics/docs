@@ -3,24 +3,13 @@ title: "Upload bundles"
 ---
 
 import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+import RecordingsBundle from '/snippets/file-rules/recordings-bundle.mdx';
+import BundleCliVersion from '/snippets/file-rules/bundle-cli-version.mdx';
 
 A bundle is a group of related [uploads](/data-uploads/concepts/uploads) from one
-device, such as every file from one recording or run. File rules assign uploads to
-bundles: a rule names parts of its glob with
-[captures](/data-uploads/concepts/file-rules/rule-definition#glob-captures) and lists them
-in `upload.bundle`, and files whose captured values match join the same bundle.
+device, such as every file from one recording or run. 
 
 ## Properties
-
-<ParamField path="id" type="string">
-  <ImmutableBadge />
-
-  The bundle's ID. Bundles have no name. The ID identifies the
-  [`bundle`](/data-uploads/concepts/uploads#param-bundle) on each upload in the
-  bundle and renders the `{bundle_id}` variable in a file rule's `upload.path`.
-
-  Example: `upl_bdl_123`
-</ParamField>
 
 <ParamField path="device" type="Device">
   <ImmutableBadge />
@@ -35,25 +24,39 @@ in `upload.bundle`, and files whose captured values match join the same bundle.
   bundle groups.
 </ParamField>
 
-<ParamField path="capture_values" type="string[]">
-  <ImmutableBadge />
-
-  The captured values that identify the bundle, in the order the file rule's
-  `upload.bundle` lists its captures. Together with the device and upload collection,
-  these values are the bundle's identity: no two bundles share all three.
-
-  Example: `["run_42"]`
-</ParamField>
-
 <ParamField path="capture_keys" type="string[]">
   <ImmutableBadge />
 
-  The capture keys from `upload.bundle` of the file rule that created the bundle, in
-  the same order as `capture_values`. Capture keys do not affect membership, so uploads
-  from rules that use different capture keys can join the same bundle.
+  The capture keys from [upload.bundle](/data-uploads/concepts/file-rules/rule-definition#param-bundle) of the file rule that created the bundle. 
+  
+  Capture keys do not affect membership, only captured values do. See [Membership](#membership).
 
-  Example: `["recording"]`
+  Example: `["mission", "run"]`
 </ParamField>
+
+<ParamField path="capture_values" type="string[]">
+  <ImmutableBadge />
+
+  The captured values that identify the bundle. 
+  
+  Together with the device and upload collection, these values are the bundle's
+  identity: no two bundles share all three. See [Membership](#membership).
+
+  Example: `["mission_123", "run_03"]`
+</ParamField>
+
+
+
+## Bundling with a file rule
+
+Bundles are specified in a file rule's [upload.bundle](/data-uploads/concepts/file-rules/rule-definition#param-bundle) field. Below is an example of a file rule that bundles recordings by the recording name:
+
+<RecordingsBundle />
+
+A file in another recording folder, such as `run_43`, lands in a different bundle with a
+different `{bundle_id}`.
+
+<BundleCliVersion />
 
 ## Membership
 
@@ -67,42 +70,6 @@ and over time: a file that matches later joins the existing bundle.
   bundles.
 - Bundles never span devices or upload collections.
 
-## Bundling with a file rule
-
-The rule below uploads every file in a recording folder and bundles the files by the
-folder's name:
-
-```yaml
-name: Recordings
-
-source:
-  glob: "/data/recordings/{recording}/*"
-
-upload:
-  collection_slug: recordings
-  bucket: my-uploads-bucket
-  path: "{device_id}/{recording}/{bundle_id}/{upload_id}/{file_name}"
-  bundle:
-    - recording
-```
-
-Both files in the `run_42` folder join the same bundle:
-
-| Device file | Object key |
-| --- | --- |
-| `/data/recordings/run_42/camera.mcap` | `dvc_123/run_42/upl_bdl_123/upl_123/camera.mcap` |
-| `/data/recordings/run_42/metadata.yaml` | `dvc_123/run_42/upl_bdl_123/upl_456/metadata.yaml` |
-
-A file in another recording folder, such as `run_43`, lands in a different bundle with a
-different `{bundle_id}`.
-
-[`upload.bundle`](/data-uploads/concepts/file-rules/rule-definition#param-bundle) lists 1
-to 16 unique capture keys and is not sent to devices.
-
-<Info>
-  Pushing file rules with `upload.bundle` requires CLI `v0.12.2` or later. See the
-  [CLI changelog](/changelog/cli#v0-12-2).
-</Info>
 ## Multiple rules
 
 Related files sometimes need different rules, for example because `.yaml` files need a

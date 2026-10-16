@@ -1,3 +1,5 @@
+import BundleCliVersion from '/snippets/file-rules/bundle-cli-version.mdx';
+
 A rule's `upload` block declares which registered [bucket](/data-uploads/concepts/buckets) matching files are written to, and the object path within it. 
 
 The `upload` block is optional. If omitted, the rule only manages local retention.
@@ -49,6 +51,8 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
   Uploads from the same
   device and upload collection whose captured values match, *in the listed order*, are
   grouped into a single [bundle](/data-uploads/concepts/upload-bundles).
+
+  <BundleCliVersion />
 
   Example: `[recording]`
 </ParamField>

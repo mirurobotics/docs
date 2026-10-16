@@ -5,6 +5,8 @@ title: "Rule definition"
 import Retention from '/snippets/file-rules/retention.mdx';
 import Sources from '/snippets/file-rules/sources.mdx';
 import Upload from '/snippets/file-rules/upload.mdx';
+import RecordingsBundle from '/snippets/file-rules/recordings-bundle.mdx';
+import BundleCliVersion from '/snippets/file-rules/bundle-cli-version.mdx';
 
 File rules are defined as a single YAML file in your Git repository:
 
@@ -142,32 +144,11 @@ Captured values have two main uses:
   </Accordion>
 
   <Accordion title="Group related uploads into a bundle">
-    List capture keys in [`upload.bundle`](/data-uploads/concepts/file-rules/rule-definition#param-bundle). Uploads from the same device and upload collection with matching capture values are [bundled](/data-uploads/concepts/upload-bundles).
+    Specify capture keys in the [`upload.bundle`](/data-uploads/concepts/file-rules/rule-definition#param-bundle) field. Uploads from the same device and upload collection with matching capture values are [bundled](/data-uploads/concepts/upload-bundles).
 
-    ```yaml
-    name: Recordings
+    <RecordingsBundle />
 
-    source:
-      glob: "/data/recordings/{recording}/*"
-
-    upload:
-      collection_slug: recordings
-      bucket: my-uploads-bucket
-      path: "{device_id}/{recording}/{bundle_id}/{upload_id}/{file_name}"
-      bundle:
-        - recording
-    ```
-
-    Using the above rule, both files in the `run_42` folder are grouped into the same bundle.
-
-    Device files
-    - `/data/recordings/run_42/camera.mcap`
-    - `/data/recordings/run_42/metadata.yaml`
-
-    Object keys:
-    - `dvc_123/run_42/upl_bdl_123/upl_123/camera.mcap`
-    - `dvc_123/run_42/upl_bdl_123/upl_456/metadata.yaml`
-
+    <BundleCliVersion />
 
     For more information on bundles, see [Upload bundles](/data-uploads/concepts/upload-bundles).
   </Accordion>
