@@ -120,6 +120,9 @@ Captured values have two main uses:
 
 <AccordionGroup>
   <Accordion title="Configure the upload path">
+
+    Reference captures in [`upload.path`](/data-uploads/concepts/file-rules/rule-definition#param-path) as `{key}`. The matched text is filled in with the capture's value on upload.
+
     ```yaml highlight={4,9} nocopy
     name: Recordings
 
@@ -132,15 +135,15 @@ Captured values have two main uses:
       path: "{device_id}/{recording}/{upload_id}/{file_name}"
     ```
 
-    Reference a capture in [`upload.path`](/data-uploads/concepts/file-rules/rule-definition#param-path) as `{key}`. The matched text is filled in with the capture's value on upload.
+    Below is an example source file and upload path:
 
-    Source file: `/data/recordings/run_42/camera.mcap`
+    **Source file:** `/data/recordings/run_42/camera.mcap`
 
-    Upload path: `dvc_123/run_42/upl_123/camera.mcap`
+    **Upload path:** `dvc_123/run_42/upl_123/camera.mcap`
   </Accordion>
 
   <Accordion title="Group related uploads into a bundle">
-    Specify capture keys in the [`upload.bundle`](/data-uploads/concepts/file-rules/rule-definition#param-bundle) field. Uploads from the same device and upload collection with matching capture values are [bundled](/data-uploads/concepts/upload-bundles).
+    Reference captures in the [`upload.bundle`](/data-uploads/concepts/file-rules/rule-definition#param-bundle) field. Uploads with the same device, upload collection, and capture values are [bundled](/data-uploads/concepts/upload-bundles).
 
     <RecordingsBundle />
 
