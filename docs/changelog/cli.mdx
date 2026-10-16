@@ -7,6 +7,22 @@ description: "Changelog and migration steps for the Miru CLI"
 import { Dropdown } from '/snippets/components/api-dropdown.jsx';
 
 
+# v0.13.0
+
+*October 15, 2026*
+
+CLI `v0.13.0` adds support for grouping related uploads into [bundles](/data-uploads/concepts/file-rules/bundles).
+
+## Features
+
+- Add the `upload.bundle` field to file rule YAML files: a list of glob capture names that groups related uploads into a [bundle](/data-uploads/concepts/file-rules/bundles). `miru release create` sends it to Miru, which validates it
+
+## Fixes
+
+- Fix the update notice's changelog link so it opens the [CLI changelog](/changelog/cli)
+
+---
+
 # v0.12.1
 
 *September 6, 2026*
