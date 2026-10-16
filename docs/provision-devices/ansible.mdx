@@ -59,7 +59,7 @@ You can also install from [git](https://github.com/mirurobotics/ansible-collecti
 
 Write the playbook to apply the provision role to the hosts in your inventory. 
 
-```yaml
+```yaml highlight={2,6}
 - name: Provision Miru devices
   hosts: {your-inventory-group}
   roles:

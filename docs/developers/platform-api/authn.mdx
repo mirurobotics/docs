@@ -10,7 +10,7 @@ For more information on creating and managing API keys, see the [API keys](/admi
 
 To authenticate requests to the Miru Platform API, include your API key in the `X-API-Key` header of your request:
 
-```bash
+```bash highlight={3}
 curl --request GET \
   --url 'https://api.mirurobotics.com/beta/devices' \
   --header 'X-API-Key: <api-key>' \
