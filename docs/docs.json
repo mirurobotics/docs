@@ -158,10 +158,10 @@
                       "data-uploads/concepts/file-rules/rule-definition"
                     ]
                   },
-                  "data-uploads/concepts/upload-collections",
                   "data-uploads/concepts/buckets",
+                  "data-uploads/concepts/upload-collections",
                   "data-uploads/concepts/uploads",
-                  "data-uploads/concepts/bundles"
+                  "data-uploads/concepts/upload-bundles"
                 ]
               },
               {
