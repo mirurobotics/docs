@@ -2,7 +2,6 @@
 title: "Rule definition"
 ---
 
-import BundleCliVersion from '/snippets/file-rules/bundle-cli-version.mdx';
 import RecordingsBundle from '/snippets/file-rules/recordings-bundle.mdx';
 import Retention from '/snippets/file-rules/retention.mdx';
 import Sources from '/snippets/file-rules/sources.mdx';
@@ -126,7 +125,7 @@ Captured values have two main uses:
   <Accordion title="Configure the upload path">
     Reference a capture in [`upload.path`](/data-uploads/concepts/file-rules/rule-definition#param-path) as `{key}`. The matched text is filled in with the capture's value on upload.
 
-    ```yaml
+    ```yaml highlight={4,9}
     name: Recordings
 
     source:
@@ -147,8 +146,6 @@ Captured values have two main uses:
     Specify capture keys in the [`upload.bundle`](/data-uploads/concepts/file-rules/rule-definition#param-bundle) field. Uploads from the same device and upload collection with matching capture values are [bundled](/data-uploads/concepts/upload-bundles).
 
     <RecordingsBundle />
-
-    <BundleCliVersion />
 
     For more information on bundles, see [Upload bundles](/data-uploads/concepts/upload-bundles).
   </Accordion>
