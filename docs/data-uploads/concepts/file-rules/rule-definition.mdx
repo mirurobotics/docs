@@ -64,7 +64,9 @@ rule for each pattern.
 
 Brace expansion is not supported: a brace group containing a comma, such as `{a,b}`,
 matches literally. A brace group without a comma, such as `{Recording}` or `{}`, is read
-as a capture and must be valid (see [Glob captures](#glob-captures)). Backslash escapes
+as a capture and must be valid (see [Glob captures](#glob-captures)). 
+
+Backslash escapes
 (`\*`) and extended patterns such as `!(x)` are not supported. On Linux, backslashes
 also match literally; on Windows, `\` is a path separator.
 
@@ -112,22 +114,85 @@ also match literally; on Windows, `\` is a path separator.
 
 ### Glob captures
 
-A capture is a `{name}` placeholder in a glob. It matches like `*`: any characters
-within one path segment, including the empty string. Each captured value can be used as
-a variable in `upload.path` and listed in `upload.bundle` to group related uploads into a
-[bundle](/data-uploads/concepts/upload-bundles).
+A capture is a `{name}` placeholder in a glob. It matches exactly like `*` operator: any characters
+within one path segment, including the empty string. 
+
+For example, the pattern `/data/recordings/{recording}.mcap` matches the exact same files as `/data/recordings/*.mcap`.
+
+**Use cases**
+
+Captured values have two main uses:
+
+<AccordionGroup>
+  <Accordion title="Configure the upload path">
+    Reference a capture in [`upload.path`](/data-uploads/concepts/file-rules/rule-definition#param-path) as `{name}`. The matched text is filled in when the object key is rendered.
+
+    ```yaml
+    name: Recordings
+
+    source:
+      glob: "/data/recordings/{recording}/*"
+
+    upload:
+      collection_slug: recordings
+      bucket: my-uploads-bucket
+      path: "{device_id}/{recording}/{upload_id}/{file_name}"
+    ```
+
+    Device file: `/data/recordings/run_42/camera.mcap`
+
+    Object key: `dvc_123/run_42/upl_123/camera.mcap`
+  </Accordion>
+
+  <Accordion title="Group related uploads into a bundle">
+    List capture names in [`upload.bundle`](/data-uploads/concepts/file-rules/rule-definition#param-bundle). Uploads from the same device and upload collection with matching capture values are [bundled](/data-uploads/concepts/upload-bundles).
+
+    ```yaml
+    name: Recordings
+
+    source:
+      glob: "/data/recordings/{recording}/*"
+
+    upload:
+      collection_slug: recordings
+      bucket: my-uploads-bucket
+      path: "{device_id}/{recording}/{bundle_id}/{upload_id}/{file_name}"
+      bundle:
+        - recording
+    ```
+
+    Using the above rule, both files in the `run_42` folder are grouped into the same bundle.
+
+    Device files
+    - `/data/recordings/run_42/camera.mcap`
+    - `/data/recordings/run_42/metadata.yaml`
+
+    Object keys:
+    - `dvc_123/run_42/upl_bdl_123/upl_123/camera.mcap`
+    - `dvc_123/run_42/upl_bdl_123/upl_456/metadata.yaml`
+
+
+    For more information on bundles, see [Upload bundles](/data-uploads/concepts/upload-bundles).
+  </Accordion>
+</AccordionGroup>
+
+**Naming rules**
 
 Capture names must:
 
-- Start with a lowercase letter and contain only lowercase letters, digits, and `_`
+- Start with a lowercase letter
+- Contain only lowercase letters, digits, and `_`
 - Be unique within the glob
-- Not reuse a built-in `upload.path` variable: `device_id`, `device_name`, `file_name`, `upload_id`, `bundle_id`, `year`, `month`, `day`, `hour`, or `minute`
+- Not reuse a built-in upload path [variables](/data-uploads/concepts/file-rules/rule-definition#param-path)
+- Be used in the [upload path](/data-uploads/concepts/file-rules/rule-definition#param-path) or [upload bundle](/data-uploads/concepts/file-rules/rule-definition#param-bundle)
 
 A path segment holds at most one capture, and the rest of that segment must be constant
 text, with no `*`, `?`, `[`, `\`, or other braces. A capture may not have `**` segments
 both before and after it.
 
-| Pattern | Result |
+**Invalid examples**
+
+| Pattern | Reason |
 | --- | --- |
 | `/data/recordings/{recording}/*` | Valid |
 | `/data/{session}/run_{run}.mcap` | Valid |
@@ -137,11 +202,14 @@ both before and after it.
 | `/data/{Recording}/*` | Invalid: the name must start with a lowercase letter |
 | `/data/{file_name}/*` | Invalid: reuses a built-in variable |
 
-A capture may match an empty string, so `run_{run}.mcap` also matches `run_.mcap`.
+**Valid examples**
 
-Every capture must be used in `upload.bundle` or `upload.path`, so a glob with captures
-requires an `upload` block. Devices match each capture as `*`, so captures need no
-Miru Agent upgrade.
+| Pattern | 
+| --- | 
+| `/data/recordings/{recording}/*` |
+| `/data/{session}/run_{run}.mcap` | 
+
+A capture may match an empty string, so `run_{run}.mcap` also matches `run_.mcap`.
 
 ## Uploads
 
