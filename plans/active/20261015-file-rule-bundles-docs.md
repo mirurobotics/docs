@@ -19,7 +19,7 @@ Miru can now group related uploads, such as every file of one robot recording, i
 
 ## Progress
 
-- [ ] Milestone 1: bundles page, nav entry, cspell word.
+- [x] Milestone 1: bundles page, nav entry, cspell word.
 - [ ] Milestone 2: cross-page updates (rule definition, snippets, uploads, define file rules, CLI flags anchor).
 - [ ] Milestone 3: CLI changelog entry.
 - [ ] Milestone 4: push, draft PR, `$preflight` reports `CLEAN`, PR marked ready, `ai-review` findings addressed, plan moved to `plans/completed/`, final `$preflight` `CLEAN`.

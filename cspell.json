@@ -50,6 +50,7 @@
     "journalctl",
     "keypair",
     "keyrings",
+    "mcap",
     "mgmt",
     "mintable",
     "mirurobotics",

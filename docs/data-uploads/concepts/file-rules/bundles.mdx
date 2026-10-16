@@ -1,0 +1,143 @@
+---
+title: "Bundles"
+description: "Group related uploads from one recording or run into a bundle"
+---
+
+A bundle groups related uploads, such as every file from one recording or run, even
+when different file rules upload them. A rule opts in by naming parts of its glob with
+captures and listing them in `upload.bundle`.
+
+## Example
+
+The rule below uploads every file in a recording folder and bundles the files by the
+folder's name:
+
+```yaml
+name: Recordings
+
+source:
+  glob: "/data/recordings/{recording}/*"
+
+upload:
+  collection_slug: recordings
+  bucket: my-uploads-bucket
+  path: "{device_id}/{recording}/{bundle_id}/{upload_id}/{file_name}"
+  bundle:
+    - recording
+```
+
+Both files in the `run_42` folder join the same bundle:
+
+| Device file | Object key |
+| --- | --- |
+| `/data/recordings/run_42/camera.mcap` | `dvc_123/run_42/upl_bdl_123/upl_123/camera.mcap` |
+| `/data/recordings/run_42/metadata.yaml` | `dvc_123/run_42/upl_bdl_123/upl_456/metadata.yaml` |
+
+A file in another recording folder, such as `run_43`, lands in a different bundle with a
+different `{bundle_id}`.
+
+## Captures
+
+A capture is a `{name}` placeholder in `source.glob`. It matches like `*`: any
+characters within one path segment, including the empty string. The rest of the glob
+follows the base [glob pattern](/data-uploads/concepts/file-rules/rule-definition#glob-patterns)
+syntax.
+
+Capture names must:
+
+- Start with a lowercase letter and contain only lowercase letters, digits, and `_`
+- Be unique within the glob
+- Not reuse a built-in `upload.path` variable: `device_id`, `device_name`, `file_name`, `upload_id`, `bundle_id`, `year`, `month`, `day`, `hour`, or `minute`
+
+A path segment holds at most one capture, and the rest of that segment must be constant
+text, with no `*`, `?`, `[`, `\`, or other braces. A capture may not have `**` segments
+both before and after it.
+
+| Pattern | Result |
+| --- | --- |
+| `/data/recordings/{recording}/*` | Valid |
+| `/data/{session}/run_{run}.mcap` | Valid |
+| `/data/{recording}_*.mcap` | Invalid: `*` in a capture's segment |
+| `/data/{session}{run}/*` | Invalid: two captures in one segment |
+| `/data/**/{recording}/**/*` | Invalid: `**` before and after the capture |
+| `/data/{Recording}/*` | Invalid: the name must start with a lowercase letter |
+| `/data/{file_name}/*` | Invalid: reuses a built-in variable |
+
+A brace group containing a comma, such as `{a,b}`, is not a capture and matches
+literally. Any other brace group, such as `{}` or `{Recording}`, is read as a capture and
+is rejected if its name is invalid.
+
+A capture may match an empty string, so `run_{run}.mcap` also matches `run_.mcap`.
+
+Every capture must be used in `upload.bundle` or `upload.path`, so a glob with captures
+requires an `upload` block. Devices match each capture as `*`, so captures need no
+Miru Agent upgrade.
+
+## Bundle membership
+
+[`upload.bundle`](/data-uploads/concepts/file-rules/rule-definition#param-bundle) lists 1
+to 16 unique capture names. Uploads from the same device and the same upload collection
+whose captured values match, in the listed order, share one bundle. This holds across
+rules and over time: a file that matches later joins the existing bundle.
+
+- Capture names do not affect matching. Rules that name their captures differently share
+  a bundle if they list them in the same order with the same values.
+- Order matters. Session `03` with run `05` and session `05` with run `03` are different
+  bundles.
+- Bundles never span devices or upload collections.
+
+`upload.bundle` is not sent to devices.
+
+<Info>
+  Pushing file rules with `upload.bundle` requires CLI `v0.13.0` or later. See the
+  [CLI changelog](/changelog/cli#v0-13-0).
+</Info>
+
+## Bundle identifiers
+
+Bundles have no name. Each bundle has an ID such as `upl_bdl_123`, which is available as:
+
+- The `{bundle_id}` variable in `upload.path`, which requires `upload.bundle`
+- The upload's [`bundle_id`](/data-uploads/concepts/uploads#param-bundle-id) field, which
+  is null for uploads from rules without `upload.bundle`
+
+## Multiple rules
+
+Related files sometimes need different rules, for example because `.yaml` files need a
+shorter stability window than `.mcap` files:
+
+```yaml
+name: Run Recordings
+
+source:
+  glob: "/data/runs/run_{run}.mcap"
+
+upload:
+  collection_slug: runs
+  bucket: my-uploads-bucket
+  path: "runs/{device_id}/{bundle_id}/{upload_id}/{file_name}"
+  bundle:
+    - run
+```
+
+```yaml
+name: Run Metadata
+
+source:
+  glob: "/data/runs/run_{id}.yaml"
+  stability_window_secs: 5
+
+upload:
+  collection_slug: runs
+  bucket: my-uploads-bucket
+  path: "runs/{device_id}/{bundle_id}/{upload_id}/{file_name}"
+  bundle:
+    - id
+```
+
+`run_42.mcap` and `run_42.yaml` join one bundle because both rules list one capture with
+the value `42` and use the same upload collection, even though the captures are named
+differently.
+
+The same works for one rule per sensor folder, for example `/data/{session}/camera/*`
+and `/data/{session}/lidar/*`, both bundled by `session`.
