@@ -1,0 +1,108 @@
+---
+title: "Bundles"
+description: "Groups of related uploads, such as every file from one recording or run"
+---
+
+A bundle is a group of related [uploads](/data-uploads/concepts/uploads) from one
+device, such as every file from one recording or run. File rules assign uploads to
+bundles: a rule names parts of its glob with
+[captures](/data-uploads/concepts/file-rules/rule-definition#glob-captures) and lists them
+in `upload.bundle`, and files whose captured values match join the same bundle.
+
+## Membership
+
+Uploads from the same device and the same upload collection whose captured values match,
+in the order `upload.bundle` lists them, share one bundle. This holds across file rules
+and over time: a file that matches later joins the existing bundle.
+
+- Capture names do not affect matching. Rules that name their captures differently share
+  a bundle if they list them in the same order with the same values.
+- Order matters. Session `03` with run `05` and session `05` with run `03` are different
+  bundles.
+- Bundles never span devices or upload collections.
+
+## Identifiers
+
+Bundles have no name. Each bundle has an ID such as `upl_bdl_123`, which is available as:
+
+- The upload's [`bundle_id`](/data-uploads/concepts/uploads#param-bundle-id) field, which
+  is null for uploads from rules without `upload.bundle`
+- The `{bundle_id}` variable in a file rule's `upload.path`, which requires
+  `upload.bundle`
+
+## Bundling with a file rule
+
+The rule below uploads every file in a recording folder and bundles the files by the
+folder's name:
+
+```yaml
+name: Recordings
+
+source:
+  glob: "/data/recordings/{recording}/*"
+
+upload:
+  collection_slug: recordings
+  bucket: my-uploads-bucket
+  path: "{device_id}/{recording}/{bundle_id}/{upload_id}/{file_name}"
+  bundle:
+    - recording
+```
+
+Both files in the `run_42` folder join the same bundle:
+
+| Device file | Object key |
+| --- | --- |
+| `/data/recordings/run_42/camera.mcap` | `dvc_123/run_42/upl_bdl_123/upl_123/camera.mcap` |
+| `/data/recordings/run_42/metadata.yaml` | `dvc_123/run_42/upl_bdl_123/upl_456/metadata.yaml` |
+
+A file in another recording folder, such as `run_43`, lands in a different bundle with a
+different `{bundle_id}`.
+
+[`upload.bundle`](/data-uploads/concepts/file-rules/rule-definition#param-bundle) lists 1
+to 16 unique capture names and is not sent to devices.
+
+<Info>
+  Pushing file rules with `upload.bundle` requires CLI `v0.13.0` or later. See the
+  [CLI changelog](/changelog/cli#v0-13-0).
+</Info>
+## Multiple rules
+
+Related files sometimes need different rules, for example because `.yaml` files need a
+shorter stability window than `.mcap` files:
+
+```yaml
+name: Run Recordings
+
+source:
+  glob: "/data/runs/run_{run}.mcap"
+
+upload:
+  collection_slug: runs
+  bucket: my-uploads-bucket
+  path: "runs/{device_id}/{bundle_id}/{upload_id}/{file_name}"
+  bundle:
+    - run
+```
+
+```yaml
+name: Run Metadata
+
+source:
+  glob: "/data/runs/run_{id}.yaml"
+  stability_window_secs: 5
+
+upload:
+  collection_slug: runs
+  bucket: my-uploads-bucket
+  path: "runs/{device_id}/{bundle_id}/{upload_id}/{file_name}"
+  bundle:
+    - id
+```
+
+`run_42.mcap` and `run_42.yaml` join one bundle because both rules list one capture with
+the value `42` and use the same upload collection, even though the captures are named
+differently.
+
+The same works for one rule per sensor folder, for example `/data/{session}/camera/*`
+and `/data/{session}/lidar/*`, both bundled by `session`.

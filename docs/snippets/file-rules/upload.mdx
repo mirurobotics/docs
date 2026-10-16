@@ -35,8 +35,8 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
   | `{day}` | `01` | The upload's creation day. |
   | `{hour}` | `00` | The upload's creation hour. |
   | `{minute}` | `00` | The upload's creation minute. |
-  | `{bundle_id}` | `upl_bdl_123` | The upload's [bundle](/data-uploads/concepts/file-rules/bundles) ID. Requires `bundle`. |
-  | `{recording}` | `run_42` | The value matched by a [glob capture](/data-uploads/concepts/file-rules/bundles#captures) of the same name. |
+  | `{bundle_id}` | `upl_bdl_123` | The upload's [bundle](/data-uploads/concepts/bundles) ID. Requires `bundle`. |
+  | Any capture, such as `{recording}` | `run_42` | The value matched by the [glob capture](/data-uploads/concepts/file-rules/rule-definition#glob-captures) of the same name. |
 
   <Warning>
     Templates must contain the `{upload_id}` variable.
@@ -46,7 +46,7 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
 <ParamField path="bundle" type="string[]">
   A list of 1 to 16 unique capture names from `source.glob`. Uploads from the same
   device and upload collection whose captured values match, in the listed order, are
-  grouped into one [bundle](/data-uploads/concepts/file-rules/bundles).
+  grouped into one [bundle](/data-uploads/concepts/bundles).
 
   Example: `[recording]`
 </ParamField>

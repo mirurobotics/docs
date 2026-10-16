@@ -113,11 +113,36 @@ also match literally; on Windows, `\` is a path separator. To match a literal
 
 ### Glob captures
 
-A `{name}` placeholder in a glob matches like `*`, any characters within one path
-segment, and names the matched text. Captured values can be used as variables in
-`upload.path` and listed in `upload.bundle` to group related uploads into a bundle.
-Devices match each capture as `*`. See
-[captures](/data-uploads/concepts/file-rules/bundles#captures) for the full rules.
+A capture is a `{name}` placeholder in a glob. It matches like `*`: any characters
+within one path segment, including the empty string. Each captured value can be used as
+a variable in `upload.path` and listed in `upload.bundle` to group related uploads into a
+[bundle](/data-uploads/concepts/bundles).
+
+Capture names must:
+
+- Start with a lowercase letter and contain only lowercase letters, digits, and `_`
+- Be unique within the glob
+- Not reuse a built-in `upload.path` variable: `device_id`, `device_name`, `file_name`, `upload_id`, `bundle_id`, `year`, `month`, `day`, `hour`, or `minute`
+
+A path segment holds at most one capture, and the rest of that segment must be constant
+text, with no `*`, `?`, `[`, `\`, or other braces. A capture may not have `**` segments
+both before and after it.
+
+| Pattern | Result |
+| --- | --- |
+| `/data/recordings/{recording}/*` | Valid |
+| `/data/{session}/run_{run}.mcap` | Valid |
+| `/data/{recording}_*.mcap` | Invalid: `*` in a capture's segment |
+| `/data/{session}{run}/*` | Invalid: two captures in one segment |
+| `/data/**/{recording}/**/*` | Invalid: `**` before and after the capture |
+| `/data/{Recording}/*` | Invalid: the name must start with a lowercase letter |
+| `/data/{file_name}/*` | Invalid: reuses a built-in variable |
+
+A capture may match an empty string, so `run_{run}.mcap` also matches `run_.mcap`.
+
+Every capture must be used in `upload.bundle` or `upload.path`, so a glob with captures
+requires an `upload` block. Devices match each capture as `*`, so captures need no
+Miru Agent upgrade.
 
 ## Uploads
 

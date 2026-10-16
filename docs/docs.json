@@ -157,11 +157,11 @@
                     "group": "File rules",
                     "pages": [
                       "data-uploads/concepts/file-rules/overview",
-                      "data-uploads/concepts/file-rules/rule-definition",
-                      "data-uploads/concepts/file-rules/bundles"
+                      "data-uploads/concepts/file-rules/rule-definition"
                     ]
                   },
-                  "data-uploads/concepts/uploads"
+                  "data-uploads/concepts/uploads",
+                  "data-uploads/concepts/bundles"
                 ]
               },
               {
