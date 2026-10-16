@@ -57,10 +57,6 @@ retention:
   ttl_secs: 3600
 ```
 
-Like schemas, file rules are identified by hashing their content, so rules with equivalent content are deduplicated even if their comments or formatting differ. 
-
-To group related files, such as every file from one recording, into a single bundle, see [bundles](/data-uploads/concepts/upload-bundles).
-
 ### Source
 
 <Sources />
@@ -72,6 +68,44 @@ To group related files, such as every file from one recording, into a single bun
 ### Retention
 
 <Retention />
+
+## Bundle related files
+
+To group related files, such as every file from one recording, into a single
+[bundle](/data-uploads/concepts/upload-bundles):
+
+1. Replace the part of the glob that identifies the group with a
+   [capture](/data-uploads/concepts/file-rules/rule-definition#glob-captures). For
+   recordings stored as `/data/recordings/<recording>/<file>`, use `{recording}`.
+2. List the capture in `upload.bundle`.
+3. Optionally, add `{bundle_id}` to `upload.path` so each bundle's files share an object
+   key prefix.
+
+```yaml recordings.yaml
+name: Recordings
+
+source:
+  glob: "/data/recordings/{recording}/*"
+
+upload:
+  collection_slug: recordings
+  bucket: my-uploads-bucket
+  path: "{device_id}/{recording}/{bundle_id}/{upload_id}/{file_name}"
+  bundle:
+    - recording
+```
+
+Add the rule to a release as described [below](#add-file-rules-to-a-release). Once the
+release is deployed, the files from each recording on a device share one bundle and land
+under one `{bundle_id}` prefix in your bucket, such as `dvc_123/run_42/upl_bdl_123/`.
+
+<Info>
+  Pushing file rules with `upload.bundle` requires CLI `v0.13.0` or later.
+</Info>
+
+Files that need different rules, such as `.mcap` and `.yaml` files with different
+stability windows, can still share a bundle. See
+[Multiple rules](/data-uploads/concepts/upload-bundles#multiple-rules).
 
 ## Add file rules to a release
 
