@@ -123,9 +123,7 @@ Captured values have two main uses:
 
 <AccordionGroup>
   <Accordion title="Configure the upload path">
-    Reference a capture in [`upload.path`](/data-uploads/concepts/file-rules/rule-definition#param-path) as `{key}`. The matched text is filled in with the capture's value on upload.
-
-    ```yaml highlight={4,9}
+    ```yaml highlight={4,9} nocopy
     name: Recordings
 
     source:
@@ -136,6 +134,8 @@ Captured values have two main uses:
       bucket: my-uploads-bucket
       path: "{device_id}/{recording}/{upload_id}/{file_name}"
     ```
+
+    Reference a capture in [`upload.path`](/data-uploads/concepts/file-rules/rule-definition#param-path) as `{key}`. The matched text is filled in with the capture's value on upload.
 
     Source file: `/data/recordings/run_42/camera.mcap`
 
