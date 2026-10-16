@@ -113,11 +113,11 @@ also match literally; on Windows, `\` is a path separator. To match a literal
 
 ### Glob captures
 
-A `{name}` placeholder in a glob matches one path segment like `*` and names that part
-of the path. Captured values can be used as variables in `upload.path` and listed in
-`upload.bundle` to group related uploads into a bundle. Devices match each capture as
-`*`. See [captures](/data-uploads/concepts/file-rules/bundles#captures) for the full
-rules.
+A `{name}` placeholder in a glob matches like `*`, any characters within one path
+segment, and names the matched text. Captured values can be used as variables in
+`upload.path` and listed in `upload.bundle` to group related uploads into a bundle.
+Devices match each capture as `*`. See
+[captures](/data-uploads/concepts/file-rules/bundles#captures) for the full rules.
 
 ## Uploads
 
