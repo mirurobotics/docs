@@ -114,9 +114,7 @@ also match literally; on Windows, `\` is a path separator.
 
 ### Glob captures
 
-A capture is a `{key}` placeholder in a glob, where `key` is the capture key. It matches exactly like the `*` wildcard operator but also records the matched text under that key. This captured value can then be used elsewhere in the rule.
-
-For example, the pattern `/data/recordings/{recording}.mcap` matches the exact same files as `/data/recordings/*.mcap` but the value of `{recording}` is captured and can be reused.
+A capture is a `{key}` placeholder in a glob, where `key` is the capture key. It matches exactly like the `*` wildcard operator but records the matched text under that key. The captured value can then be used elsewhere.
 
 **Examples**
 
@@ -209,8 +207,6 @@ both before and after it.
 - `/data/{session}/run-[0-9].mcap`
 - `/data/{session}/cam[012].mcap`
 - `/data/{session}/[!._]*`
-
-A capture may match an empty string, so `run_{run}.mcap` also matches `run_.mcap`.
 
 ## Uploads
 
