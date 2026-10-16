@@ -38,7 +38,7 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
   | `{hour}` | `00` | The upload's creation hour. |
   | `{minute}` | `00` | The upload's creation minute. |
   | `{bundle_id}` | `upl_bdl_123` | The upload's [bundle](/data-uploads/concepts/upload-bundles) ID. Requires `bundle`. |
-  | Any capture, such as `{recording}` | `run_42` | The value matched by the [glob capture](/data-uploads/concepts/file-rules/rule-definition#glob-captures) with the same key. |
+  | Any [capture](/data-uploads/concepts/file-rules/rule-definition#glob-captures)` | `run_42` | The value matched by the capture with the same key. |
 
   <Warning>
     Templates must contain the `{upload_id}` variable.
