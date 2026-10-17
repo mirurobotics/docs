@@ -7,13 +7,11 @@ and when a matching file is considered finished.
   Must satisfy the following criteria:
   - Absolute path — it starts with `/` (Linux) or a drive letter such as `C:\` (Windows)
   - At most 1024 bytes, with no control characters
-  - No `..` segments, and no empty segments (`//` or a trailing `/`); Windows patterns treat both `\` and `/` as separators
+  - No `.` or `..` segments, and no empty segments (`//` or a trailing `/`); Windows patterns treat both `\` and `/` as separators
 
-  <Warning>
-    You must grant the Miru Agent read access to matching files and their containing
-    directories. Files in directories the agent can't read are silently skipped. See
-    [File system access on Linux](/developers/agent/filesys-access/linux#data-uploads) or [Windows](/developers/agent/filesys-access/windows#data-uploads) for details.
-  </Warning>
+  <Tip>
+    Globs can specify [captures](/data-uploads/concepts/file-rules/rule-definition#glob-captures) to group related uploads into [bundles](/data-uploads/concepts/upload-bundles).
+  </Tip>
 
   <Tabs>
     <Tab title="Linux">
@@ -32,6 +30,12 @@ and when a matching file is considered finished.
 
   See [glob patterns](/data-uploads/concepts/file-rules/rule-definition#glob-patterns) for
   supported syntax, examples, and matching behavior.
+
+  <Warning>
+    You must grant the Miru Agent read access to matching files and their containing
+    directories. Files in directories the agent can't read are silently skipped. See
+    [File system access on Linux](/developers/agent/filesys-access/linux#data-uploads) or [Windows](/developers/agent/filesys-access/windows#data-uploads) for details.
+  </Warning>
 </ParamField>
 
 <ParamField path="stability_window_secs" type="integer" default="60">

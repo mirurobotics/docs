@@ -1,3 +1,5 @@
+import BundleCliVersion from '/snippets/file-rules/bundle-cli-version.mdx';
+
 A rule's `upload` block declares which registered [bucket](/data-uploads/concepts/buckets) matching files are written to, and the object path within it. 
 
 The `upload` block is optional. If omitted, the rule only manages local retention.
@@ -35,8 +37,22 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
   | `{day}` | `01` | The upload's creation day. |
   | `{hour}` | `00` | The upload's creation hour. |
   | `{minute}` | `00` | The upload's creation minute. |
+  | `{bundle_id}` | `upl_bdl_123` | The upload's [bundle](/data-uploads/concepts/upload-bundles) ID. Requires `bundle`. |
+  | Any [capture](/data-uploads/concepts/file-rules/rule-definition#glob-captures) | `run_42` | The value matched by the capture. |
 
   <Warning>
     Templates must contain the `{upload_id}` variable.
   </Warning>
+</ParamField>
+
+<ParamField path="bundle" type="string[]">
+  A list of unique [captures](/data-uploads/concepts/file-rules/rule-definition#glob-captures) from `source.glob`. 
+  
+  Uploads from the same
+  device and upload collection whose captured values match, *in the listed order*, are
+  grouped into a single [bundle](/data-uploads/concepts/upload-bundles).
+
+  <BundleCliVersion />
+
+  Example: `[recording]`
 </ParamField>
