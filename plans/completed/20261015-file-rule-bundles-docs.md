@@ -1,4 +1,4 @@
-# Document file rule upload bundles and add the CLI v0.13.0 changelog entry
+# Document file rule upload bundles and add the CLI v0.12.2 changelog entry
 
 This ExecPlan is a living document. The sections Progress, Surprises & Discoveries, Decision Log, and Outcomes & Retrospective must be kept up to date as work proceeds.
 
@@ -15,7 +15,7 @@ This plan lives in `docs/plans/` because every edit is a documentation page in t
 
 ## Purpose / Big Picture
 
-Miru can now group related uploads, such as every file of one robot recording, into a **bundle**. A file rule's `source.glob` can name parts of a path with captures (for example `{recording}`), `upload.path` can use those captures and a new `{bundle_id}` variable, and the new `upload.bundle` field lists which captures decide bundle membership. After this change a reader finds a "Bundles" page under Data Uploads > Concepts > File rules that explains captures, `upload.bundle`, and bundle IDs with worked examples; the rule definition and upload pages show the new syntax, field, and variables; the uploads page lists the `bundle_id` property and the 2048-byte source path limit; and the CLI changelog's top entry is `v0.13.0` (October 15, 2026).
+Miru can now group related uploads, such as every file of one robot recording, into a **bundle**. A file rule's `source.glob` can name parts of a path with captures (for example `{recording}`), `upload.path` can use those captures and a new `{bundle_id}` variable, and the new `upload.bundle` field lists which captures decide bundle membership. After this change a reader finds a "Bundles" page under Data Uploads > Concepts > File rules that explains captures, `upload.bundle`, and bundle IDs with worked examples; the rule definition and upload pages show the new syntax, field, and variables; the uploads page lists the `bundle_id` property and the 2048-byte source path limit; and the CLI changelog's top entry is `v0.12.2` (October 15, 2026).
 
 ## Progress
 
@@ -47,7 +47,7 @@ MDX hazard: a bare `{` in prose or a table starts a JSX expression and breaks th
 
 Lint rules that CI enforces (sources in `tools/lint/linter/`, run by `scripts/lint.sh`):
 
-- `headingcase`: the frontmatter `title` and every heading must be strict sentence case. Inline code is masked. Allowlisted tokens include `API`, `CLI`, `JSON`, `URL`, `Miru`, `Agent`, `Git`, and version tags like `v0.13.0`. `ID`, `IDs`, and `YAML` are **not** allowlisted, so "Bundle ID" fails; use "Bundle identifiers".
+- `headingcase`: the frontmatter `title` and every heading must be strict sentence case. Inline code is masked. Allowlisted tokens include `API`, `CLI`, `JSON`, `URL`, `Miru`, `Agent`, `Git`, and version tags like `v0.12.2`. `ID`, `IDs`, and `YAML` are **not** allowlisted, so "Bundle ID" fails; use "Bundle identifiers".
 - `nodoubledash`: no `--` in prose outside code.
 - import rules: imports resolve, are used, are sorted case-insensitively by path, and form one block with no blank lines.
 - CSpell checks MDX against the single `words` array in `cspell.json` (loosely sorted, uppercase entries first). `mcap` is not present and will be flagged.
@@ -59,7 +59,7 @@ Bundle facts (authoritative, from the merged PRs listed in Scope):
 3. `upload.bundle` is an optional list of 1 to 16 unique capture names. Uploads from the same device and the same upload collection whose captured values match, in the listed order, share one bundle, across rules and over time. Capture names do not affect matching: rules that name captures differently share a bundle if they list them in the same order with the same values. Swapped values (session `03`/run `05` versus session `05`/run `03`) are different bundles. Bundles never span devices or upload collections. Bundles have no name; each has an ID with prefix `upl_bdl_` (example `upl_bdl_123`), exposed through `{bundle_id}` and as the nullable `bundle_id` field on uploads. `upload.bundle` is never sent to devices.
 4. An upload's source file path is limited to 2048 bytes. What happens to longer paths is not established; state the limit only.
 5. Globs may not contain `.` segments, like `..`; this applies to every file rule (backend#889, openapi#309).
-6. CLI (cli-private#234): file rule YAML accepts `upload.bundle` as a YAML list and sends it on push (`miru release create`). The CLI does no local validation; the server validates. cli-private#232 fixed the update notice's changelog link to point at `/changelog/cli`. Other commits since `v0.12.1` are internal. The requester specified `v0.13.0` for this release, but cli-private's latest tag is the pre-release `v0.12.2-beta.1`; confirm the shipped version before merge (see Idempotence and Recovery).
+6. CLI (cli-private#234): file rule YAML accepts `upload.bundle` as a YAML list and sends it on push (`miru release create`). The CLI does no local validation; the server validates. cli-private#232 fixed the update notice's changelog link to point at `/changelog/cli`. Other commits since `v0.12.1` are internal. The requester specified `v0.12.2` for this release, but cli-private's latest tag is the pre-release `v0.12.2-beta.1`; confirm the shipped version before merge (see Idempotence and Recovery).
 
 Files to touch (line numbers as of `origin/main` at `b33cfc4`):
 
@@ -94,7 +94,7 @@ Milestone 1 (bundles page). First move this plan to `plans/active/` (the first c
 
   Sample table (Device file, Object key): `/data/recordings/run_42/camera.mcap` to `dvc_123/run_42/upl_bdl_123/upl_123/camera.mcap`; `/data/recordings/run_42/metadata.yaml` to `dvc_123/run_42/upl_bdl_123/upl_456/metadata.yaml`.
 - `## Captures`: fact 1 in prose plus a two-column table (Pattern, Result) with valid rows `/data/recordings/{recording}/*`, `/data/{session}/run_{run}.mcap`, and invalid rows with the reason: `/data/{recording}_*.mcap` (`*` in a capture's segment), `/data/{session}{run}/*` (two captures in one segment), `/data/**/{recording}/**/*` (`**` before and after), `/data/{Recording}/*` (name must start with a lowercase letter), `/data/{file_name}/*` (reuses a built-in variable). State that a brace group containing a comma, such as `{a,b}`, matches literally while any other brace group is read as a capture, that a capture may match an empty string (`run_{run}.mcap` matches `run_.mcap`), that every capture must appear in `upload.bundle` or `upload.path` (so captures need an `upload` block), and that devices match each capture as `*`, so no agent upgrade is needed. Link the base syntax to `/data-uploads/concepts/file-rules/rule-definition#glob-patterns`.
-- `## Bundle membership`: fact 3 except IDs: 1 to 16 unique capture names; same device, same upload collection, same values in the same order share a bundle, across rules and over time; names do not matter; swapped values are different bundles; never spans devices or upload collections; `upload.bundle` is not sent to devices. Link the field to `/data-uploads/concepts/file-rules/rule-definition#param-bundle`. Add an `<Info>` that pushing `upload.bundle` requires CLI `v0.13.0` or later, linking `/changelog/cli#v0-13-0`.
+- `## Bundle membership`: fact 3 except IDs: 1 to 16 unique capture names; same device, same upload collection, same values in the same order share a bundle, across rules and over time; names do not matter; swapped values are different bundles; never spans devices or upload collections; `upload.bundle` is not sent to devices. Link the field to `/data-uploads/concepts/file-rules/rule-definition#param-bundle`. Add an `<Info>` that pushing `upload.bundle` requires CLI `v0.12.2` or later, linking `/changelog/cli#v0-12-2`.
 - `## Bundle identifiers`: bundles have no name; each has an ID like `upl_bdl_123`, available as the `{bundle_id}` path variable (requires `upload.bundle`) and as the upload's `bundle_id` field (link `/data-uploads/concepts/uploads#param-bundle-id`), which is null for uploads from rules without `upload.bundle`.
 - `## Multiple rules`: one rule per file type, for example because `.yaml` files need a shorter stability window. Rule `Run Recordings` with glob `"/data/runs/run_{run}.mcap"`, bundle `[run]`; rule `Run Metadata` with glob `"/data/runs/run_{id}.yaml"`, `stability_window_secs: 5`, bundle `[id]`; both with `collection_slug: runs`, `bucket: my-uploads-bucket`, and path `"runs/{device_id}/{bundle_id}/{upload_id}/{file_name}"`. Show each rule as a full YAML block in the same shape as the Recordings example (`stability_window_secs` goes under `source`). Explain that `run_42.mcap` and `run_42.yaml` join one bundle because both rules list one capture with value `42` and use the same upload collection, even though the captures are named differently. One closing sentence: the same works for one rule per sensor folder (for example `/data/{session}/camera/*` and `/data/{session}/lidar/*` both bundled by `session`).
 
@@ -111,11 +111,11 @@ Milestone 2 (cross-page updates).
 
 Milestone 3 (CLI changelog). In `docs/changelog/cli.mdx`, insert above `# v0.12.1` (line 10), keeping the two blank lines after the import:
 
-    # v0.13.0
+    # v0.12.2
 
     *October 15, 2026*
 
-    CLI `v0.13.0` adds support for grouping related uploads into [bundles](/data-uploads/concepts/file-rules/bundles).
+    CLI `v0.12.2` adds support for grouping related uploads into [bundles](/data-uploads/concepts/file-rules/bundles).
 
     ## Features
 
@@ -151,7 +151,7 @@ Read-only review checks (no builds, linters, spellcheck, or tests are run locall
     grep -nE '(^|[^-])--([^-]|$)' docs/data-uploads/concepts/file-rules/bundles.mdx
     grep -rn "rule-definition#file-format" docs
 
-Then read every changed line containing `{` or `**` and confirm it is inside backticks or a code block; confirm every new link points at an existing page and anchor (`#captures`, `#glob-captures`, `#glob-patterns`, `#param-bundle`, `#param-bundle-id`, `/changelog/cli#v0-13-0`); confirm headings are sentence case with no bare `ID` or `YAML`. Expected: JSON loads silently, the nav grep prints one line, the `rule-definition#file-format` grep prints nothing, and the `--` grep prints nothing outside backticks or code fences (frontmatter `---` lines are excluded by the pattern). The heading grep also prints YAML comment lines inside code fences (for example `# optional block` in `rule-definition.mdx`); those are not headings.
+Then read every changed line containing `{` or `**` and confirm it is inside backticks or a code block; confirm every new link points at an existing page and anchor (`#captures`, `#glob-captures`, `#glob-patterns`, `#param-bundle`, `#param-bundle-id`, `/changelog/cli#v0-12-2`); confirm headings are sentence case with no bare `ID` or `YAML`. Expected: JSON loads silently, the nav grep prints one line, the `rule-definition#file-format` grep prints nothing, and the `--` grep prints nothing outside backticks or code fences (frontmatter `---` lines are excluded by the pattern). The heading grep also prints YAML comment lines inside code fences (for example `# optional block` in `rule-definition.mdx`); those are not headings.
 
 Milestone commits (plain `mv` works whether or not the plan file is tracked; `git add -A plans` stages the move either way):
 
@@ -163,14 +163,14 @@ Milestone commits (plain `mv` works whether or not the plan file is tracked; `gi
     git commit -m "docs(data-uploads): document glob captures, bundle field, and bundle IDs" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
     git add docs/changelog/cli.mdx plans/active/20261015-file-rule-bundles-docs.md
-    git commit -m "docs(changelog): add CLI v0.13.0 release notes" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+    git commit -m "docs(changelog): add CLI v0.12.2 release notes" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 Milestone 4:
 
     git push -u origin docs/file-rule-bundles
-    gh pr create --draft --base main --title "docs: document file rule bundles and CLI v0.13.0" --body "<body>"
+    gh pr create --draft --base main --title "docs: document file rule bundles and CLI v0.12.2" --body "<body>"
 
-The body is a few lines: what changed (bundles page, capture and `{bundle_id}` variables, `upload.bundle`, upload `bundle_id`, 2048-byte path limit, CLI `v0.13.0` notes), links to mirurobotics/backend#916, mirurobotics/openapi#309, and mirurobotics/cli-private#234, a note that the CLI version must be confirmed before merge, and the final line `🤖 Generated with [Claude Code](https://claude.com/claude-code)`. `gh pr edit` fails in mirurobotics repos (projects-classic); to change the title or body use:
+The body is a few lines: what changed (bundles page, capture and `{bundle_id}` variables, `upload.bundle`, upload `bundle_id`, 2048-byte path limit, CLI `v0.12.2` notes), links to mirurobotics/backend#916, mirurobotics/openapi#309, and mirurobotics/cli-private#234, a note that the CLI version must be confirmed before merge, and the final line `🤖 Generated with [Claude Code](https://claude.com/claude-code)`. `gh pr edit` fails in mirurobotics repos (projects-classic); to change the title or body use:
 
     gh api -X PATCH repos/mirurobotics/docs/pulls/<n> -f body="<body>"
 
@@ -198,8 +198,8 @@ Acceptance, observable on the PR's Mintlify preview (the `Mintlify Deployment` c
 - `/data-uploads/concepts/file-rules/rule-definition` shows the `{name}` syntax row, the `### Glob captures` subsection, the `{bundle_id}` and capture rows in the path variable table, and a `bundle` field; its glob rules forbid `.` and `..` segments; `/data-uploads/define-file-rules` shows the same snippet changes and the bundles link.
 - `/data-uploads/concepts/uploads` lists `bundle_id` (immutable, nullable, example `upl_bdl_123`) and says `file_path` is at most 2048 bytes.
 - `/references/cli/release-create` file rule links open the rule definition page with no broken anchor.
-- `/changelog/cli` starts with `v0.13.0`, dated October 15, 2026, with one Features and one Fixes bullet.
+- `/changelog/cli` starts with `v0.12.2`, dated October 15, 2026, with one Features and one Fixes bullet.
 
 ## Idempotence and Recovery
 
-All steps are file edits and can be repeated; re-running a grep or review changes nothing. If a commit is wrong, fix it with a follow-up commit. If the CLI release ships under another version or date, find every occurrence with `grep -rn "0\.13\.0\|0-13-0" docs` and, in one new commit whose message ends with the `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>` trailer, update the changelog heading, date line, and summary sentence, plus the bundles page `<Info>` text and its `/changelog/cli#v0-13-0` anchor. Then retitle the PR with `gh api -X PATCH repos/mirurobotics/docs/pulls/<n> -f title="<new title>"`. Already-pushed commit subjects are not rewritten. To abandon, close the PR and delete only the `docs/file-rule-bundles` branch this plan created.
+All steps are file edits and can be repeated; re-running a grep or review changes nothing. If a commit is wrong, fix it with a follow-up commit. If the CLI release ships under another version or date, find every occurrence with `grep -rn "0\.13\.0\|0-13-0" docs` and, in one new commit whose message ends with the `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>` trailer, update the changelog heading, date line, and summary sentence, plus the bundles page `<Info>` text and its `/changelog/cli#v0-12-2` anchor. Then retitle the PR with `gh api -X PATCH repos/mirurobotics/docs/pulls/<n> -f title="<new title>"`. Already-pushed commit subjects are not rewritten. To abandon, close the PR and delete only the `docs/file-rule-bundles` branch this plan created.
