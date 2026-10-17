@@ -59,48 +59,26 @@ retention:
   ttl_secs: 3600
 ```
 
-### Source
 
-<Sources />
-
-### Upload
-
-<Upload />
-
-### Retention
-
-<Retention />
+For a complete specification of available fields and settings, see the [rule definition](/data-uploads/concepts/file-rules/rule-definition) page.
 
 ## Bundle related files
 
-To group related files, such as every file from one recording, into a single
-[bundle](/data-uploads/concepts/upload-bundles):
+For rules that upload files, you can [bundle](/data-uploads/concepts/upload-bundles) related files together under one logical unit.
 
-1. Replace the part of the glob that identifies the group with a
-   [capture](/data-uploads/concepts/file-rules/rule-definition#glob-captures). For
-   recordings stored as `/data/recordings/<recording>/<file>`, use `{recording}`.
-2. List the capture in `upload.bundle`.
-3. Optionally, add `{bundle_id}` to `upload.path` so each bundle's files share an object
-   key prefix.
+Bundles are identified by a file rule's [captures](/data-uploads/concepts/file-rules/rule-definition#glob-captures) and are only shared within a given device: uploads from different devices are never bundled together.
+
+To illustrate bundling, consider the following rule which specifies the `{recording}` capture in `source.glob` and uses it in `upload.bundle` to bundle together all files from a single recording.
 
 <RecordingsBundle />
 
-Add the rule to a release as described [below](#add-file-rules-to-a-release). Once the
-release is deployed, the files from each recording on a device share one bundle and land
-under one `{bundle_id}` prefix in your bucket, such as `upl_bdl_123/`.
-
 <BundleCliVersion />
 
-Files that need different rules, such as `.mcap` and `.yaml` files with different
-stability windows, can still share a bundle. See
-[Multiple rules](/data-uploads/concepts/upload-bundles#multiple-rules).
+For more detailed information and advanced bundling examples, see the [upload bundles](/data-uploads/concepts/upload-bundles) page.
 
 ## Add file rules to a release
 
-File rules ride along with `miru release create` — the same command that creates the release and its schemas. Include them with either flag (both may be repeated):
-
-- `--file-rule <file>` — a single file rule YAML file
-- `--file-rules <dir>` — a directory of file rule YAML files
+To include file rules in a release, use the `--file-rule` or `--file-rules` flags when running the `miru release create` command.
 
 ```bash highlight={4}
 $ miru release create \

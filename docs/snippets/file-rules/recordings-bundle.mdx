@@ -1,4 +1,4 @@
-```yaml highlight={4,10,11} nocopy
+```yaml highlight={4,10} nocopy
 name: Recordings
 
 source:
@@ -7,16 +7,25 @@ source:
 upload:
   collection_slug: recordings
   bucket: my-uploads-bucket
-  path: "{bundle_id}/{upload_id}/{file_name}"
-  bundle:
-    - recording
+  path: "{device_name}/{bundle_id}/{upload_id}/{file_name}"
+  bundle: [recording]
 ```
 
-Both files in the `run_42` folder join the same bundle:
+Using this rule, all files in the `run_42` folder are bundled together:
 
-| Source file | Upload path |
-| --- | --- |
-| `/data/recordings/run_42/camera.mcap` | `upl_bdl_123/upl_123/camera.mcap` |
-| `/data/recordings/run_42/metadata.yaml` | `upl_bdl_123/upl_456/metadata.yaml` |
+<Tree>
+<Tree.Folder name="data" defaultOpen>
+  <Tree.Folder name="recordings" defaultOpen>
+    <Tree.Folder name="run_42" defaultOpen highlight>
+      <Tree.File name="camera.mcap" />
+      <Tree.File name="metadata.yaml" />
+    </Tree.Folder>
+    <Tree.Folder name="run_43" defaultOpen>
+      <Tree.File name="camera.mcap" />
+      <Tree.File name="metadata.yaml" />
+    </Tree.Folder>
+  </Tree.Folder>
+</Tree.Folder>
+</Tree>
 
-A file in another recording folder, such as `run_43`, lands in a different bundle with a different `{bundle_id}`.
+Files in another folder, such as `run_43`, land in a different bundle.
