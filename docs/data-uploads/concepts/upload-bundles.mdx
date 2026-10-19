@@ -220,7 +220,7 @@ Below are common patterns for specifying which files to bundle together.
 
     `run_18/front.yaml` does not join `run_18/back.yaml` (different camera) or `run_19/front.yaml` (different run).
 
-    How many captures you list is the grouping granularity: `[run]` puts every camera in `run_18` in one bundle; `[run, camera]` keeps them separate.
+    How many captures you list is the grouping granularity: `[run, camera]` keeps each camera separate, while `[run]` puts every camera in `run_18` in one bundle. Every capture must be [used](/data-uploads/concepts/file-rules/rule-definition#glob-captures), so a `[run]` rule must put `{camera}` in `upload.path` instead, such as `{bundle_id}/{camera}/{upload_id}/{file_name}`.
   </Tab>
 </Tabs>
 
