@@ -2,6 +2,7 @@
 title: "Rule definition"
 ---
 
+import RecordingsBundle from '/snippets/file-rules/recordings-bundle.mdx';
 import Retention from '/snippets/file-rules/retention.mdx';
 import Sources from '/snippets/file-rules/sources.mdx';
 import Upload from '/snippets/file-rules/upload.mdx';
@@ -43,7 +44,7 @@ Every pattern must:
 
 - Be absolute (e.g. start with `/` on Linux or a drive letter such as `C:\` on Windows)
 - Be at most 1024 bytes and contain no control characters
-- Contain no `..` segments or empty segments (`//` or a trailing `/`)
+- Contain no `.` or `..` segments or empty segments (`//` or a trailing `/`)
 
 Each rule accepts one pattern. To match files that no single pattern covers, define a
 rule for each pattern.
@@ -57,11 +58,15 @@ rule for each pattern.
 | `?` | one character |
 | `[abc]`, `[a-z]` | one character from the set or range |
 | `[!abc]`, `[!a-z]` | one character not in the set or range |
+| `{key}` | like `*`, and records the matched text under a capture key; see [Glob captures](#glob-captures) |
 
-Brace expansion (`{a,b}`), backslash escapes (`\*`), and extended patterns such as
-`!(x)` are not supported. Braces match literally. On Linux, backslashes also match
-literally; on Windows, `\` is a path separator. To match a literal
-`*`, `?`, or `[`, wrap it in brackets: `[*]`, `[?]`, or `[[]`.
+Brace expansion is not supported: a brace group containing a comma, such as `{a,b}`,
+matches literally. A brace group without a comma, such as `{Recording}` or `{}`, is read
+as a capture and must be valid (see [Glob captures](#glob-captures)). 
+
+Backslash escapes
+(`\*`) and extended patterns such as `!(x)` are not supported. On Linux, backslashes
+also match literally; on Windows, `\` is a path separator.
 
 **Examples**
 
@@ -104,6 +109,82 @@ literally; on Windows, `\` is a path separator. To match a literal
   directories. Files in directories the agent can't read are silently skipped. See
   [File system access on Linux](/developers/agent/filesys-access/linux#data-uploads) or [Windows](/developers/agent/filesys-access/windows#data-uploads) for details.
 </Warning>
+
+### Glob captures
+
+A capture is a `{key}` placeholder in a glob, where `key` is the capture key. It matches exactly like the `*` wildcard operator but records the matched text under that key. The captured value can then be used elsewhere.
+
+**Examples**
+
+Captured values have two main uses:
+
+<AccordionGroup>
+  <Accordion title="Configure the upload path">
+
+    Reference captures in [`upload.path`](/data-uploads/concepts/file-rules/rule-definition#param-path) as `{key}`. The matched text is filled in with the capture's value on upload.
+
+    ```yaml highlight={4,9} nocopy
+    name: Recordings
+
+    source:
+      glob: "/data/recordings/{recording}/*"
+
+    upload:
+      collection_slug: recordings
+      bucket: my-uploads-bucket
+      path: "{device_id}/{recording}/{upload_id}/{file_name}"
+    ```
+
+    Below is an example source file and upload path:
+
+    **Source file:** `/data/recordings/run_42/camera.mcap`
+
+    **Upload path:** `dvc_123/run_42/upl_123/camera.mcap`
+  </Accordion>
+
+  <Accordion title="Group related uploads into a bundle">
+    Reference captures in the [`upload.bundle`](/data-uploads/concepts/file-rules/rule-definition#param-bundle) field. Uploads with the same device, upload collection, and capture values are [bundled](/data-uploads/concepts/upload-bundles).
+
+    <RecordingsBundle />
+
+    For more information on bundles, see [Upload bundles](/data-uploads/concepts/upload-bundles).
+  </Accordion>
+</AccordionGroup>
+
+**Key rules**
+
+Capture keys must:
+
+- Start with a lowercase letter
+- Contain only lowercase letters, digits, and `_`
+- Be unique within the glob
+- Not reuse a built-in upload path [variable](/data-uploads/concepts/file-rules/rule-definition#param-path)
+- Be used in the [upload path](/data-uploads/concepts/file-rules/rule-definition#param-path) or [upload bundle](/data-uploads/concepts/file-rules/rule-definition#param-bundle)
+
+A path segment holds at most one capture, and the rest of that segment must be constant
+text, with no `*`, `?`, `[`, `\`, or other braces. A capture may not have `**` segments
+both before and after it.
+
+**Invalid examples**
+
+| Pattern | Reason |
+| --- | --- |
+| `/data/{recording}_*.mcap` | `*` in a capture's segment |
+| `/data/{session}{run}/*` | Two captures in one segment |
+| `/data/**/{recording}/**/*` | `**` before and after the capture |
+| `/data/{Recording}/*` | The key must start with a lowercase letter |
+| `/data/{file_name}/*` | Reuses a built-in variable |
+
+**Valid examples**
+
+- `/data/recordings/{recording}/*`
+- `/data/{session}/run_{run}.mcap`
+- `/data/{session}/**/*.mcap`
+- `/data/**/run_{run}.mcap`
+- `/data/{session}/cam?.mcap`
+- `/data/{session}/run-[0-9].mcap`
+- `/data/{session}/cam[012].mcap`
+- `/data/{session}/[!._]*`
 
 ## Uploads
 

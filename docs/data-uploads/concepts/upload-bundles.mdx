@@ -1,0 +1,348 @@
+---
+title: "Upload bundles"
+---
+
+import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+import RecordingsBundle from '/snippets/file-rules/recordings-bundle.mdx';
+
+An upload bundle is a group of related [uploads](/data-uploads/concepts/uploads) from a
+single device, such as every file from one recording or run. 
+
+
+## Properties
+
+<ParamField path="device" type="Device">
+  <ImmutableBadge />
+
+  The [device](/concepts/devices/overview) whose uploads the bundle groups.
+</ParamField>
+
+<ParamField path="upload collection" type="Upload Collection">
+  <ImmutableBadge />
+
+  The [upload collection](/data-uploads/concepts/upload-collections) whose uploads the
+  bundle groups.
+</ParamField>
+
+<ParamField path="capture_keys" type="string[]">
+  <ImmutableBadge />
+
+  The capture keys from [upload.bundle](/data-uploads/concepts/file-rules/rule-definition#param-bundle) of the file rule that created the bundle. 
+  
+  Capture keys do not affect membership, only captured values do. See [Same capture values](#same-capture-values).
+
+  Example: `["mission", "run"]`
+</ParamField>
+
+<ParamField path="capture_values" type="string[]">
+  <ImmutableBadge />
+
+  The captured values that identify the bundle. 
+  
+  Together with the device and upload collection, these values are the bundle's
+  identity: no two bundles share all three. See [Matching conditions](#matching-conditions).
+
+  Example: `["mission_123", "run_03"]`
+</ParamField>
+
+## Single file rule
+
+Bundles are specified in a file rule's [upload.bundle](/data-uploads/concepts/file-rules/rule-definition#param-bundle) field. Below is an example of a file rule that bundles files in the same `{recording}` folder:
+
+<RecordingsBundle />
+
+## Multiple file rules
+
+Sometimes you want to bundle files sourced from different file rules. In such cases, bundling is still possible. Consider the following two rules:
+
+<CodeGroup>
+```yaml Calibration Rule highlight={4,10} nocopy
+name: Camera Calibration
+
+source:
+  glob: "/data/calib/{run}/{camera}.yaml"
+
+upload:
+  collection_slug: calibration
+  bucket: my-uploads-bucket
+  path: "calib/{bundle_id}/{upload_id}/{file_name}"
+  bundle: [run, camera]
+```
+
+```yaml Images Rule highlight={4,11} nocopy
+name: Calibration Images
+
+source:
+  glob: "/data/images/{run}/{camera}.png"
+  stability_window_secs: 5
+
+upload:
+  collection_slug: calibration
+  bucket: my-uploads-bucket
+  path: "calib/{bundle_id}/{upload_id}/{file_name}"
+  bundle: [run, camera]
+```
+</CodeGroup>
+
+Using these rules, `/data/calib/run_18/front.yaml` and `/data/images/run_18/front.png`
+are bundled because they have the same capture values of `run_18` and `front`.
+
+<Tree>
+  <Tree.Folder name="data" defaultOpen>
+    <Tree.Folder name="calib" defaultOpen>
+      <Tree.Folder name="run_18" defaultOpen>
+        <Tree.File name="front.yaml" highlight />
+        <Tree.File name="back.yaml" />
+      </Tree.Folder>
+      <Tree.Folder name="run_19" defaultOpen>
+        <Tree.File name="front.yaml" />
+        <Tree.File name="back.yaml" />
+      </Tree.Folder>
+    </Tree.Folder>
+    <Tree.Folder name="images" defaultOpen>
+      <Tree.Folder name="run_18" defaultOpen>
+        <Tree.File name="front.png" highlight />
+        <Tree.File name="back.png" />
+      </Tree.Folder>
+      <Tree.Folder name="run_19" defaultOpen>
+        <Tree.File name="front.png" />
+        <Tree.File name="back.png" />
+      </Tree.Folder>
+    </Tree.Folder>
+  </Tree.Folder>
+</Tree>
+
+A different camera (`run_18/back.yaml`) or a later run (`run_19/front.yaml`) is placed into a different bundle.
+
+## Common patterns
+
+Below are common patterns for specifying which files to bundle together.
+
+<Tabs>
+  <Tab title="Folder">
+
+    Use when each group is already a directory. Capture the folder name and match the files inside it.
+
+    ```yaml highlight={4,10} nocopy
+    name: Bags
+
+    source:
+      glob: "/data/bags/{bag}/*"
+
+    upload:
+      collection_slug: bags
+      bucket: my-uploads-bucket
+      path: "{bundle_id}/{upload_id}/{file_name}"
+      bundle: [bag]
+    ```
+
+    Every file in `drive_07/` shares a bundle. `drive_08/` is a different bundle:
+
+    <Tree>
+      <Tree.Folder name="data" defaultOpen>
+        <Tree.Folder name="bags" defaultOpen>
+          <Tree.Folder name="drive_07" defaultOpen highlight>
+            <Tree.File name="camera.mcap" />
+            <Tree.File name="metadata.yaml" />
+          </Tree.Folder>
+          <Tree.Folder name="drive_08" defaultOpen>
+            <Tree.File name="camera.mcap" />
+            <Tree.File name="metadata.yaml" />
+          </Tree.Folder>
+        </Tree.Folder>
+      </Tree.Folder>
+    </Tree>
+
+  </Tab>
+  <Tab title="Filename">
+
+    Use when related files share an identifier in the filename instead of a folder. Capture the id, and keep the rest of the segment constant. 
+
+    <CodeGroup>
+    ```yaml MCAP Rule highlight={4,10} nocopy
+    name: Run Recordings
+
+    source:
+      glob: "/data/runs/{run}.mcap"
+
+    upload:
+      collection_slug: runs
+      bucket: my-uploads-bucket
+      path: "{bundle_id}/{upload_id}/{file_name}"
+      bundle: [run]
+    ```
+
+    ```yaml Sidecar Rule highlight={4,11} nocopy
+    name: Run Metadata
+
+    source:
+      glob: "/data/runs/{run}.yaml"
+      stability_window_secs: 5
+
+    upload:
+      collection_slug: runs
+      bucket: my-uploads-bucket
+      path: "{bundle_id}/{upload_id}/{file_name}"
+      bundle: [run]
+    ```
+    </CodeGroup>
+
+    `run_18.mcap` and `run_18.yaml` join one bundle. `run_19` is a different bundle:
+
+    <Tree>
+      <Tree.Folder name="data" defaultOpen>
+        <Tree.Folder name="runs" defaultOpen>
+          <Tree.File name="run_18.mcap" highlight />
+          <Tree.File name="run_18.yaml" highlight />
+          <Tree.File name="run_19.mcap" />
+          <Tree.File name="run_19.yaml" />
+        </Tree.Folder>
+      </Tree.Folder>
+    </Tree>
+
+  </Tab>
+  <Tab title="Nested">
+
+    Use when the group has more than one part, such as a run and a camera. Capture each part in its own path segment and list them in `upload.bundle`.
+
+    ```yaml highlight={4,10} nocopy
+    name: Camera Calibration
+
+    source:
+      glob: "/data/calib/{run}/{camera}.yaml"
+
+    upload:
+      collection_slug: calibration
+      bucket: my-uploads-bucket
+      path: "{bundle_id}/{upload_id}/{file_name}"
+      bundle: [run, camera]
+    ```
+
+    `run_18/front.yaml` does not join `run_18/back.yaml` (different camera) or `run_19/front.yaml` (different run).
+
+    How many captures you list is the grouping granularity: `[run]` puts every camera in `run_18` in one bundle; `[run, camera]` keeps them separate.
+  </Tab>
+</Tabs>
+
+## Matching conditions
+
+Specifying captures to bundle files is a powerful way to group related files together. Below is the full list of conditions that determine if two uploads are placed into the same bundle.
+
+### Same device
+
+Bundles never span devices. Identical capture values from two devices are always placed into different bundles.
+
+### Same upload collection
+
+Bundles never span upload collections. Identical capture values from the same device but specifying a different upload collection are always placed into different bundles.
+
+### Same capture values
+
+Bundles are matched by their capture *values*; the order of capture values does matter. Notably, capture keys are ignored.
+
+#### Examples
+
+To illustrate capture matching conditions, consider the following file rules:
+
+<CodeGroup>
+```yaml [mission, run] highlight={4,10} nocopy
+name: Missions
+
+source:
+  glob: "/data/missions/{mission}/{run}/*"
+
+upload:
+  collection_slug: missions
+  bucket: my-uploads-bucket
+  path: "missions/{bundle_id}/{upload_id}/{file_name}"
+  bundle: [mission, run]
+```
+
+```yaml [session, id] highlight={4,10} nocopy
+name: Sessions
+
+source:
+  glob: "/data/missions/{session}/{id}/*"
+
+upload:
+  collection_slug: missions
+  bucket: my-uploads-bucket
+  path: "missions/{bundle_id}/{upload_id}/{file_name}"
+  bundle: [session, id]
+```
+
+```yaml [mission] highlight={4,10} nocopy
+name: Missions
+
+source:
+  glob: "/data/missions/{mission}.json"
+
+upload:
+  collection_slug: missions
+  bucket: my-uploads-bucket
+  path: "missions/{bundle_id}/{upload_id}/{file_name}"
+  bundle: [mission]
+```
+</CodeGroup>
+
+Below are some examples of captured values and whether they would join the same bundle:
+
+**Bundled**
+
+<AccordionGroup>
+  <Accordion title="Same keys, values, and order">
+
+    | | Capture keys | Capture values |
+    | --- | --- | --- |
+    | Upload A | `[mission, run]` | `["01", "02"]` |
+    | Upload B | `[mission, run]` | `["01", "02"]` |
+
+    **Explanation:** Both uploads captured `["01", "02"]` in that order.
+
+  </Accordion>
+  <Accordion title="Keys differ, values and order match">
+
+    | | Capture keys | Capture values |
+    | --- | --- | --- |
+    | Upload A | `[mission, run]` | `["01", "02"]` |
+    | Upload B | `[session, id]` | `["01", "02"]` |
+
+    **Explanation:** Capture keys are ignored. Both uploads captured `["01", "02"]` in that order.
+
+  </Accordion>
+</AccordionGroup>
+
+**Not bundled**
+
+<AccordionGroup>
+  <Accordion title="Order differs">
+
+    | | Capture keys | Capture values |
+    | --- | --- | --- |
+    | Upload A | `[mission, run]` | `["02", "01"]` |
+    | Upload B | `[mission, run]` | `["01", "02"]` |
+
+    **Explanation:** Both uploads captured `01` and `02`, but in opposite order.
+
+  </Accordion>
+  <Accordion title="A value differs">
+
+    | | Capture keys | Capture values |
+    | --- | --- | --- |
+    | Upload A | `[mission, run]` | `["03", "02"]` |
+    | Upload B | `[mission, run]` | `["01", "02"]` |
+
+    **Explanation:** The first capture value is `03` vs `01`.
+
+  </Accordion>
+  <Accordion title="Fewer values">
+
+    | | Capture keys | Capture values |
+    | --- | --- | --- |
+    | Upload A | `[mission, run]` | `["01", "02"]` |
+    | Upload B | `[mission]` | `["01"]` |
+
+    **Explanation:** One upload captured two values and the other captured one.
+
+  </Accordion>
+</AccordionGroup>
