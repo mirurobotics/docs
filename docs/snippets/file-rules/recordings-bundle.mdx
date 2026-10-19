@@ -1,0 +1,31 @@
+```yaml highlight={4,10} nocopy
+name: Recordings
+
+source:
+  glob: "/data/recordings/{recording}/*"
+
+upload:
+  collection_slug: recordings
+  bucket: my-uploads-bucket
+  path: "{device_name}/{bundle_id}/{upload_id}/{file_name}"
+  bundle: [recording]
+```
+
+Using this rule, all files in the `run_42` folder are bundled together:
+
+<Tree>
+<Tree.Folder name="data" defaultOpen>
+  <Tree.Folder name="recordings" defaultOpen>
+    <Tree.Folder name="run_42" defaultOpen highlight>
+      <Tree.File name="camera.mcap" />
+      <Tree.File name="metadata.yaml" />
+    </Tree.Folder>
+    <Tree.Folder name="run_43" defaultOpen>
+      <Tree.File name="camera.mcap" />
+      <Tree.File name="metadata.yaml" />
+    </Tree.Folder>
+  </Tree.Folder>
+</Tree.Folder>
+</Tree>
+
+Files in another folder, such as `run_43`, land in a different bundle.

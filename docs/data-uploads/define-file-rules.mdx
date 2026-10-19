@@ -2,9 +2,8 @@
 title: "Define file rules"
 ---
 
-import Retention from '/snippets/file-rules/retention.mdx';
-import Sources from '/snippets/file-rules/sources.mdx';
-import Upload from '/snippets/file-rules/upload.mdx';
+import BundleCliVersion from '/snippets/file-rules/bundle-cli-version.mdx';
+import RecordingsBundle from '/snippets/file-rules/recordings-bundle.mdx';
 
 File rules are an optional part of a release. They define which files on your devices Miru manages — where they are uploaded, how long they are kept, or both. This page covers defining file rules and including them when creating a release.
 
@@ -57,26 +56,26 @@ retention:
   ttl_secs: 3600
 ```
 
-Like schemas, file rules are identified by hashing their content, so rules with equivalent content are deduplicated even if their comments or formatting differ. 
 
-### Source
+For a complete specification of available fields and settings, see the [rule definition](/data-uploads/concepts/file-rules/rule-definition) page.
 
-<Sources />
+## Bundle related files
 
-### Upload
+For rules that upload files, you can [bundle](/data-uploads/concepts/upload-bundles) related files together under one logical unit.
 
-<Upload />
+Bundles are identified by a file rule's [captures](/data-uploads/concepts/file-rules/rule-definition#glob-captures) and are only shared within a given device: uploads from different devices are never bundled together.
 
-### Retention
+To illustrate bundling, consider the following rule which specifies the `{recording}` capture in `source.glob` and uses it in `upload.bundle` to bundle together all files from a single recording.
 
-<Retention />
+<RecordingsBundle />
+
+<BundleCliVersion />
+
+For more detailed information and advanced bundling examples, see the [upload bundles](/data-uploads/concepts/upload-bundles) page.
 
 ## Add file rules to a release
 
-File rules ride along with `miru release create` — the same command that creates the release and its schemas. Include them with either flag (both may be repeated):
-
-- `--file-rule <file>` — a single file rule YAML file
-- `--file-rules <dir>` — a directory of file rule YAML files
+To include file rules in a release, use the `--file-rule` or `--file-rules` flags when running the `miru release create` command.
 
 ```bash highlight={4}
 $ miru release create \
