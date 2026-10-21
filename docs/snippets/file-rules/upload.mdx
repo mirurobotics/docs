@@ -32,13 +32,20 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
   | `{device_id}` | `dvc_123` | The uploading device's ID. |
   | `{device_name}` | `my-robot` | The device's name. |
   | `{file_name}` | `robot.log` | The source file's basename. |
-  | `{year}` | `2026` | The upload's creation year (e.g. `2026`). |
-  | `{month}` | `01` | The upload's creation month. |
-  | `{day}` | `01` | The upload's creation day. |
-  | `{hour}` | `00` | The upload's creation hour. |
-  | `{minute}` | `00` | The upload's creation minute. |
+  | `{year}` | `2026` | The upload's creation year, in UTC. |
+  | `{month}` | `01` | The upload's creation month, in UTC. |
+  | `{day}` | `01` | The upload's creation day, in UTC. |
+  | `{hour}` | `00` | The upload's creation hour (24-hour), in UTC. |
+  | `{minute}` | `00` | The upload's creation minute, in UTC. |
   | `{bundle_id}` | `upl_bdl_123` | The upload's [bundle](/data-uploads/concepts/upload-bundles) ID. Requires `bundle`. |
   | Any [capture](/data-uploads/concepts/file-rules/rule-definition#glob-captures) | `run_42` | The value matched by the capture. |
+
+  <Note>
+    Time variables are always rendered in UTC from Miru's clock when the upload is
+    created, just before the agent transfers the file. They don't reflect the
+    file's modification time or the device's clock or time zone. For example, a
+    file written at 23:50 UTC but uploaded at 00:10 UTC gets the next day's date.
+  </Note>
 
   <Warning>
     Templates must contain the `{upload_id}` variable.
