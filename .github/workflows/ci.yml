@@ -10,6 +10,12 @@ on:
       - production
   workflow_call:
 
+# Fixed group name: this file is also a reusable workflow (workflow_call),
+# where github.workflow would be the caller's name.
+concurrency:
+  group: docs-ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   changes:
     runs-on: blacksmith-2vcpu-ubuntu-2404
