@@ -10,8 +10,6 @@ on:
       - production
   workflow_call:
 
-# Fixed group name: this file is also a reusable workflow (workflow_call),
-# where github.workflow would be the caller's name.
 concurrency:
   group: docs-ci-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
