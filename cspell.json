@@ -51,6 +51,7 @@
     "journalctl",
     "keypair",
     "keyrings",
+    "localtime",
     "mcap",
     "mgmt",
     "mintable",
