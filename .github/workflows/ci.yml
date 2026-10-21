@@ -10,6 +10,10 @@ on:
       - production
   workflow_call:
 
+concurrency:
+  group: docs-ci-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   changes:
     runs-on: blacksmith-2vcpu-ubuntu-2404
