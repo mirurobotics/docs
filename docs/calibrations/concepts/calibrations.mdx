@@ -1,0 +1,101 @@
+---
+title: "Calibrations"
+---
+
+import { ImmutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
+import CalibrationDef from '/snippets/definitions/calibration.mdx';
+
+<CalibrationDef />
+
+## Properties
+
+<ParamField path="device" type="Device">
+  <ImmutableBadge />
+
+  The [device](/concepts/devices/overview) that reported the calibration.
+</ParamField>
+
+<ParamField path="component" type="Component">
+  <ImmutableBadge />
+
+  The [component](/calibrations/concepts/components) the calibrated unit belongs to.
+</ParamField>
+
+<ParamField path="role" type="Role">
+  <ImmutableBadge /> <NullableBadge />
+
+  The [role](/calibrations/concepts/components#roles-and-aspects) the calibrated unit fills on the device. Null if the device reported no role.
+</ParamField>
+
+<ParamField path="aspect" type="Aspect">
+  <ImmutableBadge /> <NullableBadge />
+
+  The [aspect](/calibrations/concepts/components#roles-and-aspects) of the unit that was calibrated. Null if the device reported no aspect.
+</ParamField>
+
+<ParamField path="serial_number" type="string">
+  <ImmutableBadge /> <NullableBadge />
+
+  The serial number of the physical unit that was calibrated, not of the device. Free text, at most 255 characters. Null if the device reported none.
+
+  Example: `M500-1234`
+</ParamField>
+
+<ParamField path="content" type="object">
+  <ImmutableBadge />
+
+  The calibration result, stored exactly as the device reported it. Content has a `format` and the `data` serialized in that format, at most 1 MiB.
+
+  Allowed formats:
+  - `json`
+  - `yaml`
+  - `jsonc`
+  - `xml`
+  - `text`
+
+  Miru checks that `json`, `jsonc` and `yaml` content parses, and stores `xml` and `text` content as given.
+</ParamField>
+
+<ParamField path="digest" type="string">
+  <ImmutableBadge />
+
+  The SHA-256 digest of the content, used to verify integrity.
+
+  Example: `sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+</ParamField>
+
+<ParamField path="deployment" type="Deployment">
+  <ImmutableBadge /> <NullableBadge />
+
+  The [deployment](/concepts/deployments/overview) the device was on when it reported the calibration. Null if the device had no deployment, or if the deployment was later deleted.
+</ParamField>
+
+<ParamField path="reported_at" type="datetime">
+  <ImmutableBadge />
+
+  Timestamp of when the Miru Agent on the device received the calibration.
+
+  The agent may upload a calibration long after it was reported, for example after a network outage, so `reported_at` can be well before `created_at`. Calibration history is ordered by `reported_at`.
+</ParamField>
+
+<ParamField path="created_at" type="datetime">
+  <ImmutableBadge />
+
+  Timestamp of when Miru recorded the calibration.
+</ParamField>
+
+## History
+
+Calibrations are append-only. Miru never changes or deletes a calibration, and no user can create, edit or delete one. A calibration is only removed when the device that reported it is deleted.
+
+Each device keeps a separate history for every combination of component, role and aspect it reports. The newest calibration in a history, by `reported_at`, is that unit's current calibration.
+
+## Duplicates
+
+Every report creates a new calibration, even if its content matches an earlier one. Sending the same calibration twice records it twice.
+
+On rare occasions, Miru may also record a calibration twice without it being sent twice. If the agent uploads a calibration but loses Miru's response, for example because of a timeout or an agent restart, it uploads the calibration again.
+
+## Access
+
+Users can view the calibrations of devices in the [groups](/concepts/groups/overview) they can view. Only a device can create a calibration, and only for itself.

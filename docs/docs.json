@@ -181,6 +181,28 @@
             ]
           },
           {
+            "group": "Calibrations",
+            "pages": [
+              "calibrations/overview",
+              {
+                "group": "Concepts",
+                "expanded": true,
+                "pages": [
+                  "calibrations/concepts/components",
+                  "calibrations/concepts/calibrations"
+                ]
+              },
+              {
+                "group": "Guides",
+                "expanded": true,
+                "pages": [
+                  "calibrations/report-calibrations",
+                  "calibrations/view-calibrations"
+                ]
+              }
+            ]
+          },
+          {
             "group": "Developers",
             "pages": [
               {

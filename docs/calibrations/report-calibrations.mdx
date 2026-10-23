@@ -1,0 +1,158 @@
+---
+title: "Report calibrations"
+---
+
+Devices report calibrations to Miru through the Miru Agent's [Device API](/developers/device-api/overview), with one request per calibration. Call it from the software that runs your calibration routines, right after each routine finishes. To import calibration files a device already has, send one request per file.
+
+## Prerequisites
+
+- The device runs Miru Agent [PLACEHOLDER: agent version] or later, which serves Device API `v0.2.3` or later.
+- The application sending the request can reach the Device API. See [Authentication](/developers/device-api/authn) for the transport and credentials on Linux and Windows.
+
+## Send a calibration
+
+Send a `POST` request to `/calibrations` with the calibration in the body.
+
+<ParamField body="component_slug" type="string" required>
+  The [slug](/calibrations/concepts/components#param-slug) of the component the calibrated unit belongs to. A new slug creates the component in Miru.
+
+  Example: `arm`
+</ParamField>
+
+<ParamField body="role" type="string">
+  The slug of the [role](/calibrations/concepts/components#roles-and-aspects) the calibrated unit fills on the device. Use it when the device has more than one unit of the component. A new role is added to the component.
+
+  Example: `aligner-1`
+</ParamField>
+
+<ParamField body="aspect" type="string">
+  The slug of the [aspect](/calibrations/concepts/components#roles-and-aspects) of the unit that was calibrated, when the unit is calibrated in more than one way. A new aspect is added to the component.
+
+  Example: `pose`
+</ParamField>
+
+<ParamField body="serial_number" type="string">
+  The serial number of the physical unit that was calibrated, not of the device. Free text, at most 255 characters.
+
+  Example: `M500-1234`
+</ParamField>
+
+<ParamField body="content" type="object" required>
+  The calibration result, with the fields below. The agent uploads it to Miru unchanged.
+</ParamField>
+
+<ParamField body="content.format" type="enum" required>
+  The format `content.data` is serialized in.
+
+  Allowed values:
+  - `json`
+  - `yaml`
+  - `jsonc`
+  - `xml`
+  - `text`
+</ParamField>
+
+<ParamField body="content.data" type="string" required>
+  The calibration result serialized in `content.format`, at most 1 MiB. This is usually the full text of the calibration file.
+</ParamField>
+
+You don't send the time or the deployment. The agent stamps each calibration with the time it received it (`reported_at`) and with the [deployment](/concepts/deployments/overview) the device is on, if any.
+
+### Example
+
+The examples below report the pose of the arm in the role `aligner-1`, read from the file `arm-pose.json`.
+
+<Tabs>
+  <Tab title="Linux">
+    This example builds the request body with [jq](https://jqlang.org/), which escapes the file's content as a JSON string.
+
+    ```bash wrap
+    jq -n --rawfile data arm-pose.json \
+      '{component_slug: "arm", role: "aligner-1", aspect: "pose", serial_number: "M500-1234", content: {format: "json", data: $data}}' |
+    curl --unix-socket /run/miru/miru.sock \
+      --request POST \
+      --url http://localhost/v0.2/calibrations \
+      --header 'Content-Type: application/json' \
+      --data-binary @-
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell wrap
+    $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
+    $body = @{
+      component_slug = "arm"
+      role           = "aligner-1"
+      aspect         = "pose"
+      serial_number  = "M500-1234"
+      content        = @{ format = "json"; data = (Get-Content -Raw "arm-pose.json") }
+    } | ConvertTo-Json -Depth 3
+    Invoke-RestMethod -Method Post `
+      -Uri "http://127.0.0.1:$($api.port)/v0.2/calibrations" `
+      -Headers @{ Authorization = "Bearer $($api.token)" } `
+      -ContentType "application/json" `
+      -Body $body
+    ```
+  </Tab>
+  <Tab title="Python">
+    [PLACEHOLDER: example with the Python Device SDK once the SDK release that supports calibrations ships]
+  </Tab>
+</Tabs>
+
+### Response
+
+Once the agent has saved the calibration on the device, it responds with `200 OK` and the time it received the calibration:
+
+```json nocopy
+{
+  "reported_at": "2026-03-10T12:00:00Z"
+}
+```
+
+A `200` means the calibration is saved on the device and will be uploaded. It doesn't mean Miru has recorded it yet. The agent responds the same way whether or not Miru is reachable, so a network outage is never an error.
+
+## Errors
+
+If the agent can't accept a calibration, it responds with an error and saves nothing. Errors use the Device API's error format:
+
+```json nocopy
+{
+  "error": {
+    "code": "calibration_too_large",
+    "params": {},
+    "message": "..."
+  }
+}
+```
+
+| Status | Code | Cause | What to do |
+| ------ | ---- | ----- | ---------- |
+| `401` | | Windows only: the bearer token is missing or out of date. | Re-read the discovery file and retry. See [Authentication](/developers/device-api/authn). |
+| `413` | `calibration_too_large` | `content.data` is over 1 MiB. Request bodies over about 2 MiB are also rejected with a `413`. | Reduce the size of the calibration. |
+| `422` | [PLACEHOLDER: error code] | The request is malformed: it isn't valid JSON, a required field is missing, a field has the wrong type, or `content.format` isn't an allowed format. | Fix the request. |
+| `507` | `calibration_buffer_full` | 1,000 calibrations are already waiting on the device to upload, usually because the device has been offline for a long time. | Retry later, once the device is back online and the agent has uploaded some of them. |
+
+## After the agent responds
+
+The agent uploads saved calibrations to Miru one at a time, in the order it received them.
+
+- **While the device is offline**, the agent keeps the calibrations on disk and retries every 10 seconds until Miru is reachable. Saved calibrations survive agent and device restarts.
+- **If an upload fails for another reason**, such as a server error, the agent retries it with a backoff that starts at 10 seconds and doubles up to 1 hour, for up to 30 attempts. Other calibrations keep uploading in the meantime.
+- **If Miru rejects a calibration**, the agent drops it, logs an error, and moves on to the next one. See [Avoid rejected calibrations](#avoid-rejected-calibrations).
+- **If a calibration still hasn't uploaded 7 days after it was reported**, the agent drops it and logs an error.
+
+Since the agent responds before it uploads, the response doesn't tell you whether Miru recorded the calibration. To confirm, [view the device's calibrations](/calibrations/view-calibrations) in the dashboard, or check the [agent logs](/developers/agent/commands#logs) for dropped calibrations.
+
+## Avoid rejected calibrations
+
+The agent only checks a request's shape and size before saving it. Miru checks the rest when the calibration is uploaded, and the agent drops a calibration Miru rejects. Miru rejects a calibration when:
+
+- `component_slug`, `role` or `aspect` isn't a valid [slug](/calibrations/concepts/components#param-slug).
+- `serial_number` is over 255 characters.
+- `content.data` doesn't parse as its `format`, for `json`, `jsonc` and `yaml` content.
+- It would add a component, role or aspect past a [limit](/calibrations/concepts/components#limits).
+
+To avoid losing calibrations this way, use fixed slugs in your software and check that your content parses before you send it.
+
+## Avoid duplicates
+
+Each request creates a new calibration, so don't resend a calibration the agent already accepted with a `200`. If a request fails with an error, nothing was saved and it's safe to send again. If the request times out before you get a response, the calibration may or may not have been saved, and sending it again may record it twice. See [Duplicates](/calibrations/concepts/calibrations#duplicates).

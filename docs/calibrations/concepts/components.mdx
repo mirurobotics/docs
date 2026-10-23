@@ -1,0 +1,106 @@
+---
+title: "Components"
+---
+
+import { ImmutableBadge, EditableBadge } from '/snippets/components/field-badges.jsx';
+import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
+import { PublisherBadge } from '/snippets/components/role-badges.jsx';
+import ComponentDef from '/snippets/definitions/component.mdx';
+
+<ComponentDef />
+
+A component can have **roles** and **aspects**, which tell apart the calibrations reported for it:
+
+- A **role** is the position a unit of the component fills on a device. Use roles when a device has more than one unit of the same component, such as two arms in the roles `aligner-1` and `aligner-2`, or four cameras in the roles `front-left`, `front-right`, `rear-left` and `rear-right`.
+- An **aspect** is the part of a unit that was calibrated, when a unit is calibrated in more than one way. For example, a camera might have the aspects `intrinsics` and `extrinsics`, and an arm might have `pose` and `home-offsets`.
+
+Roles and aspects are both optional. A device that has one unit of a component, calibrated one way, can report calibrations with only the component.
+
+The physical unit itself isn't a resource in Miru. Instead, each calibration records the [serial number](/calibrations/concepts/calibrations#param-serial-number) of the unit that was calibrated, so you can tell when a unit was swapped.
+
+## Properties
+
+<ParamField path="name" type="string">
+  <EditableBadge />
+
+  A human-readable display name.
+
+  Miru infers the name from the slug when it creates the component: words are split on hyphens and each word is capitalized, so `optics-tray` becomes `Optics Tray`. Publishers can [rename](#rename-a-component) the component afterwards.
+
+  Examples: `Arm`, `Optics Tray`, `Front Camera`
+</ParamField>
+
+<ParamField path="slug" type="string">
+  <ImmutableBadge />
+
+  A unique, code-friendly identifier for the component. Devices report calibrations with this slug.
+
+  Slugs are immutable and must satisfy the following constraints:
+
+  - Contain only lowercase letters, digits, and hyphens (`-`)
+  - Start and end with a lowercase letter or digit
+  - Contain between 1 and 48 characters
+
+  Component slugs and [config type](/cfg-mgmt/concepts/config-types) slugs are separate, so a component may share a slug with a config type.
+
+  Examples: `arm`, `optics-tray`, `front-camera`
+</ParamField>
+
+<ParamField path="roles" type="Role[]">
+  The roles reported for the component, in the order they were first reported. See [Roles and aspects](#roles-and-aspects).
+</ParamField>
+
+<ParamField path="aspects" type="Aspect[]">
+  The aspects reported for the component, in the order they were first reported. See [Roles and aspects](#roles-and-aspects).
+</ParamField>
+
+Components also carry the standard `created_at` and `updated_at` bookkeeping fields, and record the device that first reported them.
+
+## Roles and aspects
+
+Each role and aspect belongs to exactly one component and has its own name and slug.
+
+<ParamField path="name" type="string">
+  <EditableBadge />
+
+  A human-readable display name, inferred from the slug in the same way as a component's name, so `aligner-1` becomes `Aligner 1`. Publishers can [rename](#rename-a-component) it afterwards.
+
+  Examples: `Aligner 1`, `Front Left`, `Home Offsets`
+</ParamField>
+
+<ParamField path="slug" type="string">
+  <ImmutableBadge />
+
+  The value devices report as a calibration's `role` or `aspect`. It follows the same constraints as a component slug and is unique within its component, so two components can each have a role named `front-left`.
+
+  Examples: `aligner-1`, `front-left`, `pose`, `home-offsets`
+</ParamField>
+
+## Created on first report
+
+You never create components, roles or aspects yourself. Miru creates them the first time a device reports a calibration that uses them:
+
+- A calibration with a new component slug creates the component.
+- A calibration with a new role or aspect for a component adds it to that component's roles or aspects.
+
+Components, roles and aspects are never archived or deleted, so their calibration history always stays visible. Because a mistyped slug creates a new component, role or aspect that can't be removed, use fixed slugs in your software rather than building them from user input.
+
+## Limits
+
+| Resource | Limit |
+| -------- | ----- |
+| Components per workspace | 100 |
+| Roles per component | 100 |
+| Aspects per component | 100 |
+
+Once a limit is reached, Miru rejects any calibration that would add a new component, role or aspect past it, and no calibration is recorded. Calibrations for existing components, roles and aspects are unaffected.
+
+## Rename a component <PublisherBadge />
+
+<PlatformUnsupportedBadge />
+
+Publishers can change the display name of a component, a role or an aspect from the component's page in the dashboard. Slugs can't be changed, so renaming never affects the devices reporting calibrations.
+
+<Frame>
+  [PLACEHOLDER: screenshot of the component page showing the rename action for the component and its roles and aspects]
+</Frame>

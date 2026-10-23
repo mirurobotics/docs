@@ -1,0 +1,41 @@
+---
+title: "View calibrations"
+---
+
+import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
+
+<PlatformUnsupportedBadge />
+
+Each device's calibrations are accessible by clicking the device on the [Devices page](https://app.mirurobotics.com/devices) and selecting the **Calibrations** tab. Calibrations are read-only: you can view them, but not create, edit or delete them.
+
+## Current calibrations
+
+The **Calibrations** tab lists the device's current calibration for each [component](/calibrations/concepts/components), role and aspect it has reported: the newest one by the time it was reported.
+
+<Frame>
+  [PLACEHOLDER: screenshot of the device Calibrations tab listing the current calibration for each component, role and aspect]
+</Frame>
+
+## Filter calibrations
+
+To narrow the list, filter by component, then by one of that component's roles or aspects. To find the calibrations of one physical unit, search by its serial number.
+
+<Frame>
+  [PLACEHOLDER: screenshot of the component, role and aspect filters and the serial number search on the Calibrations tab]
+</Frame>
+
+## View a calibration
+
+To view a calibration, select it from the list. A panel opens with its content and details, including its serial number, the [deployment](/concepts/deployments/overview) the device was on, and when it was reported.
+
+<Frame>
+  [PLACEHOLDER: screenshot of the calibration panel showing its content and details]
+</Frame>
+
+## View calibration history
+
+Each component, role and aspect on a device has its own history, newest first. Open a calibration's history to see every earlier calibration of that unit, with a text diff of what changed.
+
+<Frame>
+  [PLACEHOLDER: screenshot of a calibration's history with a text diff between two calibrations]
+</Frame>
