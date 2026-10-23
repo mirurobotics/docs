@@ -116,7 +116,14 @@
                       "cfg-mgmt/concepts/schemas/manage"
                     ]
                   },
-                  "cfg-mgmt/concepts/config-instances"
+                  "cfg-mgmt/concepts/config-instances",
+                  {
+                    "group": "Calibrations",
+                    "pages": [
+                      "cfg-mgmt/concepts/calibrations/overview",
+                      "cfg-mgmt/concepts/calibrations/components"
+                    ]
+                  }
                 ]
               },
               {
@@ -138,7 +145,8 @@
                       "cfg-mgmt/audit/device-history",
                       "cfg-mgmt/audit/compare-devices"
                     ]
-                  }
+                  },
+                  "cfg-mgmt/report-calibrations"
                 ]
               }
             ]
@@ -176,28 +184,6 @@
                     ]
                   },
                   "data-uploads/define-file-rules"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Calibrations",
-            "pages": [
-              "calibrations/overview",
-              {
-                "group": "Concepts",
-                "expanded": true,
-                "pages": [
-                  "calibrations/concepts/components",
-                  "calibrations/concepts/calibrations"
-                ]
-              },
-              {
-                "group": "Guides",
-                "expanded": true,
-                "pages": [
-                  "calibrations/report-calibrations",
-                  "calibrations/view-calibrations"
                 ]
               }
             ]

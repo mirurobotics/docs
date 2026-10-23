@@ -1,11 +1,33 @@
 ---
-title: "Calibrations"
+title: "Overview"
 ---
 
 import { ImmutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
 import CalibrationDef from '/snippets/definitions/calibration.mdx';
 
 <CalibrationDef />
+
+When a calibration routine finishes on a device, your software sends the result to the [Miru Agent](/developers/agent/overview) through the [Device API](/developers/device-api/overview). The agent saves it on the device right away and uploads it to Miru whenever Miru is reachable, so a calibration survives network outages and agent restarts.
+
+## How it works
+
+<Frame>
+  [PLACEHOLDER: diagram of the calibration flow: a calibration routine on the device, the Device API request to the Miru Agent, the agent's on-device buffer, and the upload to Miru]
+</Frame>
+
+1. A calibration routine runs on the device and produces a result, such as a JSON or YAML file.
+2. Your software [reports the calibration](/cfg-mgmt/report-calibrations) to the Miru Agent with the Device API.
+3. The agent saves the calibration on the device and responds immediately, without waiting for Miru.
+4. The agent uploads saved calibrations to Miru in the order it received them, retrying until Miru is reachable.
+5. Miru records the calibration under its [component](/cfg-mgmt/concepts/calibrations/components), role and aspect.
+
+## Recorded, never deployed
+
+Miru only records calibrations. It never sends them back to a device, and they are never part of a [release](/concepts/releases) or a [deployment](/concepts/deployments/overview). Deployments carry what the cloud sends to a device, while calibrations record what the device reports.
+
+Calibration files stay where your software writes them on the device. The agent doesn't read calibration files from disk or write them. It only uploads what your software sends it.
+
+Calibrations are meant for results produced on the robot. Values produced off the robot, such as numbers from a setup station or entered by hand, are ordinary device configuration. Manage them as [config instances](/cfg-mgmt/concepts/config-instances) and deploy them like any other config.
 
 ## Properties
 
@@ -18,19 +40,19 @@ import CalibrationDef from '/snippets/definitions/calibration.mdx';
 <ParamField path="component" type="Component">
   <ImmutableBadge />
 
-  The [component](/calibrations/concepts/components) the calibrated unit belongs to.
+  The [component](/cfg-mgmt/concepts/calibrations/components) the calibrated unit belongs to.
 </ParamField>
 
 <ParamField path="role" type="Role">
   <ImmutableBadge /> <NullableBadge />
 
-  The [role](/calibrations/concepts/components#roles-and-aspects) the calibrated unit fills on the device. Null if the device reported no role.
+  The [role](/cfg-mgmt/concepts/calibrations/components#roles-and-aspects) the calibrated unit fills on the device. Null if the device reported no role.
 </ParamField>
 
 <ParamField path="aspect" type="Aspect">
   <ImmutableBadge /> <NullableBadge />
 
-  The [aspect](/calibrations/concepts/components#roles-and-aspects) of the unit that was calibrated. Null if the device reported no aspect.
+  The [aspect](/cfg-mgmt/concepts/calibrations/components#roles-and-aspects) of the unit that was calibrated. Null if the device reported no aspect.
 </ParamField>
 
 <ParamField path="serial_number" type="string">
