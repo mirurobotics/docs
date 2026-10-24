@@ -1,0 +1,98 @@
+---
+title: "Calibrations"
+---
+
+import { ImmutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
+import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
+import CalibrationDef from '/snippets/definitions/calibration.mdx';
+
+<CalibrationDef />
+
+Calibrations flow one way, from the device to Miru. Miru records them but never deploys them, so they are never part of a [release](/concepts/releases) or a [deployment](/concepts/deployments/overview). Values set off the robot, such as numbers from a setup station, are ordinary [config instances](/cfg-mgmt/concepts/config-instances).
+
+## Properties
+
+<ParamField path="device" type="Device">
+  <ImmutableBadge />
+
+  The [device](/concepts/devices/overview) that reported the calibration.
+</ParamField>
+
+<ParamField path="component" type="Component">
+  <ImmutableBadge />
+
+  The [component](/cfg-mgmt/concepts/components) that was calibrated.
+
+  Examples: `arm`, `front-camera`
+</ParamField>
+
+<ParamField path="role" type="Role">
+  <ImmutableBadge /> <NullableBadge />
+
+  The [role](/cfg-mgmt/concepts/components#param-roles) the calibrated unit fills on the device.
+
+  Examples: `aligner-1`, `front-left`
+</ParamField>
+
+<ParamField path="aspect" type="Aspect">
+  <ImmutableBadge /> <NullableBadge />
+
+  The [aspect](/cfg-mgmt/concepts/components#param-aspects) of the unit that was calibrated.
+
+  Examples: `pose`, `intrinsics`
+</ParamField>
+
+<ParamField path="serial number" type="string">
+  <ImmutableBadge /> <NullableBadge />
+
+  The serial number of the calibrated unit, not of the device. At most 255 characters.
+
+  Example: `M500-1234`
+</ParamField>
+
+<ParamField path="format" type="enum">
+  <ImmutableBadge />
+
+  The file format of the calibration's content. Miru checks that `json`, `jsonc` and `yaml` content parses.
+
+  Allowed values:
+  - `json`
+  - `yaml`
+  - `jsonc`
+  - `xml`
+  - `text`
+</ParamField>
+
+<ParamField path="content" type="string">
+  <ImmutableBadge />
+
+  The calibration result, exactly as the device reported it. At most 1 MiB.
+</ParamField>
+
+<ParamField path="reported at" type="datetime">
+  <ImmutableBadge />
+
+  When the device reported the calibration. A device that was offline uploads its calibrations later, so this can be well before Miru received them.
+</ParamField>
+
+## History
+
+Calibrations are append-only. Every report adds a new calibration, even if its content matches an earlier one, and calibrations are never edited or deleted. They are only removed along with their device.
+
+A device keeps a separate history for each component, role and aspect it reports. The most recently reported calibration in a history is that unit's current calibration.
+
+## View calibrations
+
+<PlatformUnsupportedBadge />
+
+To view a device's calibrations, open the device and select the **Calibrations** tab.
+
+<Frame>
+  [PLACEHOLDER: screenshot of a device's Calibrations tab]
+</Frame>
+
+## Report a calibration
+
+<PlatformUnsupportedBadge />
+
+Only devices create calibrations, through the Miru Agent. Visit the [report calibrations](/cfg-mgmt/report-calibrations) guide.

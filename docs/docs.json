@@ -116,7 +116,9 @@
                       "cfg-mgmt/concepts/schemas/manage"
                     ]
                   },
-                  "cfg-mgmt/concepts/config-instances"
+                  "cfg-mgmt/concepts/config-instances",
+                  "cfg-mgmt/concepts/components",
+                  "cfg-mgmt/concepts/calibrations"
                 ]
               },
               {
@@ -138,7 +140,8 @@
                       "cfg-mgmt/audit/device-history",
                       "cfg-mgmt/audit/compare-devices"
                     ]
-                  }
+                  },
+                  "cfg-mgmt/report-calibrations"
                 ]
               }
             ]

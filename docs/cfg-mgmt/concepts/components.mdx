@@ -1,0 +1,62 @@
+---
+title: "Components"
+---
+
+import { ImmutableBadge, EditableBadge } from '/snippets/components/field-badges.jsx';
+import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
+import { PublisherBadge } from '/snippets/components/role-badges.jsx';
+import ComponentDef from '/snippets/definitions/component.mdx';
+
+<ComponentDef />
+
+## Properties
+
+<ParamField path="name" type="string">
+  <EditableBadge />
+
+  A human-readable display name. Miru derives it from the slug, so `optics-tray` becomes `Optics Tray`.
+
+  Examples: `Arm`, `Optics Tray`, `Front Camera`
+</ParamField>
+
+<ParamField path="slug" type="string">
+  <ImmutableBadge />
+
+  A unique, code-friendly identifier that devices report calibrations with.
+
+  Slugs are immutable and must satisfy the following constraints:
+
+  - Contain only lowercase letters, digits, and hyphens (`-`)
+  - Start and end with a lowercase letter or digit
+  - Contain between 1 and 32 characters
+
+  Examples: `arm`, `optics-tray`, `front-camera`
+</ParamField>
+
+<ParamField path="roles" type="[] Role">
+  The positions the component fills on a device, for devices with more than one unit of it. A device with two arms might report them as `aligner-1` and `aligner-2`.
+</ParamField>
+
+<ParamField path="aspects" type="[] Aspect">
+  The parts of a unit that are calibrated separately. A camera might have the aspects `intrinsics` and `extrinsics`.
+</ParamField>
+
+Roles and aspects have a name and slug that follow the same rules as a component's. Their slugs only need to be unique within their component. Both are optional, so a device with one arm, calibrated one way, reports only the component.
+
+## Create a component
+
+<PlatformUnsupportedBadge />
+
+Components, roles and aspects are created when a device first [reports a calibration](/cfg-mgmt/report-calibrations) that uses them. They can't be deleted, so a mistyped slug leaves a stray component behind. Use fixed slugs in your software.
+
+A workspace can have up to 100 components, and each component up to 100 roles and 100 aspects. Past a limit, Miru rejects calibrations that would add a new one.
+
+## Edit a component  <PublisherBadge />
+
+<PlatformUnsupportedBadge />
+
+To rename a component, role or aspect, open the component in the dashboard and edit its name. Slugs can't change, so devices are unaffected.
+
+<Frame>
+  [PLACEHOLDER: screenshot of a component's page with the rename action]
+</Frame>
