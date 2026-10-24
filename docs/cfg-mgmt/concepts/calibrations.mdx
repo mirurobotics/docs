@@ -78,14 +78,6 @@ Calibrations are meant for results produced on the robot. Values produced off th
   Miru checks that `json`, `jsonc` and `yaml` content parses, and stores `xml` and `text` content as given.
 </ParamField>
 
-<ParamField path="digest" type="string">
-  <ImmutableBadge />
-
-  The SHA-256 digest of the content, used to verify integrity.
-
-  Example: `sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
-</ParamField>
-
 <ParamField path="deployment" type="Deployment">
   <ImmutableBadge /> <NullableBadge />
 
@@ -97,13 +89,7 @@ Calibrations are meant for results produced on the robot. Values produced off th
 
   Timestamp of when the Miru Agent on the device received the calibration.
 
-  The agent may upload a calibration long after it was reported, for example after a network outage, so `reported_at` can be well before `created_at`. Calibration history is ordered by `reported_at`.
-</ParamField>
-
-<ParamField path="created_at" type="datetime">
-  <ImmutableBadge />
-
-  Timestamp of when Miru recorded the calibration.
+  The agent may upload a calibration long after it was reported, for example after a network outage, so `reported_at` can be well before Miru records the calibration. Calibration history is ordered by `reported_at`.
 </ParamField>
 
 ## History
