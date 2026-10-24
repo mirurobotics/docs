@@ -1,4 +1,5 @@
 import BundleCliVersion from '/snippets/file-rules/bundle-cli-version.mdx';
+import TimezoneCliVersion from '/snippets/file-rules/timezone-cli-version.mdx';
 
 A rule's `upload` block declares which registered [bucket](/data-uploads/concepts/buckets) matching files are written to, and the object path within it. 
 
@@ -67,6 +68,8 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
     (`/etc/localtime` on Linux). The offset follows daylight saving time, so
     `{timezone}` changes from `-0500` to `-0400` when it starts.
 
+  <TimezoneCliVersion />
+
   The agent runs as a system service, so a `TZ` set in a user's shell doesn't
   reach it. To set it for the agent, add a systemd drop-in:
 
@@ -81,7 +84,8 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
 
   Then restart the agent with `sudo systemctl restart miru`.
 
-  Agents that don't report their time zone render `device` rules in UTC.
+  Agents before v0.11.2 report modification times in UTC, so they render
+  `device` rules in UTC.
 
   For example, a robot in New York that should file each day's recordings
   under its local calendar date:
