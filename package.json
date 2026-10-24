@@ -60,6 +60,9 @@
         "CVE-2026-93687",
         "CVE-2026-93748",
         "CVE-2026-97058"
+      ],
+      "ignoreGhsas": [
+        "GHSA-mrhx-c7xc-m3w5"
       ]
     }
   }

@@ -20,7 +20,7 @@
 
 ## Dependency audit
 
-CI runs `./scripts/audit.sh` (`pnpm audit`). Every advisory so far has come from transitive dependencies of the `mint` CLI's local preview and build tooling, not from anything published to readers. Fix them with `pnpm.overrides` in `package.json`. Ignore an advisory in `pnpm.auditConfig.ignoreCves` only when no patched release exists, and record it below.
+CI runs `./scripts/audit.sh` (`pnpm audit`). Every advisory so far has come from transitive dependencies of the `mint` CLI's local preview and build tooling, not from anything published to readers. Fix them with `pnpm.overrides` in `package.json`. Ignore an advisory in `pnpm.auditConfig.ignoreCves` (or `ignoreGhsas` when it has no CVE) only when no patched release exists that its dependents can use, and record it below.
 
 ### Ignored advisories
 
@@ -29,6 +29,7 @@ CI runs `./scripts/audit.sh` (`pnpm audit`). Every advisory so far has come from
 | CVE-2026-93748 ([GHSA-ch52-4w7c-c8xp](https://github.com/advisories/GHSA-ch52-4w7c-c8xp)) | `http-cache-semantics` | `mint > @mintlify/previewing > got > cacheable-request` | No patched release | A fixed version ships; override to it |
 | CVE-2026-93687 ([GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)) | `braces` | `mint > @mintlify/common > tailwindcss > chokidar` | No patched release | A fixed version ships; override to it |
 | CVE-2026-97058 ([GHSA-hp3w-g68c-fv3c](https://github.com/advisories/GHSA-hp3w-g68c-fv3c)) | `sprintf-js` | `mint > @mintlify/common > front-matter > js-yaml@3 > argparse@1` | No patched release | A fixed version ships, or `front-matter` moves off `js-yaml@3` |
+| None assigned ([GHSA-mrhx-c7xc-m3w5](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5)) | `zod` | `mint > @mintlify/cli > zod` | Only `>=4.6.6` is patched, and `@mintlify/validation` pins `zod` 3.24.0 | `@mintlify/validation` moves to `zod` 4.6.6 or later; then override to it |
 
 ### Overrides past a dependent's range
 
