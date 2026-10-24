@@ -87,15 +87,16 @@ These examples report the pose of the arm `aligner-1` from the file `arm-pose.js
 
 ## Response
 
-The agent saves the calibration on the device, then responds with `200 OK` and the time it received it:
+The agent saves the calibration on the device, then responds with `200 OK`, a new report ID and the time it received the calibration:
 
 ```json nocopy
 {
+  "report_id": "0f8e7c2a-5b1d-4c3e-9a6f-2d4b8e1c7a90",
   "reported_at": "2026-03-10T12:00:00Z"
 }
 ```
 
-The agent responds the same way while the device is offline, and uploads the calibration once Miru is reachable. Each request records a new calibration, so don't resend one that got a `200`.
+The agent responds the same way while the device is offline, and uploads the calibration once Miru is reachable. Miru records each report ID once, so the agent's own upload retries never record a calibration twice. Each request gets a new report ID, though, so don't resend one that got a `200`.
 
 ## Errors
 
