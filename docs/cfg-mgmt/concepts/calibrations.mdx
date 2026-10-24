@@ -3,31 +3,12 @@ title: "Calibrations"
 ---
 
 import { ImmutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
+import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import CalibrationDef from '/snippets/definitions/calibration.mdx';
 
 <CalibrationDef />
 
-When a calibration routine finishes on a device, your software sends the result to the [Miru Agent](/developers/agent/overview) through the [Device API](/developers/device-api/overview). The agent saves it on the device right away and uploads it to Miru whenever Miru is reachable, so a calibration survives network outages and agent restarts.
-
-## How it works
-
-<Frame>
-  [PLACEHOLDER: diagram of the calibration flow: a calibration routine on the device, the Device API request to the Miru Agent, the agent's on-device buffer, and the upload to Miru]
-</Frame>
-
-1. A calibration routine runs on the device and produces a result, such as a JSON or YAML file.
-2. Your software [reports the calibration](/cfg-mgmt/report-calibrations) to the Miru Agent with the Device API.
-3. The agent saves the calibration on the device and responds immediately, without waiting for Miru.
-4. The agent uploads saved calibrations to Miru in the order it received them, retrying until Miru is reachable.
-5. Miru records the calibration under its [component](/cfg-mgmt/concepts/components), role and aspect.
-
-## Recorded, never deployed
-
-Miru only records calibrations. It never sends them back to a device, and they are never part of a [release](/concepts/releases) or a [deployment](/concepts/deployments/overview). Deployments carry what the cloud sends to a device, while calibrations record what the device reports.
-
-Calibration files stay where your software writes them on the device. The agent doesn't read calibration files from disk or write them. It only uploads what your software sends it.
-
-Calibrations are meant for results produced on the robot. Values produced off the robot, such as numbers from a setup station or entered by hand, are ordinary device configuration. Manage them as [config instances](/cfg-mgmt/concepts/config-instances) and deploy them like any other config.
+Calibrations flow one way, from the device to Miru. Miru records them but never deploys them, so they are never part of a [release](/concepts/releases) or a [deployment](/concepts/deployments/overview). Values set off the robot, such as numbers from a setup station, are ordinary [config instances](/cfg-mgmt/concepts/config-instances).
 
 ## Properties
 
@@ -40,25 +21,31 @@ Calibrations are meant for results produced on the robot. Values produced off th
 <ParamField path="component" type="Component">
   <ImmutableBadge />
 
-  The [component](/cfg-mgmt/concepts/components) the calibrated unit belongs to.
+  The [component](/cfg-mgmt/concepts/components) that was calibrated.
+
+  Examples: `arm`, `front-camera`
 </ParamField>
 
 <ParamField path="role" type="Role">
   <ImmutableBadge /> <NullableBadge />
 
-  The [role](/cfg-mgmt/concepts/components#roles-and-aspects) the calibrated unit fills on the device. Null if the device reported no role.
+  The [role](/cfg-mgmt/concepts/components#param-roles) the calibrated unit fills on the device.
+
+  Examples: `aligner-1`, `front-left`
 </ParamField>
 
 <ParamField path="aspect" type="Aspect">
   <ImmutableBadge /> <NullableBadge />
 
-  The [aspect](/cfg-mgmt/concepts/components#roles-and-aspects) of the unit that was calibrated. Null if the device reported no aspect.
+  The [aspect](/cfg-mgmt/concepts/components#param-aspects) of the unit that was calibrated.
+
+  Examples: `pose`, `intrinsics`
 </ParamField>
 
-<ParamField path="serial_number" type="string">
+<ParamField path="serial number" type="string">
   <ImmutableBadge /> <NullableBadge />
 
-  The serial number of the physical unit that was calibrated, not of the device. Free text, at most 255 characters. Null if the device reported none.
+  The serial number of the calibrated unit, not of the device. At most 255 characters.
 
   Example: `M500-1234`
 </ParamField>
@@ -66,7 +53,7 @@ Calibrations are meant for results produced on the robot. Values produced off th
 <ParamField path="format" type="enum">
   <ImmutableBadge />
 
-  The file format the calibration's content is written in.
+  The file format of the calibration's content. Miru checks that `json`, `jsonc` and `yaml` content parses.
 
   Allowed values:
   - `json`
@@ -74,36 +61,38 @@ Calibrations are meant for results produced on the robot. Values produced off th
   - `jsonc`
   - `xml`
   - `text`
-
-  Miru checks that `json`, `jsonc` and `yaml` content parses, and stores `xml` and `text` content as given.
 </ParamField>
 
 <ParamField path="content" type="string">
   <ImmutableBadge />
 
-  The calibration result, written in the calibration's format, at most 1 MiB. Miru stores it exactly as the device reported it.
+  The calibration result, exactly as the device reported it. At most 1 MiB.
 </ParamField>
 
-<ParamField path="reported_at" type="datetime">
+<ParamField path="reported at" type="datetime">
   <ImmutableBadge />
 
-  Timestamp of when the Miru Agent on the device received the calibration.
-
-  The agent may upload a calibration long after it was reported, for example after a network outage, so `reported_at` can be well before Miru records the calibration. Calibration history is ordered by `reported_at`.
+  When the device reported the calibration. A device that was offline uploads its calibrations later, so this can be well before Miru received them.
 </ParamField>
 
 ## History
 
-Calibrations are append-only. Miru never changes or deletes a calibration, and no user can create, edit or delete one. A calibration is only removed when the device that reported it is deleted.
+Calibrations are append-only. Every report adds a new calibration, even if its content matches an earlier one, and calibrations are never edited or deleted. They are only removed along with their device.
 
-Each device keeps a separate history for every combination of component, role and aspect it reports. The newest calibration in a history, by `reported_at`, is that unit's current calibration.
+A device keeps a separate history for each component, role and aspect it reports. The most recently reported calibration in a history is that unit's current calibration.
 
-## Duplicates
+## View calibrations
 
-Every report creates a new calibration, even if its content matches an earlier one. Sending the same calibration twice records it twice.
+<PlatformUnsupportedBadge />
 
-On rare occasions, Miru may also record a calibration twice without it being sent twice. If the agent uploads a calibration but loses Miru's response, for example because of a timeout or an agent restart, it uploads the calibration again.
+To view a device's calibrations, open the device and select the **Calibrations** tab.
 
-## Access
+<Frame>
+  [PLACEHOLDER: screenshot of a device's Calibrations tab]
+</Frame>
 
-Users can view the calibrations of devices in the [groups](/concepts/groups/overview) they can view. Only a device can create a calibration, and only for itself.
+## Report a calibration
+
+<PlatformUnsupportedBadge />
+
+Only devices create calibrations, through the Miru Agent. Visit the [report calibrations](/cfg-mgmt/report-calibrations) guide.
