@@ -63,12 +63,12 @@ Calibrations are meant for results produced on the robot. Values produced off th
   Example: `M500-1234`
 </ParamField>
 
-<ParamField path="content" type="object">
+<ParamField path="format" type="enum">
   <ImmutableBadge />
 
-  The calibration result, stored exactly as the device reported it. Content has a `format` and the `data` serialized in that format, at most 1 MiB.
+  The file format the calibration's content is written in.
 
-  Allowed formats:
+  Allowed values:
   - `json`
   - `yaml`
   - `jsonc`
@@ -76,6 +76,12 @@ Calibrations are meant for results produced on the robot. Values produced off th
   - `text`
 
   Miru checks that `json`, `jsonc` and `yaml` content parses, and stores `xml` and `text` content as given.
+</ParamField>
+
+<ParamField path="content" type="string">
+  <ImmutableBadge />
+
+  The calibration result, written in the calibration's format, at most 1 MiB. Miru stores it exactly as the device reported it.
 </ParamField>
 
 <ParamField path="reported_at" type="datetime">
