@@ -117,13 +117,8 @@
                     ]
                   },
                   "cfg-mgmt/concepts/config-instances",
-                  {
-                    "group": "Calibrations",
-                    "pages": [
-                      "cfg-mgmt/concepts/calibrations/overview",
-                      "cfg-mgmt/concepts/calibrations/components"
-                    ]
-                  }
+                  "cfg-mgmt/concepts/components",
+                  "cfg-mgmt/concepts/calibrations"
                 ]
               },
               {

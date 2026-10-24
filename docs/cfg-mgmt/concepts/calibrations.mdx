@@ -1,5 +1,5 @@
 ---
-title: "Overview"
+title: "Calibrations"
 ---
 
 import { ImmutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
@@ -19,7 +19,7 @@ When a calibration routine finishes on a device, your software sends the result 
 2. Your software [reports the calibration](/cfg-mgmt/report-calibrations) to the Miru Agent with the Device API.
 3. The agent saves the calibration on the device and responds immediately, without waiting for Miru.
 4. The agent uploads saved calibrations to Miru in the order it received them, retrying until Miru is reachable.
-5. Miru records the calibration under its [component](/cfg-mgmt/concepts/calibrations/components), role and aspect.
+5. Miru records the calibration under its [component](/cfg-mgmt/concepts/components), role and aspect.
 
 ## Recorded, never deployed
 
@@ -40,19 +40,19 @@ Calibrations are meant for results produced on the robot. Values produced off th
 <ParamField path="component" type="Component">
   <ImmutableBadge />
 
-  The [component](/cfg-mgmt/concepts/calibrations/components) the calibrated unit belongs to.
+  The [component](/cfg-mgmt/concepts/components) the calibrated unit belongs to.
 </ParamField>
 
 <ParamField path="role" type="Role">
   <ImmutableBadge /> <NullableBadge />
 
-  The [role](/cfg-mgmt/concepts/calibrations/components#roles-and-aspects) the calibrated unit fills on the device. Null if the device reported no role.
+  The [role](/cfg-mgmt/concepts/components#roles-and-aspects) the calibrated unit fills on the device. Null if the device reported no role.
 </ParamField>
 
 <ParamField path="aspect" type="Aspect">
   <ImmutableBadge /> <NullableBadge />
 
-  The [aspect](/cfg-mgmt/concepts/calibrations/components#roles-and-aspects) of the unit that was calibrated. Null if the device reported no aspect.
+  The [aspect](/cfg-mgmt/concepts/components#roles-and-aspects) of the unit that was calibrated. Null if the device reported no aspect.
 </ParamField>
 
 <ParamField path="serial_number" type="string">
