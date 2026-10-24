@@ -33,7 +33,7 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
   | `{device_id}` | `dvc_123` | The uploading device's ID. |
   | `{device_name}` | `my-robot` | The device's name. |
   | `{file_name}` | `robot.log` | The source file's basename. |
-  | `{year}` | `2026` | The year of the file's modification time, in the rule's `timezone`. |
+  | `{year}` | `2026` | The year, zero-padded. |
   | `{month}` | `01` | The month, zero-padded. |
   | `{day}` | `01` | The day of the month, zero-padded. |
   | `{hour}` | `00` | The hour (24-hour), zero-padded. |
@@ -42,21 +42,15 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
   | `{bundle_id}` | `upl_bdl_123` | The upload's [bundle](/data-uploads/concepts/upload-bundles) ID. Requires `bundle`. |
   | Any [capture](/data-uploads/concepts/file-rules/rule-definition#glob-captures) | `run_42` | The value matched by the capture. |
 
-  <Note>
-    Time variables are rendered from the file's modification time (mtime), in
-    UTC by default. For example, a file written at 23:50 UTC but uploaded at
-    00:10 UTC keeps the earlier day's date. Set [`timezone`](#param-timezone) to
-    render them in the device's local time zone.
-  </Note>
-
-  <Warning>
-    The modification time comes from the device's clock, so a device whose
-    clock is wrong writes to the wrong date folders.
-  </Warning>
+  Time variables are rendered from the file's modification time (`mtime`). By default, the timezone us set to UTC. Set [`timezone`](#param-timezone) to
+  render them in the device's local time zone.
 
   <Warning>
     Templates must contain the `{upload_id}` variable.
   </Warning>
+
+
+
 </ParamField>
 
 <ParamField path="timezone" type="string" default="utc">
@@ -71,34 +65,8 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
 
   <TimezoneCliVersion />
 
-  On Linux, the agent runs as a systemd service, so a `TZ` set in a user's
-  shell doesn't reach it. To set it for the agent, add a drop-in:
+Example: `utc`
 
-  ```bash
-  sudo systemctl edit miru
-  ```
-
-  ```ini
-  [Service]
-  Environment=TZ=America/New_York
-  ```
-
-  Then restart the agent with `sudo systemctl restart miru`.
-
-  Agents before v0.11.2 report modification times in UTC, so they render
-  `device` rules in UTC.
-
-  For example, a robot in New York that should file each day's recordings
-  under its local calendar date:
-
-  ```yaml
-  upload:
-    path: "{timezone}/{year}-{month}-{day}/{device_name}/{upload_id}/{file_name}"
-    timezone: device
-  ```
-
-  A file written at 20:30 EST on January 14 lands under
-  `-0500/2026-01-14/...` instead of the next day's folder.
 </ParamField>
 
 <ParamField path="bundle" type="string[]">
