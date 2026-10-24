@@ -63,15 +63,16 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
   The time zone the path's time variables are rendered in.
 
   - `utc`: Coordinated Universal Time.
-  - `device`: the device's local time zone. The agent reads it from its `TZ`
-    environment variable or, when `TZ` is unset, from the system time zone
-    (`/etc/localtime` on Linux). The offset follows daylight saving time, so
-    `{timezone}` changes from `-0500` to `-0400` when it starts.
+  - `device`: the device's local time zone. On Linux, the agent reads it from
+    its `TZ` environment variable or, when `TZ` is unset, from
+    `/etc/localtime`. On Windows, it uses the system time zone setting. The
+    offset follows daylight saving time, so `{timezone}` changes from `-0500`
+    to `-0400` when it starts.
 
   <TimezoneCliVersion />
 
-  The agent runs as a system service, so a `TZ` set in a user's shell doesn't
-  reach it. To set it for the agent, add a systemd drop-in:
+  On Linux, the agent runs as a systemd service, so a `TZ` set in a user's
+  shell doesn't reach it. To set it for the agent, add a drop-in:
 
   ```bash
   sudo systemctl edit miru
