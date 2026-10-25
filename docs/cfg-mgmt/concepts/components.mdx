@@ -4,7 +4,6 @@ title: "Components"
 
 import { ImmutableBadge, EditableBadge } from '/snippets/components/field-badges.jsx';
 import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
-import { PublisherBadge } from '/snippets/components/role-badges.jsx';
 import ComponentDef from '/snippets/definitions/component.mdx';
 
 <ComponentDef />
@@ -34,8 +33,8 @@ import ComponentDef from '/snippets/definitions/component.mdx';
 </ParamField>
 
 <ParamField path="roles" type="[] Role">
-  The purpose the component fills on a device, such their positions on a robot arm or the sides of a gripper. 
-  
+  The purpose the component fills on a device, such as their positions on a robot arm or the sides of a gripper.
+
   A device with two arms might report them as `aligner-1` and `aligner-2`.
 
   Roles are optional, so a device with one arm, calibrated one way, reports only the component.
@@ -44,8 +43,8 @@ import ComponentDef from '/snippets/definitions/component.mdx';
 </ParamField>
 
 <ParamField path="aspects" type="[] Aspect">
-  The parts of a unit that are calibrated separately. 
-  
+  The parts of a unit that are calibrated separately.
+
   A camera might have the aspects `intrinsics` and `extrinsics`.
 
   Aspects are optional, so a device with one camera, calibrated one way, reports only the component.
@@ -58,4 +57,4 @@ import ComponentDef from '/snippets/definitions/component.mdx';
 
 <PlatformUnsupportedBadge />
 
-Components, roles and aspects cannot be created directly. Instead, they are created when a device first [reports a calibration](/cfg-mgmt/report-calibrations) that uses them. 
+Components, roles and aspects cannot be created directly. Instead, they are created when a device first [reports a calibration](/cfg-mgmt/report-calibrations) that uses them.
