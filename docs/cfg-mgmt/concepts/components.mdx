@@ -34,35 +34,28 @@ import ComponentDef from '/snippets/definitions/component.mdx';
 </ParamField>
 
 <ParamField path="roles" type="[] Role">
-  The purposes the component fills on a device, such as their positions on a robot arm or the sides of a gripper.
-
+  The purpose the component fills on a device, such their positions on a robot arm or the sides of a gripper. 
+  
   A device with two arms might report them as `aligner-1` and `aligner-2`.
+
+  Roles are optional, so a device with one arm, calibrated one way, reports only the component.
 
   Examples: `front-left`, `front-right`, `back-left`, `back-right`
 </ParamField>
 
 <ParamField path="aspects" type="[] Aspect">
-  The parts of a unit that are calibrated separately. A camera might have the aspects `intrinsics` and `extrinsics`.
+  The parts of a unit that are calibrated separately. 
+  
+  A camera might have the aspects `intrinsics` and `extrinsics`.
+
+  Aspects are optional, so a device with one camera, calibrated one way, reports only the component.
 
   Examples: `intrinsics`, `extrinsics`
 </ParamField>
 
-Roles and aspects have a name and slug that follow the same rules as a component's. Their slugs only need to be unique within their component. Both are optional, so a device with one arm, calibrated one way, reports only the component.
 
 ## Create a component
 
 <PlatformUnsupportedBadge />
 
-Components, roles and aspects are created when a device first [reports a calibration](/cfg-mgmt/report-calibrations) that uses them. They can't be deleted, so a mistyped slug leaves a stray component behind. Use fixed slugs in your software.
-
-A workspace can have up to 100 components, and each component up to 100 roles and 100 aspects. Past a limit, Miru rejects calibrations that would add a new one.
-
-## Edit a component  <PublisherBadge />
-
-<PlatformUnsupportedBadge />
-
-To rename a component, role or aspect, open the component in the dashboard and edit its name. Slugs can't change, so devices are unaffected.
-
-<Frame>
-  [PLACEHOLDER: screenshot of a component's page with the rename action]
-</Frame>
+Components, roles and aspects cannot be created directly. Instead, they are created when a device first [reports a calibration](/cfg-mgmt/report-calibrations) that uses them. 
