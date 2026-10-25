@@ -191,9 +191,9 @@ paths:
             --header 'Content-Type: application/json' \
             --data '{
               "component": "arm",
-              "role": "aligner-1",
+              "role": "front-left",
               "aspect": "pose",
-              "serial_number": "M500-1234",
+              "serial_number": "SN-1234",
               "content": {"format": "json", "data": "{\"x\": 0.12, \"y\": -0.03}"}
             }'
       - lang: powershell
@@ -202,9 +202,9 @@ paths:
           $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           $body = @{
             component      = "arm"
-            role           = "aligner-1"
+            role           = "front-left"
             aspect         = "pose"
-            serial_number  = "M500-1234"
+            serial_number  = "SN-1234"
             content        = @{ format = "json"; data = '{"x": 0.12, "y": -0.03}' }
           } | ConvertTo-Json -Depth 3; `
           Invoke-RestMethod -Method Post `
@@ -852,22 +852,22 @@ components:
             first time it is reported.
         role:
           type: string
-          example: aligner-1
+          example: front-left
           description: Slug of the role the calibrated unit fills on the device, such
-            as `aligner-1` or `front-left`. Distinguishes several units of one component
+            as `front-left` or `front-left`. Distinguishes several units of one component
             on a device. Validated like a slug. Miru resolves it to one of the component's
             `roles`, creating the role the first time it is reported.
         serial_number:
           type: string
           maxLength: 255
-          example: M500-1234
+          example: SN-1234
           description: Serial number of the physical unit that was calibrated, not
-            of the device, such as `M500-1234`. Free text, at most 255 characters.
+            of the device, such as `SN-1234`. Free text, at most 255 characters.
         aspect:
           type: string
           example: pose
           description: Slug of the aspect of the unit that was calibrated, when it
-            has more than one, e.g. `intrinsics` vs `extrinsics`, or `pose` vs `home-offsets`.
+            has more than one, e.g. `intrinsics` vs `extrinsics`, or `pose` vs `joint-offsets`.
             Validated like a slug. Miru resolves it to one of the component's `aspects`,
             creating the aspect the first time it is reported.
         content:

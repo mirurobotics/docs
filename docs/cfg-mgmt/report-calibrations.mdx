@@ -22,7 +22,7 @@ Send a `POST` request to `/calibrations`. A new component, role or aspect slug c
 <ParamField body="role" type="string">
   The slug of the unit's [role](/cfg-mgmt/concepts/components#param-roles).
 
-  Example: `aligner-1`
+  Example: `front-left`
 </ParamField>
 
 <ParamField body="aspect" type="string">
@@ -34,7 +34,7 @@ Send a `POST` request to `/calibrations`. A new component, role or aspect slug c
 <ParamField body="serial_number" type="string">
   The serial number of the calibrated unit. At most 255 characters.
 
-  Example: `M500-1234`
+  Example: `SN-1234`
 </ParamField>
 
 <ParamField body="content.format" type="enum" required>
@@ -47,7 +47,7 @@ Send a `POST` request to `/calibrations`. A new component, role or aspect slug c
 
 ### Example
 
-These examples report the pose of the arm `aligner-1` from the file `arm-pose.json`.
+These examples report the pose of the arm `front-left` from the file `arm-pose.json`.
 
 <Tabs>
   <Tab title="Linux">
@@ -55,7 +55,7 @@ These examples report the pose of the arm `aligner-1` from the file `arm-pose.js
 
     ```bash wrap
     jq -n --rawfile data arm-pose.json \
-      '{component: "arm", role: "aligner-1", aspect: "pose", serial_number: "M500-1234", content: {format: "json", data: $data}}' |
+      '{component: "arm", role: "front-left", aspect: "pose", serial_number: "SN-1234", content: {format: "json", data: $data}}' |
     curl --unix-socket /run/miru/miru.sock \
       --request POST \
       --url http://localhost/v0.2/calibrations \
@@ -68,9 +68,9 @@ These examples report the pose of the arm `aligner-1` from the file `arm-pose.js
     $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
     $body = @{
       component      = "arm"
-      role           = "aligner-1"
+      role           = "front-left"
       aspect         = "pose"
-      serial_number  = "M500-1234"
+      serial_number  = "SN-1234"
       content        = @{ format = "json"; data = (Get-Content -Raw "arm-pose.json") }
     } | ConvertTo-Json -Depth 3
     Invoke-RestMethod -Method Post `
