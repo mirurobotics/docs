@@ -9,6 +9,52 @@ import { DeviceApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
+# v0.2.3
+
+*October 25, 2026*
+
+The `v0.2.3` release lets on-device applications [report calibrations](/cfg-mgmt/report-calibrations) to Miru, and adds upload bundles and time zones to file rules.
+
+<DeviceApiReleaseLinks version="v0.2.3" />
+
+## New endpoints
+
+<Dropdown title="Calibrations">
+  - <POST /> `/calibrations` — report a [calibration](/cfg-mgmt/concepts/calibrations)
+</Dropdown>
+
+## Additive changes
+
+<Dropdown title="File rule response">
+The `upload` of a file rule returned by `GET /file_rules/{id}` added `timezone`, the time zone the upload path's time variables are rendered in (`utc` or `device`), and an optional `bundle`, the [glob captures](/data-uploads/concepts/file-rules/rule-definition#glob-captures) that group the rule's uploads into [bundles](/data-uploads/concepts/upload-bundles).
+
+```diff nocopy
+ {
+   "object": "file_rule",
+   ...
+   "upload": {
+     "path": "recordings/{device_id}/{recording}/{file_name}-{upload_id}",
++    "timezone": "utc",
++    "bundle": ["recording"]
+   }
+ }
+```
+</Dropdown>
+
+## Migration steps
+
+<Steps>
+  <Step title="Verify agent compatibility">
+    Ensure all devices are running Miru Agent `v0.12.0` or later. See [compatibility matrix](/developers/device-api/versions#agent-compatibility-matrix).
+  </Step>
+
+  <Step title="Integrate the changes">
+    Integrate the new endpoints and fields into your client application.
+  </Step>
+</Steps>
+
+---
+
 # v0.2.2
 
 *October 9, 2026*
