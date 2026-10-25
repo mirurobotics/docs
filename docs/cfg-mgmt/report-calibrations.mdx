@@ -114,7 +114,7 @@ On an error the agent saves nothing, so the request is safe to retry once the ca
 The agent drops a calibration and logs an error when:
 
 - Miru rejects it: a slug or serial number is invalid, the content doesn't parse as its format, or it would pass a [component limit](/cfg-mgmt/concepts/components#create-a-component).
-- Its upload still fails after repeated retries, for reasons other than being offline.
-- It is still on the device 7 days after it was reported.
+- Its upload keeps failing for about a day, for reasons other than the device being offline.
+- It still hasn't uploaded 90 days after it was reported, for example because the device has been offline that long.
 
 The agent only checks a request's shape and size, so a `200` doesn't rule these out. To confirm a calibration reached Miru, find it on the device's **Calibrations** tab or check the [agent logs](/developers/agent/commands#logs).
