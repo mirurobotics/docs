@@ -13,14 +13,14 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 *October 25, 2026*
 
-The `v0.2.3` release lets on-device applications [report calibrations](/cfg-mgmt/report-calibrations) to Miru, and adds upload bundles and time zones to file rules.
+The `v0.2.3` release lets on-device applications [report calibrations](/cfg-mgmt/report-calibrations) to Miru.
 
 <DeviceApiReleaseLinks version="v0.2.3" />
 
 ## New endpoints
 
 <Dropdown title="Calibrations">
-  - <POST /> `/calibrations` — report a [calibration](/cfg-mgmt/concepts/calibrations)
+  - <POST /> `/calibrations` — report a calibration
 </Dropdown>
 
 ## Additive changes
@@ -46,6 +46,10 @@ The `upload` of a file rule returned by `GET /file_rules/{id}` added `timezone`,
 <Steps>
   <Step title="Verify agent compatibility">
     Ensure all devices are running Miru Agent `v0.12.0` or later. See [compatibility matrix](/developers/device-api/versions#agent-compatibility-matrix).
+  </Step>
+
+  <Step title="Upgrade Python SDK">
+    If you are using the [Python SDK](/developers/device-api/sdks#python), upgrade to version `v0.8.0` or later.
   </Step>
 
   <Step title="Integrate the changes">
