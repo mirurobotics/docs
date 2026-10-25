@@ -141,21 +141,7 @@ paths:
       - Calibrations
       summary: Create
       operationId: createCalibration
-      description: |
-        Report a calibration to Miru. The agent checks the request,
-        saves the calibration on the device and returns right away,
-        without waiting for Miru. It uploads saved calibrations to Miru
-        in the order received and retries until Miru is reachable, so a
-        calibration survives network outages and agent restarts. The
-        agent checks the request against Miru's rules before saving it,
-        so Miru rarely rejects one later; one it does reject, such as a
-        new component once the workspace holds 100, is set aside on the
-        device and does not hold up later ones. Content is at most 1 MiB
-        and a request is at most about 2 MiB (1 MiB of content plus JSON
-        escaping). Each request is a new calibration, so sending the
-        same calibration twice records it twice. The agent sends the
-        report's `report_id` with every upload, so a retried upload does
-        not record the calibration twice.
+      description: Report a calibration to Miru.
       requestBody:
         required: true
         content:
