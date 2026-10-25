@@ -1,3 +1,19 @@
+/**
+ * Link to a Device API endpoint on the latest reference.
+ * The /references/device-api/latest redirect in docs.json is what moves when a version ships.
+ *
+ * @param {string} endpoint - Path after /endpoints/, e.g. "calibrations/create"
+ * @param {boolean} [newTab] - Open link in a new tab
+ * @param {React.ReactNode} children - Link text
+ */
+export const DeviceApiLink = ({ endpoint, newTab, children }) => {
+  const href = `/references/device-api/latest/endpoints/${endpoint}`;
+  if (newTab) {
+    return <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>;
+  }
+  return <a href={href}>{children}</a>;
+};
+
 export const DeviceApiReleaseLinks = ({ version }) => {
   return (
     <ul>

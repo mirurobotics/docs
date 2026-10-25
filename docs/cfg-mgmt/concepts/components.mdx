@@ -13,9 +13,9 @@ import ComponentDef from '/snippets/definitions/component.mdx';
 <ParamField path="name" type="string">
   <EditableBadge />
 
-  A human-readable display name, derived from the slug, so `front-camera` becomes `Front Camera`.
+  A human-readable display name, derived from the slug, so `realsense-d435` becomes `Realsense D435`.
 
-  Examples: `Arm`, `Front Camera`, `Gripper`
+  Examples: `Kuka Arm`, `Realsense D435`, `Robotiq 2f 85`
 </ParamField>
 
 <ParamField path="slug" type="string">
@@ -29,11 +29,11 @@ import ComponentDef from '/snippets/definitions/component.mdx';
   - Start and end with a lowercase letter or digit
   - Contain between 1 and 32 characters
 
-  Examples: `arm`, `front-camera`, `gripper`
+  Examples: `kuka-arm`, `realsense-d435`, `robotiq-2f-85`
 </ParamField>
 
 <ParamField path="roles" type="[] Role">
-  The purpose the component fills on a device, such as their positions on a robot arm or the sides of a gripper.
+  The purpose the component fills on a device, such as their positions on a robot arm or the sides of a Robotiq 2F-85.
 
   A device with two arms might report them as `left` and `right`.
 
@@ -45,9 +45,9 @@ import ComponentDef from '/snippets/definitions/component.mdx';
 <ParamField path="aspects" type="[] Aspect">
   The parts of a unit that are calibrated separately.
 
-  A camera might have the aspects `intrinsics` and `extrinsics`.
+  A RealSense D435 might have the aspects `intrinsics` and `extrinsics`.
 
-  Aspects are optional, so a device with one camera, calibrated one way, reports only the component.
+  Aspects are optional, so a device with one RealSense D435, calibrated one way, reports only the component.
 
   Examples: `intrinsics`, `extrinsics`
 </ParamField>

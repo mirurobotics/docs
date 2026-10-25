@@ -190,7 +190,7 @@ paths:
             --url http://localhost/v0.2/calibrations \
             --header 'Content-Type: application/json' \
             --data '{
-              "component": "arm",
+              "component": "kuka-arm",
               "role": "front-left",
               "aspect": "pose",
               "serial_number": "SN-1234",
@@ -201,7 +201,7 @@ paths:
         source: |-
           $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           $body = @{
-            component      = "arm"
+            component      = "kuka-arm"
             role           = "front-left"
             aspect         = "pose"
             serial_number  = "SN-1234"
@@ -846,15 +846,15 @@ components:
       properties:
         component:
           type: string
-          example: arm
+          example: kuka-arm
           description: Slug of the component the calibrated unit belongs to, such
-            as `arm`. Miru resolves it to the component, creating the component the
+            as `kuka-arm`. Miru resolves it to the component, creating the component the
             first time it is reported.
         role:
           type: string
           example: front-left
           description: Slug of the role the calibrated unit fills on the device, such
-            as `front-left` or `front-left`. Distinguishes several units of one component
+            as `left` or `front-left`. Distinguishes several units of one component
             on a device. Validated like a slug. Miru resolves it to one of the component's
             `roles`, creating the role the first time it is reported.
         serial_number:

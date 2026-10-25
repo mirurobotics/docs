@@ -2,22 +2,70 @@
 title: "Report calibrations"
 ---
 
-This guide details how devices report [calibrations](/cfg-mgmt/concepts/calibrations) through the Miru Agent's [Device API](/developers/device-api/overview). 
+import { DeviceApiLink } from '/snippets/components/api-links.jsx';
+import CalibrationDef from '/snippets/definitions/calibration.mdx';
+
+This guide details how to report [calibrations](/cfg-mgmt/concepts/calibrations) through the Miru Agent's [Device API](/developers/device-api/overview).
+
+## Overview
+
+<CalibrationDef />
+
+Miru allows on-device applications to report calibrations using the <DeviceApiLink endpoint="calibrations/create">create calibration</DeviceApiLink> endpoint in the Device API.
+
+When a calibration is reported, the agent saves it on the device and immediately returns a `200` response, regardless of whether the device is online or offline. Once a device is online, the agent uploads the calibration to Miru.
 
 ## Prerequisites
 
-- Miru Agent [v0.12.0](/changelog/agent#v0-12-0) or later, which serves Device API [`v0.2.3`](/changelog/device-api#v0-2-3).
-- An application that can reach the Device API. See [Authentication](/developers/device-api/authn).
+To follow this guide, you must have:
 
+- A device installed with a Miru Agent [v0.12.0](/changelog/agent#v0-12-0) or later
+
+To provision a device, see [Provision a device](/provision-devices) guide.
+
+## Components
+
+A [component](/cfg-mgmt/concepts/components) is a kind of hardware that devices report calibrations for, such as an arm, a camera, or a Robotiq 2F-85. A calibration names its component with a [slug](/cfg-mgmt/concepts/components#param-slug), such as `kuka-arm`, `realsense-d435`, or `robotiq-2f-85`. 
+
+When a calibration is reported, Miru checks if its component exists and creates it if it doesn't.
+
+### Roles
+
+Oftentimes devices have multiple units of the same component, such as multiple arms. In this case, a [role](/cfg-mgmt/concepts/components#param-roles) distinguishes the units.
+
+A device with two arms might distinguish them as `left` and `right`.
+
+### Aspects
+
+Separately, some components are calibrated in multiple ways. For example, a RealSense D435 might report `intrinsics` and `extrinsics`.
+
+An [aspect](/cfg-mgmt/concepts/components#param-aspects) distinguishes parts of a unit that are calibrated separately.
+
+Both are optional. A device with one arm, calibrated one way, reports only the component. The device keeps a separate history for each component, role, and aspect, and Miru creates a role or aspect the first time a calibration reports it.
+ 
 ## Send a calibration
 
-Send a `POST` request to `/calibrations`. A new component, role or aspect slug creates it in Miru.
+Send a `POST` request to `/calibrations`.
+
+### Required
 
 <ParamField body="component" type="string" required>
   The [slug](/cfg-mgmt/concepts/components#param-slug) of the calibrated component.
 
-  Example: `arm`
+  Example: `kuka-arm`
 </ParamField>
+
+<ParamField body="content.format" type="enum" required>
+  The file format of `content.data`: `json`, `yaml`, `jsonc`, `xml` or `text`.
+</ParamField>
+
+<ParamField body="content.data" type="string" required>
+  The calibration result, usually the full text of the calibration file. At most 1 MiB.
+</ParamField>
+
+### Optional
+
+Set a role when the device has more than one unit of the component, and an aspect when a unit is calibrated more than one way. A device with one arm, calibrated one way, sends the component and the content.
 
 <ParamField body="role" type="string">
   The slug of the unit's [role](/cfg-mgmt/concepts/components#param-roles).
@@ -37,25 +85,17 @@ Send a `POST` request to `/calibrations`. A new component, role or aspect slug c
   Example: `SN-1234`
 </ParamField>
 
-<ParamField body="content.format" type="enum" required>
-  The file format of `content.data`: `json`, `yaml`, `jsonc`, `xml` or `text`.
-</ParamField>
-
-<ParamField body="content.data" type="string" required>
-  The calibration result, usually the full text of the calibration file. At most 1 MiB.
-</ParamField>
-
 ### Example
 
-These examples report the pose of the arm `front-left` from the file `arm-pose.json`.
+These examples report the pose of the `kuka-arm` unit `front-left` from the file `kuka-arm-pose.json`.
 
 <Tabs>
   <Tab title="Linux">
     [jq](https://jqlang.org/) escapes the file's content as a JSON string.
 
     ```bash wrap
-    jq -n --rawfile data arm-pose.json \
-      '{component: "arm", role: "front-left", aspect: "pose", serial_number: "SN-1234", content: {format: "json", data: $data}}' |
+    jq -n --rawfile data kuka-arm-pose.json \
+      '{component: "kuka-arm", role: "front-left", aspect: "pose", serial_number: "SN-1234", content: {format: "json", data: $data}}' |
     curl --unix-socket /run/miru/miru.sock \
       --request POST \
       --url http://localhost/v0.2/calibrations \
@@ -67,11 +107,11 @@ These examples report the pose of the arm `front-left` from the file `arm-pose.j
     ```powershell wrap
     $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
     $body = @{
-      component      = "arm"
+      component      = "kuka-arm"
       role           = "front-left"
       aspect         = "pose"
       serial_number  = "SN-1234"
-      content        = @{ format = "json"; data = (Get-Content -Raw "arm-pose.json") }
+      content        = @{ format = "json"; data = (Get-Content -Raw "kuka-arm-pose.json") }
     } | ConvertTo-Json -Depth 3
     Invoke-RestMethod -Method Post `
       -Uri "http://127.0.0.1:$($api.port)/v0.2/calibrations" `
