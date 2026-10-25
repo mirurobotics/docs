@@ -14,9 +14,9 @@ import ComponentDef from '/snippets/definitions/component.mdx';
 <ParamField path="name" type="string">
   <EditableBadge />
 
-  A human-readable display name. Miru derives it from the slug, so `optics-tray` becomes `Optics Tray`.
+  A human-readable display name, derived from the slug, so `front-camera` becomes `Front Camera`.
 
-  Examples: `Arm`, `Optics Tray`, `Front Camera`
+  Examples: `Arm`, `Front Camera`, `Gripper`
 </ParamField>
 
 <ParamField path="slug" type="string">
@@ -30,15 +30,21 @@ import ComponentDef from '/snippets/definitions/component.mdx';
   - Start and end with a lowercase letter or digit
   - Contain between 1 and 32 characters
 
-  Examples: `arm`, `optics-tray`, `front-camera`
+  Examples: `arm`, `front-camera`, `gripper`
 </ParamField>
 
 <ParamField path="roles" type="[] Role">
-  The positions the component fills on a device, for devices with more than one unit of it. A device with two arms might report them as `aligner-1` and `aligner-2`.
+  The purposes the component fills on a device, such their positions on a robot arm or the sides of a gripper. 
+  
+  A device with two arms might report them as `aligner-1` and `aligner-2`.
+
+  Examples: `front-left`, `front-right`, `back-left`, `back-right`
 </ParamField>
 
 <ParamField path="aspects" type="[] Aspect">
   The parts of a unit that are calibrated separately. A camera might have the aspects `intrinsics` and `extrinsics`.
+
+  Examples: `intrinsics`, `extrinsics`
 </ParamField>
 
 Roles and aspects have a name and slug that follow the same rules as a component's. Their slugs only need to be unique within their component. Both are optional, so a device with one arm, calibrated one way, reports only the component.
