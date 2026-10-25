@@ -18,6 +18,16 @@ Miru Agent `v0.12.0` upgrades the Device API to `v0.2.3`, which lets on-device a
 - The agent saves each calibration on the device and uploads it once Miru is reachable, so calibrations reported while offline aren't lost
   - Up to 1,000 calibrations can wait to upload, each at most 1 MiB
   - A calibration that is still on the device 7 days after it was reported, or that Miru rejects, is dropped and logged as an error
+- Uploads now carry each file's modification time with the device's UTC offset, so file rules with `upload.timezone: device` render upload paths in the device's local time
+
+## Improvements
+
+- Uploads to Google Cloud Storage buckets now use the same upload client as Amazon S3 buckets, which removes the agent's separate Google Cloud dependencies
+
+## Fixes
+
+- Uploads now stream from the file instead of loading it into memory, so large files no longer risk exhausting memory and crash-looping the agent on low-memory devices
+- A stalled upload now fails after 60 seconds without progress and is retried without counting against its retry budget, instead of waiting out a deadline that grew with the file's size (about 23 hours for a 5.4 GB file)
 
 ---
 
