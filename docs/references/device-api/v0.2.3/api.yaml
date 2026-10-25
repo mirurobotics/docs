@@ -165,7 +165,7 @@ paths:
             --url http://localhost/v0.2/calibrations \
             --header 'Content-Type: application/json' \
             --data '{
-              "component_slug": "arm",
+              "component": "arm",
               "role": "aligner-1",
               "aspect": "pose",
               "serial_number": "M500-1234",
@@ -176,7 +176,7 @@ paths:
         source: |-
           $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           $body = @{
-            component_slug = "arm"
+            component      = "arm"
             role           = "aligner-1"
             aspect         = "pose"
             serial_number  = "M500-1234"
@@ -816,14 +816,15 @@ components:
       title: Create Calibration Request
       type: object
       required:
-      - component_slug
+      - component
       - content
       properties:
-        component_slug:
+        component:
           type: string
           example: arm
-          description: Slug of the component the calibrated unit belongs to. A new
-            slug creates a component in Miru.
+          description: Slug of the component the calibrated unit belongs to, such as
+            `arm`. Miru resolves it to the component, creating the component the first
+            time it is reported.
         role:
           type: string
           example: aligner-1

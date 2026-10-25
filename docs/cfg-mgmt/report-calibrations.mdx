@@ -13,7 +13,7 @@ Devices report calibrations through the Miru Agent's [Device API](/developers/de
 
 Send a `POST` request to `/calibrations`. A new component, role or aspect slug creates it in Miru.
 
-<ParamField body="component_slug" type="string" required>
+<ParamField body="component" type="string" required>
   The [slug](/cfg-mgmt/concepts/components#param-slug) of the calibrated component.
 
   Example: `arm`
@@ -55,7 +55,7 @@ These examples report the pose of the arm `aligner-1` from the file `arm-pose.js
 
     ```bash wrap
     jq -n --rawfile data arm-pose.json \
-      '{component_slug: "arm", role: "aligner-1", aspect: "pose", serial_number: "M500-1234", content: {format: "json", data: $data}}' |
+      '{component: "arm", role: "aligner-1", aspect: "pose", serial_number: "M500-1234", content: {format: "json", data: $data}}' |
     curl --unix-socket /run/miru/miru.sock \
       --request POST \
       --url http://localhost/v0.2/calibrations \
@@ -67,7 +67,7 @@ These examples report the pose of the arm `aligner-1` from the file `arm-pose.js
     ```powershell wrap
     $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
     $body = @{
-      component_slug = "arm"
+      component      = "arm"
       role           = "aligner-1"
       aspect         = "pose"
       serial_number  = "M500-1234"
