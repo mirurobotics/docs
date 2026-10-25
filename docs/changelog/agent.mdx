@@ -4,6 +4,21 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.12.0
+
+*[PLACEHOLDER: release date]*
+
+Miru Agent `v0.12.0` upgrades the Device API to `v0.2.3`, which lets on-device applications [report calibrations](/cfg-mgmt/report-calibrations) to Miru.
+
+## Features
+
+- Added `POST /v0.2/calibrations` to the Device API, which records a [calibration](/cfg-mgmt/concepts/calibrations) for a component of the device and returns its `report_id`
+- The agent saves each calibration on the device and uploads it once Miru is reachable, so calibrations reported while offline aren't lost
+  - Up to 1,000 calibrations can wait to upload, each at most 1 MiB
+  - A calibration that is still on the device 7 days after it was reported, or that Miru rejects, is dropped and logged as an error
+
+---
+
 # v0.11.1
 
 *October 9, 2026*
