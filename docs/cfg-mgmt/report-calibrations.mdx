@@ -107,3 +107,7 @@ The agent saves the calibration on the device, then responds with `200 OK`, a ne
 The agent responds the same way while the device is offline, and uploads the calibration once Miru is reachable. Miru records each report ID once, so the agent's own upload retries never record a calibration twice. Each request gets a new report ID, though, so don't resend one that got a `200`.
 
 ## View calibrations
+
+To view a device's calibrations, open the device and navigate to the **Calibrations** page on the left.
+
+A `200` means the agent saved the calibration on the device. The calibration appears on that page after the agent uploads it to Miru.
