@@ -4,6 +4,32 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.12.0
+
+*October 25, 2026*
+
+Miru Agent `v0.12.0` allows on-device applications to [report calibrations](/cfg-mgmt/report-calibrations) to Miru. Calibration reporting is added in Device API `v0.2.3`.
+
+[Device API v0.2.3 changelog »](/changelog/device-api#v0-2-3)
+
+## Features
+
+- Added `POST /v0.2/calibrations` to the Device API, which records a [calibration](/cfg-mgmt/concepts/calibrations) for a component of the device and returns its `report_id`
+- The agent saves each calibration on the device and uploads it once Miru is reachable, so calibrations reported while offline aren't lost
+- Uploads now carry each file's modification time with the device's UTC offset, so file rules with `upload.timezone: device` render upload paths in the device's local time
+- Uploads now resume across retries and restarts: each upload is created in Miru once, and a multipart upload continues from the parts that already landed, so a restart or power loss loses at most one part
+
+## Improvements
+
+- Uploads to Google Cloud Storage buckets now use the same upload client as Amazon S3 buckets, which removes the agent's separate Google Cloud dependencies
+
+## Fixes
+
+- Uploads now stream from the file instead of loading it into memory, so large files no longer risk exhausting memory and crash-looping the agent on low-memory devices
+- A stalled upload now fails after 60 seconds without progress and is retried without counting against its retry budget, instead of waiting out a deadline that grew with the file's size (about 23 hours for a 5.4 GB file)
+
+---
+
 # v0.11.1
 
 *October 9, 2026*

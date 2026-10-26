@@ -1,0 +1,111 @@
+---
+title: "Report calibrations"
+---
+
+import { DeviceApiLink } from '/snippets/components/api-links.jsx';
+import CalibrationDef from '/snippets/definitions/calibration.mdx';
+
+This guide details how to report [calibrations](/cfg-mgmt/concepts/calibrations) through the Miru Agent's [Device API](/developers/device-api/overview).
+
+## Overview
+
+<CalibrationDef />
+
+Miru allows on-device applications to report calibrations using the <DeviceApiLink endpoint="calibrations/create">create calibration</DeviceApiLink> endpoint in the Device API.
+
+When a calibration is reported, the agent saves it on the device and immediately returns a `200` response, regardless of whether the device is online or offline. Once a device is online, the agent uploads the calibration to Miru.
+
+## Prerequisites
+
+To follow this guide, you must have a device installed with a Miru Agent [v0.12.0](/changelog/agent#v0-12-0) or later.
+
+To provision a device, see the [Provision a device](/provision-devices) guide.
+
+## Components
+
+A [component](/cfg-mgmt/concepts/components) is a kind of hardware that devices report calibrations for, such as an arm, a camera, or a Robotiq 2F-85. A calibration names its component with a [slug](/cfg-mgmt/concepts/components#param-slug), such as `kuka-arm`, `realsense-d435`, or `robotiq-2f-85`. 
+
+When a calibration is reported, Miru checks if its component exists and creates it if it doesn't.
+
+### Roles
+
+Oftentimes devices have multiple units of the same component, such as multiple arms. 
+
+Roles distinguish components that are identical except for their purpose in the overall system. For example, a device with two arms might distinguish them as `left` and `right`.
+
+### Aspects
+
+Separately, some components have multiple calibrations. 
+
+An [aspect](/cfg-mgmt/concepts/components#param-aspects) distinguishes parts of a unit that are calibrated separately. For example, a camera might report both `intrinsics` and `extrinsics`. These calibrations belong to the same unit, but are used for different purposes within the unit itself.
+
+Both aspects and roles are optional. A device with one arm, calibrated one way, reports only the component. 
+
+Each device keeps a separate history for a given component, role, and aspect. Miru creates a role or aspect the first time a calibration reports it.
+ 
+## Send a calibration
+
+Calibrations are sent to the Miru Agent via the <DeviceApiLink endpoint="calibrations/create">create calibration</DeviceApiLink> endpoint in the Device API.
+
+We recommend using the official [Python Device SDK](https://pypi.org/project/miru-device-sdk/) to report calibrations. You can also generate your own client using the Device API's OpenAPI specification, located in the [Device API Changelog](/changelog/device-api).
+
+The following parameters are required.
+
+### Required parameters
+
+<ParamField body="component" type="string" required>
+  The [slug](/cfg-mgmt/concepts/components#param-slug) of the calibrated component.
+
+  Example: `kuka-arm`
+</ParamField>
+
+<ParamField body="content.format" type="enum" required>
+  The file format of `content.data`: `json`, `yaml`, `jsonc`, `xml` or `text`.
+</ParamField>
+
+<ParamField body="content.data" type="string" required>
+  The calibration result, usually the full text of the calibration file. At most 1 MiB.
+</ParamField>
+
+### File formatting
+
+The Miru dashboard shows the `content.data` string exactly as it was uploaded. Pretty-print that string in the request, including indentation and line breaks, the way you want it to appear.
+
+### Optional parameters
+
+In addition to the required parameters, you can also set the following optional parameters:
+
+<ParamField body="role" type="string">
+  The slug of the unit's [role](/cfg-mgmt/concepts/components#param-roles).
+
+  Example: `front-left`
+</ParamField>
+
+<ParamField body="aspect" type="string">
+  The slug of the calibrated [aspect](/cfg-mgmt/concepts/components#param-aspects).
+
+  Example: `pose`
+</ParamField>
+
+<ParamField body="serial_number" type="string">
+  The serial number of the calibrated unit. At most 255 characters.
+
+  Example: `SN-1234`
+</ParamField>
+
+## Response
+
+The agent saves the calibration on the device, then responds with `200 OK`, a new report ID and the time it received the calibration:
+
+```json nocopy
+{
+  "report_id": "0f8e7c2a-5b1d-4c3e-9a6f-2d4b8e1c7a90",
+  "reported_at": "2026-03-10T12:00:00Z"
+}
+```
+
+The agent responds the same way while the device is offline, and uploads the calibration once Miru is reachable. Miru records each report ID once, so the agent's own upload retries never record a calibration twice. Each request gets a new report ID, though, so don't resend one that got a `200`.
+
+## View calibrations
+
+To view a device's calibrations, open the device and navigate to the **Calibrations** page on the left.

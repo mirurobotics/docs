@@ -1,0 +1,60 @@
+---
+title: "Components"
+---
+
+import { ImmutableBadge, EditableBadge } from '/snippets/components/field-badges.jsx';
+import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
+import ComponentDef from '/snippets/definitions/component.mdx';
+
+<ComponentDef />
+
+## Properties
+
+<ParamField path="name" type="string">
+  <EditableBadge />
+
+  A human-readable display name, derived from the slug, so `realsense-d435` becomes `Realsense D435`.
+
+  Examples: `Kuka Arm`, `Realsense D435`, `Robotiq 2f 85`
+</ParamField>
+
+<ParamField path="slug" type="string">
+  <ImmutableBadge />
+
+  A unique, code-friendly identifier that devices report calibrations with.
+
+  Slugs are immutable and must satisfy the following constraints:
+
+  - Contain only lowercase letters, digits, and hyphens (`-`)
+  - Start and end with a lowercase letter or digit
+  - Contain between 1 and 32 characters
+
+  Examples: `kuka-arm`, `realsense-d435`, `robotiq-2f-85`
+</ParamField>
+
+<ParamField path="roles" type="[] Role">
+  The purpose a unit of the component fills on a device, such as its position on the robot or which side of the gripper it is on.
+
+  A device with two arms might report them as `left` and `right`.
+
+  Roles are optional, so a device with one arm, calibrated one way, reports only the component.
+
+  Examples: `front-left`, `front-right`, `back-left`, `back-right`
+</ParamField>
+
+<ParamField path="aspects" type="[] Aspect">
+  The parts of a unit that are calibrated separately.
+
+  A RealSense D435 might have the aspects `intrinsics` and `extrinsics`.
+
+  Aspects are optional, so a device with one RealSense D435, calibrated one way, reports only the component.
+
+  Examples: `intrinsics`, `extrinsics`
+</ParamField>
+
+
+## Create a component
+
+<PlatformUnsupportedBadge />
+
+Components, roles and aspects cannot be created directly. Instead, they are created when a device first [reports a calibration](/cfg-mgmt/report-calibrations) that uses them.
