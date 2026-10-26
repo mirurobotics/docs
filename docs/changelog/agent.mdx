@@ -16,7 +16,6 @@ Miru Agent `v0.12.0` allows on-device applications to [report calibrations](/cfg
 
 - Added `POST /v0.2/calibrations` to the Device API, which records a [calibration](/cfg-mgmt/concepts/calibrations) for a component of the device and returns its `report_id`
 - The agent saves each calibration on the device and uploads it once Miru is reachable, so calibrations reported while offline aren't lost
-- The agent holds up to 1,000 calibrations that haven't uploaded yet, for up to 90 days each; when it's holding 1,000, the endpoint returns `507` until uploads make room
 - Uploads now carry each file's modification time with the device's UTC offset, so file rules with `upload.timezone: device` render upload paths in the device's local time
 - Uploads now resume across retries and restarts: each upload is created in Miru once, and a multipart upload continues from the parts that already landed, so a restart or power loss loses at most one part
 
