@@ -18,6 +18,7 @@ Miru Agent `v0.12.0` allows on-device applications to [report calibrations](/cfg
 - The agent saves each calibration on the device and uploads it once Miru is reachable, so calibrations reported while offline aren't lost
   - Up to 1,000 calibrations can wait to upload, each at most 1 MiB
 - Uploads now carry each file's modification time with the device's UTC offset, so file rules with `upload.timezone: device` render upload paths in the device's local time
+- Uploads now resume across retries and restarts: each upload is created in Miru once, and a multipart upload continues from the parts that already landed, so a restart or power loss loses at most one part
 
 ## Improvements
 
@@ -27,6 +28,7 @@ Miru Agent `v0.12.0` allows on-device applications to [report calibrations](/cfg
 
 - Uploads now stream from the file instead of loading it into memory, so large files no longer risk exhausting memory and crash-looping the agent on low-memory devices
 - A stalled upload now fails after 60 seconds without progress and is retried without counting against its retry budget, instead of waiting out a deadline that grew with the file's size (about 23 hours for a 5.4 GB file)
+- A retryable failure after an upload attempt that ran 30 minutes or more no longer counts against the upload's retry budget, so long uploads that outlast their one-hour upload credentials are no longer dropped
 
 ---
 
