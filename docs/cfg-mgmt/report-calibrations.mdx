@@ -106,6 +106,8 @@ The agent saves the calibration on the device, then responds with `200 OK`, a ne
 
 The agent responds the same way while the device is offline, and uploads the calibration once Miru is reachable. Miru records each report ID once, so the agent's own upload retries never record a calibration twice. Each request gets a new report ID, though, so don't resend one that got a `200`.
 
+The agent holds up to 1,000 calibrations that haven't uploaded yet. When it's holding 1,000, it saves nothing and responds with `507 Insufficient Storage` and the error code `calibration_buffer_full`. Retry once the device is back online and the agent has uploaded some of them. A calibration that still hasn't uploaded 90 days after its `reported_at` is dropped.
+
 ## View calibrations
 
 To view a device's calibrations, open the device and navigate to the **Calibrations** page on the left.
