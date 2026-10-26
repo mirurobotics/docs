@@ -17,9 +17,7 @@ When a calibration is reported, the agent saves it on the device and immediately
 
 ## Prerequisites
 
-To follow this guide, you must have:
-
-- A device installed with a Miru Agent [v0.12.0](/changelog/agent#v0-12-0) or later
+To follow this guide, you must have a device installed with a Miru Agent [v0.12.0](/changelog/agent#v0-12-0) or later
 
 To provision a device, see [Provision a device](/provision-devices) guide.
 
@@ -31,23 +29,29 @@ When a calibration is reported, Miru checks if its component exists and creates 
 
 ### Roles
 
-Oftentimes devices have multiple units of the same component, such as multiple arms. In this case, a [role](/cfg-mgmt/concepts/components#param-roles) distinguishes the units.
+Oftentimes devices have multiple units of the same component, such as multiple arms. 
 
-A device with two arms might distinguish them as `left` and `right`.
+Roles are used to components which are identical except for their purpose in the overall system. For example, a device with two arms might distinguish them as `left` and `right`.
 
 ### Aspects
 
-Separately, some components are calibrated in multiple ways. For example, a RealSense D435 might report `intrinsics` and `extrinsics`.
+Separately, some components have multiple calibrations. 
 
-An [aspect](/cfg-mgmt/concepts/components#param-aspects) distinguishes parts of a unit that are calibrated separately.
+An [aspect](/cfg-mgmt/concepts/components#param-aspects) distinguishes parts of a unit that are calibrated separately. For example, a camera might report both `intrinsics` and `extrinsics`. These calibrations belong to the same unit, but are used for different purposes within the unit itself.
 
-Both are optional. A device with one arm, calibrated one way, reports only the component. The device keeps a separate history for each component, role, and aspect, and Miru creates a role or aspect the first time a calibration reports it.
+Both aspects and roles are optional. A device with one arm, calibrated one way, reports only the component. 
+
+Each device keeps a separate history for a given component, role, and aspect. Miru creates a role or aspect the first time a calibration reports it.
  
 ## Send a calibration
 
-Send a `POST` request to `/calibrations`.
+Calibrations are sent to the Miru Agent via the <DeviceApiLink endpoint="calibrations/create">create calibration</DeviceApiLink> endpoint in the Device API.
 
-### Required
+We recommend using the official [Python Device SDK](https://pypi.org/project/miru-device-sdk/) to report calibrations. You can also generate your own client using the Device API's OpenAPI specification, located in the [Device API Changelog](/changelog/device-api).
+
+The following parameters are required.
+
+### Required parameters
 
 <ParamField body="component" type="string" required>
   The [slug](/cfg-mgmt/concepts/components#param-slug) of the calibrated component.
@@ -63,9 +67,13 @@ Send a `POST` request to `/calibrations`.
   The calibration result, usually the full text of the calibration file. At most 1 MiB.
 </ParamField>
 
-### Optional
+### File formatting
 
-Set a role when the device has more than one unit of the component, and an aspect when a unit is calibrated more than one way. A device with one arm, calibrated one way, sends the component and the content.
+The document in the editor is the `content.data` string exactly as it was uploaded. Pretty-print that string in the request, including indentation and line breaks, the way you want it to appear.
+
+### Optional parameters
+
+In addition to the required parameters, you can also set the following optional parameters:
 
 <ParamField body="role" type="string">
   The slug of the unit's [role](/cfg-mgmt/concepts/components#param-roles).
@@ -85,46 +93,6 @@ Set a role when the device has more than one unit of the component, and an aspec
   Example: `SN-1234`
 </ParamField>
 
-### Example
-
-These examples report the pose of the `kuka-arm` unit `front-left` from the file `kuka-arm-pose.json`.
-
-<Tabs>
-  <Tab title="Linux">
-    [jq](https://jqlang.org/) escapes the file's content as a JSON string.
-
-    ```bash wrap
-    jq -n --rawfile data kuka-arm-pose.json \
-      '{component: "kuka-arm", role: "front-left", aspect: "pose", serial_number: "SN-1234", content: {format: "json", data: $data}}' |
-    curl --unix-socket /run/miru/miru.sock \
-      --request POST \
-      --url http://localhost/v0.2/calibrations \
-      --header 'Content-Type: application/json' \
-      --data-binary @-
-    ```
-  </Tab>
-  <Tab title="Windows">
-    ```powershell wrap
-    $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json
-    $body = @{
-      component      = "kuka-arm"
-      role           = "front-left"
-      aspect         = "pose"
-      serial_number  = "SN-1234"
-      content        = @{ format = "json"; data = (Get-Content -Raw "kuka-arm-pose.json") }
-    } | ConvertTo-Json -Depth 3
-    Invoke-RestMethod -Method Post `
-      -Uri "http://127.0.0.1:$($api.port)/v0.2/calibrations" `
-      -Headers @{ Authorization = "Bearer $($api.token)" } `
-      -ContentType "application/json" `
-      -Body $body
-    ```
-  </Tab>
-  <Tab title="Python">
-    [PLACEHOLDER: example with the Python Device SDK once the SDK release that supports calibrations ships]
-  </Tab>
-</Tabs>
-
 ## Response
 
 The agent saves the calibration on the device, then responds with `200 OK`, a new report ID and the time it received the calibration:
@@ -138,23 +106,4 @@ The agent saves the calibration on the device, then responds with `200 OK`, a ne
 
 The agent responds the same way while the device is offline, and uploads the calibration once Miru is reachable. Miru records each report ID once, so the agent's own upload retries never record a calibration twice. Each request gets a new report ID, though, so don't resend one that got a `200`.
 
-## Errors
-
-On an error the agent saves nothing, so the request is safe to retry once the cause is fixed. A request that times out may have been saved, and resending it may record it twice.
-
-| Status | Code | Cause |
-| ------ | ---- | ----- |
-| `401` | | Windows only: the bearer token is missing or stale. Re-read it as described in [Authentication](/developers/device-api/authn). |
-| `413` | `calibration_too_large` | `content.data` is over 1 MiB. |
-| `422` | [PLACEHOLDER: error code] | The request is malformed, such as a missing field or an unknown format. |
-| `507` | `calibration_buffer_full` | 1,000 calibrations are waiting to upload, usually because the device has been offline a long time. Retry later. |
-
-## Dropped calibrations
-
-The agent drops a calibration and logs an error when:
-
-- Miru rejects it: a slug or serial number is invalid, the content doesn't parse as its format, or it would pass a [component limit](/cfg-mgmt/concepts/components#create-a-component).
-- Its upload keeps failing for about a day, for reasons other than the device being offline.
-- It still hasn't uploaded 90 days after it was reported, for example because the device has been offline that long.
-
-The agent only checks a request's shape and size, so a `200` doesn't rule these out. To confirm a calibration reached Miru, find it on the device's **Calibrations** tab or check the [agent logs](/developers/agent/commands#logs).
+## View calibrations
