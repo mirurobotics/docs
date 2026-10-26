@@ -10,6 +10,203 @@ import { LazyVideo } from '/snippets/components/lazy-video.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
 <div className="changelog-page">
+  <Update label="October 26, 2026">
+    ## Calibrations
+
+    Devices can now report calibrations to Miru, so the calibration results for every
+    arm, camera, and gripper in your fleet are stored with their full history.
+
+    An application on the device reports a calibration to the Miru Agent through the
+    [Device API](/developers/device-api/overview), using the
+    [Python Device SDK](https://pypi.org/project/miru-device-sdk/) or your own client. The
+    agent saves it on the device and uploads it once the device is online, so calibrations
+    taken while offline aren't lost.
+
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-10-27/calibrations.png" borderWidth="0px" innerRadius="8px" />
+
+    To start reporting calibrations, upgrade your devices to
+    [Miru Agent v0.12.0](/changelog/agent#v0-12-0) or later and follow the
+    [report calibrations guide](/cfg-mgmt/report-calibrations).
+
+    ## Device Staging
+
+    Staging now happens on the device. Each device has a new **Staging** tab where you
+    prepare its next release, see exactly what will change, and deploy when it's ready.
+
+    To manage a release across your fleet, use the Staging tab on the release itself. It
+    lists every device the release is staged on, so you can deploy or archive them all at
+    once.
+
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-10-27/device-staging.png" borderWidth="0px" innerRadius="8px" />
+
+    ## File Bundling
+
+    File rules can now group related uploads into
+    [bundles](/data-uploads/concepts/upload-bundles), such as every file from a single
+    recording or run. Bundling is opt-in: rules without `upload.bundle` upload as before.
+
+    To bundle files, name part of a rule's glob with a `{key}`
+    [capture](/data-uploads/concepts/file-rules/rule-definition#glob-captures) and list it
+    in [`upload.bundle`](/data-uploads/concepts/file-rules/rule-definition#param-bundle).
+    Uploads from the same device that capture the same values share a bundle:
+
+    <Framed image="https://assets.mirurobotics.com/docs/changelog/26-10-27/bundling.png" borderWidth="0px" innerRadius="8px" />
+
+    * **Captures:** A `{key}` in `source.glob` matches like `*` and records the matched
+      text. Use a capture in `upload.path` to name objects after the folder or file they
+      came from
+    * **Bundle ID:** Use `{bundle_id}` in `upload.path` to store a bundle's files under
+      one prefix in your bucket
+    * **Across file rules:** Rules that upload to the same collection share a bundle when
+      their captured values match, so a recording and its metadata file can come from
+      separate rules
+    * **Per device:** Bundles never span devices, so identical values from two devices
+      land in different bundles
+    * **Object metadata:** Uploaded objects now carry `upload_id`, `file_rule_id`, and
+      `workspace_id`, plus `bundle_id` for bundled uploads, so an object in your bucket
+      links back to Miru
+
+    File bundling requires [Miru CLI v0.12.2](/changelog/cli#v0-12-2) or later. Devices
+    don't need an agent update.
+
+    [Upload bundles »](/data-uploads/concepts/upload-bundles)
+
+    <Separator />
+
+    <Dropdown title="Improvements">
+      <DropdownItem>
+        **Upload times in the device's time zone:** Upload path time variables now come
+        from the file's modification time instead of the upload time. Set
+        [`upload.timezone`](/data-uploads/concepts/file-rules/rule-definition#param-timezone)
+        to `device` to render them in the device's local time, and use `{timezone}` to add
+        the UTC offset. Requires [Miru CLI v0.12.3](/changelog/cli#v0-12-3) and
+        [Miru Agent v0.12.0](/changelog/agent#v0-12-0) or later.
+      </DropdownItem>
+
+      <DropdownItem>
+        **History tab:** The device's Deployments tab is now **History**. Alongside the
+        list, a diff view compares each deployment against its parent, with status and
+        release filters. Redeploy and copy actions moved to each row's menu.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Compare on the device:** Compare is now a device tab. Compare a device against
+        another device, or against its own earlier deployments to see how it changed over
+        time.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Focused device editor:** The editor is now for editing and deploying, while
+        History is for inspecting past deployments. The Changes panel lists errors first,
+        then every change grouped by file, each with its own diff, discard, and restore.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Config file details:** Hover a file in the editor to see the device path it's
+        written to, its config type, slot, and format, with a link to its schema.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Device and release sidebar:** Inside a device or release, the sidebar folds the
+        workspace navigation into an icon rail beside a panel listing that device's or
+        release's pages. Its switcher leads with your recently visited devices and
+        releases. The sidebar is resizable, and **⌘B** collapses the panel.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Device overview:** A details rail shows the device's properties, system info,
+        and who has access to it. Rename the device from its title, and ping or
+        reprovision it from the menu beside the name.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Deployment details:** The deployment sheet now has Deployment, Changes, and
+        Configurations tabs, with a timeline of when the deployment was created, queued,
+        deployed, and archived, and its changes against its parent.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Old values in diffs:** Every modified line now shows the value it replaced. When
+        Miru can't verify a structured diff, it shows a line diff and says why, instead of
+        highlighting the wrong lines.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Deleted lines while editing:** The editor gutter marks where lines were deleted
+        from the file.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Consistent change counts:** The editor, deploy and stage summaries, activity
+        feed, and deployment details now count a file's changes the same way.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Duplicate JSON keys:** Duplicate keys in a JSON config are flagged as errors on
+        the duplicate key, and block deploying until they're fixed.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Faster device pages:** Device tabs open instantly, and hovering a tab or a
+        switcher row preloads its page.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Connection status:** The device header shows **Reconnecting…** when live
+        updates drop, and the device reloads when they come back so no update is missed.
+      </DropdownItem>
+    </Dropdown>
+
+    <Separator />
+
+    <Dropdown title="Fixes">
+      <DropdownItem>
+        **YAML formatting:** YAML configs are no longer reformatted on deploy, stage, or
+        **Format file**. Only edited JSON is formatted.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Stale staged deployments:** Staging or deploying after another deployment
+        reached the device could silently revert it. It's now rejected with a notice
+        naming the new deployment.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Unsaved drafts:** Closing a tab with unsaved edits now asks first, and logging
+        out clears your drafts so the next person to sign in on that browser can't deploy
+        them.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Undo across files:** Each file keeps its own undo history when you switch
+        between files.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Exact discards:** Discarding a change restores exactly what was there, or is
+        refused when it can't be.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Large files:** Large arrays and YAML files no longer freeze the editor while
+        diffing.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Invalid file rule globs:** A file rule whose glob can't be compiled, such as
+        `/logs/[ab.log`, is now rejected when the release is created. Before, it was
+        accepted and stopped the device from applying the release's file rules. Globs
+        also can no longer contain `.` path segments, such as `/data/./logs/*`.
+      </DropdownItem>
+
+      <DropdownItem>
+        **Long uploads to Google Cloud Storage:** GCS upload credentials could expire
+        minutes after an upload started. They now last close to an hour, like S3
+        credentials.
+      </DropdownItem>
+    </Dropdown>
+  </Update>
+
   <Update label="October 9, 2026">
     ## Windows Support
 
