@@ -11,8 +11,8 @@
   "devDependencies": {
     "cspell": "10.4.0",
     "eslint": "10.13.0",
-    "eslint-plugin-mdx": "3.8.1",
-    "mint": "4.2.1047"
+    "eslint-plugin-mdx": "3.8.2",
+    "mint": "4.2.1112"
   },
   "pnpm": {
     "overrides": {
