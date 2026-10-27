@@ -33,6 +33,33 @@ Before provisioning a device via provisioning tokens, you must first install the
 
 <Install />
 
+## Check whether the machine is provisioned
+
+Before creating a token, check whether the machine is already provisioned so automation can skip it. `provision --check` reads only the machine's local state, so it needs no token or network connection. It requires Miru Agent `v0.10.2` or later.
+
+<Tabs>
+  <Tab title="Linux">
+    ```bash
+    sudo -u miru /usr/sbin/miru-agent provision --check
+    ```
+  </Tab>
+  <Tab title="Windows">
+    From PowerShell opened as administrator:
+
+    ```powershell PowerShell wrap
+    & "$env:ProgramW6432\Miru\Agent\miru-agent.exe" provision --check
+    ```
+  </Tab>
+</Tabs>
+
+| Exit code | Output | Meaning |
+|-----------|--------|---------|
+| `0` | `provisioned` | The machine is already provisioned. Skip provisioning. |
+| `3` | `not provisioned` | The machine is not provisioned. Create a token and provision it. |
+| `1` | An error on stderr | The provisioning state could not be determined. |
+
+The [Ansible collection](/provision-devices/ansible) runs this check before minting a token. Because the check doesn't contact Miru, a machine whose device was archived or deleted in Miru still reports `provisioned`; see [troubleshooting](#troubleshooting).
+
 ## Create a provisioning token
 
 Provisioning tokens are created via the <PlatformApiLink endpoint="provisioning-tokens/create">Platform API</PlatformApiLink> endpoint using [API keys](/admin/apikeys).
@@ -116,7 +143,7 @@ Provisioning performs the following actions:
 
 ### Troubleshooting
 
-If the machine you're provisioning on has already been provisioned, the provisioning command is treated as a no-op and exits successfully.
+If the machine you're provisioning on has already been provisioned, the provisioning command fails with exit code `1`. Run [`provision --check`](#check-whether-the-machine-is-provisioned) first to skip machines that are already provisioned.
 
 To reassociate the machine with an existing Miru device, follow the [reprovisioning](/provision-devices/reprovision) documentation.
 
