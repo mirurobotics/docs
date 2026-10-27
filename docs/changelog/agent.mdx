@@ -4,6 +4,18 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.12.2
+
+*October 27, 2026*
+
+Miru Agent `v0.12.2` makes `provision` fail on a machine that is already provisioned, so a script can no longer mistake a re-run for a successful provision.
+
+## Breaking changes
+
+- `miru-agent provision` now exits with status `1` when the machine is already provisioned, instead of printing "Device is already provisioned" and exiting `0` without contacting Miru. The error names the device and points to [reprovisioning](/provision-devices/reprovision). Scripts that run `provision` more than once should first check the machine with [`provision --check`](/developers/agent/commands#provisioning-status)
+
+---
+
 # v0.12.1
 
 *October 27, 2026*
