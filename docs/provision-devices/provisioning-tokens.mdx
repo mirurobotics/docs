@@ -143,7 +143,7 @@ Provisioning performs the following actions:
 
 ### Troubleshooting
 
-If the machine you're provisioning on has already been provisioned, the provisioning command fails with exit code `1`. Run [`provision --check`](#check-whether-the-machine-is-provisioned) first to skip machines that are already provisioned.
+If the machine you're provisioning on has already been provisioned, the provisioning command fails with exit code `1` (Miru Agent `v0.12.2` and later; earlier versions exit successfully without doing anything). Run [`provision --check`](#check-whether-the-machine-is-provisioned) first to skip machines that are already provisioned.
 
 To reassociate the machine with an existing Miru device, follow the [reprovisioning](/provision-devices/reprovision) documentation.
 
