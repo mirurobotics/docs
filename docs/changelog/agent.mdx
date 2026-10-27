@@ -12,7 +12,7 @@ Miru Agent `v0.12.2` makes `provision` fail on a machine that is already provisi
 
 ## Breaking changes
 
-- `miru-agent provision` now exits with status `1` when the machine is already provisioned, instead of printing "Device is already provisioned" and exiting `0` without contacting Miru. The error names the device and points to [reprovisioning](/provision-devices/reprovision). Scripts that run `provision` more than once should first check the machine with [`provision --check`](/developers/agent/commands#provisioning-status)
+- `miru-agent provision` now exits with status `1` when the machine is already provisioned, instead of printing "Device is already provisioned" and exiting `0` without contacting Miru
 
 ---
 
