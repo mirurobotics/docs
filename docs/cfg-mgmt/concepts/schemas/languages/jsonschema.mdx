@@ -172,11 +172,7 @@ properties:
     x-miru-type: double
 ```
 
-With this keyword, a value is valid only when it is written with a decimal point or an exponent, such as `1.0` or `1e3`. A value of `1` fails validation with `got integer 1, want double 1.0`. `double` is the only supported value of `x-miru-type`.
-
-<Note>
-  In a JSON-formatted schema, `default` values aren't checked for a decimal point, so set them to a double such as `1.0` yourself. YAML-formatted schemas are checked.
-</Note>
+With this keyword, a value is valid only when it is written with a decimal point or an exponent, such as `1.0` or `1e3`. A value of `1` fails validation with `got integer 1, want double 1.0`. The same rule applies to the property's `default`, and generated defaults keep the decimal point. `double` is the only supported value of `x-miru-type`.
 
 ## File formats
 
