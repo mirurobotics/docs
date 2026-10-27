@@ -4,6 +4,18 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.12.1
+
+*October 27, 2026*
+
+Miru Agent `v0.12.1` makes refused uploads easier to diagnose by logging the storage provider's explanation of the error.
+
+## Improvements
+
+- When a bucket refuses an upload, the agent's log now includes the provider's error message and details, such as which account lacked which permission on Google Cloud Storage, instead of only the error code
+
+---
+
 # v0.12.0
 
 *October 26, 2026*
