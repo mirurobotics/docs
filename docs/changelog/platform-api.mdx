@@ -89,7 +89,7 @@ API keys can now be granted the following scopes. Each new endpoint requires its
 
   <POST /> `/releases`
 
-  `description` is optional when creating a release.
+  `description` is optional when creating a release. If it is omitted, the description defaults to the message of the release's git commit. It stays `null` if the release has no git commit or `description` is set to `null`.
 
   ```diff nocopy
     {
