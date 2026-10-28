@@ -29,15 +29,6 @@ API keys can now be granted the following scopes. Each new endpoint requires its
 <Dropdown title="Calibrations">
   * <GET /> `/calibrations` — list calibrations
   * <GET /> `/calibrations/{calibration_id}` — retrieve a calibration
-
-  Calibrations can be filtered by `device_id`, `component_id`, `role_id`, `aspect_id`, `serial_number`, `report_id`, and `operator_id`, and sorted by `reported_at`. Calibration content is returned only when expanded.
-
-  ```diff nocopy
-    GET /calibrations
-  + GET /calibrations?device_id=dvc_123&component_id=cmp_123
-  + GET /calibrations?order_by=reported_at:desc
-  + GET /calibrations/{calibration_id}?expand=content
-  ```
 </Dropdown>
 
 <Separator />
@@ -45,14 +36,6 @@ API keys can now be granted the following scopes. Each new endpoint requires its
 <Dropdown title="Components">
   * <GET /> `/components` — list components
   * <GET /> `/components/{component_id}` — retrieve a component
-
-  Components can be filtered by `id`, `name`, `slug`, and `device_id`. A component's `roles` and `aspects` can be expanded.
-
-  ```diff nocopy
-    GET /components
-  + GET /components?device_id=dvc_123
-  + GET /components/{component_id}?expand=roles&expand=aspects
-  ```
 </Dropdown>
 
 <Separator />
@@ -60,8 +43,6 @@ API keys can now be granted the following scopes. Each new endpoint requires its
 <Dropdown title="Component roles">
   * <GET /> `/component_roles` — list component roles
   * <GET /> `/component_roles/{component_role_id}` — retrieve a component role
-
-  Component roles can be filtered by `id`, `component_id`, `name`, and `slug`. A role's `component` can be expanded.
 </Dropdown>
 
 <Separator />
@@ -69,8 +50,6 @@ API keys can now be granted the following scopes. Each new endpoint requires its
 <Dropdown title="Component aspects">
   * <GET /> `/component_aspects` — list component aspects
   * <GET /> `/component_aspects/{component_aspect_id}` — retrieve a component aspect
-
-  Component aspects can be filtered by `id`, `component_id`, `name`, and `slug`. An aspect's `component` can be expanded.
 </Dropdown>
 
 ## Additive changes
