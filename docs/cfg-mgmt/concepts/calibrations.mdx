@@ -3,7 +3,7 @@ title: "Calibrations"
 ---
 
 import { ImmutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
-import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
+import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import CalibrationDef from '/snippets/definitions/calibration.mdx';
 
 <CalibrationDef />
@@ -89,7 +89,7 @@ Calibrations can only be created on-device using the Miru Agent. Visit the [repo
 
 ## View calibrations
 
-<PlatformUnsupportedBadge />
+<PlatformApiBadge endpoint="calibrations/list" />
 
 To view a device's calibrations, open the device and navigate to the **Calibrations** page on the left.
 
