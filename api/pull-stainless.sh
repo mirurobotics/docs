@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Usage: pull-stainless.sh [platform-api-version ...]
+# Each version (e.g. 2026-10-28) gets the Stainless Python examples added to
+# its vendored reference spec.
+
 git_repo_root_dir=$(git rev-parse --show-toplevel)
 
 # pull the device-api.yaml file from Stainless
@@ -61,6 +65,11 @@ python3 add_powershell_samples.py "$DEVICE_API_FILE"
 
 # insert the scopes into the platform-api.yaml file
 python3 inject_scopes.py "$PLATFORM_API_FILE"
+
+# add the Python SDK examples to the vendored platform API reference specs
+for version in "$@"; do
+	python3 add_python_samples.py "$PLATFORM_API_FILE" "$git_repo_root_dir/docs/references/platform-api/$version.yaml"
+done
 
 # generate the event pages
 python3 generate_event_pages.py "$DEVICE_API_FILE" "$git_repo_root_dir/api/events"
