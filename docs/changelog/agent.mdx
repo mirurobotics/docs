@@ -4,6 +4,30 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.12.2
+
+*October 27, 2026*
+
+Miru Agent `v0.12.2` makes `provision` fail on a machine that is already provisioned, so a script can no longer mistake a re-run for a successful provision.
+
+## Breaking changes
+
+- `miru-agent provision` now exits with status `1` when the machine is already provisioned, instead of printing "Device is already provisioned" and exiting `0` without contacting Miru
+
+---
+
+# v0.12.1
+
+*October 27, 2026*
+
+Miru Agent `v0.12.1` makes refused uploads easier to diagnose by logging the storage provider's explanation of the error.
+
+## Improvements
+
+- When a bucket refuses an upload, the agent's log now includes the provider's error message and details, such as which account lacked which permission on Google Cloud Storage, instead of only the error code
+
+---
+
 # v0.12.0
 
 *October 26, 2026*

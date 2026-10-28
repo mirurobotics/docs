@@ -161,6 +161,23 @@ $schema: "https://json-schema.org/draft/2020-12/schema"
   If the `$schema` keyword is omitted from a schema, the schema is automatically interpreted as Draft 2020-12.
 </Note>
 
+## Custom vocabulary
+
+Miru extends JSON Schema's vocabulary with the following keywords.
+
+### Doubles
+
+JSON Schema's `number` type accepts both `1` and `1.0`. Some applications care about the difference. For example, ROS 2 rejects `1` for a parameter declared as a double. To require a double, add the `x-miru-type: double` keyword:
+
+```yaml JSON Schema highlight={4}
+properties:
+  gain:
+    type: number
+    x-miru-type: double
+```
+
+With this keyword, a number is valid only when it is written with a decimal point or an exponent, such as `1.0` or `1e3`. A value of `1` fails validation. The keyword checks only numbers, so keep `type: number` next to it. `double` is the only supported value of `x-miru-type`.
+
 ## File formats
 
 While JSON Schema was originally built for JSON data, it is not exclusive to JSON. JSON Schema may be uploaded to Miru in the following formats:
