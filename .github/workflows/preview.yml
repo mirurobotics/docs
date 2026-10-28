@@ -1,0 +1,35 @@
+name: Preview
+run-name: Preview ${{ inputs.branch }} (by @${{ github.actor }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy as a Mintlify preview'
+        required: true
+        type: string
+
+permissions: {}
+
+jobs:
+  preview:
+    name: Preview ${{ inputs.branch }}
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    timeout-minutes: 5
+
+    steps:
+      - name: Trigger Mintlify preview deployment
+        env:
+          BRANCH: ${{ inputs.branch }}
+          MINTLIFY_API_KEY: ${{ secrets.MINTLIFY_API_KEY }}
+          MINTLIFY_PROJECT_ID: ${{ vars.MINTLIFY_PROJECT_ID }}
+        run: |
+          response=$(curl --silent --show-error --fail-with-body \
+            --request POST \
+            --url "https://api.mintlify.com/v1/project/preview/${MINTLIFY_PROJECT_ID}" \
+            --header "Authorization: Bearer ${MINTLIFY_API_KEY}" \
+            --header 'Content-Type: application/json' \
+            --data "$(jq --null-input --arg branch "${BRANCH}" '{branch: $branch}')") \
+            || { echo "::error::Mintlify rejected the preview: ${response}"; exit 1; }
+          preview_url=$(jq --raw-output '.previewUrl' <<< "${response}")
+          echo "Preview for \`${BRANCH}\`: ${preview_url}" >> "${GITHUB_STEP_SUMMARY}"
