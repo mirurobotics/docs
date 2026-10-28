@@ -163,13 +163,13 @@ $schema: "https://json-schema.org/draft/2020-12/schema"
 
 ## Custom vocabulary
 
-Miru adds the following keywords to JSON Schema.
+Miru extends JSON Schema's vocabulary with the following keywords.
 
 ### Doubles
 
 JSON Schema's `number` type accepts both `1` and `1.0`. Some applications care about the difference. For example, ROS 2 rejects `1` for a parameter declared as a double. To require a double, add the `x-miru-type: double` keyword:
 
-```yaml JSON Schema
+```yaml JSON Schema highlight={4}
 properties:
   gain:
     type: number
