@@ -12,7 +12,7 @@
  * @param {React.ReactNode} children - Link text
  */
 export const PlatformApiLink = ({ endpoint, newTab, children }) => {
-  const href = `/references/platform-api/2026-08-17/endpoints/${endpoint}`;
+  const href = `/references/platform-api/2026-10-28/endpoints/${endpoint}`;
   if (newTab) {
     return <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>;
   }
@@ -34,7 +34,7 @@ export const PlatformApiLink = ({ endpoint, newTab, children }) => {
  * @param {string} [label] - Badge text
  */
 export const PlatformApiBadge = ({ endpoint, label = "Platform API" }) => {
-  const href = `/references/platform-api/2026-08-17/endpoints/${endpoint}`;
+  const href = `/references/platform-api/2026-10-28/endpoints/${endpoint}`;
   return (
     <Tooltip tip="Open the Platform API reference for this operation">
       <a

@@ -9,6 +9,152 @@ import { PlatformApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
+# 2026-10-28.everglades
+
+_October 28, 2026_
+
+This `everglades` update adds read access to [calibrations](/cfg-mgmt/concepts/calibrations) and the [components](/cfg-mgmt/concepts/components) they are reported for, including each component's roles and aspects. Devices report calibrations starting with Miru Agent [v0.12.0](/changelog/agent#v0-12-0). Devices now report the operating system, CPU architecture, hostname, and kernel they run, and releases gain a free-form description.
+
+Every change is additive. `2026-08-17.everglades` remains a supported `Miru-Version` value, so existing integrations keep working without changes.
+
+<PlatformApiReleaseLinks version="2026-10-28.everglades" />
+
+## New endpoints
+
+Each new resource has its own `read` and `manage` [scopes](/developers/platform-api/authz#scopes-by-resource).
+
+<Dropdown title="Calibrations">
+  * <GET /> `/calibrations` — list calibrations
+  * <GET /> `/calibrations/{calibration_id}` — retrieve a calibration
+</Dropdown>
+
+<Separator />
+
+<Dropdown title="Components">
+  * <GET /> `/components` — list components
+  * <GET /> `/components/{component_id}` — retrieve a component
+</Dropdown>
+
+<Separator />
+
+<Dropdown title="Component roles">
+  * <GET /> `/component_roles` — list component roles
+  * <GET /> `/component_roles/{component_role_id}` — retrieve a component role
+</Dropdown>
+
+<Separator />
+
+<Dropdown title="Component aspects">
+  * <GET /> `/component_aspects` — list component aspects
+  * <GET /> `/component_aspects/{component_aspect_id}` — retrieve a component aspect
+</Dropdown>
+
+## Additive changes
+
+<Dropdown title="Device platform details">
+  Devices now report the platform the agent runs on. `os`, `arch`, `hostname`, `os_version`, and `kernel_version` are always present and are `null` until the agent reports them. Devices report them starting with Miru Agent [v0.11.0](/changelog/agent#v0-11-0). Visit the [device properties](/concepts/devices/overview#properties) documentation for details.
+
+  * `os` is `linux` or `windows`
+  * `arch` is `x86_64` or `aarch64`
+
+  **Device Response**
+
+  ```diff nocopy
+      "id": "dvc_123",
+      "name": "My Device",
+      "agent_version": "v1.0.0",
+  +   "os": "linux",
+  +   "arch": "x86_64",
+  +   "hostname": "robot-1.local",
+  +   "os_version": "Ubuntu 22.04",
+  +   "kernel_version": "5.15.0-91-generic",
+  ```
+</Dropdown>
+
+<Separator />
+
+<Dropdown title="Release description">
+  Releases now return a free-form `description`, which is `null` when unset.
+
+  **Release Response**
+
+  ```diff nocopy
+      "id": "rls_123",
+      "version": "v1.0.0",
+  +   "description": "Add lidar calibration to motion control",
+  ```
+
+  <POST /> `/releases`
+
+  `description` is optional when creating a release. If it is omitted, the description defaults to the message of the release's git commit. It stays `null` if the release has no git commit or `description` is set to `null`.
+
+  ```diff nocopy
+    {
+      "version": "v1.0.0",
+  +   "description": "Add lidar calibration to motion control",
+      "config_schema_ids": ["cfg_sch_123"]
+    }
+  ```
+</Dropdown>
+
+<Separator />
+
+<Dropdown title="Release and config schema OS">
+  Releases and config schemas now report the operating system family they target, as a read-only `os` field that is always `linux` or `windows`. Miru derives it from the instance slot filepaths of a config schema, and from the config schemas and file rules of a release.
+
+  **Config Schema Response**
+
+  ```diff nocopy
+      "id": "cfg_sch_123",
+      "digest": "sha256:1234567890",
+  +   "os": "linux",
+  ```
+
+  **Release Response**
+
+  ```diff nocopy
+      "id": "rls_123",
+      "version": "v1.0.0",
+  +   "os": "linux",
+  ```
+</Dropdown>
+
+<Separator />
+
+<Dropdown title="CSV instance format">
+  `csv` is added to the config schema `instance_format` enum and the config instance content `format` enum, in responses and in the <POST /> `/config_schemas` and <POST /> `/config_instances` request bodies. Visit the [opaque schema language](/cfg-mgmt/concepts/schemas/languages/opaque) documentation for details. Update any code that branches on these enums.
+
+  **Config Instance Format Enum**
+
+  ```diff nocopy
+      "json"
+      "yaml"
+      "jsonc"
+      "xml"
+  +   "csv"
+      "text"
+  ```
+</Dropdown>
+
+## Migration steps
+
+<Steps>
+  <Step title="Update the Miru-Version header">
+    Optionally set `Miru-Version: 2026-10-28.everglades` on API requests. Requests that send `2026-08-17.everglades` keep working. [Python SDK](/developers/platform-api/sdks#python) `v0.12.0` marks the rollout of the `2026-10-28.everglades` API. For the latest SDK version compatibility information, visit the [Platform SDKs](/developers/platform-api/sdks) page.
+  </Step>
+  <Step title="Handle the csv instance format">
+    If your code branches on config schema `instance_format` or config instance content `format`, handle the new `csv` value.
+  </Step>
+  <Step title="Optionally integrate new endpoints">
+    Optionally integrate the new calibration and component endpoints listed above, and grant your API keys the scopes they need.
+  </Step>
+  <Step title="Optionally adopt new additive surface">
+    Optionally integrate the new additive API changes listed above.
+  </Step>
+</Steps>
+
+---
+
 # 2026-08-17.everglades
 
 _August 17, 2026_
