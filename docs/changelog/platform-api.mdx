@@ -13,7 +13,7 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 _October 28, 2026_
 
-This `everglades` update adds read access to [calibrations](/cfg-mgmt/concepts/calibrations) and the [components](/cfg-mgmt/concepts/components) they are reported for, including each component's roles and aspects. Devices report calibrations starting with Miru Agent [`v0.12.0`](/changelog/agent#v0-12-0). Devices now report the operating system, CPU architecture, hostname, and kernel they run, and releases gain a free-form description.
+This `everglades` update adds read access to [calibrations](/cfg-mgmt/concepts/calibrations) and the [components](/cfg-mgmt/concepts/components) they are reported for, including each component's roles and aspects. Devices report calibrations starting with Miru Agent [v0.12.0](/changelog/agent#v0-12-0). Devices now report the operating system, CPU architecture, hostname, and kernel they run, and releases gain a free-form description.
 
 Every change is additive. `2026-08-17.everglades` remains a supported `Miru-Version` value, so existing integrations keep working without changes.
 
@@ -50,7 +50,7 @@ Each new resource has its own `read` and `manage` [scopes](/developers/platform-
 ## Additive changes
 
 <Dropdown title="Device platform details">
-  Devices now report the platform the agent runs on. `os`, `arch`, `hostname`, `os_version`, and `kernel_version` are always present and are `null` until the agent reports them. Devices report them starting with Miru Agent [`v0.11.0`](/changelog/agent#v0-11-0). Visit the [device properties](/concepts/devices/overview#properties) documentation for details.
+  Devices now report the platform the agent runs on. `os`, `arch`, `hostname`, `os_version`, and `kernel_version` are always present and are `null` until the agent reports them. Devices report them starting with Miru Agent [v0.11.0](/changelog/agent#v0-11-0). Visit the [device properties](/concepts/devices/overview#properties) documentation for details.
 
   * `os` is `linux` or `windows`
   * `arch` is `x86_64` or `aarch64`
