@@ -19,7 +19,12 @@ Every change is additive. `2026-08-17.everglades` remains a supported `Miru-Vers
 
 ## New endpoints
 
-Each new endpoint requires its resource's `read` scope (or `manage`), such as `calibrations:read`. Visit the [authorization](/developers/platform-api/authz) documentation for how scopes work.
+API keys can now be granted the following scopes. Each new endpoint requires its resource's `read` or `manage` scope. Visit the [authorization](/developers/platform-api/authz#scopes-by-resource) documentation for details.
+
+* `calibrations:read`, `calibrations:manage`
+* `components:read`, `components:manage`
+* `component_roles:read`, `component_roles:manage`
+* `component_aspects:read`, `component_aspects:manage`
 
 <Dropdown title="Calibrations">
   * <GET /> `/calibrations` — list calibrations
