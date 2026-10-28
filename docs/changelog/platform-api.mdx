@@ -103,7 +103,7 @@ API keys can now be granted the following scopes. Each new endpoint requires its
 <Separator />
 
 <Dropdown title="Release and config schema OS">
-  Releases and config schemas now report the operating system family they target, as a read-only `os` field set to `linux` or `windows`. A config schema's `os` is derived from its instance slot filepaths, and a release's `os` from its config schemas and file rules. A release with neither is `linux`.
+  Releases and config schemas now report the operating system family they target, as a read-only `os` field that is always `linux` or `windows`. Miru derives it from the instance slot filepaths of a config schema, and from the config schemas and file rules of a release.
 
   **Config Schema Response**
 
