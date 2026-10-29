@@ -50,16 +50,25 @@ Calibrations flow one way, from the device to Miru. Editing calibrations is not 
   Example: `SN-1234`
 </ParamField>
 
+<ParamField path="reported by" type="string">
+  <ImmutableBadge /> {' '} <NullableBadge />
+
+  The person who reported the calibration, exactly as the device named them. At most 255 characters.
+
+  Example: `Jane Doe`
+</ParamField>
+
 <ParamField path="format" type="enum">
   <ImmutableBadge />
 
-  The file format of the calibration's content. Miru checks that `json`, `jsonc` and `yaml` content parses.
+  The file format of the calibration's content. Miru checks that `json`, `jsonc`, `yaml`, `xml` and `csv` content parses.
 
   Allowed values:
   - `json`
   - `yaml`
   - `jsonc`
   - `xml`
+  - `csv`
   - `text`
 </ParamField>
 
