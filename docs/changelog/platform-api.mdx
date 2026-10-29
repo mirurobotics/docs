@@ -9,6 +9,84 @@ import { PlatformApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
+# 2026-10-29.everglades
+
+_October 29, 2026_
+
+This `everglades` update simplifies how calibrations are read. A calibration now names its component, role and aspect by the slugs the device reported, so you can filter calibrations by those slugs without looking up IDs first. The component, component role and component aspect endpoints are removed.
+
+`2026-10-28.everglades` is retired, and requests that send it are rejected. `2026-08-17.everglades` remains a supported `Miru-Version` value and returns the shapes described here.
+
+<PlatformApiReleaseLinks version="2026-10-29.everglades" />
+
+## Breaking changes
+
+<Dropdown title="Calibrations name components, roles and aspects by slug">
+  `component_id`, `role_id` and `aspect_id` are replaced by `component`, `role` and `aspect`, the slugs the device reported. `role` and `aspect` are `null` when the device didn't report one. `deployment_id` and `operator_id` are removed.
+
+  **Calibration Response**
+
+  ```diff nocopy
+      "id": "cal_123",
+      "device_id": "dvc_123",
+  -   "component_id": "cmp_123",
+  -   "role_id": "cmp_rol_123",
+  -   "aspect_id": null,
+  +   "component": "arm",
+  +   "role": "front-left",
+  +   "aspect": null,
+      "serial_number": "SN-1234",
+      "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  -   "deployment_id": "dpl_123",
+  -   "operator_id": "opr_123",
+      "report_id": "0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10",
+  ```
+</Dropdown>
+
+<Separator />
+
+<Dropdown title="Calibration filters">
+  <GET /> `/calibrations` filters by the `component`, `role` and `aspect` slugs instead of the `component_id`, `role_id` and `aspect_id` filters. The `operator_id` filter is removed. Role and aspect slugs are unique only within a component, so filter by `component` too to match one component's role or aspect.
+
+  ```diff nocopy
+    curl --request GET \
+  -   --url 'https://api.mirurobotics.com/beta/calibrations?component_id=cmp_123&aspect_id=cmp_asp_123' \
+  +   --url 'https://api.mirurobotics.com/beta/calibrations?component=optic-flipper&aspect=pose' \
+      --header 'X-API-Key: <api-key>' \
+  -   --header 'Miru-Version: 2026-10-28.everglades'
+  +   --header 'Miru-Version: 2026-10-29.everglades'
+  ```
+</Dropdown>
+
+<Separator />
+
+<Dropdown title="Removed endpoints">
+  Components, component roles and component aspects are no longer exposed by the Platform API, and their `read` and `manage` scopes are removed from API keys.
+
+  * <GET /> `/components`
+  * <GET /> `/components/{component_id}`
+  * <GET /> `/component_roles`
+  * <GET /> `/component_roles/{component_role_id}`
+  * <GET /> `/component_aspects`
+  * <GET /> `/component_aspects/{component_aspect_id}`
+</Dropdown>
+
+## Migration steps
+
+<Steps>
+  <Step title="Update the Miru-Version header">
+    Set `Miru-Version: 2026-10-29.everglades` on all API requests. Requests that send `2026-10-28.everglades` are rejected. [Python SDK](/developers/platform-api/sdks#python) `v0.13.0` marks the rollout of the `2026-10-29.everglades` API. For the latest SDK version compatibility information, visit the [Platform SDKs](/developers/platform-api/sdks) page.
+  </Step>
+  <Step title="Filter and read calibrations by slug">
+    Replace the `component_id`, `role_id` and `aspect_id` filters with the `component`, `role` and `aspect` slugs, and read those fields from each calibration. Lookups that turned slugs into IDs through the component endpoints are no longer needed.
+  </Step>
+  <Step title="Stop reading removed fields">
+    Remove reads of calibration `deployment_id` and `operator_id`, and calls to the component, component role and component aspect endpoints.
+  </Step>
+</Steps>
+
+---
+
 # 2026-10-28.everglades
 
 _October 28, 2026_
