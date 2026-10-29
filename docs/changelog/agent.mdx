@@ -4,6 +4,21 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.12.3
+
+*October 29, 2026*
+
+Miru Agent `v0.12.3` upgrades the Device API to `v0.2.4`, which lets on-device applications say who reported a [calibration](/cfg-mgmt/concepts/calibrations) and report calibrations as CSV.
+
+[Device API v0.2.4 changelog »](/changelog/device-api#v0-2-4)
+
+## Features
+
+- `POST /v0.2/calibrations` now accepts an optional `reported_by`, the person who reported the calibration, and the agent sends it to Miru with the calibration; calibrations queued on the device before the upgrade upload without one
+- `POST /v0.2/calibrations` now accepts `csv` as the `content.format`
+
+---
+
 # v0.12.2
 
 *October 27, 2026*

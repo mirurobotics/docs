@@ -9,6 +9,68 @@ import { DeviceApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
+# v0.2.4
+
+*October 29, 2026*
+
+The `v0.2.4` release lets on-device applications say who [reported a calibration](/cfg-mgmt/report-calibrations) and report calibrations as CSV.
+
+<DeviceApiReleaseLinks version="v0.2.4" />
+
+## Additive changes
+
+<Dropdown title="Create calibration request">
+The `POST /calibrations` request added an optional `reported_by`, the person who reported the calibration. It's free text of at most 255 characters.
+
+```diff nocopy
+ {
+   "component": "kuka-arm",
+   "role": "front-left",
+   "aspect": "pose",
+   "serial_number": "SN-1234",
++  "reported_by": "Jane Doe",
+   "content": {
+     "format": "json",
+     "data": "{\"x\": 0.12, \"y\": -0.03}"
+   }
+ }
+```
+</Dropdown>
+<Separator />
+<Dropdown title="CSV calibrations">
+The `content.format` of a `POST /calibrations` request added `csv`, for comma-separated values (RFC 4180).
+
+```diff nocopy
+ {
+   "component": "kuka-arm",
+   "content": {
+-    "format": "json",
+-    "data": "{\"x\": 0.12, \"y\": -0.03}"
++    "format": "csv",
++    "data": "x,y\n0.12,-0.03\n"
+   }
+ }
+```
+</Dropdown>
+
+## Migration steps
+
+<Steps>
+  <Step title="Verify agent compatibility">
+    Ensure all devices are running Miru Agent `v0.12.3` or later. See [compatibility matrix](/developers/device-api/versions#agent-compatibility-matrix).
+  </Step>
+
+  <Step title="Upgrade Python SDK">
+    If you are using the [Python SDK](/developers/device-api/sdks#python), upgrade to version `v0.9.0` or later.
+  </Step>
+
+  <Step title="Integrate the changes">
+    Integrate the new fields into your client application.
+  </Step>
+</Steps>
+
+---
+
 # v0.2.3
 
 *October 25, 2026*
