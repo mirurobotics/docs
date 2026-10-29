@@ -9,93 +9,50 @@ info:
     url: https://opensource.org/licenses/MIT
   x-release-version: v0.2.4
   x-git-commit:
-    sha: 67b58d48c00b0f92ccb6772344d9ef00f1e13027
-    url: https://github.com/mirurobotics/openapi/commit/67b58d48c00b0f92ccb6772344d9ef00f1e13027
+    sha: 13405ec342d31653d51698d8da8b860db728df18
+    url: https://github.com/mirurobotics/openapi/commit/13405ec342d31653d51698d8da8b860db728df18
     message: |-
-      refactor(calibrations)!: name the calibration's external user reported_by (#395)
+      chore(stlc): seal custom-code tracking files (#396)
 
-      <!-- claude-projects-attribution: {"github_login":"miru-agents"} -->
-      _Requested by **bens-agent** · [project
-      thread](https://claude.ai/code/project/chan_015imaa8aZrnubYZcZCvjeHx?thread=cmsg_015imaa8aZrnubYZcZCvjeHx6HTArhtGtMpoitqDXkyMq7)_
-
-      Follows #386.
-
-      ## Summary
-
-      Every calibration field that points at the person who reported the
-      calibration is now named `reported_by`, across the device, agent and
-      frontend APIs. `user` and `external_user` read like a Miru account or an
-      unrelated resource. `reported_by` pairs with the existing `reported_at`,
-      and the field follows the `created_by` / `created_by_id` pattern.
-
-      | API | Before | After |
-      |---|---|---|
-      | Device `CreateCalibrationRequest` | `user` | `reported_by` |
-      | Agent `CreateCalibrationRequest` | `external_user` | `reported_by` |
-      | `Calibration` (agent, frontend) | `external_user_id` |
-      `reported_by_id` |
-      | Calibration expansion (frontend) | `expand=external_user` |
-      `expand=reported_by` |
-      | Calibration list filter (frontend) | `external_user_id` |
-      `reported_by_id` |
-
-      - The external user resource is unchanged: `ExternalUser`,
-      `/external_users`, `ext_usr_` IDs. `reported_by_id` holds an external
-      user ID and `reported_by` expands to an `ExternalUser`.
-      - The platform API is unaffected, since #387 already dropped the field
-      there.
-      - Source edits and `./scripts/regen.sh` output are in separate commits.
-      An earlier pair of commits used `calibrated_by`; the latest pair renames
-      it to `reported_by`.
-
-      ## Reviewer notes
-
-      - **Breaking for the device, agent and frontend APIs.**
-      - Device: `user` is only in the `device/v0.2.4-beta.1` tag, and its only
-      consumer is mirurobotics/agent#409 (open).
-      - Agent and frontend: backend#1062 serves `agent/v0.5.14` and
-      `frontend/v0.9.21`. After this merges and is tagged, a backend follow-up
-      re-vendors both specs and renames the fields, and agent#409 re-vendors
-      the device and agent specs.
-        - No SDK, Dinghy or dashboard code uses these fields yet.
-
-      🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-      https://claude.ai/code/session_01XHScKYffhVuSntTMwJK7xK
+      Automated by the stlc generate workflow: a push-to-main or manual
+      `workflow_dispatch` publish re-sealed custom code, updating the tracking
+      files under `sdkgen/*/stainless/custom-code/`. Publishing targets the
+      private staging repos. Safe to merge - this PR's head branch
+      `stlc/seal-tracking` is skipped by the generate workflow's skip-bot
+      guard in `detect`, and on merge the push loop-breaker `guard` sees only
+      custom-code changes and runs no rebuild.
 
       <!-- codesmith:footer -->
       ---
       <a
-      href="https://app.blacksmith.sh/mirurobotics/codesmith/openapi/pr/395?autoLogin=true&ref=codesmith_pr_footer"><picture>``&lt;source
+      href="https://app.blacksmith.sh/mirurobotics/codesmith/openapi/pr/396?autoLogin=true&ref=codesmith_pr_footer"><picture><source
       media="(prefers-color-scheme: dark)"
-      srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v3.svg"&gt;&lt;source
+      srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v3.svg"><source
       media="(prefers-color-scheme: light)"
-      srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-light-v3.svg"&gt;&lt;img
+      srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-light-v3.svg"><img
       alt="View with [code]smith"
       src="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v3-3x.png"
-      width="162" height="28"&gt;``</picture></a> <a
-      href="```https://backend.blacksmith.sh/track/enable-autofix?expires=1795886184&installation_model_id=425273&pr_number=395&ref=codesmith_pr_footer&repository=mirurobotics%2Fopenapi&return_to=https%3A%2F%2Fgithub.com%2Fmirurobotics%2Fopenapi%2Fpull%2F395&signature=a51fe152faa0c2be5b44701d20bfa1a755e654edd8049f267322f63a81f9e596"&gt;&lt;picture&gt;&lt;source
+      width="162" height="28"></picture></a> <a
+      href="https://backend.blacksmith.sh/track/enable-autofix?expires=1795887387&installation_model_id=425273&pr_number=396&ref=codesmith_pr_footer&repository=mirurobotics%2Fopenapi&return_to=https%3A%2F%2Fgithub.com%2Fmirurobotics%2Fopenapi%2Fpull%2F396&signature=36ab39c5d717b3d9ff699ab6514ceba14c9fae2a8d4a356f380950ed197d6701"><picture><source
       media="(prefers-color-scheme: dark)"
-      srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"&gt;&lt;source
+      srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source
       media="(prefers-color-scheme: light)"
-      srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"&gt;&lt;img
+      srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img
       alt="Autofix with [code]smith"
       src="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark-3x.png"
-      width="190" height="28"&gt;```</picture></a>
+      width="190" height="28"></picture></a>
       <sup>Need help on this PR? Tag <code>@codesmith</code> with what you
       need.</sup>
 
       <!-- codesmith:autofix:disabled -->
       <!-- /codesmith:footer -->
 
-      ---------
-
-      Co-authored-by: Claude <noreply@anthropic.com>
-    author: Ben's Agent
+      Co-authored-by: stlc-sealback-bot[bot] <298483487+stlc-sealback-bot[bot]@users.noreply.github.com>
+    author: stlc-sealback-bot[bot]
     branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-10-29T17:51:42.804446+00:00'
+    built_at: '2026-10-29T20:27:44.269490+00:00'
 servers:
 - url: http://localhost/v0.2
   description: localhost
@@ -637,7 +594,7 @@ components:
     APIGitCommit:
       type: string
       enum:
-      - 67b58d48c00b0f92ccb6772344d9ef00f1e13027
+      - 13405ec342d31653d51698d8da8b860db728df18
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
@@ -866,8 +823,8 @@ components:
           type: string
           example: kuka-arm
           description: Slug of the component the calibrated unit belongs to, such
-            as `kuka-arm`. Miru resolves it to the component, creating the component the
-            first time it is reported.
+            as `kuka-arm`. Miru resolves it to the component, creating the component
+            the first time it is reported.
         role:
           type: string
           example: front-left
