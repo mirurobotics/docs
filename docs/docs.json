@@ -916,6 +916,10 @@
       "destination": "/references/platform-api/2026-10-29/:slug*"
     },
     {
+      "source": "/references/platform-api/2026-10-28/:slug*",
+      "destination": "/references/platform-api/2026-10-29/:slug*"
+    },
+    {
       "source": "/docs/references/cli/install",
       "destination": "/developers/cli/install"
     },
