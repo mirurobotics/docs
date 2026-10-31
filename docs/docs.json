@@ -704,13 +704,6 @@
             }
           },
           {
-            "dropdown": "2026-10-28.everglades",
-            "openapi": {
-              "source": "references/platform-api/2026-10-28.yaml",
-              "directory": "references/platform-api/2026-10-28/endpoints"
-            }
-          },
-          {
             "dropdown": "2026-08-17.everglades",
             "openapi": {
               "source": "references/platform-api/2026-08-17.yaml",
