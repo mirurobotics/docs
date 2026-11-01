@@ -9,44 +9,23 @@ import { PlatformApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
-# 2026-10-28.everglades
+# 2026-10-29.everglades
 
-_October 28, 2026_
+_October 29, 2026_
 
-This `everglades` update adds read access to [calibrations](/cfg-mgmt/concepts/calibrations) and the [components](/cfg-mgmt/concepts/components) they are reported for, including each component's roles and aspects. Devices report calibrations starting with Miru Agent [v0.12.0](/changelog/agent#v0-12-0). Devices now report the operating system, CPU architecture, hostname, and kernel they run, and releases gain a free-form description.
+This `everglades` update adds read access to [calibrations](/cfg-mgmt/concepts/calibrations). Devices report calibrations starting with Miru Agent [v0.12.0](/changelog/agent#v0-12-0). Devices now report the operating system, CPU architecture, hostname, and kernel they run, and releases gain a free-form description.
 
 Every change is additive. `2026-08-17.everglades` remains a supported `Miru-Version` value, so existing integrations keep working without changes.
 
-<PlatformApiReleaseLinks version="2026-10-28.everglades" />
+<PlatformApiReleaseLinks version="2026-10-29.everglades" />
 
 ## New endpoints
 
-Each new resource has its own `read` and `manage` [scopes](/developers/platform-api/authz#scopes-by-resource).
+Calibrations have their own `read` and `manage` [scopes](/developers/platform-api/authz#scopes-by-resource).
 
 <Dropdown title="Calibrations">
   * <GET /> `/calibrations` — list calibrations
   * <GET /> `/calibrations/{calibration_id}` — retrieve a calibration
-</Dropdown>
-
-<Separator />
-
-<Dropdown title="Components">
-  * <GET /> `/components` — list components
-  * <GET /> `/components/{component_id}` — retrieve a component
-</Dropdown>
-
-<Separator />
-
-<Dropdown title="Component roles">
-  * <GET /> `/component_roles` — list component roles
-  * <GET /> `/component_roles/{component_role_id}` — retrieve a component role
-</Dropdown>
-
-<Separator />
-
-<Dropdown title="Component aspects">
-  * <GET /> `/component_aspects` — list component aspects
-  * <GET /> `/component_aspects/{component_aspect_id}` — retrieve a component aspect
 </Dropdown>
 
 ## Additive changes
@@ -140,13 +119,13 @@ Each new resource has its own `read` and `manage` [scopes](/developers/platform-
 
 <Steps>
   <Step title="Update the Miru-Version header">
-    Optionally set `Miru-Version: 2026-10-28.everglades` on API requests. Requests that send `2026-08-17.everglades` keep working. [Python SDK](/developers/platform-api/sdks#python) `v0.12.0` marks the rollout of the `2026-10-28.everglades` API. For the latest SDK version compatibility information, visit the [Platform SDKs](/developers/platform-api/sdks) page.
+    Optionally set `Miru-Version: 2026-10-29.everglades` on API requests. Requests that send `2026-08-17.everglades` keep working. [Python SDK](/developers/platform-api/sdks#python) `v0.13.0` marks the rollout of the `2026-10-29.everglades` API. For the latest SDK version compatibility information, visit the [Platform SDKs](/developers/platform-api/sdks) page.
   </Step>
   <Step title="Handle the csv instance format">
     If your code branches on config schema `instance_format` or config instance content `format`, handle the new `csv` value.
   </Step>
   <Step title="Optionally integrate new endpoints">
-    Optionally integrate the new calibration and component endpoints listed above, and grant your API keys the scopes they need.
+    Optionally integrate the new calibration endpoints listed above, and grant your API keys the scopes they need.
   </Step>
   <Step title="Optionally adopt new additive surface">
     Optionally integrate the new additive API changes listed above.

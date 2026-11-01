@@ -2,57 +2,20 @@ openapi: 3.0.3
 info:
   title: Miru Platform API
   description: The API between Miru and any external client
-  version: 2026-10-28.everglades
+  version: 2026-10-29.everglades
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  x-release-version: 2026-10-28.everglades
+  x-release-version: 2026-10-29.everglades
   x-git-commit:
-    sha: da19e118a12d7f7069f89d7781c0085522789785
-    url: https://github.com/mirurobotics/openapi/commit/da19e118a12d7f7069f89d7781c0085522789785
-    message: |-
-      chore(stlc): seal custom-code tracking files (#381)
-
-      Automated by the stlc generate workflow: a push-to-main or manual
-      `workflow_dispatch` publish re-sealed custom code, updating the tracking
-      files under `sdkgen/*/stainless/custom-code/`. Publishing targets the
-      private staging repos. Safe to merge - this PR's head branch
-      `stlc/seal-tracking` is skipped by the generate workflow's skip-bot
-      guard in `detect`, and on merge the push loop-breaker `guard` sees only
-      custom-code changes and runs no rebuild.
-
-      <!-- codesmith:footer -->
-      ---
-      <a
-      href="https://app.blacksmith.sh/mirurobotics/codesmith/openapi/pr/381?autoLogin=true&ref=codesmith_pr_footer"><picture><source
-      media="(prefers-color-scheme: dark)"
-      srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v3.svg"><source
-      media="(prefers-color-scheme: light)"
-      srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-light-v3.svg"><img
-      alt="View with [code]smith"
-      src="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v3-3x.png"
-      width="162" height="28"></picture></a> <a
-      href="https://backend.blacksmith.sh/track/enable-autofix?expires=1795806796&installation_model_id=425273&pr_number=381&ref=codesmith_pr_footer&repository=mirurobotics%2Fopenapi&return_to=https%3A%2F%2Fgithub.com%2Fmirurobotics%2Fopenapi%2Fpull%2F381&signature=22576ca30b7a9b5179ba686401e8539245f08cdc1682091295fe21383a37f37a"><picture><source
-      media="(prefers-color-scheme: dark)"
-      srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source
-      media="(prefers-color-scheme: light)"
-      srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img
-      alt="Autofix with [code]smith"
-      src="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark-3x.png"
-      width="190" height="28"></picture></a>
-      <sup>Need help on this PR? Tag <code>@codesmith</code> with what you
-      need.</sup>
-
-      <!-- codesmith:autofix:disabled -->
-      <!-- /codesmith:footer -->
-
-      Co-authored-by: stlc-sealback-bot[bot] <298483487+stlc-sealback-bot[bot]@users.noreply.github.com>
-      Co-authored-by: Ben <ben@mirurobotics.com>
-    author: stlc-sealback-bot[bot]
+    sha: fa872feb1c97431ace4e4f5636eea0856b5d73f3
+    url: https://github.com/mirurobotics/openapi/commit/fa872feb1c97431ace4e4f5636eea0856b5d73f3
+    message: "feat(platform)!: name calibration components, roles and aspects by slug (#387)"
+    author: Ben's Agent
     branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-10-28T22:21:18.805528+00:00'
+    built_at: '2026-10-29T05:41:56.762337+00:00'
 servers:
 - url: https://api.mirurobotics.com/beta
   description: Miru Platform API
@@ -99,12 +62,11 @@ paths:
       - $ref: '#/components/parameters/calibration_order_bys'
       - $ref: '#/components/parameters/calibration_list_expansions'
       - $ref: '#/components/parameters/calibration_search_device_id'
-      - $ref: '#/components/parameters/calibration_search_component_id'
-      - $ref: '#/components/parameters/calibration_search_role_id'
-      - $ref: '#/components/parameters/calibration_search_aspect_id'
+      - $ref: '#/components/parameters/calibration_search_component'
+      - $ref: '#/components/parameters/calibration_search_role'
+      - $ref: '#/components/parameters/calibration_search_aspect'
       - $ref: '#/components/parameters/calibration_search_serial_number'
       - $ref: '#/components/parameters/calibration_search_report_id'
-      - $ref: '#/components/parameters/calibration_search_operator_id'
       responses:
         '200':
           description: Successfully listed the calibrations.
@@ -117,168 +79,6 @@ paths:
           | Scope | Required |
           |-------|----------|
           | `calibrations:read` | Yes |
-  /components/{component_id}:
-    parameters:
-    - $ref: '#/components/parameters/MiruVersion'
-    get:
-      tags:
-      - Components
-      summary: Get
-      operationId: getComponent
-      description: Retrieve a component by ID.
-      parameters:
-      - $ref: '#/components/parameters/component_id'
-      - $ref: '#/components/parameters/component_expansions'
-      responses:
-        '200':
-          description: Successfully retrieved the component.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Component'
-      x-mint:
-        content: |
-          | Scope | Required |
-          |-------|----------|
-          | `components:read` | Yes |
-  /components:
-    parameters:
-    - $ref: '#/components/parameters/MiruVersion'
-    get:
-      tags:
-      - Components
-      summary: List
-      operationId: listComponents
-      description: List components.
-      parameters:
-      - $ref: '#/components/parameters/offset'
-      - $ref: '#/components/parameters/limit'
-      - $ref: '#/components/parameters/component_order_bys'
-      - $ref: '#/components/parameters/component_list_expansions'
-      - $ref: '#/components/parameters/component_search_id'
-      - $ref: '#/components/parameters/component_search_name'
-      - $ref: '#/components/parameters/component_search_slug'
-      - $ref: '#/components/parameters/component_search_device_id'
-      responses:
-        '200':
-          description: Successfully listed the components.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ComponentList'
-      x-mint:
-        content: |
-          | Scope | Required |
-          |-------|----------|
-          | `components:read` | Yes |
-  /component_aspects/{component_aspect_id}:
-    parameters:
-    - $ref: '#/components/parameters/MiruVersion'
-    get:
-      tags:
-      - Component Aspects
-      summary: Get
-      operationId: getComponentAspect
-      description: Retrieve a component aspect by ID.
-      parameters:
-      - $ref: '#/components/parameters/component_aspect_id'
-      - $ref: '#/components/parameters/component_aspect_expansions'
-      responses:
-        '200':
-          description: Successfully retrieved the component aspect.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ComponentAspect'
-      x-mint:
-        content: |
-          | Scope | Required |
-          |-------|----------|
-          | `component_aspects:read` | Yes |
-  /component_aspects:
-    parameters:
-    - $ref: '#/components/parameters/MiruVersion'
-    get:
-      tags:
-      - Component Aspects
-      summary: List
-      operationId: listComponentAspects
-      description: List component aspects, oldest first by default.
-      parameters:
-      - $ref: '#/components/parameters/offset'
-      - $ref: '#/components/parameters/limit'
-      - $ref: '#/components/parameters/component_aspect_order_bys'
-      - $ref: '#/components/parameters/component_aspect_list_expansions'
-      - $ref: '#/components/parameters/component_aspect_search_id'
-      - $ref: '#/components/parameters/component_aspect_search_component_id'
-      - $ref: '#/components/parameters/component_aspect_search_name'
-      - $ref: '#/components/parameters/component_aspect_search_slug'
-      responses:
-        '200':
-          description: Successfully listed the component aspects.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ComponentAspectList'
-      x-mint:
-        content: |
-          | Scope | Required |
-          |-------|----------|
-          | `component_aspects:read` | Yes |
-  /component_roles/{component_role_id}:
-    parameters:
-    - $ref: '#/components/parameters/MiruVersion'
-    get:
-      tags:
-      - Component Roles
-      summary: Get
-      operationId: getComponentRole
-      description: Retrieve a component role by ID.
-      parameters:
-      - $ref: '#/components/parameters/component_role_id'
-      - $ref: '#/components/parameters/component_role_expansions'
-      responses:
-        '200':
-          description: Successfully retrieved the component role.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ComponentRole'
-      x-mint:
-        content: |
-          | Scope | Required |
-          |-------|----------|
-          | `component_roles:read` | Yes |
-  /component_roles:
-    parameters:
-    - $ref: '#/components/parameters/MiruVersion'
-    get:
-      tags:
-      - Component Roles
-      summary: List
-      operationId: listComponentRoles
-      description: List component roles, oldest first by default.
-      parameters:
-      - $ref: '#/components/parameters/offset'
-      - $ref: '#/components/parameters/limit'
-      - $ref: '#/components/parameters/component_role_order_bys'
-      - $ref: '#/components/parameters/component_role_list_expansions'
-      - $ref: '#/components/parameters/component_role_search_id'
-      - $ref: '#/components/parameters/component_role_search_component_id'
-      - $ref: '#/components/parameters/component_role_search_name'
-      - $ref: '#/components/parameters/component_role_search_slug'
-      responses:
-        '200':
-          description: Successfully listed the component roles.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ComponentRoleList'
-      x-mint:
-        content: |
-          | Scope | Required |
-          |-------|----------|
-          | `component_roles:read` | Yes |
   /config_instances/{config_instance_id}:
     parameters:
     - $ref: '#/components/parameters/MiruVersion'
@@ -1216,21 +1016,21 @@ components:
     APIVersion:
       type: string
       enum:
-      - 2026-10-28.everglades
+      - 2026-10-29.everglades
       x-enum-varnames:
       - API_VERSION
       x-stainless-const: true
     ReleaseVersion:
       type: string
       enum:
-      - 2026-10-28.everglades
+      - 2026-10-29.everglades
       x-enum-varnames:
       - RELEASE_VERSION
       x-stainless-const: true
     APIGitCommit:
       type: string
       enum:
-      - da19e118a12d7f7069f89d7781c0085522789785
+      - fa872feb1c97431ace4e4f5636eea0856b5d73f3
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
@@ -1240,20 +1040,18 @@ components:
         **Internal server use only**: an enum of possible search fields.
       enum:
       - device_id
-      - component_id
-      - role_id
-      - aspect_id
+      - component
+      - role
+      - aspect
       - serial_number
       - report_id
-      - operator_id
       x-enum-varnames:
       - CAL_SEARCH_DEVICE_ID
-      - CAL_SEARCH_COMPONENT_ID
-      - CAL_SEARCH_ROLE_ID
-      - CAL_SEARCH_ASPECT_ID
+      - CAL_SEARCH_COMPONENT
+      - CAL_SEARCH_ROLE
+      - CAL_SEARCH_ASPECT
       - CAL_SEARCH_SERIAL_NUMBER
       - CAL_SEARCH_REPORT_ID
-      - CAL_SEARCH_OPERATOR_ID
     CfgInstSearch:
       type: string
       description: |
@@ -1290,48 +1088,6 @@ components:
       - CFG_TYPE_SEARCH_ID
       - CFG_TYPE_SEARCH_NAME
       - CFG_TYPE_SEARCH_SLUG
-    ComponentSearch:
-      type: string
-      description: |
-        **Internal server use only**: an enum of possible search fields.
-      enum:
-      - id
-      - name
-      - slug
-      - device_id
-      x-enum-varnames:
-      - COMPONENT_SEARCH_ID
-      - COMPONENT_SEARCH_NAME
-      - COMPONENT_SEARCH_SLUG
-      - COMPONENT_SEARCH_DEVICE_ID
-    ComponentAspectSearch:
-      type: string
-      description: |
-        **Internal server use only**: an enum of possible search fields.
-      enum:
-      - id
-      - component_id
-      - name
-      - slug
-      x-enum-varnames:
-      - COMPONENT_ASPECT_SEARCH_ID
-      - COMPONENT_ASPECT_SEARCH_COMPONENT_ID
-      - COMPONENT_ASPECT_SEARCH_NAME
-      - COMPONENT_ASPECT_SEARCH_SLUG
-    ComponentRoleSearch:
-      type: string
-      description: |
-        **Internal server use only**: an enum of possible search fields.
-      enum:
-      - id
-      - component_id
-      - name
-      - slug
-      x-enum-varnames:
-      - COMPONENT_ROLE_SEARCH_ID
-      - COMPONENT_ROLE_SEARCH_COMPONENT_ID
-      - COMPONENT_ROLE_SEARCH_NAME
-      - COMPONENT_ROLE_SEARCH_SLUG
     DplSearch:
       type: string
       description: |
@@ -1406,97 +1162,6 @@ components:
       - content
       x-enum-varnames:
       - CALIBRATION_EXPAND_CONTENT
-    BaseCalibration:
-      title: Calibration
-      type: object
-      required:
-      - object
-      - id
-      - device_id
-      - component_id
-      - role_id
-      - aspect_id
-      - serial_number
-      - digest
-      - deployment_id
-      - operator_id
-      - report_id
-      - reported_at
-      - created_at
-      properties:
-        object:
-          type: string
-          enum:
-          - calibration
-          example: calibration
-          x-stainless-const: true
-          description: The object type, which is always `calibration`.
-        id:
-          type: string
-          example: cal_123
-          description: ID of the calibration, generated by Miru.
-        device_id:
-          type: string
-          example: dvc_123
-          description: ID of the device that reported the calibration.
-        component_id:
-          type: string
-          example: cmp_123
-          description: ID of the component the calibrated unit belongs to.
-        role_id:
-          type: string
-          nullable: true
-          example: cmp_rol_123
-          description: ID of the component role the calibrated unit fills; null if
-            no role was reported.
-        aspect_id:
-          type: string
-          nullable: true
-          example: cmp_asp_123
-          description: ID of the component aspect that was calibrated; null if no
-            aspect was reported.
-        serial_number:
-          type: string
-          nullable: true
-          maxLength: 255
-          example: SN-1234
-          description: Serial number of the physical unit that was calibrated, not
-            of the device, such as `SN-1234`, or null if none was reported. Free text,
-            at most 255 characters.
-        digest:
-          type: string
-          example: sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-          description: Digest of the content, formatted as `sha256:` followed by 64
-            lowercase hex characters.
-        deployment_id:
-          type: string
-          nullable: true
-          example: dpl_123
-          description: ID of the deployment the device was on when it reported the
-            calibration; null if it had none or the deployment was deleted.
-        operator_id:
-          type: string
-          nullable: true
-          example: opr_123
-          description: ID of the operator the device reported as running the calibration;
-            null if no operator was reported.
-        report_id:
-          type: string
-          format: uuid
-          example: 0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10
-          description: ID the agent gave the report this calibration came from.
-        reported_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: Timestamp of when the calibration was reported to the agent
-            on the device. The agent may upload it much later, for example after an
-            outage, so this can be well before `created_at`.
-        created_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: Timestamp of when Miru recorded the calibration.
     InstanceFormat:
       title: Instance Format
       type: string
@@ -1550,29 +1215,99 @@ components:
           }
     Calibration:
       title: Calibration
+      type: object
       description: One calibration reported by a device for a unit of a component.
         Calibrations are immutable and append-only; a device's history is kept per
         component, role, and aspect. Content is at most 1 MiB.
-      allOf:
-      - $ref: '#/components/schemas/BaseCalibration'
-      - type: object
-        properties:
-          content:
-            allOf:
-            - $ref: '#/components/schemas/InstanceContent'
-            description: The calibration's content. Expand using `expand=content`
-              in the query string.
+      required:
+      - object
+      - id
+      - device_id
+      - component
+      - role
+      - aspect
+      - serial_number
+      - digest
+      - report_id
+      - reported_at
+      - created_at
+      properties:
+        object:
+          type: string
+          enum:
+          - calibration
+          example: calibration
+          x-stainless-const: true
+          description: The object type, which is always `calibration`.
+        id:
+          type: string
+          example: cal_123
+          description: ID of the calibration, generated by Miru.
+        device_id:
+          type: string
+          example: dvc_123
+          description: ID of the device that reported the calibration.
+        component:
+          type: string
+          example: arm
+          description: Slug of the component the calibrated unit belongs to, as it
+            was reported.
+        role:
+          type: string
+          nullable: true
+          example: front-left
+          description: Slug of the role the calibrated unit fills on the device, as
+            it was reported; null if no role was reported.
+        aspect:
+          type: string
+          nullable: true
+          example: pose
+          description: Slug of the aspect of the unit that was calibrated, as it was
+            reported; null if no aspect was reported.
+        serial_number:
+          type: string
+          nullable: true
+          maxLength: 255
+          example: SN-1234
+          description: Serial number of the physical unit that was calibrated, not
+            of the device, such as `SN-1234`, or null if none was reported. Free text,
+            at most 255 characters.
+        digest:
+          type: string
+          example: sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+          description: Digest of the content, formatted as `sha256:` followed by 64
+            lowercase hex characters.
+        report_id:
+          type: string
+          format: uuid
+          example: 0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10
+          description: ID the agent gave the report this calibration came from.
+        reported_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when the calibration was reported to the agent
+            on the device. The agent may upload it much later, for example after an
+            outage, so this can be well before `created_at`.
+        created_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+          description: Timestamp of when Miru recorded the calibration.
+        content:
+          allOf:
+          - $ref: '#/components/schemas/InstanceContent'
+          description: The calibration's content. Expand using `expand=content` in
+            the query string.
       example:
         object: calibration
         id: cal_123
         device_id: dvc_123
-        component_id: cmp_123
-        role_id: cmp_rol_123
-        aspect_id: null
+        component: arm
+        role: front-left
+        aspect: null
         serial_number: SN-1234
         digest: sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-        deployment_id: dpl_123
-        operator_id: opr_123
         report_id: 0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10
         reported_at: '2021-01-01T00:00:00Z'
         created_at: '2021-01-01T00:00:00Z'
@@ -1665,401 +1400,6 @@ components:
             items:
               $ref: '#/components/schemas/Calibration'
             description: The list of calibrations.
-    ComponentExpansion:
-      type: string
-      enum:
-      - roles
-      - aspects
-      x-enum-varnames:
-      - COMPONENT_EXPAND_ROLES
-      - COMPONENT_EXPAND_ASPECTS
-    BaseComponent:
-      title: Component
-      type: object
-      required:
-      - object
-      - id
-      - name
-      - slug
-      - created_at
-      - updated_at
-      properties:
-        object:
-          type: string
-          enum:
-          - component
-          example: component
-          x-stainless-const: true
-          description: The object type, which is always `component`.
-        id:
-          type: string
-          example: cmp_123
-          description: ID of the component.
-        name:
-          type: string
-          example: Arm
-          description: Display name of the component. Defaults to a name inferred
-            from the slug, with words split on `-` and `_` and each capitalized (`front-camera`
-            becomes `Front Camera`). Publishers can rename it.
-        slug:
-          type: string
-          example: arm
-          description: An immutable, code-friendly name for the component, validated
-            like config type slugs. Component slugs and config type slugs are separate
-            namespaces, so a component may share a slug with a config type.
-        created_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: Timestamp of when Miru created the component, which is when
-            a device first reported a calibration with its slug.
-        updated_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: Timestamp of when the component was last updated.
-    BaseComponentRole:
-      title: Component Role
-      type: object
-      required:
-      - object
-      - id
-      - component_id
-      - slug
-      - name
-      - created_at
-      - updated_at
-      properties:
-        object:
-          type: string
-          enum:
-          - component_role
-          example: component_role
-          x-stainless-const: true
-          description: The object type, which is always `component_role`.
-        id:
-          type: string
-          example: cmp_rol_123
-          description: ID of the role.
-        component_id:
-          type: string
-          example: cmp_123
-          description: ID of the component the role belongs to.
-        slug:
-          type: string
-          example: front-left
-          description: The immutable value devices report as `role` when they create
-            a calibration, unique within the component.
-        name:
-          type: string
-          example: Front Left
-          description: Display name of the role. Defaults to a name inferred from
-            the slug, with words split on `-` and `_` and each capitalized (`front-left`
-            becomes `Front Left`). Publishers can rename it.
-        created_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: Timestamp of when Miru created the role, which is when a device
-            first reported a calibration with its slug for the component.
-        updated_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: Timestamp of when the role was last updated.
-    Component:
-      title: Component
-      description: A kind of hardware on a device whose calibrations Miru stores,
-        such as an arm or a camera. Miru creates a component the first time a device
-        reports a calibration with a new slug; components are never created, archived,
-        or deleted through the API. A workspace holds at most 100 components.
-      allOf:
-      - $ref: '#/components/schemas/BaseComponent'
-      - type: object
-        properties:
-          roles:
-            type: array
-            maxItems: 100
-            items:
-              $ref: '#/components/schemas/ComponentRole'
-            description: The component's roles, in the order first reported. Miru
-              adds a role the first time a device reports it and never removes one.
-              At most 100. Expand using `expand=roles` in the query string.
-            example:
-            - object: component_role
-              id: cmp_rol_123
-              component_id: cmp_123
-              slug: front-left
-              name: Front Left
-              created_at: '2021-01-01T00:00:00Z'
-              updated_at: '2021-01-01T00:00:00Z'
-          aspects:
-            type: array
-            maxItems: 100
-            items:
-              $ref: '#/components/schemas/ComponentAspect'
-            description: The component's aspects, in the order first reported. Miru
-              adds an aspect the first time a device reports it and never removes
-              one. At most 100. Expand using `expand=aspects` in the query string.
-            example:
-            - object: component_aspect
-              id: cmp_asp_123
-              component_id: cmp_123
-              slug: pose
-              name: Pose
-              created_at: '2021-01-01T00:00:00Z'
-              updated_at: '2021-01-01T00:00:00Z'
-      example:
-        object: component
-        id: cmp_123
-        name: Arm
-        slug: arm
-        created_at: '2021-01-01T00:00:00Z'
-        updated_at: '2021-01-01T00:00:00Z'
-    ComponentRole:
-      title: Component Role
-      description: A role a calibrated unit fills on a device, such as `left` or `front-left`.
-        Miru creates a role the first time a device reports a calibration with a new
-        role for the component; roles are never created or deleted through the API.
-        A component holds at most 100 roles.
-      allOf:
-      - $ref: '#/components/schemas/BaseComponentRole'
-      - type: object
-        properties:
-          component:
-            allOf:
-            - $ref: '#/components/schemas/Component'
-            description: The component the role belongs to. Expand using `expand=component`
-              in the query string.
-      example:
-        object: component_role
-        id: cmp_rol_123
-        component_id: cmp_123
-        slug: front-left
-        name: Front Left
-        created_at: '2021-01-01T00:00:00Z'
-        updated_at: '2021-01-01T00:00:00Z'
-    BaseComponentAspect:
-      title: Component Aspect
-      type: object
-      required:
-      - object
-      - id
-      - component_id
-      - slug
-      - name
-      - created_at
-      - updated_at
-      properties:
-        object:
-          type: string
-          enum:
-          - component_aspect
-          example: component_aspect
-          x-stainless-const: true
-          description: The object type, which is always `component_aspect`.
-        id:
-          type: string
-          example: cmp_asp_123
-          description: ID of the aspect.
-        component_id:
-          type: string
-          example: cmp_123
-          description: ID of the component the aspect belongs to.
-        slug:
-          type: string
-          example: joint-offsets
-          description: The immutable value devices report as `aspect` when they create
-            a calibration, unique within the component.
-        name:
-          type: string
-          example: Joint Offsets
-          description: Display name of the aspect. Defaults to a name inferred from
-            the slug, with words split on `-` and `_` and each capitalized (`joint-offsets`
-            becomes `Joint Offsets`). Publishers can rename it.
-        created_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: Timestamp of when Miru created the aspect, which is when a
-            device first reported a calibration with its slug for the component.
-        updated_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: Timestamp of when the aspect was last updated.
-    ComponentAspect:
-      title: Component Aspect
-      description: An aspect of a unit that was calibrated, when the unit has more
-        than one, such as `pose` or `joint-offsets`. Miru creates an aspect the first
-        time a device reports a calibration with a new aspect for the component; aspects
-        are never created or deleted through the API. A component holds at most 100
-        aspects.
-      allOf:
-      - $ref: '#/components/schemas/BaseComponentAspect'
-      - type: object
-        properties:
-          component:
-            allOf:
-            - $ref: '#/components/schemas/Component'
-            description: The component the aspect belongs to. Expand using `expand=component`
-              in the query string.
-      example:
-        object: component_aspect
-        id: cmp_asp_123
-        component_id: cmp_123
-        slug: joint-offsets
-        name: Joint Offsets
-        created_at: '2021-01-01T00:00:00Z'
-        updated_at: '2021-01-01T00:00:00Z'
-    ComponentOrderBy:
-      type: string
-      enum:
-      - id:asc
-      - id:desc
-      - created_at:asc
-      - created_at:desc
-      - updated_at:asc
-      - updated_at:desc
-      - name:asc
-      - name:desc
-      x-enum-varnames:
-      - COMPONENT_ORDER_BY_ID_ASC
-      - COMPONENT_ORDER_BY_ID_DESC
-      - COMPONENT_ORDER_BY_CREATED_AT_ASC
-      - COMPONENT_ORDER_BY_CREATED_AT_DESC
-      - COMPONENT_ORDER_BY_UPDATED_AT_ASC
-      - COMPONENT_ORDER_BY_UPDATED_AT_DESC
-      - COMPONENT_ORDER_BY_NAME_ASC
-      - COMPONENT_ORDER_BY_NAME_DESC
-      default: created_at:desc
-    ComponentListExpansion:
-      type: string
-      enum:
-      - total_count
-      - roles
-      - aspects
-      x-enum-varnames:
-      - COMPONENT_LIST_EXPAND_TOTAL_COUNT
-      - COMPONENT_LIST_EXPAND_ROLES
-      - COMPONENT_LIST_EXPAND_ASPECTS
-    ComponentList:
-      title: Component List
-      allOf:
-      - $ref: '#/components/schemas/PaginatedList'
-      - type: object
-        required:
-        - data
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/Component'
-            description: The list of components.
-    ComponentAspectExpansion:
-      type: string
-      enum:
-      - component
-      x-enum-varnames:
-      - COMPONENT_ASPECT_EXPAND_COMPONENT
-    ComponentAspectOrderBy:
-      type: string
-      enum:
-      - id:asc
-      - id:desc
-      - created_at:asc
-      - created_at:desc
-      - updated_at:asc
-      - updated_at:desc
-      - name:asc
-      - name:desc
-      - slug:asc
-      - slug:desc
-      x-enum-varnames:
-      - COMPONENT_ASPECT_ORDER_BY_ID_ASC
-      - COMPONENT_ASPECT_ORDER_BY_ID_DESC
-      - COMPONENT_ASPECT_ORDER_BY_CREATED_AT_ASC
-      - COMPONENT_ASPECT_ORDER_BY_CREATED_AT_DESC
-      - COMPONENT_ASPECT_ORDER_BY_UPDATED_AT_ASC
-      - COMPONENT_ASPECT_ORDER_BY_UPDATED_AT_DESC
-      - COMPONENT_ASPECT_ORDER_BY_NAME_ASC
-      - COMPONENT_ASPECT_ORDER_BY_NAME_DESC
-      - COMPONENT_ASPECT_ORDER_BY_SLUG_ASC
-      - COMPONENT_ASPECT_ORDER_BY_SLUG_DESC
-      default: created_at:asc
-    ComponentAspectListExpansion:
-      type: string
-      enum:
-      - total_count
-      - component
-      x-enum-varnames:
-      - COMPONENT_ASPECT_LIST_EXPAND_TOTAL_COUNT
-      - COMPONENT_ASPECT_LIST_EXPAND_COMPONENT
-    ComponentAspectList:
-      title: Component Aspect List
-      allOf:
-      - $ref: '#/components/schemas/PaginatedList'
-      - type: object
-        required:
-        - data
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/ComponentAspect'
-            description: The list of component aspects.
-    ComponentRoleExpansion:
-      type: string
-      enum:
-      - component
-      x-enum-varnames:
-      - COMPONENT_ROLE_EXPAND_COMPONENT
-    ComponentRoleOrderBy:
-      type: string
-      enum:
-      - id:asc
-      - id:desc
-      - created_at:asc
-      - created_at:desc
-      - updated_at:asc
-      - updated_at:desc
-      - name:asc
-      - name:desc
-      - slug:asc
-      - slug:desc
-      x-enum-varnames:
-      - COMPONENT_ROLE_ORDER_BY_ID_ASC
-      - COMPONENT_ROLE_ORDER_BY_ID_DESC
-      - COMPONENT_ROLE_ORDER_BY_CREATED_AT_ASC
-      - COMPONENT_ROLE_ORDER_BY_CREATED_AT_DESC
-      - COMPONENT_ROLE_ORDER_BY_UPDATED_AT_ASC
-      - COMPONENT_ROLE_ORDER_BY_UPDATED_AT_DESC
-      - COMPONENT_ROLE_ORDER_BY_NAME_ASC
-      - COMPONENT_ROLE_ORDER_BY_NAME_DESC
-      - COMPONENT_ROLE_ORDER_BY_SLUG_ASC
-      - COMPONENT_ROLE_ORDER_BY_SLUG_DESC
-      default: created_at:asc
-    ComponentRoleListExpansion:
-      type: string
-      enum:
-      - total_count
-      - component
-      x-enum-varnames:
-      - COMPONENT_ROLE_LIST_EXPAND_TOTAL_COUNT
-      - COMPONENT_ROLE_LIST_EXPAND_COMPONENT
-    ComponentRoleList:
-      title: Component Role List
-      allOf:
-      - $ref: '#/components/schemas/PaginatedList'
-      - type: object
-        required:
-        - data
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/ComponentRole'
-            description: The list of component roles.
     ConfigInstanceExpansion:
       type: string
       enum:
@@ -3853,7 +3193,7 @@ components:
       required: true
       schema:
         type: string
-        example: 2026-10-28.everglades
+        example: 2026-10-29.everglades
       description: The API version the client was built against.
     calibration_id:
       name: calibration_id
@@ -3934,45 +3274,47 @@ components:
           type: string
         example:
         - dvc_123
-    calibration_search_component_id:
-      name: component_id
+    calibration_search_component:
+      name: component
       in: query
       required: false
       style: form
       explode: false
-      description: The component IDs to filter by.
+      description: The component slugs to filter by.
       schema:
         type: array
         items:
           type: string
         example:
-        - cmp_123
-    calibration_search_role_id:
-      name: role_id
+        - arm
+    calibration_search_role:
+      name: role
       in: query
       required: false
       style: form
       explode: false
-      description: The component role IDs to filter by.
+      description: The role slugs to filter by. Role slugs are unique only within
+        a component, so filter by component too to match one component's role.
       schema:
         type: array
         items:
           type: string
         example:
-        - cmp_rol_123
-    calibration_search_aspect_id:
-      name: aspect_id
+        - front-left
+    calibration_search_aspect:
+      name: aspect
       in: query
       required: false
       style: form
       explode: false
-      description: The component aspect IDs to filter by.
+      description: The aspect slugs to filter by. Aspect slugs are unique only within
+        a component, so filter by component too to match one component's aspect.
       schema:
         type: array
         items:
           type: string
         example:
-        - cmp_asp_123
+        - pose
     calibration_search_serial_number:
       name: serial_number
       in: query
@@ -3999,306 +3341,6 @@ components:
           type: string
         example:
         - 0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10
-    calibration_search_operator_id:
-      name: operator_id
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: The operator IDs to filter by.
-      schema:
-        type: array
-        items:
-          type: string
-        example:
-        - opr_123
-    component_id:
-      name: component_id
-      in: path
-      required: true
-      description: The unique identifier of the component.
-      schema:
-        type: string
-        example: cmp_123
-    component_expansions:
-      name: expand
-      in: query
-      required: false
-      description: Fields to expand on the component.
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/ComponentExpansion'
-        example:
-        - roles
-    component_order_bys:
-      name: order_by
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: Sort order for the component results.
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/ComponentOrderBy'
-        example:
-        - created_at:desc
-    component_list_expansions:
-      name: expand
-      in: query
-      required: false
-      description: Fields to expand on each component in the list.
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/ComponentListExpansion'
-        example:
-        - roles
-    component_search_id:
-      name: id
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: The component IDs to filter by.
-      schema:
-        type: array
-        items:
-          type: string
-        example:
-        - cmp_123
-    component_search_name:
-      name: name
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: The component names to filter by.
-      schema:
-        type: array
-        items:
-          type: string
-        example:
-        - Arm
-    component_search_slug:
-      name: slug
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: The component slugs to filter by.
-      schema:
-        type: array
-        items:
-          type: string
-        example:
-        - arm
-    component_search_device_id:
-      name: device_id
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: |
-        The device IDs to filter by. Returns the components these devices have
-        reported a calibration for.
-      schema:
-        type: array
-        items:
-          type: string
-        example:
-        - dvc_123
-    component_aspect_id:
-      name: component_aspect_id
-      in: path
-      required: true
-      description: The unique identifier of the component aspect.
-      schema:
-        type: string
-        example: cmp_asp_123
-    component_aspect_expansions:
-      name: expand
-      in: query
-      required: false
-      description: Fields to expand on the component aspect.
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/ComponentAspectExpansion'
-        example:
-        - component
-    component_aspect_order_bys:
-      name: order_by
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: Sort order for the component aspect results.
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/ComponentAspectOrderBy'
-        example:
-        - created_at:asc
-    component_aspect_list_expansions:
-      name: expand
-      in: query
-      required: false
-      description: Fields to expand on each component aspect in the list.
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/ComponentAspectListExpansion'
-        example:
-        - component
-    component_aspect_search_id:
-      name: id
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: The component aspect IDs to filter by.
-      schema:
-        type: array
-        items:
-          type: string
-        example:
-        - cmp_asp_123
-    component_aspect_search_component_id:
-      name: component_id
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: The component IDs to filter by.
-      schema:
-        type: array
-        items:
-          type: string
-        example:
-        - cmp_123
-    component_aspect_search_name:
-      name: name
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: The component aspect names to filter by.
-      schema:
-        type: array
-        items:
-          type: string
-        example:
-        - Joint Offsets
-    component_aspect_search_slug:
-      name: slug
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: The component aspect slugs to filter by.
-      schema:
-        type: array
-        items:
-          type: string
-        example:
-        - joint-offsets
-    component_role_id:
-      name: component_role_id
-      in: path
-      required: true
-      description: The unique identifier of the component role.
-      schema:
-        type: string
-        example: cmp_rol_123
-    component_role_expansions:
-      name: expand
-      in: query
-      required: false
-      description: Fields to expand on the component role.
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/ComponentRoleExpansion'
-        example:
-        - component
-    component_role_order_bys:
-      name: order_by
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: Sort order for the component role results.
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/ComponentRoleOrderBy'
-        example:
-        - created_at:asc
-    component_role_list_expansions:
-      name: expand
-      in: query
-      required: false
-      description: Fields to expand on each component role in the list.
-      schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/ComponentRoleListExpansion'
-        example:
-        - component
-    component_role_search_id:
-      name: id
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: The component role IDs to filter by.
-      schema:
-        type: array
-        items:
-          type: string
-        example:
-        - cmp_rol_123
-    component_role_search_component_id:
-      name: component_id
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: The component IDs to filter by.
-      schema:
-        type: array
-        items:
-          type: string
-        example:
-        - cmp_123
-    component_role_search_name:
-      name: name
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: The component role names to filter by.
-      schema:
-        type: array
-        items:
-          type: string
-        example:
-        - Front Left
-    component_role_search_slug:
-      name: slug
-      in: query
-      required: false
-      style: form
-      explode: false
-      description: The component role slugs to filter by.
-      schema:
-        type: array
-        items:
-          type: string
-        example:
-        - front-left
     config_instance_id:
       name: config_instance_id
       in: path

@@ -697,10 +697,10 @@
         "product": "Platform API Reference",
         "dropdowns": [
           {
-            "dropdown": "2026-10-28.everglades",
+            "dropdown": "2026-10-29.everglades",
             "openapi": {
-              "source": "references/platform-api/2026-10-28.yaml",
-              "directory": "references/platform-api/2026-10-28/endpoints"
+              "source": "references/platform-api/2026-10-29.yaml",
+              "directory": "references/platform-api/2026-10-29/endpoints"
             }
           },
           {
@@ -913,7 +913,11 @@
     },
     {
       "source": "/references/platform-api/latest/:slug*",
-      "destination": "/references/platform-api/2026-10-28/:slug*"
+      "destination": "/references/platform-api/2026-10-29/:slug*"
+    },
+    {
+      "source": "/references/platform-api/2026-10-28/:slug*",
+      "destination": "/references/platform-api/2026-10-29/:slug*"
     },
     {
       "source": "/docs/references/cli/install",
