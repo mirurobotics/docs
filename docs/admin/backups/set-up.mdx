@@ -2,6 +2,8 @@
 title: "Set up backups"
 ---
 
+import ConnectAws from '/snippets/buckets/connect-aws.mdx';
+import ConnectGcs from '/snippets/buckets/connect-gcs.mdx';
 import { ImmutableBadge, MutableBadge } from '/snippets/components/field-badges.jsx';
 import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge } from '/snippets/components/role-badges.jsx';
@@ -37,18 +39,25 @@ backups to one bucket.
   Default: `false`
 </ParamField>
 
+## Connect a bucket
+
+Skip this section if the bucket you want to use is already connected to Miru. Backups need
+no permissions beyond the ones granted here.
+
+<Tabs>
+  <Tab title="AWS S3">
+    <ConnectAws />
+  </Tab>
+  <Tab title="GCS">
+    <ConnectGcs />
+  </Tab>
+</Tabs>
+
 ## Turn on backups  <AdminBadge />
 
 <PlatformUnsupportedBadge />
 
 <Steps>
-  <Step title="Connect a bucket">
-    If you haven't already, connect a bucket with the
-    [AWS S3](/data-uploads/connect-a-bucket/aws) or
-    [GCS](/data-uploads/connect-a-bucket/gcs) guide. Backups need no permissions beyond
-    the ones those guides grant.
-  </Step>
-
   <Step title="Choose the bucket and prefix">
     In the Miru dashboard, navigate to the
     [Backups page](https://app.mirurobotics.com/settings/backups). Select the bucket, and
