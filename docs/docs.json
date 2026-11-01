@@ -184,27 +184,6 @@
             ]
           },
           {
-            "group": "Data Backups",
-            "pages": [
-              "backups/overview",
-              {
-                "group": "Concepts",
-                "expanded": true,
-                "pages": [
-                  "backups/archive-format"
-                ]
-              },
-              {
-                "group": "Guides",
-                "expanded": true,
-                "pages": [
-                  "backups/set-up",
-                  "backups/read-a-backup"
-                ]
-              }
-            ]
-          },
-          {
             "group": "Developers",
             "pages": [
               {
@@ -286,7 +265,16 @@
                   "admin/users/manage"
                 ]
               },
-              "admin/apikeys"
+              "admin/apikeys",
+              {
+                "group": "Backups",
+                "pages": [
+                  "admin/backups/overview",
+                  "admin/backups/set-up",
+                  "admin/backups/read-a-backup",
+                  "admin/backups/archive-format"
+                ]
+              }
             ]
           }
         ]

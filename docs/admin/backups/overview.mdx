@@ -12,7 +12,7 @@ a complete copy of your workspace's objects, so any one archive is enough to see
 what your workspace held at that moment. You can open it with any unzip tool and read it
 with standard tools like `jq`, DuckDB and `sha256sum`, without Miru.
 
-Backups are off by default. To turn them on, see [set up backups](/backups/set-up).
+Backups are off by default. To turn them on, see [set up backups](/admin/backups/set-up).
 
 ## How it works
 
@@ -48,7 +48,7 @@ archived devices, releases and config types.
 | Git commits | |
 
 New object types join the archive as they're added to the Platform API. Each addition is a
-minor [format version](/backups/archive-format#versioning) bump, so tools that read older
+minor [format version](/admin/backups/archive-format#versioning) bump, so tools that read older
 archives keep working.
 
 ## What's not included
@@ -71,7 +71,7 @@ its own and never depends on an earlier one.
 ## Retention
 
 Miru never deletes a backup. To control how long archives are kept, add a lifecycle rule to
-your bucket. See [retention](/backups/set-up#retention).
+your bucket. See [retention](/admin/backups/set-up#retention).
 
 A year of backups for a fleet of 100 devices is usually a few gigabytes, at roughly 25 to
 40 MB per compressed archive.
@@ -80,7 +80,7 @@ A year of backups for a fleet of 100 devices is usually a few gigabytes, at roug
 
 Restoring a backup into Miru isn't supported yet. Backups give you a complete, independent
 record of your workspace for compliance, audits and your own analysis. To read one, see
-[read a backup](/backups/read-a-backup).
+[read a backup](/admin/backups/read-a-backup).
 
 ## Security
 
