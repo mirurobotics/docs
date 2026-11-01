@@ -1,0 +1,98 @@
+---
+title: "Read a backup"
+---
+
+Backups are plain zip archives, so you can read them with standard tools and without
+Miru. This guide downloads the latest archive, checks it, and queries it.
+
+## Download the latest archive
+
+`latest.json` points at the newest successful archive.
+
+<Tabs>
+  <Tab title="AWS S3">
+    ```bash
+    aws s3 cp "s3://${BUCKET_NAME}/miru-backup/latest.json" .
+    KEY="$(jq -r '.object_key' latest.json)"
+    aws s3 cp "s3://${BUCKET_NAME}/${KEY}" backup.zip
+    ```
+  </Tab>
+
+  <Tab title="GCS">
+    ```bash
+    gcloud storage cp "gs://${BUCKET_NAME}/miru-backup/latest.json" .
+    KEY="$(jq -r '.object_key' latest.json)"
+    gcloud storage cp "gs://${BUCKET_NAME}/${KEY}" backup.zip
+    ```
+  </Tab>
+</Tabs>
+
+The role or service account you connected to Miru can only write, so download with your
+own cloud credentials.
+
+## Verify the archive
+
+Unzip the archive and check every file against the checksums in `manifest.json`.
+
+```bash
+unzip -q backup.zip -d backup
+cd backup
+jq -r '.files[] | "\(.sha256)  \(.path)"' manifest.json | sha256sum -c -
+```
+
+Each file prints `OK`. On macOS, use `shasum -a 256 -c -` in place of `sha256sum -c -`.
+
+## Query with jq
+
+Each line of an object file is one object, so `jq` reads the files directly.
+
+List every device's ID and name:
+
+```bash
+jq -r '[.id, .name] | @tsv' objects/devices.jsonl
+```
+
+Show one deployment, with the config instances it contains:
+
+```bash
+jq 'select(.id == "dpl_123")' objects/deployments.jsonl
+```
+
+## Query as tables
+
+[DuckDB](https://duckdb.org) reads JSON Lines files as tables.
+
+```sql
+SELECT status, count(*) AS devices
+FROM read_json_auto('objects/devices.jsonl')
+GROUP BY status
+ORDER BY devices DESC;
+```
+
+## Read with the Python SDK
+
+Every object in an archive is a Platform API object, so the
+[Python Platform SDK](/developers/platform-api/sdks#python) models can load them. Use an
+SDK version built for the archive's `platform_api_version`.
+
+Python reads the archive in place, without unzipping it:
+
+```python
+import json
+import zipfile
+
+from miru_platform_sdk.types import Device
+
+with zipfile.ZipFile("backup.zip") as archive:
+    manifest = json.loads(archive.read("manifest.json"))
+    print(manifest["platform_api_version"])
+
+    with archive.open("objects/devices.jsonl") as lines:
+        devices = [Device.model_validate_json(line) for line in lines]
+
+for device in devices:
+    print(device.id, device.name)
+```
+
+The SDK can't manage backups or download archives. Backups are configured from the
+[dashboard](/backups/set-up), and archives live in your bucket.

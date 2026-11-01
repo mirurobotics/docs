@@ -1,0 +1,94 @@
+---
+title: "Overview"
+---
+
+import { LinkNewTab } from '/snippets/components/link.jsx';
+
+Data backups keep a copy of your workspace's data in cloud storage *you* own.
+
+Each night, Miru writes a full backup of your workspace to one of your
+[buckets](/data-uploads/concepts/buckets). Every backup is a single zip archive that holds
+a complete copy of your workspace's objects, so any one archive is enough to see exactly
+what your workspace held at that moment. You can open it with any unzip tool and read it
+with standard tools like `jq`, DuckDB and `sha256sum`, without Miru.
+
+Backups are off by default. To turn them on, see [set up backups](/backups/set-up).
+
+## How it works
+
+1. Once a day, Miru reads your workspace at a single point in time, so every object in a
+   backup is consistent with every other.
+2. Miru writes each object as it appears in the
+   [Platform API](/developers/platform-api/overview), then writes a manifest with a
+   checksum for every file.
+3. Using the credentials from your [bucket connection](/data-uploads/concepts/buckets),
+   Miru uploads the archive to your bucket and updates `latest.json` to point at it.
+4. Miru records the run, so you can see when each backup finished and whether it
+   succeeded.
+
+A failed run leaves your last good archive and `latest.json` untouched. Miru only ever
+adds objects to your bucket. Deleting something in Miru never deletes anything in your
+bucket, and Miru never reads or deletes an archive once it's written.
+
+## What's included
+
+Each archive holds every object of the following types in your workspace, including
+archived devices, releases and config types.
+
+| Object type | Includes |
+| ----------- | -------- |
+| [Devices](/concepts/devices/overview) | |
+| [Groups](/concepts/groups/overview) | |
+| [Releases](/concepts/releases) | The config schemas in each release |
+| [Deployments](/concepts/deployments/overview) | The config instances in each deployment |
+| [Config types](/cfg-mgmt/concepts/config-types) | |
+| [Config schemas](/cfg-mgmt/concepts/schemas/overview) | The schema documents |
+| [Config instances](/cfg-mgmt/concepts/config-instances) | The config content |
+| [Calibrations](/cfg-mgmt/concepts/calibrations) | The calibration content |
+| Git commits | |
+
+New object types join the archive as they're added to the Platform API. Each addition is a
+minor [format version](/backups/archive-format#versioning) bump, so tools that read older
+archives keep working.
+
+## What's not included
+
+- **Credentials.** API keys, CLI tokens, provisioning tokens and device authorization
+  state are never exported.
+- **Account data.** Workspace settings, members, invites and billing are managed by Miru
+  and aren't part of a backup.
+- **Uploaded files.** Files your devices upload through
+  [data uploads](/data-uploads/overview) already live in your bucket, so backups don't copy
+  them again.
+- **Objects the Platform API doesn't expose yet**, such as overrides, file rules and
+  components.
+
+## Schedule
+
+Backups run once a day. Each run backs up the whole workspace, so every archive stands on
+its own and never depends on an earlier one.
+
+## Retention
+
+Miru never deletes a backup. To control how long archives are kept, add a lifecycle rule to
+your bucket. See [retention](/backups/set-up#retention).
+
+A year of backups for a fleet of 100 devices is usually a few gigabytes, at roughly 25 to
+40 MB per compressed archive.
+
+## Restoring a backup
+
+Restoring a backup into Miru isn't supported yet. Backups give you a complete, independent
+record of your workspace for compliance, audits and your own analysis. To read one, see
+[read a backup](/backups/read-a-backup).
+
+## Security
+
+- **Write-only access.** Backups use the same bucket connection as data uploads. The
+  connection only lets Miru create objects in your bucket, so no new permissions are
+  needed.
+- **Scoped to your workspace.** Each archive holds only your workspace's objects, read the
+  same way a read-only <LinkNewTab href="/admin/apikeys">API key</LinkNewTab> would read
+  them.
+- **No secrets.** Objects come from the Platform API, which never returns credentials or
+  their hashes.

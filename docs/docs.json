@@ -184,6 +184,27 @@
             ]
           },
           {
+            "group": "Data Backups",
+            "pages": [
+              "backups/overview",
+              {
+                "group": "Concepts",
+                "expanded": true,
+                "pages": [
+                  "backups/archive-format"
+                ]
+              },
+              {
+                "group": "Guides",
+                "expanded": true,
+                "pages": [
+                  "backups/set-up",
+                  "backups/read-a-backup"
+                ]
+              }
+            ]
+          },
+          {
             "group": "Developers",
             "pages": [
               {

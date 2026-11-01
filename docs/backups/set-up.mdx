@@ -1,0 +1,192 @@
+---
+title: "Set up backups"
+---
+
+import { ImmutableBadge, MutableBadge } from '/snippets/components/field-badges.jsx';
+import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
+import { AdminBadge } from '/snippets/components/role-badges.jsx';
+
+Backups are configured per workspace from the dashboard. Each workspace writes its
+backups to one bucket.
+
+## Properties
+
+<ParamField path="bucket" type="Bucket">
+  <MutableBadge />
+
+  The [bucket](/data-uploads/concepts/buckets) that backups are written to. Any connected
+  AWS S3 or GCS bucket works, including one your devices already upload to.
+
+  Example: `robot-backups-bucket`
+</ParamField>
+
+<ParamField path="prefix" type="string">
+  <MutableBadge />
+
+  The folder in the bucket that backups are written under. Miru writes only under this
+  prefix.
+
+  Default: `miru-backup`
+</ParamField>
+
+<ParamField path="enabled" type="boolean">
+  <MutableBadge />
+
+  Whether nightly backups run for the workspace.
+
+  Default: `false`
+</ParamField>
+
+## Turn on backups  <AdminBadge />
+
+<PlatformUnsupportedBadge />
+
+<Steps>
+  <Step title="Connect a bucket">
+    If you haven't already, connect a bucket with the
+    [AWS S3](/data-uploads/connect-a-bucket/aws) or
+    [GCS](/data-uploads/connect-a-bucket/gcs) guide. Backups need no permissions beyond
+    the ones those guides grant.
+  </Step>
+
+  <Step title="Choose the bucket and prefix">
+    In the Miru dashboard, navigate to the
+    [Backups page](https://app.mirurobotics.com/settings/backups). Select the bucket, and
+    change the prefix if you want backups written somewhere other than `miru-backup/`.
+  </Step>
+
+  <Step title="Turn on backups">
+    Switch on **Backups** and click **Save**.
+
+    Before saving, Miru checks that it can write under the prefix. If the check fails, the
+    page shows the error and nothing is saved.
+  </Step>
+</Steps>
+
+The first backup runs within a day. Each later backup runs about a day after the one before
+it.
+
+## Run history  <AdminBadge />
+
+<PlatformUnsupportedBadge />
+
+The [Backups page](https://app.mirurobotics.com/settings/backups) lists recent runs, newest
+first.
+
+<ParamField path="status" type="enum">
+  <ImmutableBadge />
+
+  The state of the run.
+
+  Allowed values:
+  - `running`: the backup is being written
+  - `succeeded`: the archive was uploaded and `latest.json` points at it
+  - `failed`: the run stopped, and the previous archive is still the latest
+</ParamField>
+
+<ParamField path="snapshot_at" type="timestamp">
+  <ImmutableBadge />
+
+  The point in time the backup captures. Every object in the archive is as it was at this
+  moment.
+
+  Example: `2026-11-02T03:00:00Z`
+</ParamField>
+
+<ParamField path="objects_exported" type="integer">
+  <ImmutableBadge />
+
+  The number of objects in the archive.
+
+  Example: `1482`
+</ParamField>
+
+<ParamField path="bytes_written" type="integer">
+  <ImmutableBadge />
+
+  The size of the archive in bytes.
+
+  Example: `31457280`
+</ParamField>
+
+<ParamField path="object_key" type="string">
+  <ImmutableBadge />
+
+  Where the archive was written in your bucket.
+
+  Example: `miru-backup/miru-backup-wsp_123-20261102T030000Z.zip`
+</ParamField>
+
+<ParamField path="error" type="string">
+  <ImmutableBadge />
+
+  Why the run failed, when it failed. The most common cause is a bucket role or service
+  account that no longer grants write access.
+</ParamField>
+
+## Turn off backups  <AdminBadge />
+
+<PlatformUnsupportedBadge />
+
+On the [Backups page](https://app.mirurobotics.com/settings/backups), switch off
+**Backups** and click **Save**. No more backups run, and the archives already in your
+bucket stay where they are.
+
+## Retention
+
+Miru never deletes a backup, so archives build up until you remove them. To expire old
+archives automatically, add a lifecycle rule for the backup prefix.
+
+<Tabs>
+  <Tab title="AWS S3">
+    This rule deletes archives under `miru-backup/` 90 days after they're written.
+
+    ```bash
+    cat > lifecycle.json <<EOF
+    {
+      "Rules": [
+        {
+          "ID": "expire-miru-backups",
+          "Filter": { "Prefix": "miru-backup/" },
+          "Status": "Enabled",
+          "Expiration": { "Days": 90 }
+        }
+      ]
+    }
+    EOF
+
+    aws s3api put-bucket-lifecycle-configuration \
+      --bucket "${BUCKET_NAME}" \
+      --lifecycle-configuration file://lifecycle.json
+    ```
+
+    This replaces any lifecycle rules already on the bucket. If it has others, add this
+    rule to them.
+  </Tab>
+
+  <Tab title="GCS">
+    This rule deletes archives under `miru-backup/` 90 days after they're written.
+
+    ```bash
+    cat > lifecycle.json <<EOF
+    {
+      "rule": [
+        {
+          "action": { "type": "Delete" },
+          "condition": { "age": 90, "matchesPrefix": ["miru-backup/"] }
+        }
+      ]
+    }
+    EOF
+
+    gcloud storage buckets update "gs://${BUCKET_NAME}" \
+      --lifecycle-file=lifecycle.json
+    ```
+
+    This replaces any lifecycle rules already on the bucket. If it has others, add this
+    rule to them.
+  </Tab>
+</Tabs>
+
+`latest.json` is rewritten after every successful run, so a rule like this never expires it
+while backups are running.

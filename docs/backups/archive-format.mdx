@@ -1,0 +1,183 @@
+---
+title: "Archive format"
+---
+
+Every backup is a single zip archive. The format is a public contract: each object in it
+is a [Platform API](/developers/platform-api/overview) object, so the Platform API
+reference documents every field.
+
+## Location
+
+Archives are written under the backup [prefix](/backups/set-up#param-prefix), one per run:
+
+```
+miru-backup/
+├── latest.json
+├── miru-backup-wsp_123-20261101T030000Z.zip
+└── miru-backup-wsp_123-20261102T030000Z.zip
+```
+
+Each archive is named `miru-backup-<workspace_id>-<timestamp>.zip`, where the timestamp is
+the run's `snapshot_at` in UTC. Names sort in time order.
+
+### Latest archive pointer
+
+`latest.json` points at the newest successful archive. Miru rewrites it after every
+successful run.
+
+```json
+{
+  "object_key": "miru-backup/miru-backup-wsp_123-20261102T030000Z.zip",
+  "snapshot_at": "2026-11-02T03:00:00Z",
+  "format_version": "1.0"
+}
+```
+
+## Contents
+
+```
+miru-backup-wsp_123-20261102T030000Z.zip
+├── README.md
+├── objects/
+│   ├── calibrations.jsonl
+│   ├── config_instances.jsonl
+│   ├── config_schemas.jsonl
+│   ├── config_types.jsonl
+│   ├── deployments.jsonl
+│   ├── devices.jsonl
+│   ├── git_commits.jsonl
+│   ├── groups.jsonl
+│   └── releases.jsonl
+└── manifest.json
+```
+
+- `README.md` explains how to read the archive and links back to these docs.
+- `objects/` holds one file per object type. See [objects](#objects).
+- `manifest.json` describes the archive and lists a checksum for every other file. It's
+  written last. See [manifest](#manifest).
+
+Every object type has a file, even when the workspace has none of that type. An empty
+file means the workspace had no objects of that type.
+
+## Objects
+
+Each file in `objects/` is [JSON Lines](https://jsonlines.org): one Platform API object
+per line, sorted by `id`. Objects use the Platform API version named in the manifest's
+`platform_api_version`.
+
+| File | Object | Expansions |
+| ---- | ------ | ---------- |
+| `calibrations.jsonl` | Calibration | `content` |
+| `config_instances.jsonl` | Config instance | `content` |
+| `config_schemas.jsonl` | Config schema | `documents` |
+| `config_types.jsonl` | Config type | |
+| `deployments.jsonl` | Deployment | `config_instances` |
+| `devices.jsonl` | Device | |
+| `git_commits.jsonl` | Git commit | |
+| `groups.jsonl` | Group | |
+| `releases.jsonl` | Release | `config_schemas` |
+
+Expansions are included as the [expansions](/developers/platform-api/query-params/expansions)
+query parameter would return them. They hold the content and the relationships you'd need to
+rebuild the workspace: the config content itself, the schema documents, which config
+instances each deployment contains and which config schemas each release contains.
+
+Archived devices, releases and config types are included.
+
+## Manifest
+
+`manifest.json` is written last, so an archive with a manifest is complete.
+
+```json
+{
+  "format_version": "1.0",
+  "platform_api_version": "2026-10-29.everglades",
+  "workspace_id": "wsp_123",
+  "snapshot_at": "2026-11-02T03:00:00Z",
+  "object_counts": {
+    "calibrations": 64,
+    "config_instances": 812,
+    "devices": 112,
+    "releases": 38
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "size": 612,
+      "sha256": "9f2c..."
+    },
+    {
+      "path": "objects/calibrations.jsonl",
+      "size": 48211,
+      "sha256": "41ab..."
+    }
+  ]
+}
+```
+
+<ParamField path="format_version" type="string">
+  The version of the archive format, as `major.minor`. See [versioning](#versioning).
+
+  Example: `1.0`
+</ParamField>
+
+<ParamField path="platform_api_version" type="string">
+  The [Platform API version](/developers/platform-api/versioning) of every object in the
+  archive.
+
+  Example: `2026-10-29.everglades`
+</ParamField>
+
+<ParamField path="workspace_id" type="string">
+  The ID of the workspace the archive was taken from.
+
+  Example: `wsp_123`
+</ParamField>
+
+<ParamField path="snapshot_at" type="timestamp">
+  The point in time the archive captures. Every object is as it was at this moment.
+
+  Example: `2026-11-02T03:00:00Z`
+</ParamField>
+
+<ParamField path="object_counts" type="map[string]integer">
+  The number of objects of each type, keyed by object type. Each count matches the number
+  of lines in that type's file.
+
+  Example: `{"devices": 112}`
+</ParamField>
+
+<ParamField path="files" type="array">
+  Every other file in the archive, in the order it was written.
+
+  <Expandable title="properties">
+    <ParamField path="path" type="string">
+      The file's path inside the archive.
+
+      Example: `objects/devices.jsonl`
+    </ParamField>
+
+    <ParamField path="size" type="integer">
+      The file's size in bytes, uncompressed.
+
+      Example: `48211`
+    </ParamField>
+
+    <ParamField path="sha256" type="string">
+      The SHA-256 digest of the file's uncompressed bytes, in hex.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+## Versioning
+
+The archive format has its own version, separate from the Platform API version.
+
+- **Minor versions** only add: new fields in the manifest, new object types in `objects/`,
+  or objects from a newer Platform API version in the same epoch. A reader written for
+  `1.0` can read any `1.x` archive.
+- **Major versions** may remove or change things. Each major version is announced in the
+  [changelog](/changelog/product) before it ships.
+
+Archives are never rewritten, so an archive always matches the format version in its
+manifest.
