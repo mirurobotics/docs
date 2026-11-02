@@ -348,23 +348,6 @@
                 ]
               },
               {
-                "group": "Cloud",
-                "openapi": {
-                  "source": "references/device-api/v0.2.5/api.yaml",
-                  "directory": "references/device-api/v0.2.5/endpoints"
-                },
-                "pages": [
-                  "references/device-api/v0.2.5/cloud/overview",
-                  {
-                    "group": "Calibrations",
-                    "pages": [
-                      "GET /cloud/calibrations",
-                      "GET /cloud/calibrations/{calibration_id}"
-                    ]
-                  }
-                ]
-              },
-              {
                 "group": "Deployments",
                 "openapi": {
                   "source": "references/device-api/v0.2.5/api.yaml",
@@ -432,6 +415,23 @@
                 "pages": [
                   "GET /releases/{release_id}",
                   "GET /releases/current"
+                ]
+              },
+              {
+                "group": "Cloud",
+                "openapi": {
+                  "source": "references/device-api/v0.2.5/api.yaml",
+                  "directory": "references/device-api/v0.2.5/endpoints"
+                },
+                "pages": [
+                  "references/device-api/v0.2.5/cloud/overview",
+                  {
+                    "group": "Calibrations",
+                    "pages": [
+                      "GET /cloud/calibrations",
+                      "GET /cloud/calibrations/{calibration_id}"
+                    ]
+                  }
                 ]
               }
             ]
