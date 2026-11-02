@@ -8,7 +8,7 @@ reference documents every field.
 
 ## Location
 
-Archives are written under the backup [prefix](/admin/backups/set-up#param-prefix), one per run:
+Archives are written under the backup prefix, `miru-backup/` by default, one per run:
 
 ```
 miru-backup/
@@ -128,45 +128,10 @@ Archived devices, releases and config types are included.
   Example: `2026-10-29.everglades`
 </ParamField>
 
-<ParamField path="workspace_id" type="string">
-  The ID of the workspace the archive was taken from.
-
-  Example: `wsp_123`
-</ParamField>
-
 <ParamField path="snapshot_at" type="timestamp">
   The point in time the archive captures. Every object is as it was at this moment.
 
   Example: `2026-11-02T03:00:00Z`
-</ParamField>
-
-<ParamField path="object_counts" type="map[string]integer">
-  The number of objects of each type, keyed by object type. Each count matches the number
-  of lines in that type's file.
-
-  Example: `{"devices": 112}`
-</ParamField>
-
-<ParamField path="files" type="array">
-  Every other file in the archive, in the order it was written.
-
-  <Expandable title="properties">
-    <ParamField path="path" type="string">
-      The file's path inside the archive.
-
-      Example: `objects/devices.jsonl`
-    </ParamField>
-
-    <ParamField path="size" type="integer">
-      The file's size in bytes, uncompressed.
-
-      Example: `48211`
-    </ParamField>
-
-    <ParamField path="sha256" type="string">
-      The SHA-256 digest of the file's uncompressed bytes, in hex.
-    </ParamField>
-  </Expandable>
 </ParamField>
 
 ## Versioning

@@ -58,17 +58,6 @@ Show one deployment, with the config instances it contains:
 jq 'select(.id == "dpl_123")' objects/deployments.jsonl
 ```
 
-## Query as tables
-
-[DuckDB](https://duckdb.org) reads JSON Lines files as tables.
-
-```sql
-SELECT status, count(*) AS devices
-FROM read_json_auto('objects/devices.jsonl')
-GROUP BY status
-ORDER BY devices DESC;
-```
-
 ## Read with the Python SDK
 
 Every object in an archive is a Platform API object, so the

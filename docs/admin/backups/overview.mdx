@@ -2,8 +2,6 @@
 title: "Overview"
 ---
 
-import { LinkNewTab } from '/snippets/components/link.jsx';
-
 Data backups keep a copy of your workspace's data in cloud storage *you* own.
 
 Each night, Miru writes a full backup of your workspace to one of your
@@ -22,9 +20,8 @@ Backups are off by default. To turn them on, see [set up backups](/admin/backups
    [Platform API](/developers/platform-api/overview), then writes a manifest with a
    checksum for every file.
 3. Using the credentials from your [bucket connection](/data-uploads/concepts/buckets),
-   Miru uploads the archive to your bucket and updates `latest.json` to point at it.
-4. Miru records the run, so you can see when each backup finished and whether it
-   succeeded.
+   Miru uploads the archive to your bucket and updates `latest.json` to point at it. The
+   connection only lets Miru create objects, and backups need no new permissions.
 
 A failed run leaves your last good archive and `latest.json` untouched. Miru only ever
 adds objects to your bucket. Deleting something in Miru never deletes anything in your
@@ -66,29 +63,11 @@ archives keep working.
 ## Schedule
 
 Backups run once a day. Each run backs up the whole workspace, so every archive stands on
-its own and never depends on an earlier one.
-
-## Retention
-
-Miru never deletes a backup. To control how long archives are kept, add a lifecycle rule to
-your bucket. See [retention](/admin/backups/set-up#retention).
-
-A year of backups for a fleet of 100 devices is usually a few gigabytes, at roughly 25 to
-40 MB per compressed archive.
+its own and never depends on an earlier one. Miru never deletes a backup. To control how
+long archives are kept, see [retention](/admin/backups/set-up#retention).
 
 ## Restoring a backup
 
 Restoring a backup into Miru isn't supported yet. Backups give you a complete, independent
 record of your workspace for compliance, audits and your own analysis. To read one, see
 [read a backup](/admin/backups/read-a-backup).
-
-## Security
-
-- **Write-only access.** Backups use the same bucket connection as data uploads. The
-  connection only lets Miru create objects in your bucket, so no new permissions are
-  needed.
-- **Scoped to your workspace.** Each archive holds only your workspace's objects, read the
-  same way a read-only <LinkNewTab href="/admin/apikeys">API key</LinkNewTab> would read
-  them.
-- **No secrets.** Objects come from the Platform API, which never returns credentials or
-  their hashes.
