@@ -1,0 +1,46 @@
+---
+title: "Platform endpoints"
+sidebarTitle: "Overview"
+description: "Platform API resources, scoped to this device and served by the agent."
+---
+
+Most Device API endpoints serve data the agent keeps on the device. Platform endpoints, the ones under `/platform`, serve [Platform API](/developers/platform-api/overview) resources from the [Miru control plane](/developers/agent/architecture), scoped to this device, such as the calibrations the device has reported. The agent fetches them from the control plane on every request, using the device's credentials.
+
+<img
+  src="https://assets.mirurobotics.com/docs/v04/images/device-api/platform-request.svg"
+  alt="Device API platform endpoint request sequence"
+/>
+
+## How they differ
+
+**They need a connection.** A platform endpoint works only while the agent can reach the control plane. The agent keeps no copy of the data, so when the control plane is unreachable the request fails with an error instead of returning stale or empty results. Retry once the device is back online. See [Network requirements](/developers/agent/network) for the hosts the agent connects to.
+
+**They return only this device's data.** Resources match their Platform API counterparts without the `device_id` field, and the list filters are the same except `device_id`. Requesting another device's resource by its ID returns a not found error. Platform endpoints are read-only.
+
+**They live under `client.platform` in the SDK.** For example, `GET /platform/calibrations` is `client.platform.calibrations.list()` in the [Python SDK](/developers/device-api/sdks#python).
+
+## Calibrations
+
+| Endpoint | Python SDK | Description |
+| -------- | ---------- | ----------- |
+| [`GET /platform/calibrations`](/references/device-api/v0.2.5/endpoints/platform-calibrations/list) | `client.platform.calibrations.list()` | List the device's calibrations |
+| [`GET /platform/calibrations/{calibration_id}`](/references/device-api/v0.2.5/endpoints/platform-calibrations/get) | `client.platform.calibrations.retrieve()` | Get one of the device's calibrations |
+
+These endpoints let an application read back the [calibrations](/cfg-mgmt/concepts/calibrations) the device [reported](/cfg-mgmt/report-calibrations), for example after the device's computer is re-imaged or replaced. A calibration is listed only once the agent has uploaded it, so one reported while the device was offline appears after the device reconnects.
+
+Calibration content is left out by default. Add `expand=content` to include it.
+
+```python
+from miru_device_sdk import Miru
+
+client = Miru()
+calibrations = client.platform.calibrations.list(
+    component=["kuka-arm"],
+    role=["front-left"],
+    expand=["content"],
+)
+for calibration in calibrations.data:
+    print(calibration.aspect, calibration.content.data)
+```
+
+The `role` and `aspect` filters accept `null`, which matches calibrations reported without a role or aspect. For example, `component=kuka-arm&role=null` lists the calibrations of a `kuka-arm` reported without a role. Because of this, `null` is reserved and can't be [reported](/cfg-mgmt/report-calibrations) as a role or aspect.

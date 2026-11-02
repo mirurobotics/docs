@@ -418,18 +418,18 @@
                 ]
               },
               {
-                "group": "Cloud",
+                "group": "Platform",
                 "openapi": {
                   "source": "references/device-api/v0.2.5/api.yaml",
                   "directory": "references/device-api/v0.2.5/endpoints"
                 },
                 "pages": [
-                  "references/device-api/v0.2.5/cloud/overview",
+                  "references/device-api/v0.2.5/platform/overview",
                   {
                     "group": "Calibrations",
                     "pages": [
-                      "GET /cloud/calibrations",
-                      "GET /cloud/calibrations/{calibration_id}"
+                      "GET /platform/calibrations",
+                      "GET /platform/calibrations/{calibration_id}"
                     ]
                   }
                 ]

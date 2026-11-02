@@ -13,15 +13,15 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 *November 2, 2026*
 
-The `v0.2.5` release lets on-device applications pull their device's [calibrations](/cfg-mgmt/concepts/calibrations) from the Miru control plane through the new [cloud endpoints](/references/device-api/v0.2.5/cloud/overview). Cloud endpoints read from the control plane on every request, so they need the agent to reach it.
+The `v0.2.5` release lets on-device applications pull their device's [calibrations](/cfg-mgmt/concepts/calibrations) from the Miru control plane through the new [platform endpoints](/references/device-api/v0.2.5/platform/overview). Platform endpoints serve Platform API resources scoped to the device, reading from the control plane on every request, so they need the agent to reach it.
 
 <DeviceApiReleaseLinks version="v0.2.5" />
 
 ## New endpoints
 
-<Dropdown title="Cloud calibrations">
-  - <GET /> `/cloud/calibrations` — list the device's calibrations
-  - <GET /> `/cloud/calibrations/{id}` — get one of the device's calibrations by ID
+<Dropdown title="Platform calibrations">
+  - <GET /> `/platform/calibrations` — list the device's calibrations
+  - <GET /> `/platform/calibrations/{id}` — get one of the device's calibrations by ID
 
 Both filter to the calling device's own calibrations. The list filters by `component`, `role`, `aspect`, `serial_number` and `report_id`, where `role=null` and `aspect=null` match calibrations reported without a role or aspect.
 

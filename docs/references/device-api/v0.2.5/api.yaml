@@ -645,18 +645,18 @@ paths:
             --request GET `
             --url "http://127.0.0.1:$($api.port)/v0.2/events" `
             --header "Authorization: Bearer $($api.token)"
-  /cloud/calibrations:
+  /platform/calibrations:
     get:
       tags:
-      - Cloud Calibrations
+      - Platform Calibrations
       summary: List
-      operationId: listCloudCalibrations
+      operationId: listPlatformCalibrations
       description: List the device's calibrations from the control plane.
       parameters:
       - $ref: '#/components/parameters/offset'
       - $ref: '#/components/parameters/limit'
       - $ref: '#/components/parameters/calibration_order_bys'
-      - $ref: '#/components/parameters/cloud_calibration_list_expansions'
+      - $ref: '#/components/parameters/platform_calibration_list_expansions'
       - $ref: '#/components/parameters/calibration_search_component'
       - $ref: '#/components/parameters/calibration_search_role'
       - $ref: '#/components/parameters/calibration_search_aspect'
@@ -668,7 +668,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CloudCalibrationList'
+                $ref: '#/components/schemas/PlatformCalibrationList'
       x-codeSamples:
       - lang: curl
         label: curl (Linux)
@@ -676,38 +676,38 @@ paths:
           curl \
             --unix-socket /run/miru/miru.sock \
             --request GET \
-            --url http://localhost/v0.2/cloud/calibrations
+            --url http://localhost/v0.2/platform/calibrations
       - lang: powershell
         label: PowerShell (Windows)
         source: |-
           $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           Invoke-RestMethod -Method Get `
-            -Uri "http://127.0.0.1:$($api.port)/v0.2/cloud/calibrations" `
+            -Uri "http://127.0.0.1:$($api.port)/v0.2/platform/calibrations" `
             -Headers @{ Authorization = "Bearer $($api.token)" }
       - lang: Python
         source: |-
           from miru_device_sdk import Miru
 
           client = Miru()
-          calibrations = client.cloud.calibrations.list()
+          calibrations = client.platform.calibrations.list()
           print(calibrations.data)
-  /cloud/calibrations/{calibration_id}:
+  /platform/calibrations/{calibration_id}:
     get:
       tags:
-      - Cloud Calibrations
+      - Platform Calibrations
       summary: Get
-      operationId: getCloudCalibration
+      operationId: getPlatformCalibration
       description: Retrieve a calibration by its ID from the control plane.
       parameters:
       - $ref: '#/components/parameters/calibration_id'
-      - $ref: '#/components/parameters/cloud_calibration_expansions'
+      - $ref: '#/components/parameters/platform_calibration_expansions'
       responses:
         '200':
           description: Successfully retrieved the calibration.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CloudCalibration'
+                $ref: '#/components/schemas/PlatformCalibration'
       x-codeSamples:
       - lang: curl
         label: curl (Linux)
@@ -715,20 +715,20 @@ paths:
           curl \
             --unix-socket /run/miru/miru.sock \
             --request GET \
-            --url http://localhost/v0.2/cloud/calibrations/{calibration_id}
+            --url http://localhost/v0.2/platform/calibrations/{calibration_id}
       - lang: powershell
         label: PowerShell (Windows)
         source: |-
           $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
           Invoke-RestMethod -Method Get `
-            -Uri "http://127.0.0.1:$($api.port)/v0.2/cloud/calibrations/{calibration_id}" `
+            -Uri "http://127.0.0.1:$($api.port)/v0.2/platform/calibrations/{calibration_id}" `
             -Headers @{ Authorization = "Bearer $($api.token)" }
       - lang: Python
         source: |-
           from miru_device_sdk import Miru
 
           client = Miru()
-          calibration = client.cloud.calibrations.retrieve(
+          calibration = client.platform.calibrations.retrieve(
               "cal_123",
           )
           print(calibration.id)
@@ -1776,14 +1776,14 @@ components:
       - CALIBRATION_ORDER_BY_REPORTED_AT_ASC
       - CALIBRATION_ORDER_BY_REPORTED_AT_DESC
       default: created_at:desc
-    CloudCalibrationListExpansion:
+    PlatformCalibrationListExpansion:
       type: string
       enum:
       - content
       - total_count
       x-enum-varnames:
-      - CLOUD_CALIBRATION_LIST_EXPAND_CONTENT
-      - CLOUD_CALIBRATION_LIST_EXPAND_TOTAL_COUNT
+      - PLATFORM_CALIBRATION_LIST_EXPAND_CONTENT
+      - PLATFORM_CALIBRATION_LIST_EXPAND_TOTAL_COUNT
     PaginatedList:
       title: Paginated List
       type: object
@@ -1824,8 +1824,8 @@ components:
           description: True if there are more items in the list to return. False if
             there are no more items to return.
           example: false
-    CloudCalibration:
-      title: Cloud Calibration
+    PlatformCalibration:
+      title: Platform Calibration
       type: object
       description: One calibration reported by a device for a unit of a component.
         Calibrations are immutable and append-only; a device's history is kept per
@@ -1927,8 +1927,8 @@ components:
               "pitch": 0.0,
               "yaw": 1.571
             }
-    CloudCalibrationList:
-      title: Cloud Calibration List
+    PlatformCalibrationList:
+      title: Platform Calibration List
       allOf:
       - $ref: '#/components/schemas/PaginatedList'
       - type: object
@@ -1938,14 +1938,14 @@ components:
           data:
             type: array
             items:
-              $ref: '#/components/schemas/CloudCalibration'
+              $ref: '#/components/schemas/PlatformCalibration'
             description: The list of calibrations.
-    CloudCalibrationExpansion:
+    PlatformCalibrationExpansion:
       type: string
       enum:
       - content
       x-enum-varnames:
-      - CLOUD_CALIBRATION_EXPAND_CONTENT
+      - PLATFORM_CALIBRATION_EXPAND_CONTENT
     Error:
       type: object
       required:
@@ -2041,7 +2041,7 @@ components:
           $ref: '#/components/schemas/CalibrationOrderBy'
         example:
         - created_at:desc
-    cloud_calibration_list_expansions:
+    platform_calibration_list_expansions:
       name: expand
       in: query
       required: false
@@ -2049,7 +2049,7 @@ components:
       schema:
         type: array
         items:
-          $ref: '#/components/schemas/CloudCalibrationListExpansion'
+          $ref: '#/components/schemas/PlatformCalibrationListExpansion'
         example:
         - content
     calibration_search_component:
@@ -2129,7 +2129,7 @@ components:
       schema:
         type: string
         example: cal_123
-    cloud_calibration_expansions:
+    platform_calibration_expansions:
       name: expand
       in: query
       required: false
@@ -2137,6 +2137,6 @@ components:
       schema:
         type: array
         items:
-          $ref: '#/components/schemas/CloudCalibrationExpansion'
+          $ref: '#/components/schemas/PlatformCalibrationExpansion'
         example:
         - content
