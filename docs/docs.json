@@ -271,8 +271,8 @@
                 "pages": [
                   "admin/backups/overview",
                   "admin/backups/set-up",
-                  "admin/backups/read-a-backup",
-                  "admin/backups/archive-format"
+                  "admin/backups/archive-format",
+                  "admin/backups/read-a-backup"
                 ]
               }
             ]
