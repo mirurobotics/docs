@@ -53,7 +53,8 @@ it.
 The [Backups page](https://app.mirurobotics.com/settings/backups) lists recent runs, newest
 first, with each run's status and where its archive was written. When a run fails, the page
 shows why. The most common cause is a bucket role or service account that no longer grants
-write access.
+write access. A run also fails if Miru can't read the content of any config instance or
+calibration, so a backup is never missing content.
 
 ## Turn off backups  <AdminBadge />
 
