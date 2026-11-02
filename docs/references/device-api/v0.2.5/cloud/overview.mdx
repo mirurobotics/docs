@@ -6,6 +6,11 @@ description: "Endpoints the agent serves by reading from the Miru control plane.
 
 Most Device API endpoints serve data the agent keeps on the device. Cloud endpoints, the ones under `/cloud`, serve data that only the [Miru control plane](/developers/agent/architecture) has, such as the calibrations the device has reported. The agent fetches it from the control plane on every request, using the device's credentials.
 
+<img
+  src="https://assets.mirurobotics.com/docs/v04/images/device-api/cloud-request.svg"
+  alt="Device API cloud endpoint request sequence"
+/>
+
 ## How they differ
 
 **They need a connection.** A cloud endpoint works only while the agent can reach the control plane. The agent keeps no copy of the data, so when the control plane is unreachable the request fails with an error instead of returning stale or empty results. Retry once the device is back online. See [Network requirements](/developers/agent/network) for the hosts the agent connects to.
