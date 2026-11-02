@@ -9,6 +9,68 @@ import { DeviceApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
+# v0.2.5
+
+*November 2, 2026*
+
+The `v0.2.5` release lets on-device applications pull their device's [calibrations](/cfg-mgmt/concepts/calibrations) from Miru through the new [cloud endpoints](/developers/device-api/cloud). Cloud endpoints read from Miru on every request, so they need the agent to reach Miru.
+
+<DeviceApiReleaseLinks version="v0.2.5" />
+
+## New endpoints
+
+<Dropdown title="Cloud calibrations">
+  - <GET /> `/cloud/calibrations` — list the device's calibrations
+  - <GET /> `/cloud/calibrations/{id}` — get one of the device's calibrations by ID
+
+Both filter to the calling device's own calibrations. The list filters by `component`, `role`, `aspect`, `serial_number` and `report_id`, where `role=null` and `aspect=null` match calibrations reported without a role or aspect.
+
+```json nocopy
+{
+  "object": "calibration",
+  "id": "cal_123",
+  "component": "kuka-arm",
+  "role": "front-left",
+  "aspect": null,
+  "serial_number": "SN-1234",
+  "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "report_id": "0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10",
+  "reported_at": "2026-03-10T12:00:00Z",
+  "created_at": "2026-03-10T12:00:05Z",
+  "content": {
+    "format": "json",
+    "data": "{\"x\": 0.12, \"y\": -0.03}"
+  }
+}
+```
+
+`content` is included only with `expand=content`.
+</Dropdown>
+
+## Other changes
+
+<Dropdown title="Reserved role and aspect">
+`POST /calibrations` now rejects `null` as a `role` or `aspect` with a `422` and the error code `invalid_request`, because the list filters use `null` to match a missing role or aspect.
+</Dropdown>
+
+## Migration steps
+
+<Steps>
+  <Step title="Verify agent compatibility">
+    Ensure all devices are running Miru Agent `v0.12.4` or later. See [compatibility matrix](/developers/device-api/versions#agent-compatibility-matrix).
+  </Step>
+
+  <Step title="Upgrade Python SDK">
+    If you are using the [Python SDK](/developers/device-api/sdks#python), upgrade to version `v0.10.0` or later.
+  </Step>
+
+  <Step title="Integrate the changes">
+    Integrate the new endpoints into your client application.
+  </Step>
+</Steps>
+
+---
+
 # v0.2.4
 
 *October 29, 2026*
