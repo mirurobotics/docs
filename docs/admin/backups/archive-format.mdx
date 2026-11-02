@@ -8,30 +8,17 @@ reference documents every field.
 
 ## Location
 
-Archives are written under the backup prefix, `miru-backup/` by default, one per run:
+Archives are written under the backup prefix, `miru-backup/` by default, one per successful run:
 
 ```
 miru-backup/
-├── latest.json
 ├── miru-backup-wsp_123-20261101T030000Z.zip
 └── miru-backup-wsp_123-20261102T030000Z.zip
 ```
 
 Each archive is named `miru-backup-<workspace_id>-<timestamp>.zip`, where the timestamp is
-the run's `snapshot_at` in UTC. Names sort in time order.
-
-### Latest archive pointer
-
-`latest.json` points at the newest successful archive. Miru rewrites it after every
-successful run.
-
-```json
-{
-  "object_key": "miru-backup/miru-backup-wsp_123-20261102T030000Z.zip",
-  "snapshot_at": "2026-11-02T03:00:00Z",
-  "format_version": "1.0"
-}
-```
+the run's `snapshot_at` in UTC. Names sort in time order, so the newest archive is the last
+one by name.
 
 ## Contents
 

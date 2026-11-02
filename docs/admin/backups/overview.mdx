@@ -20,10 +20,10 @@ Backups are off by default. To turn them on, see [set up backups](/admin/backups
    [Platform API](/developers/platform-api/overview), then writes a manifest with a
    checksum for every file.
 3. Using the credentials from your [bucket connection](/data-uploads/concepts/buckets),
-   Miru uploads the archive to your bucket and updates `latest.json` to point at it. The
+   Miru uploads the archive to your bucket. The
    connection only lets Miru create objects, and backups need no new permissions.
 
-A failed run leaves your last good archive and `latest.json` untouched. Miru only ever
+A failed run writes nothing and leaves your last good archive untouched. Miru only ever
 adds objects to your bucket. Deleting something in Miru never deletes anything in your
 bucket, and Miru never reads or deletes an archive once it's written.
 

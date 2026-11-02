@@ -69,5 +69,5 @@ bucket stay where they are.
 Miru never deletes a backup, so archives build up until you remove them. To expire old
 archives automatically, add a lifecycle rule for the backup prefix in
 [AWS S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html)
-or [GCS](https://cloud.google.com/storage/docs/lifecycle). `latest.json` is rewritten after
-every successful run, so an age-based rule never expires it while backups are running.
+or [GCS](https://cloud.google.com/storage/docs/lifecycle). While backups keep running, an
+age-based rule always leaves the newest archives in place.

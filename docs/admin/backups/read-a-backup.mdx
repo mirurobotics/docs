@@ -7,22 +7,25 @@ Miru. This guide downloads the latest archive, checks it, and queries it.
 
 ## Download the latest archive
 
-`latest.json` points at the newest successful archive.
+Archive names end in the time they were taken, so the newest archive is the last one by
+name.
 
 <Tabs>
   <Tab title="AWS S3">
     ```bash
-    aws s3 cp "s3://${BUCKET_NAME}/miru-backup/latest.json" .
-    KEY="$(jq -r '.object_key' latest.json)"
+    KEY="$(aws s3api list-objects-v2 \
+      --bucket "${BUCKET_NAME}" \
+      --prefix "miru-backup/miru-backup-" \
+      --query 'sort_by(Contents, &Key)[-1].Key' \
+      --output text)"
     aws s3 cp "s3://${BUCKET_NAME}/${KEY}" backup.zip
     ```
   </Tab>
 
   <Tab title="GCS">
     ```bash
-    gcloud storage cp "gs://${BUCKET_NAME}/miru-backup/latest.json" .
-    KEY="$(jq -r '.object_key' latest.json)"
-    gcloud storage cp "gs://${BUCKET_NAME}/${KEY}" backup.zip
+    URL="$(gcloud storage ls "gs://${BUCKET_NAME}/miru-backup/miru-backup-*.zip" | sort | tail -n 1)"
+    gcloud storage cp "${URL}" backup.zip
     ```
   </Tab>
 </Tabs>
