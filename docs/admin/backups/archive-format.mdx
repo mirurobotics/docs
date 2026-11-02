@@ -51,7 +51,8 @@ miru-backup-wsp_123-20261102T030000Z.zip
 └── manifest.json
 ```
 
-- `README.md` explains how to read the archive and links back to these docs.
+- `README.md` lists the object types in the archive, explains how to read it and links
+  back to these docs.
 - `objects/` holds one file per object type. See [objects](#objects).
 - `manifest.json` describes the archive and lists a checksum for every other file. It's
   written last. See [manifest](#manifest).
@@ -82,7 +83,9 @@ query parameter would return them. They hold the content and the relationships y
 rebuild the workspace: the config content itself, the schema documents, which config
 instances each deployment contains and which config schemas each release contains.
 
-Archived devices, releases and config types are included.
+Archived devices, releases and config types are included. Archived devices have a `status`
+of `archived`. Archived releases and config types carry no marker, so they look the same
+as active ones.
 
 ## Manifest
 
