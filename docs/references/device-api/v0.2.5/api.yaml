@@ -651,9 +651,7 @@ paths:
       - Cloud Calibrations
       summary: List
       operationId: listCloudCalibrations
-      description: List the calibrations Miru recorded for this device. Requires the
-        agent to reach Miru. By default, results are ordered by `created_at` descending,
-        with ties broken by `id`.
+      description: List the device's calibrations.
       parameters:
       - $ref: '#/components/parameters/offset'
       - $ref: '#/components/parameters/limit'
@@ -699,8 +697,7 @@ paths:
       - Cloud Calibrations
       summary: Get
       operationId: getCloudCalibration
-      description: Retrieve a calibration Miru recorded for this device by its ID.
-        Requires the agent to reach Miru.
+      description: Retrieve a calibration by its ID.
       parameters:
       - $ref: '#/components/parameters/calibration_id'
       - $ref: '#/components/parameters/cloud_calibration_expansions'
