@@ -1,0 +1,270 @@
+---
+title: "Pull calibrations"
+---
+
+import { NullableBadge } from '/snippets/components/field-badges.jsx';
+import CalibrationDef from '/snippets/definitions/calibration.mdx';
+
+This guide details how an on-device application pulls the device's [calibrations](/cfg-mgmt/concepts/calibrations) from Miru through the Miru Agent's [Device API](/developers/device-api/overview).
+
+## Overview
+
+<CalibrationDef />
+
+Miru is the source of truth for a device's calibrations. When a device's computer is re-imaged or replaced, its applications can pull the calibrations the device [reported](/cfg-mgmt/report-calibrations) back from Miru instead of calibrating again.
+
+The Device API serves two routes for this:
+
+- `GET /v0.2/cloud/calibrations` lists the device's calibrations.
+- `GET /v0.2/cloud/calibrations/{calibration_id}` gets one calibration by its ID.
+
+The `/cloud` prefix marks routes the agent serves by reading from Miru. The agent keeps no copy, so it calls Miru on every request.
+
+A device can only pull its own calibrations. A calibration shows up only after the agent has uploaded it, so one reported while the device was offline isn't listed until the device reconnects.
+
+## Prerequisites
+
+To follow this guide, you must have a device installed with a Miru Agent that supports cloud calibrations. See the [Device API changelog](/changelog/device-api).
+
+The device must be able to reach Miru. Unlike [reporting a calibration](/cfg-mgmt/report-calibrations), which works offline, pulling one fails if the agent can't reach Miru. The agent returns an error instead of stale or empty results, so retry once the device is back online.
+
+To provision a device, see the [Provision a device](/provision-devices) guide.
+
+## List calibrations
+
+We recommend using the official [Python Device SDK](https://pypi.org/project/miru-device-sdk/) to pull calibrations. You can also generate your own client using the Device API's OpenAPI specification, located in the [Device API changelog](/changelog/device-api).
+
+The following example lists the device's calibrations of its `front-left` arm, with their content.
+
+<Tabs>
+  <Tab title="Python">
+    ```python
+    from miru_device_sdk import Miru
+
+    client = Miru()
+    calibrations = client.cloud.calibrations.list(
+        component=["kuka-arm"],
+        role=["front-left"],
+        expand=["content"],
+    )
+    for calibration in calibrations.data:
+        print(calibration.aspect, calibration.content.data)
+    ```
+  </Tab>
+  <Tab title="Linux">
+    ```bash
+    curl --unix-socket /run/miru/miru.sock \
+      --request GET \
+      --url 'http://localhost/v0.2/cloud/calibrations?component=kuka-arm&role=front-left&expand=content'
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell PowerShell wrap
+    $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
+    curl.exe --request GET `
+      --url "http://127.0.0.1:$($api.port)/v0.2/cloud/calibrations?component=kuka-arm&role=front-left&expand=content" `
+      --header "Authorization: Bearer $($api.token)"
+    ```
+  </Tab>
+</Tabs>
+
+By default, results are ordered by `created_at` descending, newest first.
+
+### Filters
+
+Each filter takes a list of values, comma-separated in the query string, such as `role=left,right`. A calibration matches a filter if it matches any of its values, and it must match every filter you set.
+
+<ParamField query="component" type="string[]">
+  The [component](/cfg-mgmt/concepts/components) slugs to filter by.
+
+  Example: `kuka-arm`
+</ParamField>
+
+<ParamField query="role" type="string[]">
+  The [role](/cfg-mgmt/concepts/components#param-roles) slugs to filter by. `null` matches calibrations reported without a role.
+
+  Role slugs are unique only within a component, so filter by `component` too to match one component's role.
+
+  Example: `front-left`
+</ParamField>
+
+<ParamField query="aspect" type="string[]">
+  The [aspect](/cfg-mgmt/concepts/components#param-aspects) slugs to filter by. `null` matches calibrations reported without an aspect.
+
+  Aspect slugs are unique only within a component, so filter by `component` too to match one component's aspect.
+
+  Example: `pose`
+</ParamField>
+
+<ParamField query="serial_number" type="string[]">
+  The serial numbers of the calibrated units to filter by.
+
+  Example: `SN-1234`
+</ParamField>
+
+<ParamField query="report_id" type="string[]">
+  The report IDs to filter by. The agent returns a report ID when a calibration is [reported](/cfg-mgmt/report-calibrations#response).
+
+  Example: `0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10`
+</ParamField>
+
+For example, `component=kuka-arm&role=null` lists the calibrations of a `kuka-arm` reported without a role.
+
+### Sorting and pagination
+
+<ParamField query="order_by" type="string[]" default="created_at:desc">
+  The sort order. Ties are broken by `id`.
+
+  Allowed values: `created_at:asc`, `created_at:desc`, `reported_at:asc`, `reported_at:desc`, `id:asc`, `id:desc`
+</ParamField>
+
+<ParamField query="limit" type="integer" default="10">
+  The maximum number of calibrations to return, from 1 to 100.
+</ParamField>
+
+<ParamField query="offset" type="integer" default="0">
+  The number of calibrations to skip.
+</ParamField>
+
+<ParamField query="expand" type="string[]">
+  The fields to include in the response.
+
+  Allowed values:
+  - `content`: each calibration's content
+  - `total_count`: the total number of calibrations that match the filters
+</ParamField>
+
+The response is a list of calibrations. When `has_more` is `true`, request the next page with a larger `offset`.
+
+```json nocopy
+{
+  "object": "list",
+  "limit": 10,
+  "offset": 0,
+  "has_more": false,
+  "data": [
+    {
+      "object": "calibration",
+      "id": "cal_123",
+      "component": "kuka-arm",
+      "role": "front-left",
+      "aspect": "pose",
+      "serial_number": "SN-1234",
+      "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "report_id": "0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10",
+      "reported_at": "2026-03-10T12:00:00Z",
+      "created_at": "2026-03-10T12:00:05Z",
+      "content": {
+        "format": "json",
+        "data": "{\"x\": 0.12, \"y\": -0.03}"
+      }
+    }
+  ]
+}
+```
+
+## Get a calibration
+
+To get one calibration, pass its ID. Add `expand=content` to include its content.
+
+<Tabs>
+  <Tab title="Python">
+    ```python
+    from miru_device_sdk import Miru
+
+    client = Miru()
+    calibration = client.cloud.calibrations.retrieve(
+        "cal_123",
+        expand=["content"],
+    )
+    print(calibration.content.data)
+    ```
+  </Tab>
+  <Tab title="Linux">
+    ```bash
+    curl --unix-socket /run/miru/miru.sock \
+      --request GET \
+      --url 'http://localhost/v0.2/cloud/calibrations/cal_123?expand=content'
+    ```
+  </Tab>
+  <Tab title="Windows">
+    ```powershell PowerShell wrap
+    $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
+    curl.exe --request GET `
+      --url "http://127.0.0.1:$($api.port)/v0.2/cloud/calibrations/cal_123?expand=content" `
+      --header "Authorization: Bearer $($api.token)"
+    ```
+  </Tab>
+</Tabs>
+
+A calibration that belongs to another device is not found.
+
+## Calibration fields
+
+Both routes return calibrations with the following fields.
+
+<ParamField response="id" type="string">
+  The calibration's ID, generated by Miru.
+
+  Example: `cal_123`
+</ParamField>
+
+<ParamField response="component" type="string">
+  The slug of the calibrated component, as it was reported.
+
+  Example: `kuka-arm`
+</ParamField>
+
+<ParamField response="role" type="string">
+  <NullableBadge />
+
+  The slug of the unit's role, as it was reported, or `null` if no role was reported.
+
+  Example: `front-left`
+</ParamField>
+
+<ParamField response="aspect" type="string">
+  <NullableBadge />
+
+  The slug of the calibrated aspect, as it was reported, or `null` if no aspect was reported.
+
+  Example: `pose`
+</ParamField>
+
+<ParamField response="serial_number" type="string">
+  <NullableBadge />
+
+  The serial number of the calibrated unit, or `null` if none was reported.
+
+  Example: `SN-1234`
+</ParamField>
+
+<ParamField response="digest" type="string">
+  The SHA-256 digest of the content, as `sha256:` followed by 64 lowercase hex characters.
+</ParamField>
+
+<ParamField response="report_id" type="string">
+  The report ID the agent returned when the calibration was reported.
+</ParamField>
+
+<ParamField response="reported_at" type="datetime">
+  When the calibration was reported to the agent. A device that was offline uploads its calibrations later, so this can be well before `created_at`.
+</ParamField>
+
+<ParamField response="created_at" type="datetime">
+  When Miru recorded the calibration.
+</ParamField>
+
+<ParamField response="content" type="object">
+  The calibration's content, exactly as it was reported. Included only with `expand=content`.
+
+  <Expandable title="properties">
+    <ParamField response="format" type="enum">
+      The file format of `data`: `json`, `yaml`, `jsonc`, `xml`, `csv` or `text`.
+    </ParamField>
+
+    <ParamField response="data" type="string">
+      The calibration result. At most 1 MiB.
+    </ParamField>
+  </Expandable>
+</ParamField>

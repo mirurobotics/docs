@@ -76,13 +76,13 @@ The Miru dashboard shows the `content.data` string exactly as it was uploaded. P
 In addition to the required parameters, you can also set the following optional parameters:
 
 <ParamField body="role" type="string">
-  The slug of the unit's [role](/cfg-mgmt/concepts/components#param-roles).
+  The slug of the unit's [role](/cfg-mgmt/concepts/components#param-roles). `null` is reserved and can't be used as a role.
 
   Example: `front-left`
 </ParamField>
 
 <ParamField body="aspect" type="string">
-  The slug of the calibrated [aspect](/cfg-mgmt/concepts/components#param-aspects).
+  The slug of the calibrated [aspect](/cfg-mgmt/concepts/components#param-aspects). `null` is reserved and can't be used as an aspect.
 
   Example: `pose`
 </ParamField>
@@ -117,3 +117,5 @@ The agent holds up to 1,000 calibrations that haven't uploaded yet. When it's ho
 ## View calibrations
 
 To view a device's calibrations, open the device and navigate to the **Calibrations** page on the left.
+
+To read them back on the device, see the [pull calibrations](/cfg-mgmt/pull-calibrations) guide.
