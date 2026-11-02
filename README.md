@@ -6,7 +6,7 @@
 
 ### Platform API Updates
 - Supported Versions
-- Platform API Reference
+- Platform API Reference (list each endpoint under its resource group in `docs/docs.json`)
 - SDK Compatibility Matrix
 - "latest" API component
 - Changelog
