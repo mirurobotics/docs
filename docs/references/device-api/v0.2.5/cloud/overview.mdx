@@ -1,0 +1,41 @@
+---
+title: "Cloud endpoints"
+sidebarTitle: "Overview"
+description: "Endpoints the agent serves by reading from the Miru control plane."
+---
+
+Most Device API endpoints serve data the agent keeps on the device. Cloud endpoints, the ones under `/cloud`, serve data that only the [Miru control plane](/developers/agent/architecture) has, such as the calibrations the device has reported. The agent fetches it from the control plane on every request, using the device's credentials.
+
+## How they differ
+
+**They need a connection.** A cloud endpoint works only while the agent can reach the control plane. The agent keeps no copy of the data, so when the control plane is unreachable the request fails with an error instead of returning stale or empty results. Retry once the device is back online. See [Network requirements](/developers/agent/network) for the hosts the agent connects to.
+
+**They return only this device's data.** Requesting another device's resource by its ID returns a not found error.
+
+**They live under `client.cloud` in the SDK.** For example, `GET /cloud/calibrations` is `client.cloud.calibrations.list()` in the [Python SDK](/developers/device-api/sdks#python).
+
+## Calibrations
+
+| Endpoint | Python SDK | Description |
+| -------- | ---------- | ----------- |
+| [`GET /cloud/calibrations`](/references/device-api/v0.2.5/endpoints/cloud-calibrations/list) | `client.cloud.calibrations.list()` | List the device's calibrations |
+| [`GET /cloud/calibrations/{calibration_id}`](/references/device-api/v0.2.5/endpoints/cloud-calibrations/get) | `client.cloud.calibrations.retrieve()` | Get one of the device's calibrations |
+
+These endpoints let an application read back the [calibrations](/cfg-mgmt/concepts/calibrations) the device [reported](/cfg-mgmt/report-calibrations), for example after the device's computer is re-imaged or replaced. A calibration is listed only once the agent has uploaded it, so one reported while the device was offline appears after the device reconnects.
+
+Calibration content is left out by default. Add `expand=content` to include it.
+
+```python
+from miru_device_sdk import Miru
+
+client = Miru()
+calibrations = client.cloud.calibrations.list(
+    component=["kuka-arm"],
+    role=["front-left"],
+    expand=["content"],
+)
+for calibration in calibrations.data:
+    print(calibration.aspect, calibration.content.data)
+```
+
+The `role` and `aspect` filters accept `null`, which matches calibrations reported without a role or aspect. For example, `component=kuka-arm&role=null` lists the calibrations of a `kuka-arm` reported without a role. Because of this, `null` is reserved and can't be [reported](/cfg-mgmt/report-calibrations) as a role or aspect.

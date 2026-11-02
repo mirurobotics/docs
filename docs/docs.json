@@ -227,8 +227,7 @@
                   "developers/device-api/authn",
                   "developers/device-api/sdks",
                   "developers/device-api/versions",
-                  "developers/device-api/events",
-                  "developers/device-api/cloud"
+                  "developers/device-api/events"
                 ]
               },
               {
@@ -345,9 +344,28 @@
                   "directory": "references/device-api/v0.2.5/endpoints"
                 },
                 "pages": [
-                  "POST /calibrations",
-                  "GET /cloud/calibrations",
-                  "GET /cloud/calibrations/{calibration_id}"
+                  "POST /calibrations"
+                ]
+              },
+              {
+                "group": "Cloud",
+                "openapi": {
+                  "source": "references/device-api/v0.2.5/api.yaml",
+                  "directory": "references/device-api/v0.2.5/endpoints"
+                },
+                "pages": [
+                  "references/device-api/v0.2.5/cloud/overview",
+                  {
+                    "group": "Calibrations",
+                    "openapi": {
+                      "source": "references/device-api/v0.2.5/api.yaml",
+                      "directory": "references/device-api/v0.2.5/endpoints"
+                    },
+                    "pages": [
+                      "GET /cloud/calibrations",
+                      "GET /cloud/calibrations/{calibration_id}"
+                    ]
+                  }
                 ]
               },
               {
