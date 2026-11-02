@@ -345,16 +345,7 @@
                   "directory": "references/device-api/v0.2.5/endpoints"
                 },
                 "pages": [
-                  "POST /calibrations"
-                ]
-              },
-              {
-                "group": "Cloud Calibrations",
-                "openapi": {
-                  "source": "references/device-api/v0.2.5/api.yaml",
-                  "directory": "references/device-api/v0.2.5/endpoints"
-                },
-                "pages": [
+                  "POST /calibrations",
                   "GET /cloud/calibrations",
                   "GET /cloud/calibrations/{calibration_id}"
                 ]
