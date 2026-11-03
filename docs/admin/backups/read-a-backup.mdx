@@ -13,6 +13,7 @@ bucket.
 
 ```bash
 WORKSPACE_ID="<workspace-id>"
+PREFIX="miru-backup" # or your custom prefix
 ```
 
 <Tabs>
@@ -20,7 +21,7 @@ WORKSPACE_ID="<workspace-id>"
     ```bash
     KEY="$(aws s3api list-objects-v2 \
       --bucket "${BUCKET_NAME}" \
-      --prefix "miru-backup/miru-backup-${WORKSPACE_ID}-" \
+      --prefix "${PREFIX}/miru-backup-${WORKSPACE_ID}-" \
       --query 'sort_by(Contents, &Key)[-1].Key' \
       --output text)"
     aws s3 cp "s3://${BUCKET_NAME}/${KEY}" backup.zip
@@ -29,7 +30,7 @@ WORKSPACE_ID="<workspace-id>"
 
   <Tab title="GCS">
     ```bash
-    URL="$(gcloud storage ls "gs://${BUCKET_NAME}/miru-backup/miru-backup-${WORKSPACE_ID}-*.zip" | sort | tail -n 1)"
+    URL="$(gcloud storage ls "gs://${BUCKET_NAME}/${PREFIX}/miru-backup-${WORKSPACE_ID}-*.zip" | sort | tail -n 1)"
     gcloud storage cp "${URL}" backup.zip
     ```
   </Tab>

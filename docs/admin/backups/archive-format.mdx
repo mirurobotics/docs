@@ -128,11 +128,12 @@ describes it.
 
 ## Versioning
 
-The archive format has its own version, separate from the Platform API version.
+`format_version` covers the archive layout and the manifest. The resources inside follow
+their own [Platform API version](/developers/platform-api/versioning), named in
+`platform_api_version`.
 
-- **Minor versions** only add: new fields in the manifest, new resource types in
-  `resources/`, or resources from a newer Platform API version in the same epoch. A reader written for
-  `1.0` can read any `1.x` archive.
+- **Minor versions** only add: new fields in the manifest or new resource types in
+  `resources/`. A reader written for `1.0` can read any `1.x` archive.
 - **Major versions** may remove or change things. Each major version is announced in the
   [changelog](/changelog/product) before it ships.
 
