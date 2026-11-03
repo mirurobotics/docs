@@ -26,6 +26,11 @@ workspace when they share a bucket, so filter on the workspace ID first.
 ```
 miru-backup-wsp_123-20261102T030000Z.zip
 ├── README.md
+├── content/
+│   ├── calibrations/
+│   │   └── cal_123
+│   └── config_instances/
+│       └── cfg_inst_123
 ├── resources/
 │   ├── calibrations.jsonl
 │   ├── config_instances.jsonl
@@ -42,6 +47,8 @@ miru-backup-wsp_123-20261102T030000Z.zip
 - `README.md` lists the resource types in the archive, explains how to read it and links
   back to these docs.
 - `resources/` holds one file per resource type. See [resources](#resources).
+- `content/` holds the stored content of each config instance and calibration. See
+  [content](#content).
 - `manifest.json` describes the archive and lists a checksum for every other file. See
   [manifest](#manifest).
 
@@ -56,8 +63,8 @@ resource per line. Resources use the Platform API version named in the manifest'
 
 | File | Resource | Expansions |
 | ---- | -------- | ---------- |
-| `calibrations.jsonl` | Calibration | `content` |
-| `config_instances.jsonl` | Config instance | `content` |
+| `calibrations.jsonl` | Calibration | |
+| `config_instances.jsonl` | Config instance | |
 | `config_schemas.jsonl` | Config schema | `documents` |
 | `config_types.jsonl` | Config type | |
 | `deployments.jsonl` | Deployment | `config_instances` |
@@ -67,13 +74,19 @@ resource per line. Resources use the Platform API version named in the manifest'
 | `releases.jsonl` | Release | `config_schemas` |
 
 Expansions are included as the [expansions](/developers/platform-api/query-params/expansions)
-query parameter would return them. They hold the content and the relationships you'd need to
-rebuild the workspace: the config content itself, the schema documents, which config
-instances each deployment contains and which config schemas each release contains.
+query parameter would return them. They hold the schema documents, which config instances
+each deployment contains and which config schemas each release contains.
 
 Archived devices, releases and config types are included. Archived devices have a `status`
 of `archived`. Archived releases and config types carry no marker, so they look the same
 as active ones.
+
+## Content
+
+Each file in `content/` holds the stored content of one config instance or calibration,
+named by the resource's ID: `content/config_instances/<id>` and
+`content/calibrations/<id>`. The bytes are exactly as they were stored, with no
+re-encoding. The manifest lists every content file with its checksum.
 
 ## Manifest
 
