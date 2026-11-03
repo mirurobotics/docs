@@ -42,8 +42,8 @@ miru-backup-wsp_123-20261102T030000Z.zip
 - `README.md` lists the resource types in the archive, explains how to read it and links
   back to these docs.
 - `resources/` holds one file per resource type. See [resources](#resources).
-- `manifest.json` describes the archive and lists a checksum for every other file. It's
-  written last. See [manifest](#manifest).
+- `manifest.json` describes the archive and lists a checksum for every other file. See
+  [manifest](#manifest).
 
 Every resource type has a file, even when the workspace has none of that type. An empty
 file means the workspace had no resources of that type.
@@ -77,7 +77,8 @@ as active ones.
 
 ## Manifest
 
-`manifest.json` is written last, so an archive with a manifest is complete.
+Miru uploads each archive whole, so any archive in your bucket is complete. `manifest.json`
+describes it.
 
 ```json
 {
