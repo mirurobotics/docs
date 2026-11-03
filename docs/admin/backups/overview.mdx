@@ -25,7 +25,8 @@ Backups are off by default. To turn them on, see [set up backups](/admin/backups
 
 A failed run writes nothing and leaves your last good archive untouched. Miru only ever
 adds objects to your bucket. Deleting something in Miru never deletes anything in your
-bucket, and Miru never reads or deletes an archive once it's written.
+bucket, and Miru never reads or deletes an archive once it's written. To control how long
+archives are kept, see [retention](/admin/backups/set-up#retention).
 
 ## What's included
 
@@ -54,12 +55,6 @@ archives keep working.
   them again.
 - **Resources the Platform API doesn't expose yet**, such as overrides, file rules and
   components.
-
-## Schedule
-
-Backups run once a day. Each run backs up the whole workspace, so every archive stands on
-its own and never depends on an earlier one. Miru never deletes a backup. To control how
-long archives are kept, see [retention](/admin/backups/set-up#retention).
 
 ## Restoring a backup
 

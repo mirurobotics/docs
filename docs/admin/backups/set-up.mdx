@@ -5,15 +5,16 @@ title: "Set up backups"
 import ConnectAws from '/snippets/buckets/connect-aws.mdx';
 import ConnectGcs from '/snippets/buckets/connect-gcs.mdx';
 import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
-import { AdminBadge } from '/snippets/components/role-badges.jsx';
+import { AdminBadge, PublisherBadge } from '/snippets/components/role-badges.jsx';
 
 Backups are configured per workspace from the dashboard. Each workspace writes its
 backups to one bucket.
 
 ## Connect a bucket
 
-Skip this section if the bucket you want to use is already connected to Miru. Backups need
-no permissions beyond the ones granted here.
+Skip this section if the bucket you want to use is already connected to Miru. Connecting a
+bucket needs the <PublisherBadge size="sm"/> role. Backups need no bucket permissions beyond
+the ones granted here.
 
 <Tabs>
   <Tab title="AWS S3">
