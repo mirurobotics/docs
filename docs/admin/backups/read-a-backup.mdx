@@ -47,23 +47,23 @@ Each file prints `OK`. On macOS, use `shasum -a 256 -c -` in place of `sha256sum
 
 ## Query with jq
 
-Each line of an object file is one object, so `jq` reads the files directly.
+Each line of a resource file is one resource, so `jq` reads the files directly.
 
 List every device's ID and name:
 
 ```bash
-jq -r '[.id, .name] | @tsv' objects/devices.jsonl
+jq -r '[.id, .name] | @tsv' resources/devices.jsonl
 ```
 
 Show one deployment, with the config instances it contains:
 
 ```bash
-jq 'select(.id == "dpl_123")' objects/deployments.jsonl
+jq 'select(.id == "dpl_123")' resources/deployments.jsonl
 ```
 
 ## Read with the Python SDK
 
-Every object in an archive is a Platform API object, so the
+Every resource in an archive is a Platform API resource, so the
 [Python Platform SDK](/developers/platform-api/sdks#python) models can load them. Use an
 SDK version built for the archive's `platform_api_version`.
 
@@ -79,7 +79,7 @@ with zipfile.ZipFile("backup.zip") as archive:
     manifest = json.loads(archive.read("manifest.json"))
     print(manifest["platform_api_version"])
 
-    with archive.open("objects/devices.jsonl") as lines:
+    with archive.open("resources/devices.jsonl") as lines:
         devices = [Device.model_validate_json(line) for line in lines]
 
 for device in devices:

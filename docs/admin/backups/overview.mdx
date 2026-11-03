@@ -6,7 +6,7 @@ Data backups keep a copy of your workspace's data in cloud storage *you* own.
 
 Each night, Miru writes a full backup of your workspace to one of your
 [buckets](/data-uploads/concepts/buckets). Every backup is a single zip archive that holds
-a complete copy of your workspace's objects, so any one archive is enough to see exactly
+a complete copy of your workspace's resources, so any one archive is enough to see exactly
 what your workspace held at that moment. You can open it with any unzip tool and read it
 with standard tools like `jq`, DuckDB and `sha256sum`, without Miru.
 
@@ -14,9 +14,9 @@ Backups are off by default. To turn them on, see [set up backups](/admin/backups
 
 ## How it works
 
-1. Once a day, Miru reads your workspace at a single point in time, so every object in a
+1. Once a day, Miru reads your workspace at a single point in time, so every resource in a
    backup is consistent with every other.
-2. Miru writes each object as it appears in the
+2. Miru writes each resource as it appears in the
    [Platform API](/developers/platform-api/overview), then writes a manifest with a
    checksum for every file.
 3. Using the credentials from your [bucket connection](/data-uploads/concepts/buckets),
@@ -29,11 +29,11 @@ bucket, and Miru never reads or deletes an archive once it's written.
 
 ## What's included
 
-Each archive holds every object of the following types in your workspace, including
+Each archive holds every resource of the following types in your workspace, including
 archived devices, releases and config types.
 
-| Object type | Includes |
-| ----------- | -------- |
+| Resource type | Includes |
+| ------------- | -------- |
 | [Devices](/concepts/devices/overview) | |
 | [Groups](/concepts/groups/overview) | |
 | [Releases](/concepts/releases) | The config schemas in each release |
@@ -44,7 +44,7 @@ archived devices, releases and config types.
 | [Calibrations](/cfg-mgmt/concepts/calibrations) | The calibration content |
 | Git commits | |
 
-New object types join the archive as they're added to the Platform API. Each addition is a
+New resource types join the archive as they're added to the Platform API. Each addition is a
 minor [format version](/admin/backups/archive-format#versioning) bump, so tools that read older
 archives keep working.
 
@@ -57,7 +57,7 @@ archives keep working.
 - **Uploaded files.** Files your devices upload through
   [data uploads](/data-uploads/overview) already live in your bucket, so backups don't copy
   them again.
-- **Objects the Platform API doesn't expose yet**, such as overrides, file rules and
+- **Resources the Platform API doesn't expose yet**, such as overrides, file rules and
   components.
 
 ## Schedule

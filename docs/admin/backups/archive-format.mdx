@@ -2,8 +2,8 @@
 title: "Archive format"
 ---
 
-Every backup is a single zip archive. The format is a public contract: each object in it
-is a [Platform API](/developers/platform-api/overview) object, so the Platform API
+Every backup is a single zip archive. The format is a public contract: each resource in
+it is a [Platform API](/developers/platform-api/overview) resource, so the Platform API
 reference documents every field.
 
 ## Location
@@ -25,7 +25,7 @@ one by name.
 ```
 miru-backup-wsp_123-20261102T030000Z.zip
 ├── README.md
-├── objects/
+├── resources/
 │   ├── calibrations.jsonl
 │   ├── config_instances.jsonl
 │   ├── config_schemas.jsonl
@@ -38,23 +38,23 @@ miru-backup-wsp_123-20261102T030000Z.zip
 └── manifest.json
 ```
 
-- `README.md` lists the object types in the archive, explains how to read it and links
+- `README.md` lists the resource types in the archive, explains how to read it and links
   back to these docs.
-- `objects/` holds one file per object type. See [objects](#objects).
+- `resources/` holds one file per resource type. See [resources](#resources).
 - `manifest.json` describes the archive and lists a checksum for every other file. It's
   written last. See [manifest](#manifest).
 
-Every object type has a file, even when the workspace has none of that type. An empty
-file means the workspace had no objects of that type.
+Every resource type has a file, even when the workspace has none of that type. An empty
+file means the workspace had no resources of that type.
 
-## Objects
+## Resources
 
-Each file in `objects/` is [JSON Lines](https://jsonlines.org): one Platform API object
-per line. Objects use the Platform API version named in the manifest's
+Each file in `resources/` is [JSON Lines](https://jsonlines.org): one Platform API
+resource per line. Resources use the Platform API version named in the manifest's
 `platform_api_version`.
 
-| File | Object | Expansions |
-| ---- | ------ | ---------- |
+| File | Resource | Expansions |
+| ---- | -------- | ---------- |
 | `calibrations.jsonl` | Calibration | `content` |
 | `config_instances.jsonl` | Config instance | `content` |
 | `config_schemas.jsonl` | Config schema | `documents` |
@@ -84,7 +84,7 @@ as active ones.
   "platform_api_version": "2026-10-29.everglades",
   "workspace_id": "wsp_123",
   "snapshot_at": "2026-11-02T03:00:00Z",
-  "object_counts": {
+  "resource_counts": {
     "calibrations": 64,
     "config_instances": 812,
     "devices": 112,
@@ -97,7 +97,7 @@ as active ones.
       "sha256": "9f2c..."
     },
     {
-      "path": "objects/calibrations.jsonl",
+      "path": "resources/calibrations.jsonl",
       "size": 48211,
       "sha256": "41ab..."
     }
@@ -112,14 +112,14 @@ as active ones.
 </ParamField>
 
 <ParamField path="platform_api_version" type="string">
-  The [Platform API version](/developers/platform-api/versioning) of every object in the
-  archive.
+  The [Platform API version](/developers/platform-api/versioning) of every resource in
+  the archive.
 
   Example: `2026-10-29.everglades`
 </ParamField>
 
 <ParamField path="snapshot_at" type="timestamp">
-  The point in time the archive captures. Every object is as it was at this moment.
+  The point in time the archive captures. Every resource is as it was at this moment.
 
   Example: `2026-11-02T03:00:00Z`
 </ParamField>
@@ -128,8 +128,8 @@ as active ones.
 
 The archive format has its own version, separate from the Platform API version.
 
-- **Minor versions** only add: new fields in the manifest, new object types in `objects/`,
-  or objects from a newer Platform API version in the same epoch. A reader written for
+- **Minor versions** only add: new fields in the manifest, new resource types in
+  `resources/`, or resources from a newer Platform API version in the same epoch. A reader written for
   `1.0` can read any `1.x` archive.
 - **Major versions** may remove or change things. Each major version is announced in the
   [changelog](/changelog/product) before it ships.
