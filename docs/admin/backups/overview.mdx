@@ -8,7 +8,7 @@ Each night, Miru writes a full backup of your workspace to one of your
 [buckets](/data-uploads/concepts/buckets). Every backup is a single zip archive that holds
 a complete copy of your workspace's resources, so any one archive is enough to see exactly
 what your workspace held at that moment. You can open it with any unzip tool and read it
-with standard tools like `jq`, DuckDB and `sha256sum`, without Miru.
+with standard tools like `jq` and `sha256sum`, without Miru.
 
 Backups are off by default. To turn them on, see [set up backups](/admin/backups/set-up).
 
@@ -29,20 +29,15 @@ bucket, and Miru never reads or deletes an archive once it's written.
 
 ## What's included
 
-Each archive holds every resource of the following types in your workspace, including
-archived devices, releases and config types.
-
-| Resource type | Includes |
-| ------------- | -------- |
-| [Devices](/concepts/devices/overview) | |
-| [Groups](/concepts/groups/overview) | |
-| [Releases](/concepts/releases) | The config schemas in each release |
-| [Deployments](/concepts/deployments/overview) | The config instances in each deployment |
-| [Config types](/cfg-mgmt/concepts/config-types) | |
-| [Config schemas](/cfg-mgmt/concepts/schemas/overview) | The schema documents |
-| [Config instances](/cfg-mgmt/concepts/config-instances) | The config content |
-| [Calibrations](/cfg-mgmt/concepts/calibrations) | The calibration content |
-| Git commits | |
+Each archive holds every [device](/concepts/devices/overview),
+[group](/concepts/groups/overview), [release](/concepts/releases),
+[deployment](/concepts/deployments/overview),
+[config type](/cfg-mgmt/concepts/config-types),
+[config schema](/cfg-mgmt/concepts/schemas/overview),
+[config instance](/cfg-mgmt/concepts/config-instances),
+[calibration](/cfg-mgmt/concepts/calibrations) and git commit in your workspace, along with
+the config content and schema documents. For the file each type is written to, see
+[resources](/admin/backups/archive-format#resources).
 
 New resource types join the archive as they're added to the Platform API. Each addition is a
 minor [format version](/admin/backups/archive-format#versioning) bump, so tools that read older
