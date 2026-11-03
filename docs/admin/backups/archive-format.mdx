@@ -17,8 +17,9 @@ miru-backup/
 ```
 
 Each archive is named `miru-backup-<workspace_id>-<timestamp>.zip`, where the timestamp is
-the run's `snapshot_at` in UTC. Names sort in time order, so the newest archive is the last
-one by name.
+the run's `snapshot_at` in UTC. A workspace's archive names sort in time order, so its
+newest archive is the last one by name. A prefix can hold archives from more than one
+workspace when they share a bucket, so filter on the workspace ID first.
 
 ## Contents
 
