@@ -76,6 +76,19 @@ File rules go into effect when a
 
 A file is processed only if it was created or modified after the rule took effect. Files that existed before the rule took effect are ignored as long as they remain unchanged.
 
+### Replacing a deployment
+
+A rule stays in effect on a device for as long as that device's deployment contains it.
+When a deployment without the rule replaces it, for example because a new release
+changes or removes the rule:
+
+- Files created or modified after the rule leaves effect are not seen by it.
+- Files the rule saw while it was in effect are still uploaded and deleted as the rule
+  specifies. The Miru Agent keeps the rule until it has finished with all of them.
+
+An unchanged rule in a new release is the same rule (see [`digest`](#param-digest)), so
+it stays in effect.
+
 ## Create a file rule  <PublisherBadge />
 
 <PlatformUnsupportedBadge />
