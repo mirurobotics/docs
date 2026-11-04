@@ -57,11 +57,12 @@
 }
 
 /* Documentation sidebar: Concepts and Guides are always expanded, so show
-   them as plain labels with no collapse arrow */
-li:is([data-title="Concepts"], [data-title="Guides"]) > button[aria-expanded] {
+   them as plain labels with no collapse arrow. Only open groups match, so
+   one collapsed from the keyboard can still be clicked open */
+li:is([data-title="Concepts"], [data-title="Guides"]) > button[aria-expanded="true"] {
   pointer-events: none;
 }
 
-li:is([data-title="Concepts"], [data-title="Guides"]) > button[aria-expanded] svg {
+li:is([data-title="Concepts"], [data-title="Guides"]) > button[aria-expanded="true"] svg {
   display: none;
 }
