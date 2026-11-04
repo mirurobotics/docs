@@ -49,12 +49,13 @@
 }
 
 /* Platform API Reference sidebar: resource groups are always expanded, so
-   show them as plain labels with no collapse arrow */
-.sidebar-group:has(a[href^="/references/platform-api/"]) li[data-title] > button[aria-expanded] {
+   show them as plain labels with no collapse arrow. Only open groups match,
+   so one collapsed from the keyboard can still be clicked open */
+.sidebar-group:has(a[href^="/references/platform-api/"]) li[data-title] > button[aria-expanded="true"] {
   pointer-events: none;
 }
 
-.sidebar-group:has(a[href^="/references/platform-api/"]) li[data-title] > button[aria-expanded] svg {
+.sidebar-group:has(a[href^="/references/platform-api/"]) li[data-title] > button[aria-expanded="true"] svg {
   display: none;
 }
 
