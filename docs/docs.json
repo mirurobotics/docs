@@ -708,6 +708,7 @@
                 "pages": [
                   {
                     "group": "Devices",
+                    "expanded": true,
                     "pages": [
                       "GET /devices/{device_id}",
                       "PATCH /devices/{device_id}",
@@ -718,6 +719,7 @@
                   },
                   {
                     "group": "Groups",
+                    "expanded": true,
                     "pages": [
                       "GET /groups/{group_id}",
                       "PATCH /groups/{group_id}",
@@ -728,6 +730,7 @@
                   },
                   {
                     "group": "Releases",
+                    "expanded": true,
                     "pages": [
                       "GET /releases/{release_id}",
                       "GET /releases",
@@ -736,6 +739,7 @@
                   },
                   {
                     "group": "Deployments",
+                    "expanded": true,
                     "pages": [
                       "GET /deployments/{deployment_id}",
                       "GET /deployments",
@@ -747,6 +751,7 @@
                   },
                   {
                     "group": "Provisioning Tokens",
+                    "expanded": true,
                     "pages": [
                       "POST /provisioning_tokens"
                     ]
@@ -758,6 +763,7 @@
                 "pages": [
                   {
                     "group": "Config Types",
+                    "expanded": true,
                     "pages": [
                       "GET /config_types/{config_type_id}",
                       "PATCH /config_types/{config_type_id}",
@@ -767,6 +773,7 @@
                   },
                   {
                     "group": "Config Schemas",
+                    "expanded": true,
                     "pages": [
                       "GET /config_schemas/{config_schema_id}",
                       "GET /config_schemas",
@@ -775,6 +782,7 @@
                   },
                   {
                     "group": "Config Instances",
+                    "expanded": true,
                     "pages": [
                       "GET /config_instances/{config_instance_id}",
                       "GET /config_instances",
@@ -784,6 +792,7 @@
                   },
                   {
                     "group": "Calibrations",
+                    "expanded": true,
                     "pages": [
                       "GET /calibrations/{calibration_id}",
                       "GET /calibrations"
@@ -791,6 +800,7 @@
                   },
                   {
                     "group": "Git Commits",
+                    "expanded": true,
                     "pages": [
                       "GET /git_commits/{git_commit_id}",
                       "GET /git_commits",
@@ -804,6 +814,7 @@
                 "pages": [
                   {
                     "group": "Principals",
+                    "expanded": true,
                     "pages": [
                       "GET /principal"
                     ]
@@ -824,6 +835,7 @@
                 "pages": [
                   {
                     "group": "Devices",
+                    "expanded": true,
                     "pages": [
                       "GET /devices/{device_id}",
                       "PATCH /devices/{device_id}",
@@ -834,6 +846,7 @@
                   },
                   {
                     "group": "Groups",
+                    "expanded": true,
                     "pages": [
                       "GET /groups/{group_id}",
                       "PATCH /groups/{group_id}",
@@ -844,6 +857,7 @@
                   },
                   {
                     "group": "Releases",
+                    "expanded": true,
                     "pages": [
                       "GET /releases/{release_id}",
                       "GET /releases",
@@ -852,6 +866,7 @@
                   },
                   {
                     "group": "Deployments",
+                    "expanded": true,
                     "pages": [
                       "GET /deployments/{deployment_id}",
                       "GET /deployments",
@@ -863,6 +878,7 @@
                   },
                   {
                     "group": "Provisioning Tokens",
+                    "expanded": true,
                     "pages": [
                       "POST /provisioning_tokens"
                     ]
@@ -874,6 +890,7 @@
                 "pages": [
                   {
                     "group": "Config Types",
+                    "expanded": true,
                     "pages": [
                       "GET /config_types/{config_type_id}",
                       "PATCH /config_types/{config_type_id}",
@@ -883,6 +900,7 @@
                   },
                   {
                     "group": "Config Schemas",
+                    "expanded": true,
                     "pages": [
                       "GET /config_schemas/{config_schema_id}",
                       "GET /config_schemas",
@@ -891,6 +909,7 @@
                   },
                   {
                     "group": "Config Instances",
+                    "expanded": true,
                     "pages": [
                       "GET /config_instances/{config_instance_id}",
                       "GET /config_instances",
@@ -900,6 +919,7 @@
                   },
                   {
                     "group": "Git Commits",
+                    "expanded": true,
                     "pages": [
                       "GET /git_commits/{git_commit_id}",
                       "GET /git_commits",
@@ -913,6 +933,7 @@
                 "pages": [
                   {
                     "group": "Principals",
+                    "expanded": true,
                     "pages": [
                       "GET /principal"
                     ]
@@ -933,6 +954,7 @@
                 "pages": [
                   {
                     "group": "Devices",
+                    "expanded": true,
                     "pages": [
                       "GET /devices/{device_id}",
                       "PATCH /devices/{device_id}",
@@ -943,6 +965,7 @@
                   },
                   {
                     "group": "Releases",
+                    "expanded": true,
                     "pages": [
                       "GET /releases/{release_id}",
                       "GET /releases",
@@ -951,6 +974,7 @@
                   },
                   {
                     "group": "Deployments",
+                    "expanded": true,
                     "pages": [
                       "GET /deployments/{deployment_id}",
                       "GET /deployments",
@@ -962,6 +986,7 @@
                   },
                   {
                     "group": "Provisioning Tokens",
+                    "expanded": true,
                     "pages": [
                       "POST /provisioning_tokens"
                     ]
@@ -973,6 +998,7 @@
                 "pages": [
                   {
                     "group": "Config Types",
+                    "expanded": true,
                     "pages": [
                       "GET /config_types/{config_type_id}",
                       "PATCH /config_types/{config_type_id}",
@@ -982,6 +1008,7 @@
                   },
                   {
                     "group": "Config Schemas",
+                    "expanded": true,
                     "pages": [
                       "GET /config_schemas/{config_schema_id}",
                       "GET /config_schemas",
@@ -990,6 +1017,7 @@
                   },
                   {
                     "group": "Config Instances",
+                    "expanded": true,
                     "pages": [
                       "GET /config_instances/{config_instance_id}",
                       "GET /config_instances",
@@ -999,6 +1027,7 @@
                   },
                   {
                     "group": "Git Commits",
+                    "expanded": true,
                     "pages": [
                       "GET /git_commits/{git_commit_id}",
                       "GET /git_commits",
@@ -1012,6 +1041,7 @@
                 "pages": [
                   {
                     "group": "Principals",
+                    "expanded": true,
                     "pages": [
                       "GET /principal"
                     ]
@@ -1032,6 +1062,7 @@
                 "pages": [
                   {
                     "group": "Devices",
+                    "expanded": true,
                     "pages": [
                       "GET /devices/{device_id}",
                       "PATCH /devices/{device_id}",
@@ -1043,6 +1074,7 @@
                   },
                   {
                     "group": "Releases",
+                    "expanded": true,
                     "pages": [
                       "GET /releases/{release_id}",
                       "GET /releases",
@@ -1051,6 +1083,7 @@
                   },
                   {
                     "group": "Deployments",
+                    "expanded": true,
                     "pages": [
                       "GET /deployments/{deployment_id}",
                       "GET /deployments",
@@ -1067,6 +1100,7 @@
                 "pages": [
                   {
                     "group": "Config Types",
+                    "expanded": true,
                     "pages": [
                       "GET /config_types/{config_type_id}",
                       "PATCH /config_types/{config_type_id}",
@@ -1076,6 +1110,7 @@
                   },
                   {
                     "group": "Config Schemas",
+                    "expanded": true,
                     "pages": [
                       "GET /config_schemas/{config_schema_id}",
                       "GET /config_schemas",
@@ -1084,6 +1119,7 @@
                   },
                   {
                     "group": "Config Instances",
+                    "expanded": true,
                     "pages": [
                       "GET /config_instances/{config_instance_id}",
                       "GET /config_instances",
@@ -1093,6 +1129,7 @@
                   },
                   {
                     "group": "Git Commits",
+                    "expanded": true,
                     "pages": [
                       "GET /git_commits/{git_commit_id}",
                       "GET /git_commits",
@@ -1106,6 +1143,7 @@
                 "pages": [
                   {
                     "group": "Principals",
+                    "expanded": true,
                     "pages": [
                       "GET /principal"
                     ]
@@ -1126,6 +1164,7 @@
                 "pages": [
                   {
                     "group": "Devices",
+                    "expanded": true,
                     "pages": [
                       "GET /devices/{device_id}",
                       "PATCH /devices/{device_id}",
@@ -1137,6 +1176,7 @@
                   },
                   {
                     "group": "Releases",
+                    "expanded": true,
                     "pages": [
                       "GET /releases/{release_id}",
                       "GET /releases"
@@ -1144,6 +1184,7 @@
                   },
                   {
                     "group": "Deployments",
+                    "expanded": true,
                     "pages": [
                       "GET /deployments/{deployment_id}",
                       "GET /deployments",
@@ -1157,6 +1198,7 @@
                 "pages": [
                   {
                     "group": "Config Instances",
+                    "expanded": true,
                     "pages": [
                       "GET /config_instances/{config_instance_id}",
                       "GET /config_instances"

@@ -48,6 +48,16 @@
   width: 55%;
 }
 
+/* Platform API Reference sidebar: resource groups are always expanded, so
+   show them as plain labels with no collapse arrow */
+.sidebar-group:has(a[href^="/references/platform-api/"]) li[data-title] > button[aria-expanded] {
+  pointer-events: none;
+}
+
+.sidebar-group:has(a[href^="/references/platform-api/"]) li[data-title] > button[aria-expanded] svg {
+  display: none;
+}
+
 /* Center mermaid diagrams horizontally */
 .mermaid {
   display: flex;
