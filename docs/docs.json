@@ -738,6 +738,15 @@
                     ]
                   },
                   {
+                    "group": "Git Commits",
+                    "expanded": true,
+                    "pages": [
+                      "GET /git_commits/{git_commit_id}",
+                      "GET /git_commits",
+                      "POST /git_commits"
+                    ]
+                  },
+                  {
                     "group": "Deployments",
                     "expanded": true,
                     "pages": [
@@ -796,15 +805,6 @@
                     "pages": [
                       "GET /calibrations/{calibration_id}",
                       "GET /calibrations"
-                    ]
-                  },
-                  {
-                    "group": "Git Commits",
-                    "expanded": true,
-                    "pages": [
-                      "GET /git_commits/{git_commit_id}",
-                      "GET /git_commits",
-                      "POST /git_commits"
                     ]
                   }
                 ]
@@ -865,6 +865,15 @@
                     ]
                   },
                   {
+                    "group": "Git Commits",
+                    "expanded": true,
+                    "pages": [
+                      "GET /git_commits/{git_commit_id}",
+                      "GET /git_commits",
+                      "POST /git_commits"
+                    ]
+                  },
+                  {
                     "group": "Deployments",
                     "expanded": true,
                     "pages": [
@@ -915,15 +924,6 @@
                       "GET /config_instances",
                       "POST /config_instances",
                       "GET /config_instances/{config_instance_id}/content"
-                    ]
-                  },
-                  {
-                    "group": "Git Commits",
-                    "expanded": true,
-                    "pages": [
-                      "GET /git_commits/{git_commit_id}",
-                      "GET /git_commits",
-                      "POST /git_commits"
                     ]
                   }
                 ]
@@ -973,6 +973,15 @@
                     ]
                   },
                   {
+                    "group": "Git Commits",
+                    "expanded": true,
+                    "pages": [
+                      "GET /git_commits/{git_commit_id}",
+                      "GET /git_commits",
+                      "POST /git_commits"
+                    ]
+                  },
+                  {
                     "group": "Deployments",
                     "expanded": true,
                     "pages": [
@@ -1023,15 +1032,6 @@
                       "GET /config_instances",
                       "POST /config_instances",
                       "GET /config_instances/{config_instance_id}/content"
-                    ]
-                  },
-                  {
-                    "group": "Git Commits",
-                    "expanded": true,
-                    "pages": [
-                      "GET /git_commits/{git_commit_id}",
-                      "GET /git_commits",
-                      "POST /git_commits"
                     ]
                   }
                 ]
@@ -1082,6 +1082,15 @@
                     ]
                   },
                   {
+                    "group": "Git Commits",
+                    "expanded": true,
+                    "pages": [
+                      "GET /git_commits/{git_commit_id}",
+                      "GET /git_commits",
+                      "POST /git_commits"
+                    ]
+                  },
+                  {
                     "group": "Deployments",
                     "expanded": true,
                     "pages": [
@@ -1125,15 +1134,6 @@
                       "GET /config_instances",
                       "POST /config_instances",
                       "GET /config_instances/{config_instance_id}/content"
-                    ]
-                  },
-                  {
-                    "group": "Git Commits",
-                    "expanded": true,
-                    "pages": [
-                      "GET /git_commits/{git_commit_id}",
-                      "GET /git_commits",
-                      "POST /git_commits"
                     ]
                   }
                 ]
