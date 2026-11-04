@@ -56,7 +56,6 @@
   margin-right: auto;
 }
 
-
 /* Documentation sidebar: Concepts and Guides are always expanded, so show
    them as plain labels with no collapse arrow */
 li:is([data-title="Concepts"], [data-title="Guides"]) > button[aria-expanded] {
