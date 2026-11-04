@@ -76,6 +76,31 @@ File rules go into effect when a
 
 A file is processed only if it was created or modified after the rule took effect. Files that existed before the rule took effect are ignored as long as they remain unchanged.
 
+### New releases
+
+Each rule manages the files that are created or modified while its deployment is on the
+device. When the deployment leaves the device, such as when you deploy a new release,
+the rule stops picking up new files but finishes the files it has already seen:
+
+- **Before the deployment:** files the rule found when it took effect are ignored, as
+  long as they remain unchanged.
+- **During the deployment:** files the rule picks up are uploaded and deleted according
+  to that rule's `upload` and `retention` blocks, even if the new release no longer
+  includes the rule. The device keeps the old rule until it has finished all of these
+  files.
+- **After the deployment:** files created or modified after the deployment leaves the
+  device are left to the rules in the new release.
+
+A file the old rule saw that has not yet stayed unchanged for its
+[stability window](/data-uploads/concepts/file-rules/rule-definition#sources) is still
+finished by that rule if it stops changing. If it changes after the deployment leaves
+the device, the old rule drops it, and any rule in the new release that matches the file
+picks it up instead.
+
+A rule that is in both releases, with an identical definition, is the same rule (see
+[`digest`](#param-digest)). It stays in effect without a break, so the new release
+doesn't change which of its files are processed.
+
 ## Create a file rule  <PublisherBadge />
 
 <PlatformUnsupportedBadge />
