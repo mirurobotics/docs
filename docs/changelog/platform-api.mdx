@@ -13,7 +13,7 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 _November 4, 2026_
 
-This `everglades` update records who did what. Resources now report the principal that created them, archivable resources report when they were archived and by whom, and deployments report who queued them. It also adds read access to workspace members and API keys, and lets API keys archive, unarchive and delete releases.
+This `everglades` update records who did what. Resources now report the principal that created them, archivable resources report when they were archived and by whom, and deployments report who staged and queued them. It also adds read access to workspace members and API keys, and lets API keys archive, unarchive and delete releases.
 
 Every change is additive. `2026-10-29.everglades` and `2026-08-17.everglades` remain supported `Miru-Version` values, so existing integrations keep working without changes.
 
@@ -96,21 +96,29 @@ Users and API keys have their own `read` [scopes](/developers/platform-api/authz
 
 <Separator />
 
-<Dropdown title="Deployment queued by">
-  Deployments now return `queued_by_id`, the principal that queued the deployment for its device, recorded with `queued_at`. It's `null` if the deployment was never queued, or was queued before Miru started recording it. Expand `queued_by` to get the principal.
+<Dropdown title="Deployment staged by and queued by">
+  Deployments now return when and by whom they were staged and queued.
+
+  * `staged_at` and `staged_by_id` are `null` when the deployment was created already queued. Otherwise they equal `created_at` and `created_by_id`.
+  * `queued_by_id` is the principal that queued the deployment for its device, recorded with `queued_at`. It's `null` if the deployment was never queued, or was queued before Miru started recording it.
 
   **Deployment Response**
 
   ```diff nocopy
       "id": "dpl_123",
       "status": "queued",
+  +   "staged_at": "2026-11-04T00:00:00Z",
+      "queued_at": "2026-11-04T00:05:00Z",
   +   "created_by_id": "usr_123",
+  +   "staged_by_id": "usr_123",
   +   "queued_by_id": "api_key_123",
   ```
 
+  Expand `staged_by` and `queued_by` to get the principals.
+
   ```diff nocopy
     GET /deployments/dpl_123
-  + GET /deployments/dpl_123?expand=queued_by
+  + GET /deployments/dpl_123?expand=staged_by&expand=queued_by
   ```
 </Dropdown>
 
@@ -145,7 +153,7 @@ Users and API keys have their own `read` [scopes](/developers/platform-api/authz
 <Separator />
 
 <Dropdown title="Principal type">
-  Principals, from <GET /> `/principal` and from the new `created_by`, `archived_by` and `queued_by` expansions, now return a `type`: `user`, `api_key` or `device`. More types may be added, so handle unknown values.
+  Principals, from <GET /> `/principal` and from the new `created_by`, `archived_by`, `staged_by` and `queued_by` expansions, now return a `type`: `user`, `api_key` or `device`. More types may be added, so handle unknown values.
 
   **Principal Response**
 

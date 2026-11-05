@@ -2584,6 +2584,7 @@ components:
       - parent
       - config_instances
       - created_by
+      - staged_by
       - queued_by
       x-enum-varnames:
       - DEPLOYMENT_EXPAND_DEVICE
@@ -2591,6 +2592,7 @@ components:
       - DEPLOYMENT_EXPAND_PARENT
       - DEPLOYMENT_EXPAND_CONFIG_INSTANCES
       - DEPLOYMENT_EXPAND_CREATED_BY
+      - DEPLOYMENT_EXPAND_STAGED_BY
       - DEPLOYMENT_EXPAND_QUEUED_BY
     DeploymentStatus:
       type: string
@@ -2881,10 +2883,12 @@ components:
       - type: object
         required:
         - parent_id
+        - staged_at
         - queued_at
         - deployed_at
         - archived_at
         - created_by_id
+        - staged_by_id
         - queued_by_id
         properties:
           parent_id:
@@ -2893,6 +2897,14 @@ components:
             example: dpl_123
             description: ID of the deployment that this deployment was patched from.
               Null if this deployment has no parent.
+          staged_at:
+            type: string
+            format: date-time
+            example: '2021-01-01T00:00:00Z'
+            nullable: true
+            description: Timestamp of when the deployment was staged. Null when the
+              deployment was created already queued (`queued_at` is not after `created_at`);
+              otherwise equal to `created_at`.
           queued_at:
             type: string
             format: date-time
@@ -2921,6 +2933,12 @@ components:
             type: string
             example: usr_123
             description: ID of the principal who created the deployment.
+          staged_by_id:
+            type: string
+            example: usr_123
+            nullable: true
+            description: ID of the principal who staged the deployment. Null when
+              the deployment was created already queued; otherwise equal to `created_by_id`.
           queued_by_id:
             type: string
             example: usr_123
@@ -2934,6 +2952,12 @@ components:
             - $ref: '#/components/schemas/Principal'
             description: The principal who created the deployment. Expand using `expand=created_by`
               in the query string.
+          staged_by:
+            allOf:
+            - $ref: '#/components/schemas/Principal'
+            nullable: true
+            description: The principal who staged the deployment. Null if `staged_by_id`
+              is null. Expand using `expand=staged_by` in the query string.
           queued_by:
             allOf:
             - $ref: '#/components/schemas/Principal'
@@ -2993,10 +3017,12 @@ components:
         parent_id: null
         created_at: '2024-01-01T00:00:00Z'
         updated_at: '2024-01-01T00:00:00Z'
+        staged_at: '2024-01-01T00:00:00Z'
         queued_at: null
         deployed_at: null
         archived_at: null
         created_by_id: usr_123
+        staged_by_id: usr_123
         queued_by_id: null
     BaseRelease:
       title: Base Release
@@ -3321,6 +3347,7 @@ components:
       - parent
       - config_instances
       - created_by
+      - staged_by
       - queued_by
       x-enum-varnames:
       - DEPLOYMENT_LIST_EXPAND_TOTAL_COUNT
@@ -3329,6 +3356,7 @@ components:
       - DEPLOYMENT_LIST_EXPAND_PARENT
       - DEPLOYMENT_LIST_EXPAND_CONFIG_INSTANCES
       - DEPLOYMENT_LIST_EXPAND_CREATED_BY
+      - DEPLOYMENT_LIST_EXPAND_STAGED_BY
       - DEPLOYMENT_LIST_EXPAND_QUEUED_BY
     DeploymentList:
       title: Deployment List
