@@ -6,16 +6,16 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  x-release-version: 2026-11-04.everglades-beta.5
+  x-release-version: 2026-11-04.everglades-beta.6
   x-git-commit:
-    sha: 03c706b257a031fdcb91ef3d975c5233ecd530aa
-    url: https://github.com/mirurobotics/openapi/commit/03c706b257a031fdcb91ef3d975c5233ecd530aa
-    message: "feat(platform): add release archive, unarchive and delete endpoints (#437)"
+    sha: 28c531e90b66451f23d5029c807253d19291a190
+    url: https://github.com/mirurobotics/openapi/commit/28c531e90b66451f23d5029c807253d19291a190
+    message: "feat(platform): shorten list calibrations and add deployment staged_at and staged_by (#443)"
     author: Ben's Agent
     branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-11-04T23:48:46.706613+00:00'
+    built_at: '2026-11-05T20:26:30.117344+00:00'
 servers:
 - url: https://api.mirurobotics.com/beta
   description: Miru Platform API
@@ -1210,14 +1210,14 @@ components:
     ReleaseVersion:
       type: string
       enum:
-      - 2026-11-04.everglades-beta.5
+      - 2026-11-04.everglades-beta.6
       x-enum-varnames:
       - RELEASE_VERSION
       x-stainless-const: true
     APIGitCommit:
       type: string
       enum:
-      - 03c706b257a031fdcb91ef3d975c5233ecd530aa
+      - 28c531e90b66451f23d5029c807253d19291a190
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
