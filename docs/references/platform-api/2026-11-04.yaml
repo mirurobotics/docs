@@ -6,16 +6,16 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  x-release-version: 2026-11-04.everglades-beta.6
+  x-release-version: 2026-11-04.everglades
   x-git-commit:
-    sha: 28c531e90b66451f23d5029c807253d19291a190
-    url: https://github.com/mirurobotics/openapi/commit/28c531e90b66451f23d5029c807253d19291a190
-    message: "feat(platform): shorten list calibrations and add deployment staged_at and staged_by (#443)"
+    sha: e1decbb4c54ce8a4bf2f78b8728b2b10654294c9
+    url: https://github.com/mirurobotics/openapi/commit/e1decbb4c54ce8a4bf2f78b8728b2b10654294c9
+    message: "feat(platform): add archived and deleted list filters, and tidy descriptions (#446)"
     author: Ben's Agent
     branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-11-05T20:26:30.117344+00:00'
+    built_at: '2026-11-05T23:04:32.018858+00:00'
 servers:
 - url: https://api.mirurobotics.com/beta
   description: Miru Platform API
@@ -62,6 +62,7 @@ paths:
       - $ref: '#/components/parameters/api_key_order_bys'
       - $ref: '#/components/parameters/api_key_list_expansions'
       - $ref: '#/components/parameters/api_key_search_id'
+      - $ref: '#/components/parameters/api_key_deleted'
       responses:
         '200':
           description: Successfully listed the API keys.
@@ -397,6 +398,7 @@ paths:
       - $ref: '#/components/parameters/config_type_search_id'
       - $ref: '#/components/parameters/config_type_search_name'
       - $ref: '#/components/parameters/config_type_search_slug'
+      - $ref: '#/components/parameters/config_type_archived'
       responses:
         '200':
           description: Successfully listed the config types.
@@ -1044,6 +1046,7 @@ paths:
       - $ref: '#/components/parameters/release_list_expansions'
       - $ref: '#/components/parameters/release_search_id'
       - $ref: '#/components/parameters/release_search_version'
+      - $ref: '#/components/parameters/release_archived'
       responses:
         '200':
           description: Successfully listed the releases.
@@ -1210,14 +1213,14 @@ components:
     ReleaseVersion:
       type: string
       enum:
-      - 2026-11-04.everglades-beta.6
+      - 2026-11-04.everglades
       x-enum-varnames:
       - RELEASE_VERSION
       x-stainless-const: true
     APIGitCommit:
       type: string
       enum:
-      - 28c531e90b66451f23d5029c807253d19291a190
+      - e1decbb4c54ce8a4bf2f78b8728b2b10654294c9
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
@@ -2070,8 +2073,8 @@ components:
         file_paths:
           type: array
           description: The file paths of the config schema files relative to the git
-            repository root. JSON Schema only support a single file for a schema.
-            CUE support multiple files via [packages](https://cuelang.org/docs/references/spec/#packages).
+            repository root. JSON Schema only supports a single file for a schema.
+            CUE supports multiple files via [packages](https://cuelang.org/docs/references/spec/#packages).
           items:
             type: string
           example:
@@ -2226,12 +2229,12 @@ components:
             allOf:
             - $ref: '#/components/schemas/ConfigSchemaGitCommitList'
             description: The git commits the config schema was registered from, with
-              the schema's file paths at each commit. Expand using 'expand=config_schema_git_commits'
+              the schema's file paths at each commit. Expand using `expand=config_schema_git_commits`
               in the query string.
           config_type:
             allOf:
             - $ref: '#/components/schemas/ConfigType'
-            description: Expand the config type using 'expand=config_type' in the
+            description: Expand the config type using `expand=config_type` in the
               query string.
       example:
         object: config_schema
@@ -2271,18 +2274,18 @@ components:
           config_schema:
             allOf:
             - $ref: '#/components/schemas/ConfigSchema'
-            description: Expand the config schema using 'expand=config_schema' in
+            description: Expand the config schema using `expand=config_schema` in
               the query string.
           config_type:
             allOf:
             - $ref: '#/components/schemas/ConfigType'
-            description: Expand the config type using 'expand=config_type' in the
+            description: Expand the config type using `expand=config_type` in the
               query string.
           content:
             allOf:
             - $ref: '#/components/schemas/InstanceContent'
             description: The configuration values associated with the config instance.
-              Expand the content using 'expand=content' in the query string.
+              Expand the content using `expand=content` in the query string.
       example:
         object: config_instance
         id: cfg_inst_123
@@ -2465,7 +2468,7 @@ components:
           type: array
           description: The file paths of the config schema files relative to the git
             repository root. JSON Schema only supports a single file for a schema.
-            CUE support multiple files via [packages](https://cuelang.org/docs/references/spec/#packages).
+            CUE supports multiple files via [packages](https://cuelang.org/docs/references/spec/#packages).
           items:
             type: string
           example:
@@ -2967,23 +2970,23 @@ components:
           device:
             allOf:
             - $ref: '#/components/schemas/Device'
-            description: Expand the device using 'expand=device' in the query string.
+            description: Expand the device using `expand=device` in the query string.
           release:
             allOf:
             - $ref: '#/components/schemas/Release'
-            description: Expand the release using 'expand=release' in the query string.
+            description: Expand the release using `expand=release` in the query string.
           parent:
             allOf:
             - $ref: '#/components/schemas/Deployment'
             nullable: true
             description: The parent deployment that this deployment was patched from.
-              Null if this deployment has no parent. Expand the parent using 'expand=parent'
+              Null if this deployment has no parent. Expand the parent using `expand=parent`
               in the query string.
           config_instances:
             type: array
             items:
               $ref: '#/components/schemas/ConfigInstance'
-            description: Expand the config instances using 'expand=config_instances'
+            description: Expand the config instances using `expand=config_instances`
               in the query string.
             example:
             - object: config_instance
@@ -3121,7 +3124,7 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/ConfigSchema'
-            description: Expand the config schemas using 'expand=config_schemas' in
+            description: Expand the config schemas using `expand=config_schemas` in
               the query string.
             example:
             - object: config_schema
@@ -4106,6 +4109,21 @@ components:
           type: string
         example:
         - api_key_123
+    api_key_deleted:
+      name: deleted
+      in: query
+      required: false
+      description: Filter by deleted state. `any` (default) returns deleted and active
+        API keys, `false` returns only active API keys, and `true` returns only deleted
+        API keys.
+      schema:
+        type: string
+        enum:
+        - 'false'
+        - 'true'
+        - any
+        default: any
+        example: 'false'
     calibration_id:
       name: calibration_id
       in: path
@@ -4488,6 +4506,21 @@ components:
           type: string
         example:
         - motion-control
+    config_type_archived:
+      name: archived
+      in: query
+      required: false
+      description: Filter by archived state. `any` (default) returns archived and
+        non-archived config types, `false` returns only non-archived config types,
+        and `true` returns only archived config types.
+      schema:
+        type: string
+        enum:
+        - 'false'
+        - 'true'
+        - any
+        default: any
+        example: 'false'
     deployment_id:
       name: deployment_id
       in: path
@@ -4949,6 +4982,21 @@ components:
           type: string
         example:
         - v1.0.0
+    release_archived:
+      name: archived
+      in: query
+      required: false
+      description: Filter by archived state. `any` (default) returns archived and
+        non-archived releases, `false` returns only non-archived releases, and `true`
+        returns only archived releases.
+      schema:
+        type: string
+        enum:
+        - 'false'
+        - 'true'
+        - any
+        default: any
+        example: 'false'
     user_id:
       name: user_id
       in: path

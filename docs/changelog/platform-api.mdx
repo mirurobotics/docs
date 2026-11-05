@@ -96,6 +96,19 @@ Users and API keys have their own `read` [scopes](/developers/platform-api/authz
 
 <Separator />
 
+<Dropdown title="Archived and deleted filters">
+  <GET /> `/releases` and <GET /> `/config_types` gained an `archived` filter, and <GET /> `/api_keys` gained a `deleted` filter. Each takes `false`, `true` or `any`, and defaults to `any`, so lists still include archived and deleted resources unless you filter them out.
+
+  ```diff nocopy
+    GET /releases
+  + GET /releases?archived=false
+    GET /api_keys
+  + GET /api_keys?deleted=false
+  ```
+</Dropdown>
+
+<Separator />
+
 <Dropdown title="Deployment staged by and queued by">
   Deployments now return when and by whom they were staged and queued.
 
