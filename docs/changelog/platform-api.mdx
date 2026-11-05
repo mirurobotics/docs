@@ -96,14 +96,12 @@ Users and API keys have their own `read` [scopes](/developers/platform-api/authz
 
 <Separator />
 
-<Dropdown title="Archived and deleted filters">
-  <GET /> `/releases` and <GET /> `/config_types` gained an `archived` filter, and <GET /> `/api_keys` gained a `deleted` filter. Each takes `false`, `true` or `any`, and defaults to `any`, so lists still include archived and deleted resources unless you filter them out.
+<Dropdown title="Archived filter">
+  <GET /> `/releases` and <GET /> `/config_types` gained an `archived` filter that takes `false`, `true` or `any`. It defaults to `any`, so lists still include archived resources unless you filter them out.
 
   ```diff nocopy
     GET /releases
   + GET /releases?archived=false
-    GET /api_keys
-  + GET /api_keys?deleted=false
   ```
 </Dropdown>
 
