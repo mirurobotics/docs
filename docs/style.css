@@ -48,6 +48,26 @@
   width: 55%;
 }
 
+/* Sidebar groups that are always expanded: Platform API Reference resource
+   groups, and the Documentation sidebar's Concepts and Guides. Show them as
+   plain labels with no collapse arrow. Only open groups match, so one
+   collapsed from the keyboard can still be clicked open */
+:is(
+  .sidebar-group:has(a[href^="/references/platform-api/"]) li[data-title],
+  li[data-title="Concepts"],
+  li[data-title="Guides"]
+) > button[aria-expanded="true"] {
+  pointer-events: none;
+}
+
+:is(
+  .sidebar-group:has(a[href^="/references/platform-api/"]) li[data-title],
+  li[data-title="Concepts"],
+  li[data-title="Guides"]
+) > button[aria-expanded="true"] svg {
+  display: none;
+}
+
 /* Center mermaid diagrams horizontally */
 .mermaid {
   display: flex;

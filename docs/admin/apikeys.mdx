@@ -3,7 +3,7 @@ title: "API keys"
 ---
 
 import { Framed } from '/snippets/components/framed.jsx';
-import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
+import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge } from '/snippets/components/role-badges.jsx';
 
 <Framed 
@@ -44,7 +44,7 @@ retrieved again; if you lose it, create a new one.
 
 ## View API keys
 
-<PlatformUnsupportedBadge />
+<PlatformApiBadge endpoint="api-keys/list" />
 
 To view your workspace's API keys, navigate to the
 [API Keys page](https://app.mirurobotics.com/settings/secrets). Each key is listed by
