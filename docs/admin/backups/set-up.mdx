@@ -33,29 +33,59 @@ the ones granted here.
   <Step title="Choose the bucket and prefix">
     In the Miru dashboard, navigate to the
     [Backups page](https://app.mirurobotics.com/settings/backups). Select the bucket, and
-    change the prefix if you want backups written somewhere other than `miru-backup/`.
+    change the prefix if you want backups written somewhere other than `miru-backup/`. An
+    archived bucket can't be selected.
   </Step>
 
   <Step title="Turn on backups">
     Switch on **Backups** and click **Save**.
 
-    Before saving, Miru checks that it can write under the prefix. If the check fails, the
-    page shows the error and nothing is saved.
+    Before saving, Miru checks that it can write under the prefix by uploading an empty
+    object under `<prefix>/.miru/probe/`. If the check fails, the page shows the error and
+    nothing is saved. Miru runs the same check whenever you save the settings with a bucket
+    selected, even with backups off.
   </Step>
 </Steps>
 
-The first backup runs within a day. Each later backup runs about a day after the one before
-it.
+The first backup starts within about an hour. Each later backup starts about a day after
+the one before it.
+
+A prefix can't start or end with `/`, or contain `*`, `?` or `$`. If more than one
+workspace backs up to the same bucket, give each its own prefix, since archive names don't
+include the workspace.
+
+## Change where backups go  <AdminBadge />
+
+<PlatformUnsupportedBadge />
+
+On the [Backups page](https://app.mirurobotics.com/settings/backups), select a different
+bucket or change the prefix, and click **Save**. Miru checks the new location the same way
+before saving. Later backups go to the new location, and earlier archives stay where they
+were written.
+
+While the backup settings point at a bucket, you can't delete that bucket, and while
+backups are on you can't [archive](/data-uploads/concepts/buckets#archive-a-bucket) it.
+Choose another bucket, or clear the bucket as you
+[turn off backups](#turn-off-backups), first.
 
 ## Run history  <AdminBadge />
 
 <PlatformUnsupportedBadge />
 
 The [Backups page](https://app.mirurobotics.com/settings/backups) lists recent runs, newest
-first, with each run's status and where its archive was written. When a run fails, the page
-shows why. The most common cause is a bucket role or service account that no longer grants
-write access. A run also fails if Miru can't read the content of any config instance or
-calibration, so a backup is never missing content.
+first, with each run's status and, once it succeeds, the size and key of its archive.
+
+| Status | Meaning |
+| ------ | ------- |
+| Queued | The run is waiting to start. |
+| Running | The run has started and hasn't finished. |
+| Succeeded | The archive was uploaded to the bucket. |
+| Failed | The run stopped before the archive was uploaded. |
+
+When a run fails, the page shows why. The most common cause is a bucket role or service
+account that no longer grants write access. A run also fails if Miru can't read the content
+of any config instance or calibration, so a backup is never missing content. A run that
+hasn't finished 12 hours after it was queued is marked failed.
 
 ## Turn off backups  <AdminBadge />
 
@@ -64,6 +94,10 @@ calibration, so a backup is never missing content.
 On the [Backups page](https://app.mirurobotics.com/settings/backups), switch off
 **Backups** and click **Save**. No more backups run, and the archives already in your
 bucket stay where they are.
+
+Saving checks the selected bucket, even when turning backups off. If Miru can no longer
+write to the bucket, or it's archived, clear the bucket as you switch off backups. Clearing
+the bucket also lets you delete it.
 
 ## Retention
 

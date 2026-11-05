@@ -7,12 +7,11 @@ Miru. This guide downloads the latest archive, checks it, and queries it.
 
 ## Download the latest archive
 
-Archive names end in the time they were taken, so a workspace's newest archive is the last
-one by name. Filter on your workspace ID, since other workspaces can back up to the same
-bucket.
+Archive names end in the time they were taken, so the newest archive is the last one by
+name.
 
 ```bash
-WORKSPACE_ID="<workspace-id>"
+BUCKET_NAME="<bucket-name>"
 PREFIX="miru-backup" # or your custom prefix
 ```
 
@@ -21,7 +20,7 @@ PREFIX="miru-backup" # or your custom prefix
     ```bash
     KEY="$(aws s3api list-objects-v2 \
       --bucket "${BUCKET_NAME}" \
-      --prefix "${PREFIX}/miru-backup-${WORKSPACE_ID}-" \
+      --prefix "${PREFIX}/miru-backup-" \
       --query 'sort_by(Contents, &Key)[-1].Key' \
       --output text)"
     aws s3 cp "s3://${BUCKET_NAME}/${KEY}" backup.zip
@@ -30,7 +29,7 @@ PREFIX="miru-backup" # or your custom prefix
 
   <Tab title="GCS">
     ```bash
-    URL="$(gcloud storage ls "gs://${BUCKET_NAME}/${PREFIX}/miru-backup-${WORKSPACE_ID}-*.zip" | sort | tail -n 1)"
+    URL="$(gcloud storage ls "gs://${BUCKET_NAME}/${PREFIX}/miru-backup-*.zip" | sort | tail -n 1)"
     gcloud storage cp "${URL}" backup.zip
     ```
   </Tab>

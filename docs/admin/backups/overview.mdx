@@ -36,7 +36,8 @@ Each archive holds every [device](/concepts/devices/overview),
 [config type](/cfg-mgmt/concepts/config-types),
 [config schema](/cfg-mgmt/concepts/schemas/overview),
 [config instance](/cfg-mgmt/concepts/config-instances),
-[calibration](/cfg-mgmt/concepts/calibrations) and git commit in your workspace, along with
+[calibration](/cfg-mgmt/concepts/calibrations), git commit,
+[API key](/admin/apikeys) and [user](/admin/users/overview) in your workspace, along with
 the config content and schema documents. For where each one is written, see
 [archive format](/admin/backups/archive-format#contents).
 
@@ -46,15 +47,16 @@ archives keep working.
 
 ## What's not included
 
-- **Credentials.** API keys, CLI tokens, provisioning tokens and device authorization
-  state are never exported.
-- **Account data.** Workspace settings, members, invites and billing are managed by Miru
-  and aren't part of a backup.
+- **Credentials.** API key secrets, CLI tokens, provisioning tokens and device
+  authorization state are never exported. API keys are included only as their name,
+  scopes and timestamps, as the Platform API returns them.
+- **Account data.** Workspace settings, invites and billing are managed by Miru and aren't
+  part of a backup.
 - **Uploaded files.** Files your devices upload through
   [data uploads](/data-uploads/overview) already live in your bucket, so backups don't copy
   them again.
-- **Resources the Platform API doesn't expose yet**, such as overrides, file rules and
-  components.
+- **Resources the Platform API doesn't expose yet**, such as buckets, overrides, file rules
+  and components.
 
 ## Restoring a backup
 

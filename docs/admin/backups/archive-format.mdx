@@ -12,19 +12,28 @@ Archives are written under the backup prefix, `miru-backup/` by default, one per
 
 ```
 miru-backup/
-├── miru-backup-wsp_123-20261101T030000Z.zip
-└── miru-backup-wsp_123-20261102T030000Z.zip
+├── .miru/
+│   └── probe/
+├── miru-backup-20261101T030000Z.zip
+└── miru-backup-20261102T030000Z.zip
 ```
 
-Each archive is named `miru-backup-<workspace_id>-<timestamp>.zip`, where the timestamp is
-the run's `snapshot_at` in UTC. A workspace's archive names sort in time order, so its
-newest archive is the last one by name. A prefix can hold archives from more than one
-workspace when they share a bucket, so filter on the workspace ID first.
+Each archive is named `miru-backup-<timestamp>.zip`, where the timestamp is the run's
+`snapshot_at` in UTC. Archive names sort in time order, so the newest archive is the last
+one by name.
+
+Archive names don't include the workspace. If more than one workspace backs up to the same
+bucket, give each workspace its own prefix. The manifest's `workspace_id` says which
+workspace an archive came from.
+
+`.miru/probe/` holds the empty objects Miru writes to
+[check the bucket](/admin/backups/set-up#turn-on-backups) each time the backup settings are
+saved. They aren't archives, and you can delete them.
 
 ## Contents
 
 ```
-miru-backup-wsp_123-20261102T030000Z.zip
+miru-backup-20261102T030000Z.zip
 ├── README.md
 ├── content/
 │   ├── calibrations/
@@ -32,15 +41,18 @@ miru-backup-wsp_123-20261102T030000Z.zip
 │   └── config_instances/
 │       └── cfg_inst_123
 ├── resources/
+│   ├── api_keys.jsonl
 │   ├── calibrations.jsonl
 │   ├── config_instances.jsonl
+│   ├── config_schema_git_commits.jsonl
 │   ├── config_schemas.jsonl
 │   ├── config_types.jsonl
 │   ├── deployments.jsonl
 │   ├── devices.jsonl
 │   ├── git_commits.jsonl
 │   ├── groups.jsonl
-│   └── releases.jsonl
+│   ├── releases.jsonl
+│   └── users.jsonl
 └── manifest.json
 ```
 
@@ -63,8 +75,10 @@ resource per line. Resources use the Platform API version named in the manifest'
 
 | File | Resource | Expansions |
 | ---- | -------- | ---------- |
+| `api_keys.jsonl` | API key | |
 | `calibrations.jsonl` | Calibration | |
 | `config_instances.jsonl` | Config instance | |
+| `config_schema_git_commits.jsonl` | Config schema git commit | |
 | `config_schemas.jsonl` | Config schema | `documents` |
 | `config_types.jsonl` | Config type | |
 | `deployments.jsonl` | Deployment | `config_instances` |
@@ -72,14 +86,18 @@ resource per line. Resources use the Platform API version named in the manifest'
 | `git_commits.jsonl` | Git commit | |
 | `groups.jsonl` | Group | |
 | `releases.jsonl` | Release | `config_schemas` |
+| `users.jsonl` | User | |
 
 Expansions are included as the [expansions](/developers/platform-api/query-params/expansions)
 query parameter would return them. They hold the schema documents, which config instances
 each deployment contains and which config schemas each release contains.
 
-Archived devices, releases and config types are included. Archived devices have a `status`
-of `archived`. Archived releases and config types carry no marker, so they look the same
-as active ones.
+`config_schema_git_commits.jsonl` links each config schema to the git commits it was pushed
+from, with the schema's file paths in each commit. It has its own file because the
+`config_schema_git_commits` expansion on config schemas returns only one page.
+
+Archived devices, releases and config types are included, with `archived_at` set. Deleted
+API keys are included, with `deleted_at` set. API keys never include their secret.
 
 ## Content
 
@@ -95,15 +113,17 @@ describes it.
 
 ```json
 {
-  "format_version": "1.0",
-  "platform_api_version": "2026-10-29.everglades",
+  "format_version": "1.1",
+  "platform_api_version": "2026-11-04.everglades",
   "workspace_id": "wsp_123",
   "snapshot_at": "2026-11-02T03:00:00Z",
   "resource_counts": {
+    "api_keys": 3,
     "calibrations": 64,
     "config_instances": 812,
     "devices": 112,
-    "releases": 38
+    "releases": 38,
+    "users": 9
   },
   "files": [
     {
@@ -123,14 +143,20 @@ describes it.
 <ParamField path="format_version" type="string">
   The version of the archive format, as `major.minor`. See [versioning](#versioning).
 
-  Example: `1.0`
+  Example: `1.1`
 </ParamField>
 
 <ParamField path="platform_api_version" type="string">
   The [Platform API version](/developers/platform-api/versioning) of every resource in
   the archive.
 
-  Example: `2026-10-29.everglades`
+  Example: `2026-11-04.everglades`
+</ParamField>
+
+<ParamField path="workspace_id" type="string">
+  The ID of the workspace the archive was taken from.
+
+  Example: `wsp_123`
 </ParamField>
 
 <ParamField path="snapshot_at" type="timestamp">
