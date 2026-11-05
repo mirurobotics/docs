@@ -21,12 +21,12 @@ Every change is additive. `2026-10-29.everglades` and `2026-08-17.everglades` re
 
 ## New endpoints
 
+Users and API keys have their own `read` [scopes](/developers/platform-api/authz#scopes-by-resource), and deleting a release needs the new `releases:delete` scope.
+
 <Dropdown title="Releases">
   * <POST /> `/releases/{release_id}/archive` — archive a release
   * <POST /> `/releases/{release_id}/unarchive` — unarchive a release
   * <DELETE /> `/releases/{release_id}` — delete a release
-
-  Archive and unarchive need `releases:write`, and delete needs the new `releases:delete` [scope](/developers/platform-api/authz#releases). A release that has deployments can't be deleted; archive it instead. Visit the [releases](/concepts/releases#archive-a-release) documentation for what archiving does.
 </Dropdown>
 
 <Separator />
@@ -34,8 +34,6 @@ Every change is additive. `2026-10-29.everglades` and `2026-08-17.everglades` re
 <Dropdown title="Users">
   * <GET /> `/users` — list the workspace's users
   * <GET /> `/users/{user_id}` — retrieve a user
-
-  Both need the new `users:read` [scope](/developers/platform-api/authz#users). They include members who have left or been suspended. The list is sorted by first name, then last name, unless you pass `order_by`.
 </Dropdown>
 
 <Separator />
@@ -43,8 +41,6 @@ Every change is additive. `2026-10-29.everglades` and `2026-08-17.everglades` re
 <Dropdown title="API keys">
   * <GET /> `/api_keys` — list the workspace's API keys
   * <GET /> `/api_keys/{api_key_id}` — retrieve an API key
-
-  Both need the new `api_keys:read` [scope](/developers/platform-api/authz#api-keys). They include deleted API keys, and never return the secret.
 </Dropdown>
 
 ## Additive changes
