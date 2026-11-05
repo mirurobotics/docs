@@ -115,7 +115,7 @@ A dialog will appear. Hit **Unarchive** to confirm the unarchive.
 
 <PlatformApiBadge endpoint="releases/delete" />
 
-Deleting a release is only possible if no deployments have been delivered to any device with that release. Otherwise, the release cannot be deleted.
+A release can only be deleted if it has no deployments, including staged ones. Otherwise, the release cannot be deleted; [archive it](#archive-a-release) instead.
 
 To delete a release, click the ellipses **(...)** on the release, or right-click it, and
 hit **Delete**.
