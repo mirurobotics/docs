@@ -1,0 +1,162 @@
+---
+title: "Archive format"
+---
+
+Every backup is a single zip archive. The format is a public contract: each resource in
+it is a [Platform API](/developers/platform-api/overview) resource. Refer to the
+Platform API reference to see the contents of each resource.
+
+## Bucket location
+
+Archives are written to your bucket under the backup prefix specified during [set up](/admin/backups/set-up). The default bucket prefix is `miru-backups/`.
+
+<Tree>
+  <Tree.Folder name="<your-bucket>" defaultOpen>
+    <Tree.Folder name="miru-backups" defaultOpen>
+      <Tree.File name="miru-backup-20261101T030000Z.zip" />
+      <Tree.File name="miru-backup-20261102T030000Z.zip" />
+      <Tree.File name="..." />
+    </Tree.Folder>
+    <Tree.Folder name="<sibling-folder>" />
+  </Tree.Folder>
+</Tree>
+
+Each archive is named `miru-backup-<timestamp>.zip`, where the timestamp is when the backup was taken. 
+
+
+## Archive contents
+
+Every archive contains the entire state of the workspace at the time the backup was taken. Unzipping an archive reveals a directory with the following contents:
+
+<Tree>
+  <Tree.Folder name="miru-backup-20261102T030000Z.zip" defaultOpen>
+    <Tree.File name="README.md" />
+    <Tree.File name="manifest.json" />
+    <Tree.Folder name="resources" defaultOpen>
+      <Tree.File name="api_keys.jsonl" />
+      <Tree.File name="calibrations.jsonl" />
+      <Tree.File name="config_instances.jsonl" />
+      <Tree.File name="config_schema_git_commits.jsonl" />
+      <Tree.File name="config_schemas.jsonl" />
+      <Tree.File name="config_types.jsonl" />
+      <Tree.File name="deployments.jsonl" />
+      <Tree.File name="devices.jsonl" />
+      <Tree.File name="git_commits.jsonl" />
+      <Tree.File name="groups.jsonl" />
+      <Tree.File name="releases.jsonl" />
+      <Tree.File name="users.jsonl" />
+    </Tree.Folder>
+    <Tree.Folder name="contents" defaultOpen>
+      <Tree.Folder name="calibrations" defaultOpen>
+        <Tree.File name="cal_123" />
+        <Tree.File name="cal_456" />
+        <Tree.File name="..." />
+      </Tree.Folder>
+      <Tree.Folder name="config_instances" defaultOpen>
+        <Tree.File name="cfg_inst_123" />
+        <Tree.File name="cfg_inst_456" />
+        <Tree.File name="..." />
+      </Tree.Folder>
+    </Tree.Folder>
+  </Tree.Folder>
+</Tree>
+
+- `README.md` lists the resource types in the archive, explains how to read it and links
+  back to these docs.
+- `manifest.json` describes the archive. See [manifest](#manifest).
+- `resources/` holds one file per resource type. See [resources](#resources).
+- `contents/` holds the stored content of each config instance and calibration. See
+  [contents](#contents).
+
+Every resource type is guaranteed to have a file. An empty file means the workspace had
+no resources of that type.
+
+
+## Manifest
+
+The manifest is a JSON file that describes the archive.
+
+```json
+{
+  "format_version": "0.1",
+  "platform_api_version": "2026-11-04.everglades",
+  "workspace_id": "wsp_123",
+  "timestamp": "2026-11-02T03:00:00Z",
+  "resource_counts": {
+    "api_keys": 3,
+    "calibrations": 64,
+    "config_instances": 812,
+    "devices": 112,
+    "releases": 38,
+    "users": 9
+  }
+}
+```
+
+<ParamField path="format_version" type="string">
+  The version of the archive format, as `major.minor`. See [versioning](#versioning).
+
+  Example: `0.1`
+</ParamField>
+
+<ParamField path="platform_api_version" type="string">
+  The [Platform API version](/developers/platform-api/versioning) of every resource in
+  the archive.
+
+  Example: `2026-11-04.everglades`
+</ParamField>
+
+<ParamField path="workspace_id" type="string">
+  The ID of the workspace the archive was taken from.
+
+  Example: `wsp_123`
+</ParamField>
+
+<ParamField path="timestamp" type="timestamp">
+  The point in time the archive captures. Every resource is as it was at this moment.
+
+  Example: `2026-11-02T03:00:00Z`
+</ParamField>
+
+<ParamField path="resource_counts" type="object">
+  A map of resource types to the number of resources of that type in the archive.
+</ParamField>
+
+## Resources
+
+Each file in `resources/` is a [JSON Lines](https://jsonlines.org) file containing one Platform API resource per line. Resources use the Platform API version named in the manifest's `platform_api_version`.
+
+| File | Resource | Expansions |
+| ---- | -------- | ---------- |
+| `api_keys.jsonl` | API key | |
+| `calibrations.jsonl` | Calibration | |
+| `config_instances.jsonl` | Config instance | |
+| `config_schema_git_commits.jsonl` | Config schema git commit | |
+| `config_schemas.jsonl` | Config schema | `documents` |
+| `config_types.jsonl` | Config type | |
+| `deployments.jsonl` | Deployment | `config_instances` |
+| `devices.jsonl` | Device | |
+| `git_commits.jsonl` | Git commit | |
+| `groups.jsonl` | Group | |
+| `releases.jsonl` | Release | `config_schemas` |
+| `users.jsonl` | User | |
+
+Some resources include expansion data that the Platform API does not include by default. For example, `config_schemas.jsonl` includes the schema documents, since there is no dedicated schema documents endpoint in the Platform API.
+
+`config_schema_git_commits.jsonl` links each config schema to the git commits it was
+pushed from, with the schema's file paths in each commit. While config schema git commits are not returned as their own resource in the Platform API, they are given their own file in the archive because expanding the `config_schema_git_commits` expansion on config schemas returns only a singular page of results, which may loose data.
+
+Archived devices, releases and config types are included in the archive. Deleted API
+keys are also included, as resources may have been created from an API key that has since been deleted.
+
+## Contents
+
+The `contents/` directory contains the stored content of each config instance and calibration. Since these files are so large, they are given their own directory in the archive.
+
+Each file in `contents/` holds the stored content of one config instance or calibration,
+named by the resource's ID: 
+
+- `contents/config_instances/<id>`
+- `contents/calibrations/<id>`
+
+The bytes are exactly as they were stored, with no re-encoding.

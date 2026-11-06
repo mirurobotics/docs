@@ -1,0 +1,44 @@
+---
+title: "Overview"
+---
+
+Data backups keep a copy of your workspace's data in a cloud storage bucket *you* own.
+Each night, Miru writes a full backup of your workspace to your
+[buckets](/data-uploads/concepts/buckets). 
+
+Every backup is a single zip archive that
+holds a complete copy of your workspace's resources. An archive contains the complete workspace state exactly as it was at that moment.
+
+By default, backups are off. To turn them on, see [set up backups](/admin/backups/set-up).
+
+## How it works
+
+1. Once a day, Miru reads your workspace at a single point in time, ensuring that all the resources in a backup are consistent with each other.
+2. Miru writes each resource as it appears in the latest
+   [Platform API](/references/platform-api/latest/endpoints) version into a single zip archive (see [archive format](/admin/backups/archive-format#archive-contents)).
+3. Using the credentials from your [bucket connection](/data-uploads/concepts/buckets),
+   Miru uploads the archive to your bucket. 
+
+A failed backup writes nothing. Miru only ever adds objects to your bucket. Deleting something in Miru never deletes
+anything in your bucket, and Miru never reads or deletes an archive once it's written.
+
+To control how long archives are kept, add a [lifecycle rule](/admin/backups/set-up#configure-retention) to the bucket.
+
+## What's included
+
+An archive contains all resources from the latest [Platform API](/references/platform-api/latest/endpoints) version. As of writing, the latest version is [2026-11-04.everglades](/references/platform-api/2026-11-04), which contains:
+
+- [Devices](/concepts/devices/overview)
+- [Groups](/concepts/groups/overview)
+- [Releases](/concepts/releases)
+- Git commits
+- [Deployments](/concepts/deployments/overview)
+- [Config types](/cfg-mgmt/concepts/config-types)
+- [Config schemas](/cfg-mgmt/concepts/schemas/overview)
+- Config schema git commits
+- [Config instances](/cfg-mgmt/concepts/config-instances) (including their contents)
+- [Calibrations](/cfg-mgmt/concepts/calibrations) (including their contents)
+- [API keys](/admin/apikeys)
+- [Users](/admin/users/overview)
+
+Any resource additions, modifications, or deletions to the latest platform API are reflected in the currently backed up archive.
