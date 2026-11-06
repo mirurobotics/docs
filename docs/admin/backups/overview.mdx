@@ -4,20 +4,20 @@ title: "Overview"
 
 Data backups keep a copy of your workspace's data in a cloud storage bucket *you* own.
 Each night, Miru writes a full backup of your workspace to your
-[buckets](/data-uploads/concepts/buckets). 
+[bucket](/data-uploads/concepts/buckets).
 
-Every backup is a single zip archive that
-holds a complete copy of your workspace's resources. An archive contains the complete workspace state exactly as it was at that moment.
+Every backup is a single zip archive that holds a complete copy of your workspace's
+resources. It contains all resources and their state exactly as they were at the moment the backup was taken.
 
 By default, backups are off. To turn them on, see [set up backups](/admin/backups/set-up).
 
 ## How it works
 
-1. Once a day, Miru reads your workspace at a single point in time, ensuring that all the resources in a backup are consistent with each other.
+1. Once a day, Miru reads all the resources in your workspace.
 2. Miru writes each resource as it appears in the latest
    [Platform API](/references/platform-api/latest/endpoints) version into a single zip archive (see [archive format](/admin/backups/archive-format#archive-contents)).
 3. Using the credentials from your [bucket connection](/data-uploads/concepts/buckets),
-   Miru uploads the archive to your bucket. 
+   Miru uploads the archive.
 
 A failed backup writes nothing. Miru only ever adds objects to your bucket. Deleting something in Miru never deletes
 anything in your bucket, and Miru never reads or deletes an archive once it's written.

@@ -12,8 +12,6 @@ backups to one bucket.
 
 - A [bucket](/data-uploads/concepts/buckets) connected to Miru. Connect an [AWS S3](/data-uploads/connect-a-bucket/aws) or [GCS](/data-uploads/connect-a-bucket/gcs) bucket. Connecting a bucket needs the <PublisherBadge size="sm"/> role, and backups need no bucket permissions beyond the ones that connection grants.
 
-
-
 ## Enable backups  <AdminBadge />
 
 <PlatformUnsupportedBadge />
@@ -21,15 +19,14 @@ backups to one bucket.
 <Steps>
   <Step title="Choose the bucket and prefix">
     In the Miru dashboard, navigate to the
-    [Backups page](https://app.mirurobotics.com/settings/backups). Select the bucket, and
-    change the prefix if you want backups written somewhere other than `miru-backups/`. An
-    archived bucket can't be selected.
+    [Backups page](https://app.mirurobotics.com/settings/backups) and click **Connect**. Select
+    the bucket and, if you want, change the backup prefix from the default `miru-backups/`.
   </Step>
 
-  <Step title="Save">
-    Click **Save**. Backups run while a bucket is selected.
+  <Step title="Connect">
+    Click **Connect**.
 
-    Before saving, Miru checks that it can write under the prefix by uploading an empty
+    Before connecting, Miru checks that it can write to the bucket by uploading an empty
     object under `<prefix>/.miru/probe/`. If the check fails, the page shows the error and
     nothing is saved.
   </Step>
@@ -71,10 +68,10 @@ account that no longer grants write access.
 
 <PlatformUnsupportedBadge />
 
-On the [Backups page](https://app.mirurobotics.com/settings/backups), select a different
-bucket or change the prefix, and click **Save**. Miru checks the new location the same way
-before saving. Later backups go to the new location, and earlier archives stay where they
-were written.
+On the [Backups page](https://app.mirurobotics.com/settings/backups), click **Change**,
+select a different bucket or change the prefix, and click **Save**. Miru checks the new
+location the same way before saving. Later backups go to the new location, and earlier
+archives stay where they were written.
 
 While the backup settings point at a bucket, you can't delete or
 [archive](/data-uploads/concepts/buckets#archive-a-bucket) that bucket. Choose another
@@ -85,11 +82,5 @@ to can't be deleted, only archived.
 
 <PlatformUnsupportedBadge />
 
-On the [Backups page](https://app.mirurobotics.com/settings/backups), clear the bucket and
-click **Save**. No more backups run, and the archives already in your bucket stay where
-they are.
-
-Clearing the bucket doesn't check it, so it works even if Miru can no longer write to the
-bucket or it's archived.
-
-
+On the [Backups page](https://app.mirurobotics.com/settings/backups), click **Disconnect**.
+No more backups run, and the archives already in your bucket stay where they are.
