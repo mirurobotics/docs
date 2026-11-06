@@ -2,64 +2,42 @@
 title: "Overview"
 ---
 
-Data backups keep a copy of your workspace's data in cloud storage *you* own.
+Data backups keep a copy of your workspace's data in cloud storage bucket *you* own.
+Each night, Miru writes a full backup of your workspace to your
+[buckets](/data-uploads/concepts/buckets). 
 
-Each night, Miru writes a full backup of your workspace to one of your
-[buckets](/data-uploads/concepts/buckets). Every backup is a single zip archive that holds
-a complete copy of your workspace's resources, so any one archive is enough to see exactly
-what your workspace held at that moment. You can open it with any unzip tool and read it
-with standard tools like `jq` and `sha256sum`, without Miru.
+Every backup is a single zip archive that
+holds a complete copy of your workspace's resources. An archive contains the complete workspace state exactly as it was at that moment.
 
-Backups are off by default. To turn them on, see [set up backups](/admin/backups/set-up).
+By default, backups are off. To turn them on, see [set up backups](/admin/backups/set-up).
 
 ## How it works
 
-1. Once a day, Miru reads your workspace at a single point in time, so every resource in a
-   backup is consistent with every other.
-2. Miru writes each resource as it appears in the
-   [Platform API](/developers/platform-api/overview), then writes a manifest with a
-   checksum for every file.
+1. Once a day, Miru reads your workspace at a single point in time, ensuring that all the resources in a backup are consistent with each other.
+2. Miru writes each resource as it appears in the latest
+   [Platform API](/references/platform-api/latest/endpoints) version into a single zip archive (see [archive format](/admin/backups/archive-format#contents)).
 3. Using the credentials from your [bucket connection](/data-uploads/concepts/buckets),
-   Miru uploads the archive to your bucket. The
-   connection only lets Miru create objects, and backups need no new permissions.
+   Miru uploads the archive to your bucket. 
 
-A failed run writes nothing and leaves your last good archive untouched. Miru only ever
-adds objects to your bucket. Deleting something in Miru never deletes anything in your
-bucket, and Miru never reads or deletes an archive once it's written. To control how long
-archives are kept, see [retention](/admin/backups/set-up#retention).
+A failed backup writes nothing and leaves your last good archive untouched. Miru only ever adds objects to your bucket. Deleting something in Miru never deletes
+anything in your bucket, and Miru never reads or deletes an archive once it's written.
+
+To control how long archives are kept, see [retention](/admin/backups/set-up#retention).
 
 ## What's included
 
-Each archive holds every [device](/concepts/devices/overview),
-[group](/concepts/groups/overview), [release](/concepts/releases),
-[deployment](/concepts/deployments/overview),
-[config type](/cfg-mgmt/concepts/config-types),
-[config schema](/cfg-mgmt/concepts/schemas/overview),
-[config instance](/cfg-mgmt/concepts/config-instances),
-[calibration](/cfg-mgmt/concepts/calibrations), git commit,
-[API key](/admin/apikeys) and [user](/admin/users/overview) in your workspace, along with
-the config content and schema documents. For where each one is written, see
-[archive format](/admin/backups/archive-format#contents).
+An archive contains all resources from the latest [Platform API](/references/platform-api/latest/endpoints) version. As of writing, the latest version is [2026-11-04.everglades](/references/platform-api/2026-11-04.everglades), which contains:
 
-New resource types join the archive as they're added to the Platform API. Each addition is a
-minor [format version](/admin/backups/archive-format#versioning) bump, so tools that read older
-archives keep working.
+- [Devices](/concepts/devices/overview)
+- [Groups](/concepts/groups/overview)
+- [Releases](/concepts/releases)
+- Git commits
+- [Deployments](/concepts/deployments/overview)
+- [Config types](/cfg-mgmt/concepts/config-types)
+- [Config schemas](/cfg-mgmt/concepts/schemas/overview)
+- [Config instances](/cfg-mgmt/concepts/config-instances) (including their contents)
+- [Calibrations](/cfg-mgmt/concepts/calibrations) (including their contents)
+- [API keys](/admin/apikeys)
+- [Users](/admin/users/overview)
 
-## What's not included
-
-- **Credentials.** API key secrets, CLI tokens, provisioning tokens and device
-  authorization state are never exported. API keys are included only as their name,
-  scopes and timestamps, as the Platform API returns them.
-- **Account data.** Workspace settings, invites and billing are managed by Miru and aren't
-  part of a backup.
-- **Uploaded files.** Files your devices upload through
-  [data uploads](/data-uploads/overview) already live in your bucket, so backups don't copy
-  them again.
-- **Resources the Platform API doesn't expose yet**, such as buckets, overrides, file rules
-  and components.
-
-## Restoring a backup
-
-Restoring a backup into Miru isn't supported yet. Backups give you a complete, independent
-record of your workspace for compliance, audits and your own analysis. To read one, see
-[read a backup](/admin/backups/read-a-backup).
+Any resource additions, modifications, or deletions to the latest platform API are reflected in the currently backed up archive.
