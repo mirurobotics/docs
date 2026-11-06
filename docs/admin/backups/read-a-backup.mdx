@@ -82,36 +82,24 @@ $Prefix = "miru-backups" # or your custom prefix
 
 Above are example commands for downloading the latest archive from AWS S3 and GCS. Make sure to sign in to your cloud account before running the commands.
 
-## Verify the archive
-
-Unzip the archive and check every file against the checksums in `manifest.json`.
+## Unzip the archive
 
 <CodeGroup>
 ```bash Linux
 unzip -q backup.zip -d backup
 cd backup
-jq -r '.files[] | "\(.sha256)  \(.path)"' manifest.json | sha256sum -c -
 ```
 
 ```bash macOS
 unzip -q backup.zip -d backup
 cd backup
-jq -r '.files[] | "\(.sha256)  \(.path)"' manifest.json | shasum -a 256 -c -
 ```
 
 ```powershell Windows
 Expand-Archive backup.zip -DestinationPath backup
 Set-Location backup
-$manifest = Get-Content manifest.json -Raw | ConvertFrom-Json
-foreach ($file in $manifest.files) {
-  $hash = (Get-FileHash $file.path -Algorithm SHA256).Hash
-  $status = if ($hash -eq $file.sha256) { "OK" } else { "FAILED" }
-  "$($file.path): $status"
-}
 ```
 </CodeGroup>
-
-Each file prints `OK`.
 
 ## Query resources
 

@@ -63,8 +63,7 @@ Every archive contains the entire state of the workspace at the time the backup 
 
 - `README.md` lists the resource types in the archive, explains how to read it and links
   back to these docs.
-- `manifest.json` describes the archive and lists a checksum for every other file. See
-  [manifest](#manifest).
+- `manifest.json` describes the archive. See [manifest](#manifest).
 - `resources/` holds one file per resource type. See [resources](#resources).
 - `contents/` holds the stored content of each config instance and calibration. See
   [contents](#contents).
@@ -75,7 +74,7 @@ no resources of that type.
 
 ## Manifest
 
-The manifest is a JSON file that describes the archive and lists a checksum for every file in the archive.
+The manifest is a JSON file that describes the archive.
 
 ```json
 {
@@ -90,19 +89,7 @@ The manifest is a JSON file that describes the archive and lists a checksum for 
     "devices": 112,
     "releases": 38,
     "users": 9
-  },
-  "files": [
-    {
-      "path": "README.md",
-      "size": 612,
-      "sha256": "9f2c..."
-    },
-    {
-      "path": "resources/calibrations.jsonl",
-      "size": 48211,
-      "sha256": "41ab..."
-    }
-  ]
+  }
 }
 ```
 
@@ -133,10 +120,6 @@ The manifest is a JSON file that describes the archive and lists a checksum for 
 
 <ParamField path="resource_counts" type="object">
   A map of resource types to the number of resources of that type in the archive.
-</ParamField>
-
-<ParamField path="files" type="array">
-  A list of files in the archive and their checksums.
 </ParamField>
 
 ## Resources
@@ -176,4 +159,4 @@ named by the resource's ID:
 - `contents/config_instances/<id>`
 - `contents/calibrations/<id>`
 
-The bytes are exactly as they were stored, with no re-encoding. The manifest lists every content file with its checksum to verify the integrity of the archive.
+The bytes are exactly as they were stored, with no re-encoding.
