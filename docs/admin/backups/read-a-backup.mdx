@@ -10,14 +10,27 @@ Miru. This guide downloads the latest archive, checks it, and queries it.
 Archive names end in the time they were taken, so the newest archive is the last one by
 name.
 
-```bash
+<CodeGroup>
+```bash Linux
 BUCKET_NAME="<bucket-name>"
 PREFIX="miru-backup" # or your custom prefix
 ```
 
+```bash macOS
+BUCKET_NAME="<bucket-name>"
+PREFIX="miru-backup" # or your custom prefix
+```
+
+```powershell Windows
+$BucketName = "<bucket-name>"
+$Prefix = "miru-backup" # or your custom prefix
+```
+</CodeGroup>
+
 <Tabs>
   <Tab title="AWS S3">
-    ```bash
+    <CodeGroup>
+    ```bash Linux
     KEY="$(aws s3api list-objects-v2 \
       --bucket "${BUCKET_NAME}" \
       --prefix "${PREFIX}/miru-backup-" \
@@ -25,46 +38,122 @@ PREFIX="miru-backup" # or your custom prefix
       --output text)"
     aws s3 cp "s3://${BUCKET_NAME}/${KEY}" backup.zip
     ```
+
+    ```bash macOS
+    KEY="$(aws s3api list-objects-v2 \
+      --bucket "${BUCKET_NAME}" \
+      --prefix "${PREFIX}/miru-backup-" \
+      --query 'sort_by(Contents, &Key)[-1].Key' \
+      --output text)"
+    aws s3 cp "s3://${BUCKET_NAME}/${KEY}" backup.zip
+    ```
+
+    ```powershell Windows
+    $Key = aws s3api list-objects-v2 `
+      --bucket $BucketName `
+      --prefix "$Prefix/miru-backup-" `
+      --query 'sort_by(Contents, &Key)[-1].Key' `
+      --output text
+    aws s3 cp "s3://$BucketName/$Key" backup.zip
+    ```
+    </CodeGroup>
   </Tab>
 
   <Tab title="GCS">
-    ```bash
+    <CodeGroup>
+    ```bash Linux
     URL="$(gcloud storage ls "gs://${BUCKET_NAME}/${PREFIX}/miru-backup-*.zip" | sort | tail -n 1)"
     gcloud storage cp "${URL}" backup.zip
     ```
+
+    ```bash macOS
+    URL="$(gcloud storage ls "gs://${BUCKET_NAME}/${PREFIX}/miru-backup-*.zip" | sort | tail -n 1)"
+    gcloud storage cp "${URL}" backup.zip
+    ```
+
+    ```powershell Windows
+    $Url = gcloud storage ls "gs://$BucketName/$Prefix/miru-backup-*.zip" |
+      Sort-Object | Select-Object -Last 1
+    gcloud storage cp $Url backup.zip
+    ```
+    </CodeGroup>
   </Tab>
 </Tabs>
 
-The role or service account you connected to Miru can only write, so download with your
-own cloud credentials.
+Above are example commands for downloading the latest archive from AWS S3 and GCS. Make sure to sign in to your cloud account before running the commands.
 
 ## Verify the archive
 
 Unzip the archive and check every file against the checksums in `manifest.json`.
 
-```bash
+<CodeGroup>
+```bash Linux
 unzip -q backup.zip -d backup
 cd backup
 jq -r '.files[] | "\(.sha256)  \(.path)"' manifest.json | sha256sum -c -
 ```
 
-Each file prints `OK`. On macOS, use `shasum -a 256 -c -` in place of `sha256sum -c -`.
+```bash macOS
+unzip -q backup.zip -d backup
+cd backup
+jq -r '.files[] | "\(.sha256)  \(.path)"' manifest.json | shasum -a 256 -c -
+```
 
-## Query with jq
+```powershell Windows
+Expand-Archive backup.zip -DestinationPath backup
+Set-Location backup
+$manifest = Get-Content manifest.json -Raw | ConvertFrom-Json
+foreach ($file in $manifest.files) {
+  $hash = (Get-FileHash $file.path -Algorithm SHA256).Hash
+  $status = if ($hash -eq $file.sha256) { "OK" } else { "FAILED" }
+  "$($file.path): $status"
+}
+```
+</CodeGroup>
 
-Each line of a resource file is one resource, so `jq` reads the files directly.
+Each file prints `OK`.
+
+## Query resources
+
+Each line of a resource file is one resource, so `jq` on Linux and macOS, or PowerShell on
+Windows, reads the files directly.
 
 List every device's ID and name:
 
-```bash
+<CodeGroup>
+```bash Linux
 jq -r '[.id, .name] | @tsv' resources/devices.jsonl
 ```
 
+```bash macOS
+jq -r '[.id, .name] | @tsv' resources/devices.jsonl
+```
+
+```powershell Windows
+Get-Content resources/devices.jsonl -Encoding UTF8 |
+  ForEach-Object { $_ | ConvertFrom-Json } |
+  ForEach-Object { "$($_.id)`t$($_.name)" }
+```
+</CodeGroup>
+
 Show one deployment, with the config instances it contains:
 
-```bash
+<CodeGroup>
+```bash Linux
 jq 'select(.id == "dpl_123")' resources/deployments.jsonl
 ```
+
+```bash macOS
+jq 'select(.id == "dpl_123")' resources/deployments.jsonl
+```
+
+```powershell Windows
+Get-Content resources/deployments.jsonl -Encoding UTF8 |
+  ForEach-Object { $_ | ConvertFrom-Json } |
+  Where-Object id -eq "dpl_123" |
+  ConvertTo-Json -Depth 10
+```
+</CodeGroup>
 
 ## Read with the Python SDK
 
@@ -90,6 +179,3 @@ with zipfile.ZipFile("backup.zip") as archive:
 for device in devices:
     print(device.id, device.name)
 ```
-
-The SDK can't manage backups or download archives. Backups are configured from the
-[dashboard](/admin/backups/set-up), and archives live in your bucket.
