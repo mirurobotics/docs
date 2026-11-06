@@ -272,8 +272,7 @@
                   "admin/backups/overview",
                   "admin/backups/archive-format",
                   "admin/backups/set-up",
-                  "admin/backups/read-a-backup",
-                  "admin/backups/run-history"
+                  "admin/backups/read-a-backup"
                 ]
               }
             ]
