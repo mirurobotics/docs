@@ -3,117 +3,83 @@ title: "Archive format"
 ---
 
 Every backup is a single zip archive. The format is a public contract: each resource in
-it is a [Platform API](/developers/platform-api/overview) resource, so the Platform API
-reference documents every field.
+it is a [Platform API](/developers/platform-api/overview) resource. Refer to the
+Platform API reference to see the contents of each resource.
 
-## Location
+## Bucket location
 
-Archives are written under the backup prefix, `miru-backup/` by default, one per successful run:
+Archives are written to your bucket under the backup prefix specified during [set up](/admin/backups/set-up). The default bucket prefix is `miru-backup/`.
 
-```
-miru-backup/
-├── .miru/
-│   └── probe/
-├── miru-backup-20261101T030000Z.zip
-└── miru-backup-20261102T030000Z.zip
-```
+<Tree>
+  <Tree.Folder name="<your-bucket>" defaultOpen>
+    <Tree.Folder name="miru-backup" defaultOpen>
+      <Tree.File name="miru-backup-20261101T030000Z.zip" />
+      <Tree.File name="miru-backup-20261102T030000Z.zip" />
+      <Tree.File name="..." />
+    </Tree.Folder>
+    <Tree.Folder name="<sibling-folder>" />
+  </Tree.Folder>
+</Tree>
 
-Each archive is named `miru-backup-<timestamp>.zip`, where the timestamp is the run's
-`snapshot_at` in UTC. Archive names sort in time order, so the newest archive is the last
-one by name.
+Each archive is named `miru-backup-<timestamp>.zip`, where the timestamp is when the backup was taken. 
 
-Archive names don't include the workspace. If more than one workspace backs up to the same
-bucket, give each workspace its own prefix. The manifest's `workspace_id` says which
-workspace an archive came from.
 
-`.miru/probe/` holds the empty objects Miru writes to
-[check the bucket](/admin/backups/set-up#turn-on-backups) each time the backup settings are
-saved. They aren't archives, and you can delete them.
+## Archive contents
 
-## Contents
+Every archive contains the entire state of the workspace at the time the backup was taken. Unzipping an archive reveals a directory with the following contents:
 
-```
-miru-backup-20261102T030000Z.zip
-├── README.md
-├── content/
-│   ├── calibrations/
-│   │   └── cal_123
-│   └── config_instances/
-│       └── cfg_inst_123
-├── resources/
-│   ├── api_keys.jsonl
-│   ├── calibrations.jsonl
-│   ├── config_instances.jsonl
-│   ├── config_schema_git_commits.jsonl
-│   ├── config_schemas.jsonl
-│   ├── config_types.jsonl
-│   ├── deployments.jsonl
-│   ├── devices.jsonl
-│   ├── git_commits.jsonl
-│   ├── groups.jsonl
-│   ├── releases.jsonl
-│   └── users.jsonl
-└── manifest.json
-```
+<Tree>
+  <Tree.Folder name="miru-backup-20261102T030000Z.zip" defaultOpen>
+    <Tree.File name="README.md" />
+    <Tree.File name="manifest.json" />
+    <Tree.Folder name="resources" defaultOpen>
+      <Tree.File name="api_keys.jsonl" />
+      <Tree.File name="calibrations.jsonl" />
+      <Tree.File name="config_instances.jsonl" />
+      <Tree.File name="config_schema_git_commits.jsonl" />
+      <Tree.File name="config_schemas.jsonl" />
+      <Tree.File name="config_types.jsonl" />
+      <Tree.File name="deployments.jsonl" />
+      <Tree.File name="devices.jsonl" />
+      <Tree.File name="git_commits.jsonl" />
+      <Tree.File name="groups.jsonl" />
+      <Tree.File name="releases.jsonl" />
+      <Tree.File name="users.jsonl" />
+    </Tree.Folder>
+    <Tree.Folder name="content" defaultOpen>
+      <Tree.Folder name="calibrations" defaultOpen>
+        <Tree.File name="cal_123" />
+        <Tree.File name="cal_456" />
+        <Tree.File name="..." />
+      </Tree.Folder>
+      <Tree.Folder name="config_instances" defaultOpen>
+        <Tree.File name="cfg_inst_123" />
+        <Tree.File name="cfg_inst_456" />
+        <Tree.File name="..." />
+      </Tree.Folder>
+    </Tree.Folder>
+  </Tree.Folder>
+</Tree>
 
 - `README.md` lists the resource types in the archive, explains how to read it and links
   back to these docs.
+- `manifest.json` describes the archive and lists a checksum for every other file. See
+  [manifest](#manifest).
 - `resources/` holds one file per resource type. See [resources](#resources).
 - `content/` holds the stored content of each config instance and calibration. See
   [content](#content).
-- `manifest.json` describes the archive and lists a checksum for every other file. See
-  [manifest](#manifest).
 
-Every resource type has a file, even when the workspace has none of that type. An empty
-file means the workspace had no resources of that type.
+Every resource type is guaranteed to have a file. An empty file means the workspace had
+no resources of that type.
 
-## Resources
-
-Each file in `resources/` is [JSON Lines](https://jsonlines.org): one Platform API
-resource per line. Resources use the Platform API version named in the manifest's
-`platform_api_version`.
-
-| File | Resource | Expansions |
-| ---- | -------- | ---------- |
-| `api_keys.jsonl` | API key | |
-| `calibrations.jsonl` | Calibration | |
-| `config_instances.jsonl` | Config instance | |
-| `config_schema_git_commits.jsonl` | Config schema git commit | |
-| `config_schemas.jsonl` | Config schema | `documents` |
-| `config_types.jsonl` | Config type | |
-| `deployments.jsonl` | Deployment | `config_instances` |
-| `devices.jsonl` | Device | |
-| `git_commits.jsonl` | Git commit | |
-| `groups.jsonl` | Group | |
-| `releases.jsonl` | Release | `config_schemas` |
-| `users.jsonl` | User | |
-
-Expansions are included as the [expansions](/developers/platform-api/query-params/expansions)
-query parameter would return them. They hold the schema documents, which config instances
-each deployment contains and which config schemas each release contains.
-
-`config_schema_git_commits.jsonl` links each config schema to the git commits it was pushed
-from, with the schema's file paths in each commit. It has its own file because the
-`config_schema_git_commits` expansion on config schemas returns only one page.
-
-Archived devices, releases and config types are included, with `archived_at` set. Deleted
-API keys are included, with `deleted_at` set. API keys never include their secret.
-
-## Content
-
-Each file in `content/` holds the stored content of one config instance or calibration,
-named by the resource's ID: `content/config_instances/<id>` and
-`content/calibrations/<id>`. The bytes are exactly as they were stored, with no
-re-encoding. The manifest lists every content file with its checksum.
 
 ## Manifest
 
-Miru uploads each archive whole, so any archive in your bucket is complete. `manifest.json`
-describes it.
+The manifest is a JSON file that describes the archive and lists a checksum for every file in the archive.
 
 ```json
 {
-  "format_version": "1.1",
+  "format_version": "0.1",
   "platform_api_version": "2026-11-04.everglades",
   "workspace_id": "wsp_123",
   "snapshot_at": "2026-11-02T03:00:00Z",
@@ -143,7 +109,7 @@ describes it.
 <ParamField path="format_version" type="string">
   The version of the archive format, as `major.minor`. See [versioning](#versioning).
 
-  Example: `1.1`
+  Example: `0.1`
 </ParamField>
 
 <ParamField path="platform_api_version" type="string">
@@ -165,16 +131,49 @@ describes it.
   Example: `2026-11-02T03:00:00Z`
 </ParamField>
 
-## Versioning
+<ParamField path="resource_counts" type="object">
+  A map of resource types to the number of resources of that type in the archive.
+</ParamField>
 
-`format_version` covers the archive layout and the manifest. The resources inside follow
-their own [Platform API version](/developers/platform-api/versioning), named in
-`platform_api_version`.
+<ParamField path="files" type="array">
+  A list of files in the archive and their checksums.
+</ParamField>
 
-- **Minor versions** only add: new fields in the manifest or new resource types in
-  `resources/`. A reader written for `1.0` can read any `1.x` archive.
-- **Major versions** may remove or change things. Each major version is announced in the
-  [changelog](/changelog/product) before it ships.
+## Resources
 
-Archives are never rewritten, so an archive always matches the format version in its
-manifest.
+Each file in `resources/` is a [JSON Lines](https://jsonlines.org) file containing one Platform API resource per line. Resources use the Platform API version named in the manifest's `platform_api_version`.
+
+| File | Resource | Expansions |
+| ---- | -------- | ---------- |
+| `api_keys.jsonl` | API key | |
+| `calibrations.jsonl` | Calibration | |
+| `config_instances.jsonl` | Config instance | |
+| `config_schema_git_commits.jsonl` | Config schema git commit | |
+| `config_schemas.jsonl` | Config schema | `documents` |
+| `config_types.jsonl` | Config type | |
+| `deployments.jsonl` | Deployment | `config_instances` |
+| `devices.jsonl` | Device | |
+| `git_commits.jsonl` | Git commit | |
+| `groups.jsonl` | Group | |
+| `releases.jsonl` | Release | `config_schemas` |
+| `users.jsonl` | User | |
+
+Some resources include expansion data that the Platform API does not include by default. For example, `config_schemas.jsonl` includes the schema documents, since there is no dedicated schema documents endpoint in the Platform API.
+
+`config_schema_git_commits.jsonl` links each config schema to the git commits it was
+pushed from, with the schema's file paths in each commit. While config schema git commits are not returned as their own resource in the Platform API, they are given their own file in the archive because expanding the `config_schema_git_commits` expansion on config schemas returns only a singular page of results, which may loose data.
+
+Archived devices, releases and config types are included in the archive. Deleted API
+keys are also included, as resources may have been created from an API key that has since been deleted.
+
+## Content
+
+The `content/` directory contains the stored content of each config instance and calibration. Since these files are so large, they are given their own directory in the archive.
+
+Each file in `content/` holds the stored content of one config instance or calibration,
+named by the resource's ID: 
+
+- `content/config_instances/<id>`
+- `content/calibrations/<id>`
+
+The bytes are exactly as they were stored, with no re-encoding. The manifest lists every content file with its checksum to verify the integrity of the archive.
