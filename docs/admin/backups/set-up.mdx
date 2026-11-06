@@ -2,30 +2,19 @@
 title: "Set up backups"
 ---
 
-import ConnectAws from '/snippets/buckets/connect-aws.mdx';
-import ConnectGcs from '/snippets/buckets/connect-gcs.mdx';
 import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { AdminBadge, PublisherBadge } from '/snippets/components/role-badges.jsx';
 
 Backups are configured per workspace from the dashboard. Each workspace writes its
 backups to one bucket.
 
-## Connect a bucket
+## Prerequisites
 
-Skip this section if the bucket you want to use is already connected to Miru. Connecting a
-bucket needs the <PublisherBadge size="sm"/> role. Backups need no bucket permissions beyond
-the ones granted here.
+- A [bucket](/data-uploads/concepts/buckets) connected to Miru. Connect an [AWS S3](/data-uploads/connect-a-bucket/aws) or [GCS](/data-uploads/connect-a-bucket/gcs) bucket. Connecting a bucket needs the <PublisherBadge size="sm"/> role, and backups need no bucket permissions beyond the ones that connection grants.
 
-<Tabs>
-  <Tab title="AWS S3">
-    <ConnectAws />
-  </Tab>
-  <Tab title="GCS">
-    <ConnectGcs />
-  </Tab>
-</Tabs>
 
-## Turn on backups  <AdminBadge />
+
+## Enable backups  <AdminBadge />
 
 <PlatformUnsupportedBadge />
 
@@ -54,6 +43,14 @@ A prefix can't start or end with `/`, or contain `*`, `?` or `$`. If more than o
 workspace backs up to the same bucket, give each its own prefix, since archive names don't
 include the workspace.
 
+### Configure retention
+
+Miru never deletes a backup, so archives build up until you remove them. To expire old
+archives automatically, add a lifecycle rule for the backup prefix in
+[AWS S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html)
+or [GCS](https://cloud.google.com/storage/docs/lifecycle). While backups keep running, an
+age-based rule always leaves the newest archives in place.
+
 ## Change where backups go  <AdminBadge />
 
 <PlatformUnsupportedBadge />
@@ -68,25 +65,6 @@ backups are on you can't [archive](/data-uploads/concepts/buckets#archive-a-buck
 Choose another bucket, or clear the bucket as you
 [turn off backups](#turn-off-backups), first.
 
-## Run history  <AdminBadge />
-
-<PlatformUnsupportedBadge />
-
-The [Backups page](https://app.mirurobotics.com/settings/backups) lists recent runs, newest
-first, with each run's status and, once it succeeds, the size and key of its archive.
-
-| Status | Meaning |
-| ------ | ------- |
-| Queued | The run is waiting to start. |
-| Running | The run has started and hasn't finished. |
-| Succeeded | The archive was uploaded to the bucket. |
-| Failed | The run stopped before the archive was uploaded. |
-
-When a run fails, the page shows why. The most common cause is a bucket role or service
-account that no longer grants write access. A run also fails if Miru can't read the content
-of any config instance or calibration, so a backup is never missing content. A run that
-hasn't finished 12 hours after it was queued is marked failed.
-
 ## Turn off backups  <AdminBadge />
 
 <PlatformUnsupportedBadge />
@@ -99,10 +77,4 @@ Saving checks the selected bucket, even when turning backups off. If Miru can no
 write to the bucket, or it's archived, clear the bucket as you switch off backups. Clearing
 the bucket also lets you delete it.
 
-## Retention
 
-Miru never deletes a backup, so archives build up until you remove them. To expire old
-archives automatically, add a lifecycle rule for the backup prefix in
-[AWS S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html)
-or [GCS](https://cloud.google.com/storage/docs/lifecycle). While backups keep running, an
-age-based rule always leaves the newest archives in place.
