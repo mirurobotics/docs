@@ -12,8 +12,6 @@ backups to one bucket.
 
 - A [bucket](/data-uploads/concepts/buckets) connected to Miru. Connect an [AWS S3](/data-uploads/connect-a-bucket/aws) or [GCS](/data-uploads/connect-a-bucket/gcs) bucket. Connecting a bucket needs the <PublisherBadge size="sm"/> role, and backups need no bucket permissions beyond the ones that connection grants.
 
-
-
 ## Enable backups  <AdminBadge />
 
 <PlatformUnsupportedBadge />
@@ -22,14 +20,13 @@ backups to one bucket.
   <Step title="Choose the bucket and prefix">
     In the Miru dashboard, navigate to the
     [Backups page](https://app.mirurobotics.com/settings/backups). Select the bucket, and
-    change the prefix if you want backups written somewhere other than `miru-backups/`. An
-    archived bucket can't be selected.
+    edit the backup prefix from the default `miru-backups/`. 
   </Step>
 
-  <Step title="Save">
-    Click **Save**. Backups run while a bucket is selected.
+  <Step title="Connect">
+    Click **Connect**.
 
-    Before saving, Miru checks that it can write under the prefix by uploading an empty
+    Before connecting, Miru checks that it can write to the bucket by uploading an empty
     object under `<prefix>/.miru/probe/`. If the check fails, the page shows the error and
     nothing is saved.
   </Step>
@@ -88,8 +85,3 @@ to can't be deleted, only archived.
 On the [Backups page](https://app.mirurobotics.com/settings/backups), clear the bucket and
 click **Save**. No more backups run, and the archives already in your bucket stay where
 they are.
-
-Clearing the bucket doesn't check it, so it works even if Miru can no longer write to the
-bucket or it's archived.
-
-
