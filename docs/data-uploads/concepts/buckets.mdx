@@ -89,8 +89,9 @@ A dialog will appear. Update the **Role ARN** and click **Save**.
 
 <PlatformUnsupportedBadge />
 
-Deleting a bucket is only possible if there are no file rules associated with the bucket and
-the [backup settings](/admin/backups/set-up#change-where-backups-go) don't point at it.
+Deleting a bucket is only possible if there are no file rules associated with the bucket,
+the [backup settings](/admin/backups/set-up#change-where-backups-go) don't point at it, and
+no backup has run to it.
 Otherwise, you must archive the bucket instead, or first change where backups go.
 
 To delete a bucket, click the ellipses **(...)** on the bucket and select **Delete**.
@@ -107,7 +108,7 @@ A confirmation dialog will appear. Click **Delete** to confirm.
 
 Archiving a bucket prevents any data uploads from being written to the bucket. However, it does not delete the bucket itself, and can be unarchived at any time.
 
-A bucket that [backups](/admin/backups/overview) are turned on for can't be archived. Turn
+A bucket the [backup](/admin/backups/overview) settings point at can't be archived. Turn
 off backups or [change where they go](/admin/backups/set-up#change-where-backups-go) first.
 
 To archive a bucket, click the ellipses **(...)** on the bucket and select **Archive**.

@@ -26,13 +26,12 @@ backups to one bucket.
     archived bucket can't be selected.
   </Step>
 
-  <Step title="Turn on backups">
-    Switch on **Backups** and click **Save**.
+  <Step title="Save">
+    Click **Save**. Backups run while a bucket is selected.
 
     Before saving, Miru checks that it can write under the prefix by uploading an empty
     object under `<prefix>/.miru/probe/`. If the check fails, the page shows the error and
-    nothing is saved. Miru runs the same check whenever you save the settings with a bucket
-    selected, even with backups off.
+    nothing is saved.
   </Step>
 </Steps>
 
@@ -79,21 +78,20 @@ bucket or change the prefix, and click **Save**. Miru checks the new location th
 before saving. Later backups go to the new location, and earlier archives stay where they
 were written.
 
-While the backup settings point at a bucket, you can't delete that bucket, and while
-backups are on you can't [archive](/data-uploads/concepts/buckets#archive-a-bucket) it.
-Choose another bucket, or clear the bucket as you
-[turn off backups](#turn-off-backups), first.
+While the backup settings point at a bucket, you can't delete or
+[archive](/data-uploads/concepts/buckets#archive-a-bucket) that bucket. Choose another
+bucket, or [turn off backups](#turn-off-backups), first. A bucket that any backup has run
+to can't be deleted, only archived.
 
 ## Turn off backups  <AdminBadge />
 
 <PlatformUnsupportedBadge />
 
-On the [Backups page](https://app.mirurobotics.com/settings/backups), switch off
-**Backups** and click **Save**. No more backups run, and the archives already in your
-bucket stay where they are.
+On the [Backups page](https://app.mirurobotics.com/settings/backups), clear the bucket and
+click **Save**. No more backups run, and the archives already in your bucket stay where
+they are.
 
-Saving checks the selected bucket, even when turning backups off. If Miru can no longer
-write to the bucket, or it's archived, clear the bucket as you switch off backups. Clearing
-the bucket also lets you delete it.
+Clearing the bucket doesn't check it, so it works even if Miru can no longer write to the
+bucket or it's archived.
 
 

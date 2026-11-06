@@ -34,8 +34,8 @@ $Prefix = "miru-backups" # or your custom prefix
     KEY="$(aws s3api list-objects-v2 \
       --bucket "${BUCKET_NAME}" \
       --prefix "${PREFIX}/miru-backup-" \
-      --query 'sort_by(Contents, &Key)[-1].Key' \
-      --output text)"
+      --query 'Contents[].Key' \
+      --output text | tr '\t' '\n' | sort | tail -n 1)"
     aws s3 cp "s3://${BUCKET_NAME}/${KEY}" backup.zip
     ```
 
@@ -43,8 +43,8 @@ $Prefix = "miru-backups" # or your custom prefix
     KEY="$(aws s3api list-objects-v2 \
       --bucket "${BUCKET_NAME}" \
       --prefix "${PREFIX}/miru-backup-" \
-      --query 'sort_by(Contents, &Key)[-1].Key' \
-      --output text)"
+      --query 'Contents[].Key' \
+      --output text | tr '\t' '\n' | sort | tail -n 1)"
     aws s3 cp "s3://${BUCKET_NAME}/${KEY}" backup.zip
     ```
 
@@ -52,8 +52,9 @@ $Prefix = "miru-backups" # or your custom prefix
     $Key = aws s3api list-objects-v2 `
       --bucket $BucketName `
       --prefix "$Prefix/miru-backup-" `
-      --query 'sort_by(Contents, &Key)[-1].Key' `
-      --output text
+      --query 'Contents[].Key' `
+      --output text |
+      ForEach-Object { $_ -split "`t" } | Sort-Object | Select-Object -Last 1
     aws s3 cp "s3://$BucketName/$Key" backup.zip
     ```
     </CodeGroup>
