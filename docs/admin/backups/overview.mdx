@@ -19,7 +19,7 @@ By default, backups are off. To turn them on, see [set up backups](/admin/backup
 3. Using the credentials from your [bucket connection](/data-uploads/concepts/buckets),
    Miru uploads the archive to your bucket. 
 
-A failed backup writes nothing and leaves your last good archive untouched. Miru only ever adds objects to your bucket. Deleting something in Miru never deletes
+A failed backup writes nothing. Miru only ever adds objects to your bucket. Deleting something in Miru never deletes
 anything in your bucket, and Miru never reads or deletes an archive once it's written.
 
 To control how long archives are kept, add a [lifecycle rule](/admin/backups/set-up#configure-retention) to the bucket.
