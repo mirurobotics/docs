@@ -65,9 +65,7 @@ first, with each run's status and, once it succeeds, the size and key of its arc
 | `failed` | The run stopped before the archive was uploaded. |
 
 When a run fails, the page shows why. The most common cause is a bucket role or service
-account that no longer grants write access. A run also fails if Miru can't read the content
-of any config instance or calibration, so a backup is never missing content. A run that
-hasn't finished 12 hours after it was queued is marked failed.
+account that no longer grants write access.
 
 ## Change where backups go  <AdminBadge />
 
