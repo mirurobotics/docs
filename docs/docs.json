@@ -274,7 +274,8 @@
                   "admin/backups/set-up",
                   "admin/backups/read-a-backup"
                 ]
-              }
+              },
+              "admin/support"
             ]
           }
         ]
@@ -1397,6 +1398,10 @@
       {
         "label": "Changelog",
         "href": "https://docs.mirurobotics.com/changelog/product"
+      },
+      {
+        "label": "Support",
+        "href": "https://docs.mirurobotics.com/admin/support"
       },
       {
         "label": "Dashboard",
