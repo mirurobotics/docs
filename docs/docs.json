@@ -276,6 +276,12 @@
                 ]
               }
             ]
+          },
+          {
+            "group": "Support",
+            "pages": [
+              "support"
+            ]
           }
         ]
       },
