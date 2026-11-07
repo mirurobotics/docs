@@ -27,6 +27,9 @@ jobs:
     runs-on: blacksmith-2vcpu-ubuntu-2404
     environment: ${{ inputs.environment }}
     timeout-minutes: 10
+    outputs:
+      sha: ${{ steps.promote.outputs.sha }}
+      noop: ${{ steps.promote.outputs.noop }}
 
     steps:
       - name: Generate app token
@@ -44,4 +47,21 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Promote ${{ inputs.ref }} → ${{ inputs.environment }}
+        id: promote
         run: ./scripts/promote.sh "${{ inputs.ref }}" "${{ inputs.environment }}"
+
+  notify:
+    name: 'Notify #deploys'
+    needs: promote
+    if: ${{ always() && needs.promote.outputs.noop != 'true' }}
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    permissions: {}
+    steps:
+      - name: Post to Slack
+        uses: mirurobotics/.github/actions/notify-deploys@92b69ccbe0df53724fd15970c53eae1db77fab14 # main
+        with:
+          webhook-url: ${{ secrets.SLACK_DEPLOYS_WEBHOOK_URL }}
+          summary: >-
+            ${{ format('[{0}] Promote docs {1}', inputs.environment,
+            needs.promote.outputs.sha || inputs.ref) }}
+          results: ${{ needs.promote.result }}
