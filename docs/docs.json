@@ -35,7 +35,8 @@
                   "getting-started/quick-start/provision-device",
                   "getting-started/quick-start/deploy-configs"
                 ]
-              }
+              },
+              "getting-started/support"
             ]
           },
           {
@@ -1397,6 +1398,10 @@
       {
         "label": "Changelog",
         "href": "https://docs.mirurobotics.com/changelog/product"
+      },
+      {
+        "label": "Support",
+        "href": "https://docs.mirurobotics.com/getting-started/support"
       },
       {
         "label": "Dashboard",
