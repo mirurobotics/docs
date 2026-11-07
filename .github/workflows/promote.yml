@@ -53,9 +53,7 @@ jobs:
   notify:
     name: 'Notify #deploys'
     needs: promote
-    if: >-
-      ${{ always() && inputs.environment == 'production'
-      && needs.promote.outputs.noop != 'true' }}
+    if: ${{ always() && needs.promote.outputs.noop != 'true' }}
     runs-on: blacksmith-2vcpu-ubuntu-2404
     permissions: {}
     steps:
@@ -64,6 +62,6 @@ jobs:
         with:
           webhook-url: ${{ secrets.SLACK_DEPLOYS_WEBHOOK_URL }}
           summary: >-
-            ${{ format('[production] Promote docs {0}',
+            ${{ format('[{0}] Promote docs {1}', inputs.environment,
             needs.promote.outputs.sha || inputs.ref) }}
           results: ${{ needs.promote.result }}
