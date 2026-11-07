@@ -27,6 +27,9 @@ jobs:
     runs-on: blacksmith-2vcpu-ubuntu-2404
     environment: ${{ inputs.environment }}
     timeout-minutes: 10
+    outputs:
+      sha: ${{ steps.promote.outputs.sha }}
+      noop: ${{ steps.promote.outputs.noop }}
 
     steps:
       - name: Generate app token
@@ -44,12 +47,15 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Promote ${{ inputs.ref }} → ${{ inputs.environment }}
+        id: promote
         run: ./scripts/promote.sh "${{ inputs.ref }}" "${{ inputs.environment }}"
 
   notify:
     name: 'Notify #deploys'
     needs: promote
-    if: ${{ always() && inputs.environment == 'production' }}
+    if: >-
+      ${{ always() && inputs.environment == 'production'
+      && needs.promote.outputs.noop != 'true' }}
     runs-on: blacksmith-2vcpu-ubuntu-2404
     permissions: {}
     steps:
@@ -57,5 +63,7 @@ jobs:
         uses: mirurobotics/.github/actions/notify-deploys@92b69ccbe0df53724fd15970c53eae1db77fab14 # main
         with:
           webhook-url: ${{ secrets.SLACK_DEPLOYS_WEBHOOK_URL }}
-          summary: ${{ format('[production] Promote docs {0}', inputs.ref) }}
+          summary: >-
+            ${{ format('[production] Promote docs {0}',
+            needs.promote.outputs.sha || inputs.ref) }}
           results: ${{ needs.promote.result }}
