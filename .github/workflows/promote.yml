@@ -64,4 +64,9 @@ jobs:
           application: Docs
           version: ${{ needs.promote.outputs.sha || inputs.ref }}
           environment: ${{ inputs.environment }}
+          link: >-
+            ${{ inputs.environment == 'production'
+            && 'https://docs.mirurobotics.com/getting-started/welcome'
+            || format('https://miru-{0}.mintlify.site/getting-started/welcome',
+            inputs.environment) }}
           results: ${{ needs.promote.result }}
