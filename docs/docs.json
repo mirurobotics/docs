@@ -274,13 +274,8 @@
                   "admin/backups/set-up",
                   "admin/backups/read-a-backup"
                 ]
-              }
-            ]
-          },
-          {
-            "group": "Support",
-            "pages": [
-              "support"
+              },
+              "admin/support"
             ]
           }
         ]
@@ -1406,7 +1401,7 @@
       },
       {
         "label": "Support",
-        "href": "https://docs.mirurobotics.com/support"
+        "href": "https://docs.mirurobotics.com/admin/support"
       },
       {
         "label": "Dashboard",
