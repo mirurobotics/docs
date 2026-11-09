@@ -43,9 +43,10 @@ the device. Files that already match a rule when it is deployed are skipped. See
 
 Devices' uploads are strictly isolated from each other. For each upload, Miru renders
 the object key from the rule's [upload path](/data-uploads/concepts/file-rules/rule-definition#param-path)
-and issues the device credentials scoped to that **exact object key**. Each object key in a
-bucket belongs to at most one upload, so devices never receive credentials which grant any
-access to another device's data.
+and issues the device credentials scoped to that **exact object key**.
+
+Each object key in a bucket belongs to at most one upload, so devices never receive
+credentials which grant any access to another device's data.
 
 ## Object metadata
 
