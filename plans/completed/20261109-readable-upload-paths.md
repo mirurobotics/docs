@@ -16,7 +16,7 @@ Out of scope: the vendored API references under `docs/references/` (they update 
 
 ## Purpose / Big Picture
 
-A file rule's `upload.path` no longer has to contain `{upload_id}`. A path is valid if it contains `{upload_id}` or at least one of `{device_id}`, `{device_name}` or `{bundle_id}`; `{file_name}` is not required. The backend gives each object key in a bucket to at most one upload and returns 409 for a second upload to the same key, which the agent treats as final. After this change the docs state the new rule, explain what happens on a collision, warn that S3 can still overwrite objects no Miru upload holds, and show a readable path in the capture and bundle examples.
+A file rule's `upload.path` no longer has to contain `{upload_id}`. A path is valid if it contains `{upload_id}` or at least one of `{device_id}`, `{device_name}` or `{bundle_id}`; `{file_name}` is not required. The backend gives each object key in a bucket to at most one upload and returns 409 for a second upload to the same key, which the agent treats as final. After this change the docs state the new rule, explain what happens on a collision, and show a readable path in the capture and bundle examples.
 
 ## Progress
 
