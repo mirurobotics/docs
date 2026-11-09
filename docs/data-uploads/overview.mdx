@@ -45,8 +45,10 @@ Devices' uploads are strictly isolated from each other. For each upload, Miru re
 the object key from the rule's [upload path](/data-uploads/concepts/file-rules/rule-definition#param-path)
 and issues the device credentials scoped to that **exact object key**.
 
-Each object key in a bucket belongs to at most one upload, so devices never receive
-credentials which grant any access to another device's data.
+Each object key in a bucket is restricted to at most one upload, so devices never receive
+credentials that grant any access to another device's data. Uploads whose object key
+conflicts with an existing upload are given a unique fallback path to ensure the upload
+occurs without overwriting existing data.
 
 ## Object metadata
 

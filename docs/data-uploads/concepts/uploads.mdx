@@ -134,8 +134,10 @@ written.
 
   The object path the file was written to in the destination bucket, rendered from the
   rule's [path template](/data-uploads/concepts/file-rules/rule-definition#param-path).
-  If another upload already holds that path, `{upload_id}` is inserted as a folder
-  before the path's last segment.
+
+  If another upload already holds the rendered path, `{upload_id}` is inserted as a
+  folder before the path's last segment. For example, if `my-robot/run_42/camera.mcap`
+  is taken, the upload is stored at `my-robot/run_42/upl_123/camera.mcap`.
 
   Example: `logs/dvc_123/upl_123/robot.log`
 </ParamField>
