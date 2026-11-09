@@ -41,10 +41,14 @@ the device. Files that already match a rule when it is deployed are skipped. See
 
 ## Device data isolation
 
-Devices' uploads are strictly isolated from each other. Isolation rests on a single requirement on the [upload
-path](/data-uploads/concepts/file-rules/rule-definition#uploads): it must include the `{upload_id}` variable somewhere in the template.
+Devices' uploads are strictly isolated from each other. For each upload, Miru renders
+the object key from the rule's [upload path](/data-uploads/concepts/file-rules/rule-definition#param-path)
+and issues the device credentials scoped to that **exact object key**. Each object key in a
+bucket belongs to at most one upload, so devices never receive credentials which grant any
+access to another device's data.
 
-Since devices receive credentials scoped to an **exact object key** for each upload, and a given upload ID is authorized to its device, devices never receive credentials which grant any access to another device's data.
+Upload paths must include `{upload_id}` or at least one of `{device_id}`, `{device_name}`,
+or `{bundle_id}`, so that devices never compete for the same object key.
 
 ## Object metadata
 

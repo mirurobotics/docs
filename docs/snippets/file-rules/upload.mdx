@@ -45,8 +45,21 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
   Time variables are rendered from the file's modification time (`mtime`). By default, the timezone is set to UTC. Set [`timezone`](#param-timezone) to
   render them in the device's local time zone.
 
+  Templates must contain `{upload_id}` or at least one of `{device_id}`,
+  `{device_name}`, or `{bundle_id}`, so that devices never compete for the same
+  object path. For example, `{device_name}/{recording}/{file_name}` is valid, but
+  `{recording}/{file_name}` is not.
+
+  Each object path in a bucket belongs to at most one upload. Without `{upload_id}`,
+  a file whose rendered path another upload already holds is not uploaded, such as a
+  log file rewritten under the same name. Add `{upload_id}`, or a variable that
+  changes between those files such as a time variable, when a device can produce
+  the same path more than once.
+
   <Warning>
-    Templates must contain the `{upload_id}` variable.
+    On S3, a path without `{upload_id}` can overwrite an object in the bucket that no
+    Miru upload holds, such as a file you added yourself or one left by a deleted
+    device. Enable S3 Versioning on the bucket to keep overwritten objects.
   </Warning>
 </ParamField>
 
