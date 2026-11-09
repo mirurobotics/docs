@@ -43,12 +43,19 @@ jobs:
         id: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
 
+      # The Go code is the custom docs linter in tools/lint.
+      - name: Setup Go
+        id: setup-go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: tools/lint/go.mod
+
       - name: Initialize CodeQL
         id: initialize
         uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
         with:
           config-file: .github/codeql/codeql-config.yml
-          languages: javascript
+          languages: javascript, go, actions
 
       - name: Autobuild
         id: autobuild
