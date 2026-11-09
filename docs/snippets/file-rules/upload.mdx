@@ -50,8 +50,9 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
   example, `{device_name}/{recording}/{file_name}` is valid, but
   `{recording}/{file_name}` is not.
 
-  Each object path in a bucket belongs to at most one upload. Attempted uploads with
-  a namespace conflict immediately fail and are never uploaded. To prevent namespace
+  Each object path in a bucket belongs to at most one upload. An upload whose path
+  another upload already holds is stored at that path with `/{upload_id}` appended
+  instead, for example `my-robot/run_42/camera.mcap/upl_123`. To prevent namespace
   conflicts completely, we recommend using the `{upload_id}` variable.
 </ParamField>
 
