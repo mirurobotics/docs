@@ -46,7 +46,8 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
   render them in the device's local time zone.
 
   Templates must contain `{upload_id}`, `{device_id}`, `{device_name}`, or
-  `{bundle_id}`, so that devices never compete for the same object path. For example, `{device_name}/{recording}/{file_name}` is valid, but
+  `{bundle_id}`, so that devices never compete for the same object path. For
+  example, `{device_name}/{recording}/{file_name}` is valid, but
   `{recording}/{file_name}` is not.
 
   Each object path in a bucket belongs to at most one upload. Without `{upload_id}`,
