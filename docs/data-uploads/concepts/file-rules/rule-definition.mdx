@@ -132,14 +132,14 @@ Captured values have two main uses:
     upload:
       collection_slug: recordings
       bucket: my-uploads-bucket
-      path: "{device_id}/{recording}/{upload_id}/{file_name}"
+      path: "{device_name}/{recording}/{file_name}"
     ```
 
     Below is an example source file and upload path:
 
     **Source file:** `/data/recordings/run_42/camera.mcap`
 
-    **Upload path:** `dvc_123/run_42/upl_123/camera.mcap`
+    **Upload path:** `my-robot/run_42/camera.mcap`
   </Accordion>
 
   <Accordion title="Group related uploads into a bundle">
