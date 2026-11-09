@@ -47,9 +47,6 @@ and issues the device credentials scoped to that **exact object key**. Each obje
 bucket belongs to at most one upload, so devices never receive credentials which grant any
 access to another device's data.
 
-Upload paths must include `{upload_id}` or at least one of `{device_id}`, `{device_name}`,
-or `{bundle_id}`, so that devices never compete for the same object key.
-
 ## Object metadata
 
 Each uploaded object is stamped with the upload's provenance as cloud object metadata
