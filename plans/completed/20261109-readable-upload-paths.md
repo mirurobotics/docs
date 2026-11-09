@@ -8,7 +8,7 @@ This ExecPlan is a living document. The sections Progress, Surprises & Discoveri
 |-----------|--------|-------------|
 | `docs/` | read-write | Update the file rule `upload.path` reference, the data uploads overview's isolation section, the upload `object_key` field, and the capture and bundle examples. |
 | `openapi/` | read-only | Source of truth for the new path rule (mirurobotics/openapi#375). |
-| `backend/` | read-only | Source of truth for the unique object key (mirurobotics/backend#1046) and the `{path}/{upload_id}` fallback on collision (mirurobotics/backend#1179). |
+| `backend/` | read-only | Source of truth for the unique object key (mirurobotics/backend#1046) and the upload ID fallback path on collision (mirurobotics/backend#1179). |
 
 Branch `docs/readable-upload-paths` from `origin/main`; the PR targets `main`.
 
@@ -16,7 +16,7 @@ Out of scope: the vendored API references under `docs/references/` (they update 
 
 ## Purpose / Big Picture
 
-A file rule's `upload.path` no longer has to contain `{upload_id}`. A path is valid if it contains `{upload_id}` or at least one of `{device_id}`, `{device_name}` or `{bundle_id}`; `{file_name}` is not required. The backend gives each object key in a bucket to at most one upload and stores a second upload to the same key at `{path}/{upload_id}` instead. After this change the docs state the new rule, explain what happens on a collision, and show a readable path in the capture and bundle examples.
+A file rule's `upload.path` no longer has to contain `{upload_id}`. A path is valid if it contains `{upload_id}` or at least one of `{device_id}`, `{device_name}` or `{bundle_id}`; `{file_name}` is not required. The backend gives each object key in a bucket to at most one upload and stores a second upload to the same key with `{upload_id}` as a folder before the file name instead. After this change the docs state the new rule, explain what happens on a collision, and show a readable path in the capture and bundle examples.
 
 ## Progress
 
@@ -29,8 +29,8 @@ None.
 
 ## Decision Log
 
-- Decision: an upload whose path is taken is stored at `{path}/{upload_id}` instead of failing, per the user's choice in the backend thread.
-  Rationale: no file is dropped, and the agent already uploads to whatever key the backend returns.
+- Decision: an upload whose path is taken is stored with `{upload_id}` as a folder before the file name (`run_42/upl_123/camera.mcap`) instead of failing, per the user's choice in the backend thread.
+  Rationale: no file is dropped, and the agent already uploads to whatever key the backend returns. Appending `/{upload_id}` at the end was dropped because it makes a key both a file and a folder.
   Date/Author: 2026-11-09 / planner
 - Decision: no S3 overwrite warning, per review ([#314](https://github.com/mirurobotics/docs/pull/314)). This replaces an earlier warning recommending S3 Versioning.
   Rationale: the reviewer asked for it to be removed.
