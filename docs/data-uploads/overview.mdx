@@ -48,7 +48,7 @@ and issues the device credentials scoped to that **exact object key**.
 Each object key in a bucket is restricted to at most one upload, so devices never receive
 credentials that grant any access to another device's data. Uploads whose object key
 conflicts with an existing upload are given a unique fallback path to ensure the upload
-occurs without overwriting existing data.
+succeeds without overwriting existing data.
 
 ## Object metadata
 
