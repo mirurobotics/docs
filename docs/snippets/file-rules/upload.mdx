@@ -52,7 +52,9 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
 
   Each object path in a bucket belongs to at most one upload. Without `{upload_id}`,
   a file whose rendered path another upload already holds is not uploaded, such as a
-  log file rewritten under the same name. Add `{upload_id}`, or a variable that
+  log file rewritten under the same name. With
+  [`require_upload: true`](/data-uploads/concepts/file-rules/rule-definition#param-require-upload), retention never deletes that file,
+  since its upload is never confirmed. Add `{upload_id}`, or a variable that
   changes between those files such as a time variable, when a device can produce
   the same path more than once.
 
