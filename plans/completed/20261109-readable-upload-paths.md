@@ -8,7 +8,7 @@ This ExecPlan is a living document. The sections Progress, Surprises & Discoveri
 |-----------|--------|-------------|
 | `docs/` | read-write | Update the file rule `upload.path` reference, the data uploads overview's isolation section, the upload `object_key` field, and the capture and bundle examples. |
 | `openapi/` | read-only | Source of truth for the new path rule (mirurobotics/openapi#375). |
-| `backend/` | read-only | Source of truth for the unique object key and 409 on collision (mirurobotics/backend#1046). |
+| `backend/` | read-only | Source of truth for the unique object key (mirurobotics/backend#1046) and the `{path}/{upload_id}` fallback on collision (mirurobotics/backend#1179). |
 
 Branch `docs/readable-upload-paths` from `origin/main`; the PR targets `main`.
 
