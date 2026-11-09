@@ -58,8 +58,9 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
 
   <Warning>
     On S3, a path without `{upload_id}` can overwrite an object in the bucket that no
-    Miru upload holds, such as a file you added yourself or one left by a deleted
-    device. Enable S3 Versioning on the bucket to keep overwritten objects.
+    Miru upload holds, such as a file you added yourself or one written by another
+    tool that shares the bucket. Enable S3 Versioning on the bucket to keep
+    overwritten objects.
   </Warning>
 </ParamField>
 
