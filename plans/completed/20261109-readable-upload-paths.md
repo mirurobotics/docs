@@ -21,7 +21,7 @@ A file rule's `upload.path` no longer has to contain `{upload_id}`. A path is va
 ## Progress
 
 - [x] (2026-11-09) Edit `docs/snippets/file-rules/upload.mdx`, `docs/data-uploads/overview.mdx`, `docs/data-uploads/concepts/uploads.mdx`, `docs/data-uploads/concepts/file-rules/rule-definition.mdx` and `docs/snippets/file-rules/recordings-bundle.mdx`.
-- [ ] Push, open the PR, CI green.
+- [x] (2026-11-09) Push, open mirurobotics/docs#314, CI green.
 
 ## Surprises & Discoveries
 
@@ -42,4 +42,4 @@ CI on the pushed branch head must be green (lint, spelling, link checks). No loc
 
 ## Outcomes & Retrospective
 
-(Summarize at completion.)
+Shipped in mirurobotics/docs#314. CI and the AI design review passed on the first push. Follow-ups: update the S3 warning once the no-overwrite condition ships, and vendor the next API versions into `docs/references/`.
