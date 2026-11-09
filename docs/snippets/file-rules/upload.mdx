@@ -52,10 +52,11 @@ The `upload` block is optional. If omitted, the rule only manages local retentio
 
   Each object path in a bucket belongs to at most one upload. An upload whose path
   another upload already holds is stored with `{upload_id}` inserted as a folder
-  before the path's last segment instead. For example, if `my-robot/run_42/camera.mcap`
-  is taken, the upload is stored at `my-robot/run_42/upl_123/camera.mcap`.
-  To prevent namespace conflicts completely, we recommend using the `{upload_id}`
-  variable.
+  before the path's last segment instead.
+
+  For example, if `my-robot/run_42/camera.mcap` is taken, the upload is stored at
+  `my-robot/run_42/upl_123/camera.mcap`. To prevent namespace conflicts completely,
+  we recommend using the `{upload_id}` variable.
 </ParamField>
 
 <ParamField path="timezone" type="string" default="utc">
