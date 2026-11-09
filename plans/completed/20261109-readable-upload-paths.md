@@ -29,8 +29,8 @@ None.
 
 ## Decision Log
 
-- Decision: describe the S3 overwrite risk and recommend S3 Versioning, without mentioning the planned S3 no-overwrite condition.
-  Rationale: the condition has not shipped, and customer docs describe shipped behavior only. GCS's `storage.objectCreator` role already cannot overwrite.
+- Decision: no S3 overwrite warning, per review ([#314](https://github.com/mirurobotics/docs/pull/314)). This replaces an earlier warning recommending S3 Versioning.
+  Rationale: the reviewer asked for it to be removed.
   Date/Author: 2026-11-09 / planner
 - Decision: drop "carries the device's verified ID" from `object_key`, matching openapi#375.
   Rationale: a path may now carry `{device_name}` or `{bundle_id}` instead of the device ID.
@@ -42,4 +42,4 @@ CI on the pushed branch head must be green (lint, spelling, link checks). No loc
 
 ## Outcomes & Retrospective
 
-Shipped in mirurobotics/docs#314. CI and the AI design review passed on the first push. Follow-ups: update the S3 warning once the no-overwrite condition ships, and vendor the next API versions into `docs/references/`.
+Shipped in mirurobotics/docs#314. CI and the AI design review passed on the first push. Follow-up: vendor the next API versions into `docs/references/`.
