@@ -9,6 +9,39 @@ import { DeviceApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
+# v0.2.5
+
+*November 10, 2026*
+
+The `v0.2.5` release lets on-device applications read the latest [calibration](/cfg-mgmt/concepts/calibrations) the device has for each component, role and aspect. The agent serves them from the device, so they're readable while the device is offline.
+
+<DeviceApiReleaseLinks version="v0.2.5" />
+
+## New endpoints
+
+<Dropdown title="Calibrations">
+  - <GET /> `/calibrations/latest` — list the latest calibration for each component, role and aspect
+  - <GET /> `/calibrations/latest/{report_id}/content` — download a latest calibration's content
+</Dropdown>
+
+## Migration steps
+
+<Steps>
+  <Step title="Verify agent compatibility">
+    Ensure all devices are running Miru Agent `v0.12.4` or later. See [compatibility matrix](/developers/device-api/versions#agent-compatibility-matrix).
+  </Step>
+
+  <Step title="Upgrade Python SDK">
+    If you are using the [Python SDK](/developers/device-api/sdks#python), upgrade to version `v0.10.0` or later.
+  </Step>
+
+  <Step title="Integrate the changes">
+    Integrate the new endpoints into your client application.
+  </Step>
+</Steps>
+
+---
+
 # v0.2.4
 
 *October 29, 2026*
