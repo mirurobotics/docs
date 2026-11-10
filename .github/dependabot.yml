@@ -24,3 +24,15 @@ updates:
         dependency-type: production
         update-types:
           - patch
+
+  - package-ecosystem: gomod
+    directory: /tools/lint
+    schedule:
+      interval: weekly
+    groups:
+      go-minor:
+        exclude-patterns:
+          - "github.com/mirurobotics/*"
+        update-types:
+          - minor
+          - patch
