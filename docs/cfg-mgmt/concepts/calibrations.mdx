@@ -3,12 +3,13 @@ title: "Calibrations"
 ---
 
 import { ImmutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
+import { DeviceApiLink } from '/snippets/components/api-links.jsx';
 import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import CalibrationDef from '/snippets/definitions/calibration.mdx';
 
 <CalibrationDef />
 
-Calibrations flow one way, from the device to Miru. Editing calibrations is not supported.
+Calibrations are reported on the device and uploaded to Miru. Editing calibrations is not supported.
 
 ## Properties
 
@@ -102,3 +103,6 @@ Calibrations can only be created on-device using the Miru Agent. Visit the [repo
 
 To view a device's calibrations, open the device and navigate to the **Calibrations** page on the left.
 
+## Read calibrations on the device
+
+On-device applications can read the device's latest calibration for each component, role and aspect with the <DeviceApiLink endpoint="calibrations/list-latest">list latest calibrations</DeviceApiLink> endpoint in the Device API, and download each one's content with the <DeviceApiLink endpoint="calibrations/download-content">download content</DeviceApiLink> endpoint. The agent keeps them on the device, so they're readable while the device is offline. Requires Miru Agent [v0.12.4](/changelog/agent#v0-12-4) or later.

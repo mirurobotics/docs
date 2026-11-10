@@ -4,6 +4,28 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.12.4
+
+*November 10, 2026*
+
+Miru Agent `v0.12.4` upgrades the Device API to `v0.2.5`, which lets on-device applications read the latest [calibration](/cfg-mgmt/concepts/calibrations) for each component, role and aspect, even while the device is offline.
+
+[Device API v0.2.5 changelog »](/changelog/device-api#v0-2-5)
+
+## Features
+
+- Added `GET /v0.2/calibrations/latest` to the Device API, which lists the latest calibration the device has for each component, role and aspect, filtered by `component`, `role` and `aspect`
+- Added `GET /v0.2/calibrations/latest/{report_id}/content` to the Device API, which returns a latest calibration's content with the `Content-Type` of its format
+- The agent keeps the latest calibrations on the device and across upgrades, so both endpoints answer without reaching Miru; calibrations reported before upgrading to `v0.12.4` aren't listed until they're reported again
+- `miru-agent reprovision` loads the device's latest calibrations from Miru, and fails if it can't load them
+
+## Breaking changes
+
+- `miru-agent reprovision` now deletes calibrations that haven't uploaded yet, so the reprovisioned device never uploads the previous device's calibrations
+- `POST /v0.2/calibrations` now rejects a `role` or `aspect` of `null` with `422`
+
+---
+
 # v0.12.3
 
 *October 29, 2026*
