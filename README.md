@@ -32,7 +32,7 @@ These overrides force a newer major than the packages using them ask for, becaus
 
 | Override | Dependents ask for | Remove when |
 |----------|--------------------|-------------|
-| `minimatch` `>=11.0.1` | `^10` (eslint, @eslint/config-array) | Those packages accept minimatch 11 |
+| `minimatch` `>=11.0.1` | `^10` (eslint, @eslint/config-array), `^9` (@npmcli/map-workspaces) | Those packages accept minimatch 11 |
 | `glob` `>=14.0.2` | `^10` (unified-engine via eslint-plugin-mdx, @npmcli packages) | Those packages accept glob 14 |
 
 To check whether an ignore still applies, temporarily remove it and run `./scripts/audit.sh`.
