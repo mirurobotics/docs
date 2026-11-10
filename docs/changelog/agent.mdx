@@ -17,8 +17,6 @@ Miru Agent `v0.12.4` upgrades the Device API to `v0.2.5`, which lets on-device a
 - Added `GET /v0.2/calibrations/latest` to the Device API, which lists the latest calibration the device has for each component, role and aspect, filtered by `component`, `role` and `aspect`
 - Added `GET /v0.2/calibrations/latest/{report_id}/content` to the Device API, which returns a latest calibration's content with the `Content-Type` of its format
 - The agent keeps the latest calibrations on the device, so both endpoints answer without reaching Miru
-- After an upgrade, the agent pulls the device's latest calibrations from Miru once it's online, so calibrations reported before the upgrade are listed too
-- `miru-agent reprovision` loads the device's latest calibrations from Miru, and fails if it can't load them
 
 ## Fixes
 
