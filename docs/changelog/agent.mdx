@@ -19,10 +19,10 @@ Miru Agent `v0.12.4` upgrades the Device API to `v0.2.5`, which lets on-device a
 - The agent keeps the latest calibrations on the device and across upgrades, so both endpoints answer without reaching Miru; calibrations reported before upgrading to `v0.12.4` aren't listed until they're reported again
 - `miru-agent reprovision` loads the device's latest calibrations from Miru, and fails if it can't load them
 
-## Breaking changes
+## Fixes
 
-- `miru-agent reprovision` now deletes calibrations that haven't uploaded yet, so the reprovisioned device never uploads the previous device's calibrations
-- `POST /v0.2/calibrations` now rejects a `role` or `aspect` of `null` with `422`
+- `miru-agent reprovision` deletes calibrations that haven't uploaded yet, so a reprovisioned device no longer uploads the previous device's calibrations
+- `POST /v0.2/calibrations` rejects a `role` or `aspect` of `null` with `422`, since `null` is reserved for matching calibrations reported without one
 
 ---
 
