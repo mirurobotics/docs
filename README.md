@@ -20,7 +20,7 @@
 
 ## Dependency audit
 
-CI runs `./scripts/audit.sh` (`pnpm audit`). It covers only the packages in `pnpm-lock.yaml`: cspell, eslint, eslint-plugin-mdx and their dependencies, plus `@mintlify/cli` and the few packages it installs, such as `sharp`. Since mint 4.3, `@mintlify/cli` bundles the validation and preview tooling that every earlier advisory came from, or downloads it at runtime, so `pnpm audit` can't see it and `pnpm.overrides` can't patch it. None of it is published to readers. Fix advisories with `pnpm.overrides` in `package.json`. Ignore an advisory in `pnpm.auditConfig.ignoreCves` (or `ignoreGhsas` when it has no CVE) only when no patched release exists that its dependents can use, and record it below.
+CI runs `./scripts/audit.sh` (`pnpm audit`). It covers only the packages in `pnpm-lock.yaml`: cspell, eslint, eslint-plugin-mdx and their dependencies, plus `@mintlify/cli` and the few packages it installs, such as `sharp`. Since mint 4.3, `@mintlify/cli` bundles the validation and preview tooling that every earlier advisory came from, or downloads it at runtime, so `pnpm audit` can't see it and `pnpm.overrides` can't patch it. None of it is published to readers. Fix advisories that `pnpm audit` reports with `pnpm.overrides` in `package.json`. Ignore an advisory in `pnpm.auditConfig.ignoreCves` (or `ignoreGhsas` when it has no CVE) only when no patched release exists that its dependents can use, and record it below.
 
 ### Ignored advisories
 
