@@ -9,6 +9,7 @@ An opaque schema is a metadata-only schema that regards all config instances as 
 Opaque schemas are useful for config formats which do not have a supported schema language. At the time of writing, this includes:
 
 - XML configuration files
+- CSV configuration files
 - Plain text configuration files (`.conf`, `.txt`, etc.)
 
 ## Example
@@ -22,6 +23,13 @@ language: opaque
 config_type: motion-control
 instance_filepath: /srv/miru/configs/motion-control.xml
 instance_format: xml
+```
+
+```yaml CSV
+language: opaque
+config_type: motion-control
+instance_filepath: /srv/miru/configs/motion-control.csv
+instance_format: csv
 ```
 
 ```yaml Plain Text
@@ -47,6 +55,7 @@ Opaque schemas accept the widest set of config instance formats of any Miru sche
 - **JSON**
 - **YAML**
 - **XML**
+- **CSV**
 - **Text**
 
 <AgentYamlSupport />

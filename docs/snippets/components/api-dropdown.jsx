@@ -5,10 +5,6 @@ export const Dropdown = ({
 }) => {
     const [isOpen, setIsOpen] = React.useState(defaultOpen);
 
-    function cn(...inputs) {
-        return inputs.filter(Boolean).join(' ');
-    }
-
     return (
         <div>
             <button
@@ -22,11 +18,10 @@ export const Dropdown = ({
                 </span>
                 {/* Clips the rotating chevron so it never overflows the page's scroll container. */}
                 <span className="flex flex-shrink-0 w-4 h-4 overflow-hidden">
+                    {/* Inline, because Mintlify's CSS leaves Tailwind's skew variables unset, which voids rotate-90. */}
                     <svg
-                        className={cn(
-                            "transition-transform duration-200 opacity-50 flex-shrink-0",
-                            isOpen && 'rotate-90'
-                        )}
+                        className="transition-transform duration-200 opacity-50 flex-shrink-0"
+                        style={{ transform: isOpen ? 'rotate(90deg)' : undefined }}
                         width="16"
                         height="16"
                         viewBox="0 0 16 16"

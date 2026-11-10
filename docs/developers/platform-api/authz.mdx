@@ -26,9 +26,24 @@ The `write` scope does **not** include `read` access—if you need both, select 
 
 Some resources have additional granular scopes beyond the standard tiers (e.g. `deployments:stage`). The `manage` scope always includes everything for the resource.
 
+API keys and users are read-only in the Platform API, so they have a `read` scope and no `manage` or `write` scope.
+
 ## Scopes by resource
 
 <div className="scope-tables">
+
+### API keys
+
+| Scope | Permissions |
+|-------|-------------|
+| `api_keys:read` | get, list |
+
+### Calibrations
+
+| Scope | Permissions |
+|-------|-------------|
+| `calibrations:manage` | all operations |
+| `calibrations:read` | get, list |
 
 ### Config instances
 
@@ -111,7 +126,8 @@ Some resources have additional granular scopes beyond the standard tiers (e.g. `
 |-------|-------------|
 | `releases:manage` | all operations |
 | `releases:read` | get, list |
-| `releases:write` | create, update |
+| `releases:write` | create, update, archive, unarchive |
+| `releases:delete` | delete |
 
 ### Upload collections
 
@@ -120,6 +136,12 @@ Some resources have additional granular scopes beyond the standard tiers (e.g. `
 | `upload_collections:manage` | all operations |
 | `upload_collections:read` | get, list |
 | `upload_collections:write` | create, update |
+
+### Users
+
+| Scope | Permissions |
+|-------|-------------|
+| `users:read` | get, list |
 
 </div>
 

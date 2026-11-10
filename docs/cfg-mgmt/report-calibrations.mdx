@@ -60,7 +60,7 @@ The following parameters are required.
 </ParamField>
 
 <ParamField body="content.format" type="enum" required>
-  The file format of `content.data`: `json`, `yaml`, `jsonc`, `xml` or `text`.
+  The file format of `content.data`: `json`, `yaml`, `jsonc`, `xml`, `csv` or `text`. `csv` requires Miru Agent [v0.12.3](/changelog/agent#v0-12-3) or later.
 </ParamField>
 
 <ParamField body="content.data" type="string" required>
@@ -91,6 +91,12 @@ In addition to the required parameters, you can also set the following optional 
   The serial number of the calibrated unit. At most 255 characters.
 
   Example: `SN-1234`
+</ParamField>
+
+<ParamField body="reported_by" type="string">
+  The person who reported the calibration. Free text, at most 255 characters. Requires Miru Agent [v0.12.3](/changelog/agent#v0-12-3) or later.
+
+  Example: `Jane Doe`
 </ParamField>
 
 ## Response

@@ -265,7 +265,17 @@
                   "admin/users/manage"
                 ]
               },
-              "admin/apikeys"
+              "admin/apikeys",
+              {
+                "group": "Backups",
+                "pages": [
+                  "admin/backups/overview",
+                  "admin/backups/archive-format",
+                  "admin/backups/set-up",
+                  "admin/backups/read-a-backup"
+                ]
+              },
+              "admin/support"
             ]
           }
         ]
@@ -323,6 +333,200 @@
       {
         "product": "Device API Reference",
         "dropdowns": [
+          {
+            "dropdown": "v0.2.5",
+            "groups": [
+              {
+                "group": "Agent",
+                "openapi": {
+                  "source": "references/device-api/v0.2.5/api.yaml",
+                  "directory": "references/device-api/v0.2.5/endpoints"
+                },
+                "pages": [
+                  "GET /health",
+                  "GET /version"
+                ]
+              },
+              {
+                "group": "Calibrations",
+                "openapi": {
+                  "source": "references/device-api/v0.2.5/api.yaml",
+                  "directory": "references/device-api/v0.2.5/endpoints"
+                },
+                "pages": [
+                  "POST /calibrations",
+                  "GET /calibrations/latest",
+                  "GET /calibrations/latest/{report_id}/content"
+                ]
+              },
+              {
+                "group": "Deployments",
+                "openapi": {
+                  "source": "references/device-api/v0.2.5/api.yaml",
+                  "directory": "references/device-api/v0.2.5/endpoints"
+                },
+                "pages": [
+                  "GET /deployments/{deployment_id}",
+                  "GET /deployments/current"
+                ]
+              },
+              {
+                "group": "Device",
+                "openapi": {
+                  "source": "references/device-api/v0.2.5/api.yaml",
+                  "directory": "references/device-api/v0.2.5/endpoints"
+                },
+                "pages": [
+                  "GET /device",
+                  "POST /device/sync"
+                ]
+              },
+              {
+                "group": "Events",
+                "openapi": {
+                  "source": "references/device-api/v0.2.5/api.yaml",
+                  "directory": "references/device-api/v0.2.5/endpoints"
+                },
+                "pages": [
+                  {
+                    "group": "Event Types",
+                    "pages": [
+                      "references/device-api/v0.2.5/events/deployment-deployed",
+                      "references/device-api/v0.2.5/events/deployment-removed"
+                    ]
+                  },
+                  "GET /events"
+                ]
+              },
+              {
+                "group": "File Rules",
+                "openapi": {
+                  "source": "references/device-api/v0.2.5/api.yaml",
+                  "directory": "references/device-api/v0.2.5/endpoints"
+                },
+                "pages": [
+                  "GET /file_rules/{file_rule_id}"
+                ]
+              },
+              {
+                "group": "Git Commits",
+                "openapi": {
+                  "source": "references/device-api/v0.2.5/api.yaml",
+                  "directory": "references/device-api/v0.2.5/endpoints"
+                },
+                "pages": [
+                  "GET /git_commits/{git_commit_id}"
+                ]
+              },
+              {
+                "group": "Releases",
+                "openapi": {
+                  "source": "references/device-api/v0.2.5/api.yaml",
+                  "directory": "references/device-api/v0.2.5/endpoints"
+                },
+                "pages": [
+                  "GET /releases/{release_id}",
+                  "GET /releases/current"
+                ]
+              }
+            ]
+          },
+          {
+            "dropdown": "v0.2.4",
+            "groups": [
+              {
+                "group": "Agent",
+                "openapi": {
+                  "source": "references/device-api/v0.2.4/api.yaml",
+                  "directory": "references/device-api/v0.2.4/endpoints"
+                },
+                "pages": [
+                  "GET /health",
+                  "GET /version"
+                ]
+              },
+              {
+                "group": "Calibrations",
+                "openapi": {
+                  "source": "references/device-api/v0.2.4/api.yaml",
+                  "directory": "references/device-api/v0.2.4/endpoints"
+                },
+                "pages": [
+                  "POST /calibrations"
+                ]
+              },
+              {
+                "group": "Deployments",
+                "openapi": {
+                  "source": "references/device-api/v0.2.4/api.yaml",
+                  "directory": "references/device-api/v0.2.4/endpoints"
+                },
+                "pages": [
+                  "GET /deployments/{deployment_id}",
+                  "GET /deployments/current"
+                ]
+              },
+              {
+                "group": "Device",
+                "openapi": {
+                  "source": "references/device-api/v0.2.4/api.yaml",
+                  "directory": "references/device-api/v0.2.4/endpoints"
+                },
+                "pages": [
+                  "GET /device",
+                  "POST /device/sync"
+                ]
+              },
+              {
+                "group": "Events",
+                "openapi": {
+                  "source": "references/device-api/v0.2.4/api.yaml",
+                  "directory": "references/device-api/v0.2.4/endpoints"
+                },
+                "pages": [
+                  {
+                    "group": "Event Types",
+                    "pages": [
+                      "references/device-api/v0.2.4/events/deployment-deployed",
+                      "references/device-api/v0.2.4/events/deployment-removed"
+                    ]
+                  },
+                  "GET /events"
+                ]
+              },
+              {
+                "group": "File Rules",
+                "openapi": {
+                  "source": "references/device-api/v0.2.4/api.yaml",
+                  "directory": "references/device-api/v0.2.4/endpoints"
+                },
+                "pages": [
+                  "GET /file_rules/{file_rule_id}"
+                ]
+              },
+              {
+                "group": "Git Commits",
+                "openapi": {
+                  "source": "references/device-api/v0.2.4/api.yaml",
+                  "directory": "references/device-api/v0.2.4/endpoints"
+                },
+                "pages": [
+                  "GET /git_commits/{git_commit_id}"
+                ]
+              },
+              {
+                "group": "Releases",
+                "openapi": {
+                  "source": "references/device-api/v0.2.4/api.yaml",
+                  "directory": "references/device-api/v0.2.4/endpoints"
+                },
+                "pages": [
+                  "GET /releases/{release_id}",
+                  "GET /releases/current"
+                ]
+              }
+            ]
+          },
           {
             "dropdown": "v0.2.3",
             "groups": [
@@ -601,32 +805,662 @@
         "product": "Platform API Reference",
         "dropdowns": [
           {
+            "dropdown": "2026-11-04.everglades",
+            "openapi": {
+              "source": "references/platform-api/2026-11-04.yaml",
+              "directory": "references/platform-api/2026-11-04/endpoints"
+            },
+            "groups": [
+              {
+                "group": "Fleet",
+                "pages": [
+                  {
+                    "group": "Devices",
+                    "expanded": true,
+                    "pages": [
+                      "GET /devices/{device_id}",
+                      "PATCH /devices/{device_id}",
+                      "POST /devices",
+                      "GET /devices",
+                      "POST /devices/{device_id}/ping"
+                    ]
+                  },
+                  {
+                    "group": "Groups",
+                    "expanded": true,
+                    "pages": [
+                      "GET /groups/{group_id}",
+                      "PATCH /groups/{group_id}",
+                      "POST /groups",
+                      "GET /groups",
+                      "POST /groups/{group_id}/move"
+                    ]
+                  },
+                  {
+                    "group": "Releases",
+                    "expanded": true,
+                    "pages": [
+                      "GET /releases/{release_id}",
+                      "GET /releases",
+                      "POST /releases",
+                      "POST /releases/{release_id}/archive",
+                      "POST /releases/{release_id}/unarchive",
+                      "DELETE /releases/{release_id}"
+                    ]
+                  },
+                  {
+                    "group": "Git Commits",
+                    "expanded": true,
+                    "pages": [
+                      "GET /git_commits/{git_commit_id}",
+                      "GET /git_commits",
+                      "POST /git_commits"
+                    ]
+                  },
+                  {
+                    "group": "Deployments",
+                    "expanded": true,
+                    "pages": [
+                      "GET /deployments/{deployment_id}",
+                      "GET /deployments",
+                      "POST /deployments",
+                      "POST /deployments/{deployment_id}/deploy",
+                      "POST /deployments/{deployment_id}/archive",
+                      "GET /deployments/{deployment_id}/drifts"
+                    ]
+                  },
+                  {
+                    "group": "Provisioning Tokens",
+                    "expanded": true,
+                    "pages": [
+                      "POST /provisioning_tokens"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Config Management",
+                "pages": [
+                  {
+                    "group": "Config Types",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_types/{config_type_id}",
+                      "PATCH /config_types/{config_type_id}",
+                      "GET /config_types",
+                      "POST /config_types"
+                    ]
+                  },
+                  {
+                    "group": "Config Schemas",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_schemas/{config_schema_id}",
+                      "GET /config_schemas",
+                      "POST /config_schemas"
+                    ]
+                  },
+                  {
+                    "group": "Config Instances",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_instances/{config_instance_id}",
+                      "GET /config_instances",
+                      "POST /config_instances",
+                      "GET /config_instances/{config_instance_id}/content"
+                    ]
+                  },
+                  {
+                    "group": "Calibrations",
+                    "expanded": true,
+                    "pages": [
+                      "GET /calibrations/{calibration_id}",
+                      "GET /calibrations"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Administration",
+                "pages": [
+                  {
+                    "group": "Users",
+                    "expanded": true,
+                    "pages": [
+                      "GET /users/{user_id}",
+                      "GET /users"
+                    ]
+                  },
+                  {
+                    "group": "API Keys",
+                    "expanded": true,
+                    "pages": [
+                      "GET /api_keys/{api_key_id}",
+                      "GET /api_keys"
+                    ]
+                  },
+                  {
+                    "group": "Principals",
+                    "expanded": true,
+                    "pages": [
+                      "GET /principal"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "dropdown": "2026-10-29.everglades",
+            "openapi": {
+              "source": "references/platform-api/2026-10-29.yaml",
+              "directory": "references/platform-api/2026-10-29/endpoints"
+            },
+            "groups": [
+              {
+                "group": "Fleet",
+                "pages": [
+                  {
+                    "group": "Devices",
+                    "expanded": true,
+                    "pages": [
+                      "GET /devices/{device_id}",
+                      "PATCH /devices/{device_id}",
+                      "POST /devices",
+                      "GET /devices",
+                      "POST /devices/{device_id}/ping"
+                    ]
+                  },
+                  {
+                    "group": "Groups",
+                    "expanded": true,
+                    "pages": [
+                      "GET /groups/{group_id}",
+                      "PATCH /groups/{group_id}",
+                      "POST /groups",
+                      "GET /groups",
+                      "POST /groups/{group_id}/move"
+                    ]
+                  },
+                  {
+                    "group": "Releases",
+                    "expanded": true,
+                    "pages": [
+                      "GET /releases/{release_id}",
+                      "GET /releases",
+                      "POST /releases"
+                    ]
+                  },
+                  {
+                    "group": "Git Commits",
+                    "expanded": true,
+                    "pages": [
+                      "GET /git_commits/{git_commit_id}",
+                      "GET /git_commits",
+                      "POST /git_commits"
+                    ]
+                  },
+                  {
+                    "group": "Deployments",
+                    "expanded": true,
+                    "pages": [
+                      "GET /deployments/{deployment_id}",
+                      "GET /deployments",
+                      "POST /deployments",
+                      "POST /deployments/{deployment_id}/deploy",
+                      "POST /deployments/{deployment_id}/archive",
+                      "GET /deployments/{deployment_id}/drifts"
+                    ]
+                  },
+                  {
+                    "group": "Provisioning Tokens",
+                    "expanded": true,
+                    "pages": [
+                      "POST /provisioning_tokens"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Config Management",
+                "pages": [
+                  {
+                    "group": "Config Types",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_types/{config_type_id}",
+                      "PATCH /config_types/{config_type_id}",
+                      "GET /config_types",
+                      "POST /config_types"
+                    ]
+                  },
+                  {
+                    "group": "Config Schemas",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_schemas/{config_schema_id}",
+                      "GET /config_schemas",
+                      "POST /config_schemas"
+                    ]
+                  },
+                  {
+                    "group": "Config Instances",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_instances/{config_instance_id}",
+                      "GET /config_instances",
+                      "POST /config_instances",
+                      "GET /config_instances/{config_instance_id}/content"
+                    ]
+                  },
+                  {
+                    "group": "Calibrations",
+                    "expanded": true,
+                    "pages": [
+                      "GET /calibrations/{calibration_id}",
+                      "GET /calibrations"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Administration",
+                "pages": [
+                  {
+                    "group": "Principals",
+                    "expanded": true,
+                    "pages": [
+                      "GET /principal"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "dropdown": "2026-08-17.everglades",
             "openapi": {
               "source": "references/platform-api/2026-08-17.yaml",
               "directory": "references/platform-api/2026-08-17/endpoints"
-            }
+            },
+            "groups": [
+              {
+                "group": "Fleet",
+                "pages": [
+                  {
+                    "group": "Devices",
+                    "expanded": true,
+                    "pages": [
+                      "GET /devices/{device_id}",
+                      "PATCH /devices/{device_id}",
+                      "POST /devices",
+                      "GET /devices",
+                      "POST /devices/{device_id}/ping"
+                    ]
+                  },
+                  {
+                    "group": "Groups",
+                    "expanded": true,
+                    "pages": [
+                      "GET /groups/{group_id}",
+                      "PATCH /groups/{group_id}",
+                      "POST /groups",
+                      "GET /groups",
+                      "POST /groups/{group_id}/move"
+                    ]
+                  },
+                  {
+                    "group": "Releases",
+                    "expanded": true,
+                    "pages": [
+                      "GET /releases/{release_id}",
+                      "GET /releases",
+                      "POST /releases"
+                    ]
+                  },
+                  {
+                    "group": "Git Commits",
+                    "expanded": true,
+                    "pages": [
+                      "GET /git_commits/{git_commit_id}",
+                      "GET /git_commits",
+                      "POST /git_commits"
+                    ]
+                  },
+                  {
+                    "group": "Deployments",
+                    "expanded": true,
+                    "pages": [
+                      "GET /deployments/{deployment_id}",
+                      "GET /deployments",
+                      "POST /deployments",
+                      "POST /deployments/{deployment_id}/deploy",
+                      "POST /deployments/{deployment_id}/archive",
+                      "GET /deployments/{deployment_id}/drifts"
+                    ]
+                  },
+                  {
+                    "group": "Provisioning Tokens",
+                    "expanded": true,
+                    "pages": [
+                      "POST /provisioning_tokens"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Config Management",
+                "pages": [
+                  {
+                    "group": "Config Types",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_types/{config_type_id}",
+                      "PATCH /config_types/{config_type_id}",
+                      "GET /config_types",
+                      "POST /config_types"
+                    ]
+                  },
+                  {
+                    "group": "Config Schemas",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_schemas/{config_schema_id}",
+                      "GET /config_schemas",
+                      "POST /config_schemas"
+                    ]
+                  },
+                  {
+                    "group": "Config Instances",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_instances/{config_instance_id}",
+                      "GET /config_instances",
+                      "POST /config_instances",
+                      "GET /config_instances/{config_instance_id}/content"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Administration",
+                "pages": [
+                  {
+                    "group": "Principals",
+                    "expanded": true,
+                    "pages": [
+                      "GET /principal"
+                    ]
+                  }
+                ]
+              }
+            ]
           },
           {
             "dropdown": "2026-05-06.rainier",
             "openapi": {
               "source": "references/platform-api/2026-05-06.yaml",
               "directory": "references/platform-api/2026-05-06/endpoints"
-            }
+            },
+            "groups": [
+              {
+                "group": "Fleet",
+                "pages": [
+                  {
+                    "group": "Devices",
+                    "expanded": true,
+                    "pages": [
+                      "GET /devices/{device_id}",
+                      "PATCH /devices/{device_id}",
+                      "POST /devices",
+                      "GET /devices",
+                      "POST /devices/{device_id}/ping"
+                    ]
+                  },
+                  {
+                    "group": "Releases",
+                    "expanded": true,
+                    "pages": [
+                      "GET /releases/{release_id}",
+                      "GET /releases",
+                      "POST /releases"
+                    ]
+                  },
+                  {
+                    "group": "Git Commits",
+                    "expanded": true,
+                    "pages": [
+                      "GET /git_commits/{git_commit_id}",
+                      "GET /git_commits",
+                      "POST /git_commits"
+                    ]
+                  },
+                  {
+                    "group": "Deployments",
+                    "expanded": true,
+                    "pages": [
+                      "GET /deployments/{deployment_id}",
+                      "GET /deployments",
+                      "POST /deployments",
+                      "POST /deployments/{deployment_id}/deploy",
+                      "POST /deployments/{deployment_id}/archive",
+                      "GET /deployments/{deployment_id}/drifts"
+                    ]
+                  },
+                  {
+                    "group": "Provisioning Tokens",
+                    "expanded": true,
+                    "pages": [
+                      "POST /provisioning_tokens"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Config Management",
+                "pages": [
+                  {
+                    "group": "Config Types",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_types/{config_type_id}",
+                      "PATCH /config_types/{config_type_id}",
+                      "GET /config_types",
+                      "POST /config_types"
+                    ]
+                  },
+                  {
+                    "group": "Config Schemas",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_schemas/{config_schema_id}",
+                      "GET /config_schemas",
+                      "POST /config_schemas"
+                    ]
+                  },
+                  {
+                    "group": "Config Instances",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_instances/{config_instance_id}",
+                      "GET /config_instances",
+                      "POST /config_instances",
+                      "GET /config_instances/{config_instance_id}/content"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Administration",
+                "pages": [
+                  {
+                    "group": "Principals",
+                    "expanded": true,
+                    "pages": [
+                      "GET /principal"
+                    ]
+                  }
+                ]
+              }
+            ]
           },
           {
             "dropdown": "2026-03-09.tetons",
             "openapi": {
               "source": "references/platform-api/2026-03-09.yaml",
               "directory": "references/platform-api/2026-03-09/endpoints"
-            }
+            },
+            "groups": [
+              {
+                "group": "Fleet",
+                "pages": [
+                  {
+                    "group": "Devices",
+                    "expanded": true,
+                    "pages": [
+                      "GET /devices/{device_id}",
+                      "PATCH /devices/{device_id}",
+                      "POST /devices",
+                      "GET /devices",
+                      "POST /devices/{device_id}/activation_token",
+                      "POST /devices/{device_id}/ping"
+                    ]
+                  },
+                  {
+                    "group": "Releases",
+                    "expanded": true,
+                    "pages": [
+                      "GET /releases/{release_id}",
+                      "GET /releases",
+                      "POST /releases"
+                    ]
+                  },
+                  {
+                    "group": "Git Commits",
+                    "expanded": true,
+                    "pages": [
+                      "GET /git_commits/{git_commit_id}",
+                      "GET /git_commits",
+                      "POST /git_commits"
+                    ]
+                  },
+                  {
+                    "group": "Deployments",
+                    "expanded": true,
+                    "pages": [
+                      "GET /deployments/{deployment_id}",
+                      "GET /deployments",
+                      "POST /deployments",
+                      "POST /deployments/{deployment_id}/deploy",
+                      "POST /deployments/{deployment_id}/archive",
+                      "GET /deployments/{deployment_id}/drifts"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Config Management",
+                "pages": [
+                  {
+                    "group": "Config Types",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_types/{config_type_id}",
+                      "PATCH /config_types/{config_type_id}",
+                      "GET /config_types",
+                      "POST /config_types"
+                    ]
+                  },
+                  {
+                    "group": "Config Schemas",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_schemas/{config_schema_id}",
+                      "GET /config_schemas",
+                      "POST /config_schemas"
+                    ]
+                  },
+                  {
+                    "group": "Config Instances",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_instances/{config_instance_id}",
+                      "GET /config_instances",
+                      "POST /config_instances",
+                      "GET /config_instances/{config_instance_id}/content"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Administration",
+                "pages": [
+                  {
+                    "group": "Principals",
+                    "expanded": true,
+                    "pages": [
+                      "GET /principal"
+                    ]
+                  }
+                ]
+              }
+            ]
           },
           {
             "dropdown": "2025-10-21.zion",
             "openapi": {
               "source": "references/platform-api/2025-10-21.yaml",
               "directory": "references/platform-api/2025-10-21/endpoints"
-            }
+            },
+            "groups": [
+              {
+                "group": "Fleet",
+                "pages": [
+                  {
+                    "group": "Devices",
+                    "expanded": true,
+                    "pages": [
+                      "GET /devices/{device_id}",
+                      "PATCH /devices/{device_id}",
+                      "DELETE /devices/{device_id}",
+                      "POST /devices",
+                      "GET /devices",
+                      "POST /devices/{device_id}/activation_token"
+                    ]
+                  },
+                  {
+                    "group": "Releases",
+                    "expanded": true,
+                    "pages": [
+                      "GET /releases/{release_id}",
+                      "GET /releases"
+                    ]
+                  },
+                  {
+                    "group": "Deployments",
+                    "expanded": true,
+                    "pages": [
+                      "GET /deployments/{deployment_id}",
+                      "GET /deployments",
+                      "POST /deployments"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Config Management",
+                "pages": [
+                  {
+                    "group": "Config Instances",
+                    "expanded": true,
+                    "pages": [
+                      "GET /config_instances/{config_instance_id}",
+                      "GET /config_instances"
+                    ]
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -662,6 +1496,10 @@
       {
         "label": "Changelog",
         "href": "https://docs.mirurobotics.com/changelog/product"
+      },
+      {
+        "label": "Support",
+        "href": "https://docs.mirurobotics.com/admin/support"
       },
       {
         "label": "Dashboard",
@@ -806,11 +1644,15 @@
     },
     {
       "source": "/references/device-api/latest/:slug*",
-      "destination": "/references/device-api/v0.2.3/:slug*"
+      "destination": "/references/device-api/v0.2.5/:slug*"
     },
     {
       "source": "/references/platform-api/latest/:slug*",
-      "destination": "/references/platform-api/2026-08-17/:slug*"
+      "destination": "/references/platform-api/2026-11-04/:slug*"
+    },
+    {
+      "source": "/references/platform-api/2026-10-28/:slug*",
+      "destination": "/references/platform-api/2026-10-29/:slug*"
     },
     {
       "source": "/docs/references/cli/install",

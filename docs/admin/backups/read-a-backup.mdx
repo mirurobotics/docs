@@ -1,0 +1,170 @@
+---
+title: "Read a backup"
+---
+
+Backups are plain zip archives, so you can read them with standard tools and without
+Miru. This guide downloads the latest archive, checks it, and queries it.
+
+## Download the latest archive
+
+Archive names end in the time they were taken, so the newest archive is the last one by
+name.
+
+<CodeGroup>
+```bash Linux
+BUCKET_NAME="<bucket-name>"
+PREFIX="miru-backups" # or your custom prefix
+```
+
+```bash macOS
+BUCKET_NAME="<bucket-name>"
+PREFIX="miru-backups" # or your custom prefix
+```
+
+```powershell Windows
+$BucketName = "<bucket-name>"
+$Prefix = "miru-backups" # or your custom prefix
+```
+</CodeGroup>
+
+<Tabs>
+  <Tab title="AWS S3">
+    <CodeGroup>
+    ```bash Linux
+    KEY="$(aws s3api list-objects-v2 \
+      --bucket "${BUCKET_NAME}" \
+      --prefix "${PREFIX}/miru-backup-" \
+      --query 'Contents[].Key' \
+      --output text | tr '\t' '\n' | sort | tail -n 1)"
+    aws s3 cp "s3://${BUCKET_NAME}/${KEY}" backup.zip
+    ```
+
+    ```bash macOS
+    KEY="$(aws s3api list-objects-v2 \
+      --bucket "${BUCKET_NAME}" \
+      --prefix "${PREFIX}/miru-backup-" \
+      --query 'Contents[].Key' \
+      --output text | tr '\t' '\n' | sort | tail -n 1)"
+    aws s3 cp "s3://${BUCKET_NAME}/${KEY}" backup.zip
+    ```
+
+    ```powershell Windows
+    $Key = aws s3api list-objects-v2 `
+      --bucket $BucketName `
+      --prefix "$Prefix/miru-backup-" `
+      --query 'Contents[].Key' `
+      --output text |
+      ForEach-Object { $_ -split "`t" } | Sort-Object | Select-Object -Last 1
+    aws s3 cp "s3://$BucketName/$Key" backup.zip
+    ```
+    </CodeGroup>
+  </Tab>
+
+  <Tab title="GCS">
+    <CodeGroup>
+    ```bash Linux
+    URL="$(gcloud storage ls "gs://${BUCKET_NAME}/${PREFIX}/miru-backup-*.zip" | sort | tail -n 1)"
+    gcloud storage cp "${URL}" backup.zip
+    ```
+
+    ```bash macOS
+    URL="$(gcloud storage ls "gs://${BUCKET_NAME}/${PREFIX}/miru-backup-*.zip" | sort | tail -n 1)"
+    gcloud storage cp "${URL}" backup.zip
+    ```
+
+    ```powershell Windows
+    $Url = gcloud storage ls "gs://$BucketName/$Prefix/miru-backup-*.zip" |
+      Sort-Object | Select-Object -Last 1
+    gcloud storage cp $Url backup.zip
+    ```
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+Above are example commands for downloading the latest archive from AWS S3 and GCS. Make sure to sign in to your cloud account before running the commands.
+
+## Unzip the archive
+
+<CodeGroup>
+```bash Linux
+unzip -q backup.zip -d backup
+cd backup
+```
+
+```bash macOS
+unzip -q backup.zip -d backup
+cd backup
+```
+
+```powershell Windows
+Expand-Archive backup.zip -DestinationPath backup
+Set-Location backup
+```
+</CodeGroup>
+
+## Query resources
+
+Each line of a resource file is one resource, so `jq` on Linux and macOS, or PowerShell on
+Windows, reads the files directly.
+
+List every device's ID and name:
+
+<CodeGroup>
+```bash Linux
+jq -r '[.id, .name] | @tsv' resources/devices.jsonl
+```
+
+```bash macOS
+jq -r '[.id, .name] | @tsv' resources/devices.jsonl
+```
+
+```powershell Windows
+Get-Content resources/devices.jsonl -Encoding UTF8 |
+  ForEach-Object { $_ | ConvertFrom-Json } |
+  ForEach-Object { "$($_.id)`t$($_.name)" }
+```
+</CodeGroup>
+
+Show one deployment, with the config instances it contains:
+
+<CodeGroup>
+```bash Linux
+jq 'select(.id == "dpl_123")' resources/deployments.jsonl
+```
+
+```bash macOS
+jq 'select(.id == "dpl_123")' resources/deployments.jsonl
+```
+
+```powershell Windows
+Get-Content resources/deployments.jsonl -Encoding UTF8 |
+  ForEach-Object { $_ | ConvertFrom-Json } |
+  Where-Object id -eq "dpl_123" |
+  ConvertTo-Json -Depth 10
+```
+</CodeGroup>
+
+## Read with the Python SDK
+
+Every resource in an archive is a Platform API resource, so the
+[Python Platform SDK](/developers/platform-api/sdks#python) models can load them. Use an
+SDK version built for the archive's `platform_api_version`.
+
+Python reads the archive in place, without unzipping it:
+
+```python
+import json
+import zipfile
+
+from miru_platform_sdk.types import Device
+
+with zipfile.ZipFile("backup.zip") as archive:
+    manifest = json.loads(archive.read("manifest.json"))
+    print(manifest["platform_api_version"])
+
+    with archive.open("resources/devices.jsonl") as lines:
+        devices = [Device.model_validate_json(line) for line in lines]
+
+for device in devices:
+    print(device.id, device.name)
+```

@@ -4,6 +4,66 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.12.4
+
+*November 10, 2026*
+
+Miru Agent `v0.12.4` upgrades the Device API to `v0.2.5`, which lets on-device applications read the latest [calibration](/cfg-mgmt/concepts/calibrations) for each component, role and aspect, even while the device is offline.
+
+[Device API v0.2.5 changelog »](/changelog/device-api#v0-2-5)
+
+## Features
+
+- Added `GET /v0.2/calibrations/latest` to the Device API, which lists the latest calibration the device has for each component, role and aspect, filtered by `component`, `role` and `aspect`
+- Added `GET /v0.2/calibrations/latest/{report_id}/content` to the Device API, which returns a latest calibration's content with the `Content-Type` of its format
+- The agent keeps the latest calibrations on the device, so both endpoints answer without reaching Miru
+
+## Fixes
+
+- `miru-agent reprovision` deletes calibrations that haven't uploaded yet, so a reprovisioned device no longer uploads the previous device's calibrations
+- `POST /v0.2/calibrations` rejects a `role` or `aspect` of `null` with `422`, since `null` is reserved for matching calibrations reported without one
+
+---
+
+# v0.12.3
+
+*October 29, 2026*
+
+Miru Agent `v0.12.3` upgrades the Device API to `v0.2.4`, which lets on-device applications say who reported a [calibration](/cfg-mgmt/concepts/calibrations) and report calibrations as CSV.
+
+[Device API v0.2.4 changelog »](/changelog/device-api#v0-2-4)
+
+## Features
+
+- `POST /v0.2/calibrations` now accepts an optional `reported_by`, the person who reported the calibration, and the agent sends it to Miru with the calibration; calibrations queued on the device before the upgrade upload without one
+- `POST /v0.2/calibrations` now accepts `csv` as the `content.format`
+
+---
+
+# v0.12.2
+
+*October 27, 2026*
+
+Miru Agent `v0.12.2` makes `provision` fail on a machine that is already provisioned, so a script can no longer mistake a re-run for a successful provision.
+
+## Breaking changes
+
+- `miru-agent provision` now exits with status `1` when the machine is already provisioned, instead of printing "Device is already provisioned" and exiting `0` without contacting Miru
+
+---
+
+# v0.12.1
+
+*October 27, 2026*
+
+Miru Agent `v0.12.1` makes refused uploads easier to diagnose by logging the storage provider's explanation of the error.
+
+## Improvements
+
+- When a bucket refuses an upload, the agent's log now includes the provider's error message and details, such as which account lacked which permission on Google Cloud Storage, instead of only the error code
+
+---
+
 # v0.12.0
 
 *October 26, 2026*

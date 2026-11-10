@@ -1,0 +1,38 @@
+name: Preview
+
+# Mintlify only creates previews on its own for PRs into its deployment branch,
+# so create one when a PR opens. Mintlify rebuilds it on each later push.
+on:
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  preview:
+    # Fork and Dependabot PRs don't get the Mintlify secret.
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    timeout-minutes: 5
+
+    steps:
+      - name: Trigger Mintlify preview deployment
+        env:
+          BRANCH: ${{ github.head_ref }}
+          GH_TOKEN: ${{ github.token }}
+          MINTLIFY_API_KEY: ${{ secrets.MINTLIFY_API_KEY }}
+          MINTLIFY_PROJECT_ID: ${{ vars.MINTLIFY_PROJECT_ID }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          response=$(curl --silent --show-error --fail-with-body \
+            --request POST \
+            --url "https://api.mintlify.com/v1/project/preview/${MINTLIFY_PROJECT_ID}" \
+            --header "Authorization: Bearer ${MINTLIFY_API_KEY}" \
+            --header 'Content-Type: application/json' \
+            --data "$(jq --null-input --arg branch "${BRANCH}" '{branch: $branch}')") \
+            || { echo "::error::Mintlify preview request failed: ${response}"; exit 1; }
+          preview_url=$(jq --raw-output --exit-status '.previewUrl // empty' <<< "${response}")
+          gh pr comment "${PR_URL}" --body "Mintlify preview: ${preview_url}"

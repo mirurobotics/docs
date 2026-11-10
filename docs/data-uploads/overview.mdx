@@ -2,6 +2,8 @@
 title: "Overview"
 ---
 
+import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
+
 Data uploads move data *off* your devices and into *your* cloud storage.
 
 You define a small set of [**file rules**](/data-uploads/concepts/file-rules/overview) — what to
@@ -13,7 +15,7 @@ to finish being written to, and uploads it directly to your bucket.
 
 <img
   src="https://assets.mirurobotics.com/docs/v04/images/data-uploads/data-upload-flow.svg"
-  alt="Upload flow: a device requests an upload from the Miru control plane, receives short-lived downscoped credentials for a single object key carrying its own device ID, and uploads the file directly to your cloud storage with the native cloud SDK. Your data never passes through Miru."
+  alt="Upload flow: a device requests an upload from the Miru control plane, receives short-lived downscoped credentials for a single object key, and uploads the file directly to your cloud storage with the native cloud SDK. Your data never passes through Miru."
 />
 
 1. The Miru Agent detects a new file to upload
@@ -41,10 +43,14 @@ the device. Files that already match a rule when it is deployed are skipped. See
 
 ## Device data isolation
 
-Devices' uploads are strictly isolated from each other. Isolation rests on a single requirement on the [upload
-path](/data-uploads/concepts/file-rules/rule-definition#uploads): it must include the `{upload_id}` variable somewhere in the template.
+Devices' uploads are strictly isolated from each other. For each upload, Miru renders
+the object key from the rule's [upload path](/data-uploads/concepts/file-rules/rule-definition#param-path)
+and issues the device credentials scoped to that **exact object key**.
 
-Since devices receive credentials scoped to an **exact object key** for each upload, and a given upload ID is authorized to its device, devices never receive credentials which grant any access to another device's data.
+Each object key in a bucket is restricted to at most one upload, so devices never receive
+credentials that grant any access to another device's data. Uploads whose object key
+conflicts with an existing upload are given a unique fallback path to ensure the upload
+succeeds without overwriting existing data.
 
 ## Object metadata
 
