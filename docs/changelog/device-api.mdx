@@ -24,24 +24,6 @@ The `v0.2.5` release lets on-device applications read the latest [calibration](/
   - <GET /> `/calibrations/latest/{report_id}/content` — download a latest calibration's content
 </Dropdown>
 
-## Additive changes
-
-<Dropdown title="File rule response">
-The `upload.path` of a file rule returned by `GET /file_rules/{id}` no longer has to contain `{upload_id}`. It contains `{upload_id}` or at least one of `{device_id}`, `{device_name}` or `{bundle_id}`. See [upload path](/data-uploads/concepts/file-rules/rule-definition#param-path).
-
-```diff nocopy
- {
-   "object": "file_rule",
-   ...
-   "upload": {
--    "path": "recordings/{device_id}/{recording}/{file_name}-{upload_id}",
-+    "path": "recordings/{device_name}/{recording}/{file_name}",
-     "timezone": "utc"
-   }
- }
-```
-</Dropdown>
-
 ## Other changes
 
 <Dropdown title="Reserved role and aspect">
