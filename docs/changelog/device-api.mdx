@@ -24,12 +24,6 @@ The `v0.2.5` release lets on-device applications read the latest [calibration](/
   - <GET /> `/calibrations/latest/{report_id}/content` — download a latest calibration's content
 </Dropdown>
 
-## Other changes
-
-<Dropdown title="Reserved role and aspect">
-`null` is reserved as a `role` or `aspect`, because the `GET /calibrations/latest` filters use it to match calibrations reported without one. A `POST /calibrations` request with a `role` or `aspect` of `null` is rejected with `422`.
-</Dropdown>
-
 ## Migration steps
 
 <Steps>
