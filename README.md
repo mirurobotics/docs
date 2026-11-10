@@ -20,26 +20,20 @@
 
 ## Dependency audit
 
-CI runs `./scripts/audit.sh` (`pnpm audit`). Every advisory so far has come from transitive dependencies of the `mint` CLI's local preview and build tooling, not from anything published to readers. Fix them with `pnpm.overrides` in `package.json`. Ignore an advisory in `pnpm.auditConfig.ignoreCves` (or `ignoreGhsas` when it has no CVE) only when no patched release exists that its dependents can use, and record it below.
+CI runs `./scripts/audit.sh` (`pnpm audit`). It covers only the packages in `pnpm-lock.yaml`: cspell, eslint, eslint-plugin-mdx and their dependencies, plus `@mintlify/cli` and the few packages it installs, such as `sharp`. Since mint 4.3, `@mintlify/cli` bundles the validation and preview tooling that every earlier advisory came from, or downloads it at runtime, so `pnpm audit` can't see it and `pnpm.overrides` can't patch it. None of it is published to readers. Fix advisories with `pnpm.overrides` in `package.json`. Ignore an advisory in `pnpm.auditConfig.ignoreCves` (or `ignoreGhsas` when it has no CVE) only when no patched release exists that its dependents can use, and record it below.
 
 ### Ignored advisories
 
-| CVE | Package | Path | Why ignored | Remove when |
-|-----|---------|------|-------------|-------------|
-| CVE-2026-93748 ([GHSA-ch52-4w7c-c8xp](https://github.com/advisories/GHSA-ch52-4w7c-c8xp)) | `http-cache-semantics` | `mint > @mintlify/previewing > got > cacheable-request` | No patched release | A fixed version ships; override to it |
-| CVE-2026-93687 ([GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)) | `braces` | `mint > @mintlify/common > tailwindcss > chokidar` | No patched release | A fixed version ships; override to it |
-| CVE-2026-97058 ([GHSA-hp3w-g68c-fv3c](https://github.com/advisories/GHSA-hp3w-g68c-fv3c)) | `sprintf-js` | `mint > @mintlify/common > front-matter > js-yaml@3 > argparse@1` | No patched release | A fixed version ships, or `front-matter` moves off `js-yaml@3` |
-| None assigned ([GHSA-mrhx-c7xc-m3w5](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5)) | `zod` | `mint > @mintlify/cli > @mintlify/validation > zod` | Only `>=4.6.6` is patched, and `@mintlify/validation` and `@mintlify/scraping` pin `zod` 3.24.0 | Both move to `zod` 4.6.6 or later; then override to it |
+None.
 
 ### Overrides past a dependent's range
 
-These overrides force a newer major than the packages using them ask for, because no patched release exists in the requested range. Only local preview and linting use them, and no page renders math.
+These overrides force a version outside the range the packages using them ask for, because no patched release exists in the requested range. Only local tooling uses them.
 
 | Override | Dependents ask for | Remove when |
 |----------|--------------------|-------------|
-| `postcss-selector-parser` `>=7.1.6 <8` | `^6` (tailwindcss 3, postcss-nested) | Mintlify moves to a tailwindcss that accepts 7.x |
-| `katex` `>=0.18.2 <0.20` | `^0.16` (rehype-katex, micromark-extension-math) | Those packages accept a patched katex |
-| `minimatch` `>=11.0.1` | `^10` (eslint, @eslint/config-array), `^9` or `^3` (Mintlify tooling) | Those packages accept minimatch 11 |
-| `glob` `>=14.0.2` | `^10` (unified-engine via eslint-plugin-mdx, @npmcli packages), `7.1.6` (sucrase) | Those packages accept glob 14 |
+| `sharp` `>=0.35.5` | `0.33.5` (@mintlify/cli) | `@mintlify/cli` accepts a patched sharp |
+| `minimatch` `>=11.0.1` | `^10` (eslint, @eslint/config-array), `^9` (@npmcli/map-workspaces via eslint-plugin-mdx) | Those packages accept minimatch 11 |
+| `glob` `>=14.0.2` | `^10` (unified-engine and @npmcli packages via eslint-plugin-mdx) | Those packages accept glob 14 |
 
 To check whether an ignore still applies, temporarily remove it and run `./scripts/audit.sh`.
