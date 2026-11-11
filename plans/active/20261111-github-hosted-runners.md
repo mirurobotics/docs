@@ -55,7 +55,7 @@ No source file is added. The edited `runs-on` lines mirror `cli/.github/workflow
 
 ## Decision Log
 
-(Add entries as work proceeds.)
+- 2026-11-11: Each `runs-on: ubuntu-latest` carries an inline comment that standard GitHub-hosted runners are free in public repos, so a reader knows why the repo is not on Blacksmith. Matches the inline runner comment in `agent/.github/workflows/release.yml`.
 
 ## Outcomes & Retrospective
 
