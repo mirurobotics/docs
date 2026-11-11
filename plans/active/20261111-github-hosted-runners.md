@@ -42,8 +42,9 @@ No source file is added. The edited `runs-on` lines mirror `cli/.github/workflow
 
 ## Progress
 
-- [ ] Replace the 11 `blacksmith-2vcpu-ubuntu-2404` labels with `ubuntu-latest`.
-- [ ] Commit `ci: run docs workflows on GitHub-hosted ubuntu-latest runners`.
+- [x] Replace the 11 `blacksmith-2vcpu-ubuntu-2404` labels with `ubuntu-latest`.
+- [x] Commit `ci: run docs workflows on GitHub-hosted ubuntu-latest runners`.
+- [x] Source written
 - [ ] Push and open the draft PR; CI, Preview and a dispatched CodeQL run pass on the branch head.
 - [ ] Preflight reports `CLEAN`.
 - [ ] After merge: AI Review on the next PR, the `ci.yml` push run on `main`, and the next Promote run pass on `ubuntu-latest`.

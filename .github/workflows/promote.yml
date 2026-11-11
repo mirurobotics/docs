@@ -24,7 +24,7 @@ permissions:
 jobs:
   promote:
     name: Promote ${{ inputs.ref }} → ${{ inputs.environment }}
-    runs-on: blacksmith-2vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     timeout-minutes: 10
     outputs:
@@ -54,7 +54,7 @@ jobs:
     name: 'Notify #deploys'
     needs: promote
     if: ${{ always() && needs.promote.outputs.noop != 'true' }}
-    runs-on: blacksmith-2vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     permissions: {}
     steps:
       - name: Post to Slack
