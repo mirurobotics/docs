@@ -20,7 +20,7 @@ permissions:
 jobs:
   changes:
     name: Check for new commits
-    runs-on: blacksmith-2vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
       actions: read
@@ -36,7 +36,7 @@ jobs:
   codeql:
     needs: changes
     if: ${{ !cancelled() && needs.changes.outputs.scan != 'false' }}
-    runs-on: blacksmith-2vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
