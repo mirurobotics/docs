@@ -25,7 +25,7 @@ This PR is the exemplar for the same change in agent, gotools and setup-cli.
 
 | New file | Mirrors |
 |----------|---------|
-| `plans/backlog/20261111-github-hosted-runners.md` | `plans/completed/20261109-readable-upload-paths.md` and the other docs plans |
+| `plans/active/20261111-github-hosted-runners.md` | `plans/completed/20261109-readable-upload-paths.md` and the other docs plans |
 
 No source file is added. The edited `runs-on` lines mirror `cli/.github/workflows/ai-review.yml` (`with: runs-on: ubuntu-latest` passed to `mirurobotics/.github/.github/workflows/ai-review.yml@bf0916104b6b5b5373c09a5f5b413ec6bded2cb5`, the same SHA docs pins), `cli/.github/workflows/codeql-analysis.yml` and `ansible-collection-agent/.github/workflows/ci.yml`.
 
