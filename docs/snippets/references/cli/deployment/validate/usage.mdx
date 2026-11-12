@@ -3,9 +3,8 @@
 
     By default, validating a deployment reads the config files from the current directory.
 
-    ```bash
-    miru deployment validate \
-      --release {release-version}
+    ```bash wrap
+    miru deployment validate --release {release-version}
     ```
   </Tab>
 
@@ -13,10 +12,8 @@
 
     Use the `--root` flag to read the config files from a custom root directory.
 
-    ```bash
-    miru deployment validate \
-      --release {release-version} \
-      --root {root-dir}
+    ```bash wrap
+    miru deployment validate --release {release-version} --root {root-dir}
     ```
   </Tab>
 
@@ -24,10 +21,8 @@
 
     Use `--root /` to read config files from the exact location they are written to on production devices.
 
-    ```bash
-    miru deployment validate \
-      --release {release-version} \
-      --root /
+    ```bash wrap
+    miru deployment validate --release {release-version} --root /
     ```
   </Tab>
 </Tabs>
