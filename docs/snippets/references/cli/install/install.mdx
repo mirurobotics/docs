@@ -72,16 +72,17 @@ The CLI is available on macOS, Linux, and Windows (x64).
         Download the latest release from [GitHub](https://github.com/mirurobotics/cli/releases/latest) and extract `miru.exe`.
 
         ```powershell PowerShell wrap
-        $dir = "$env:LOCALAPPDATA\Programs\Miru"
-        Invoke-WebRequest https://github.com/mirurobotics/cli/releases/latest/download/miru_Windows_x86_64.zip -OutFile "$env:TEMP\miru.zip"
+        $dir = "$env:LOCALAPPDATA\Programs\Miru\CLI"
+        Invoke-WebRequest https://github.com/mirurobotics/cli/releases/latest/download/miru_Windows_x86_64.zip -UseBasicParsing -OutFile "$env:TEMP\miru.zip"
         Expand-Archive "$env:TEMP\miru.zip" -DestinationPath $dir -Force
+        Remove-Item "$env:TEMP\miru.zip"
         ```
       </Step>
       <Step title="Add to PATH">
         Add the folder to your user `PATH`, then open a new PowerShell window.
 
         ```powershell PowerShell wrap
-        $dir = "$env:LOCALAPPDATA\Programs\Miru"
+        $dir = "$env:LOCALAPPDATA\Programs\Miru\CLI"
         $path = [Environment]::GetEnvironmentVariable('Path', 'User')
         if (($path -split ';') -notcontains $dir) { [Environment]::SetEnvironmentVariable('Path', "$path;$dir", 'User') }
         ```
