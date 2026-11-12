@@ -71,18 +71,20 @@ To upgrade the Miru CLI to the latest version, run the upgrade command in your l
 
 <Tabs>
   <Tab title="macOS">
-    Remove via Homebrew.
+    Remove via Homebrew, then remove the configuration files in `~/.miru`.
 
     ```bash
     brew uninstall miru
+    rm -rf ~/.miru
     ```
   </Tab>
 
   <Tab title="Linux">
-    Remove the Debian package.
+    Remove the Debian package, then remove the configuration files in `~/.miru`.
 
     ```bash
     sudo apt-get purge miru-cli
+    rm -rf ~/.miru
     ```
 
     If installed via `apt`, you can also remove the apt source.
@@ -105,9 +107,3 @@ To upgrade the Miru CLI to the latest version, run the upgrade command in your l
     ```
   </Tab>
 </Tabs>
-
-On macOS and Linux, remove any leftover configuration files.
-
-```bash
-rm -rf ~/.miru
-```
