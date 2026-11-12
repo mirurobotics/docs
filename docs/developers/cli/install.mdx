@@ -61,6 +61,10 @@ To upgrade the Miru CLI to the latest version, run the upgrade command in your l
     </Tabs>
   </Tab>
 
+  <Tab title="Windows">
+    Repeat the download and extract step of the [installation](#install). `Expand-Archive -Force` replaces the existing `miru.exe`.
+  </Tab>
+
 </Tabs>
 
 ## Uninstall
@@ -89,9 +93,20 @@ To upgrade the Miru CLI to the latest version, run the upgrade command in your l
       The signing key at `/etc/apt/keyrings/miru-archive-keyring.gpg` is shared with the Miru Agent. Only remove it if you have also uninstalled the Miru Agent.
     </Info>
   </Tab>
+
+  <Tab title="Windows">
+    Remove the CLI folder, its `PATH` entry, and the configuration files in `$HOME\.miru`.
+
+    ```powershell PowerShell wrap
+    $dir = "$env:LOCALAPPDATA\Programs\Miru"
+    Remove-Item -Recurse -Force $dir, "$HOME\.miru"
+    $path = [Environment]::GetEnvironmentVariable('Path', 'User')
+    [Environment]::SetEnvironmentVariable('Path', (($path -split ';') -ne $dir) -join ';', 'User')
+    ```
+  </Tab>
 </Tabs>
 
-Remove any leftover configuration files.
+On macOS and Linux, remove any leftover configuration files.
 
 ```bash
 rm -rf ~/.miru
