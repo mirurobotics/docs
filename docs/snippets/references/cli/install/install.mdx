@@ -73,7 +73,7 @@ The CLI is available on macOS, Linux, and Windows (x64).
 
         ```powershell PowerShell wrap
         $dir = "$env:LOCALAPPDATA\Programs\Miru\CLI"
-        Invoke-WebRequest https://github.com/mirurobotics/cli/releases/latest/download/miru_Windows_x86_64.zip -UseBasicParsing -OutFile "$env:TEMP\miru.zip"
+        Invoke-WebRequest https://github.com/mirurobotics/cli/releases/latest/download/cli_Windows_x86_64.zip -UseBasicParsing -OutFile "$env:TEMP\miru.zip"
         Expand-Archive "$env:TEMP\miru.zip" -DestinationPath $dir -Force
         Remove-Item "$env:TEMP\miru.zip"
         ```
