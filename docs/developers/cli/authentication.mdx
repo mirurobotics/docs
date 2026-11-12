@@ -44,9 +44,15 @@ on any device.
 
 To authenticate without `miru login`, set the `MIRU_API_KEY` environment variable:
 
-```bash
+<CodeGroup>
+```bash macOS/Linux
 export MIRU_API_KEY=<your-api-key>
 ```
+
+```powershell Windows
+$env:MIRU_API_KEY = "<your-api-key>"
+```
+</CodeGroup>
 
 To create a key, see [Create an API key](/admin/apikeys#create-an-api-key). Each
 command's page in the [CLI reference](/references/cli/release-create) lists the scopes
