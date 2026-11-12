@@ -53,6 +53,11 @@ cd "${repo_root}"
 # ---------------------------------------------------------------------------
 # 1. Resolve ref and verify it is reachable from main
 # ---------------------------------------------------------------------------
+if [[ ! "${ref}" =~ ^[A-Za-z0-9][A-Za-z0-9._/-]*$ ]]; then
+  echo "::error::Ref must be a tag, branch or commit SHA: letters, digits, '.', '_', '/' or '-', starting with a letter or digit."
+  exit 1
+fi
+
 git fetch origin --tags --force
 
 if ! sha=$(git rev-parse --verify "${ref}^{commit}" 2>/dev/null); then

@@ -48,7 +48,10 @@ jobs:
 
       - name: Promote ${{ inputs.ref }} → ${{ inputs.environment }}
         id: promote
-        run: ./scripts/promote.sh "${{ inputs.ref }}" "${{ inputs.environment }}"
+        env:
+          REF: ${{ inputs.ref }}
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: ./scripts/promote.sh "${REF}" "${ENVIRONMENT}"
 
   notify:
     name: 'Notify #deploys'
