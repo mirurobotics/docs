@@ -36,7 +36,8 @@ Today anyone who can start the Promote workflow can run arbitrary shell commands
 
 ## Progress
 
-- [ ] Milestone 1: edit `.github/workflows/promote.yml` and `scripts/promote.sh`, then commit.
+- [x] Milestone 1: edit `.github/workflows/promote.yml` and `scripts/promote.sh`, then commit.
+- [x] Source written
 - [ ] Push, open the draft PR, and run `$preflight` until it reports `CLEAN`.
 
 ## Surprises & Discoveries
