@@ -3,25 +3,65 @@
   <Tab title="Schema Directory">
     Use the `--schemas` flag to specify a directory containing the schemas to include in the release.
 
-    ```bash wrap
-    miru release create --version {version} --schemas {/path/to/schemas/directory/}
+    <CodeGroup>
+
+    ```bash Unix highlight={3}
+    miru release create \
+      --version {version} \
+      --schemas {/path/to/schemas/directory/}
     ```
+
+    ```powershell PowerShell highlight={3}
+    miru release create `
+      --version {version} `
+      --schemas {/path/to/schemas/directory/}
+    ```
+
+    </CodeGroup>
   </Tab>
 
   <Tab title="Schema Files">
     Use the `--schema` flag to specify schema files to include in the release.
 
-    ```bash wrap
-    miru release create --version {version} --schema {path/to/schema1.yaml} --schema {path/to/schema2.yaml}
+    <CodeGroup>
+
+    ```bash Unix highlight={3-4}
+    miru release create \
+      --version {version} \
+      --schema {path/to/schema1.yaml} \
+      --schema {path/to/schema2.yaml}
     ```
+
+    ```powershell PowerShell highlight={3-4}
+    miru release create `
+      --version {version} `
+      --schema {path/to/schema1.yaml} `
+      --schema {path/to/schema2.yaml}
+    ```
+
+    </CodeGroup>
   </Tab>
 
   <Tab title="File Rules">
     Use the `--file-rule` flag to include [file rules](/data-uploads/define-file-rules) in the release, or `--file-rules` for a directory of file rules.
 
-    ```bash wrap
-    miru release create --version {version} --schemas {/path/to/schemas/directory/} --file-rules {/path/to/file/rules/directory/}
+    <CodeGroup>
+
+    ```bash Unix highlight={4}
+    miru release create \
+      --version {version} \
+      --schemas {/path/to/schemas/directory/} \
+      --file-rules {/path/to/file/rules/directory/}
     ```
+
+    ```powershell PowerShell highlight={4}
+    miru release create `
+      --version {version} `
+      --schemas {/path/to/schemas/directory/} `
+      --file-rules {/path/to/file/rules/directory/}
+    ```
+
+    </CodeGroup>
   </Tab>
 
 </Tabs>

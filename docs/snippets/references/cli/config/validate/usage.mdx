@@ -1,14 +1,36 @@
 <Tabs>
   <Tab title="Schema ID">
-    ```bash wrap
-    miru config validate {file} --schema-id {config-schema-id}
+    <CodeGroup>
+
+    ```bash Unix
+    miru config validate {file} \
+      --schema-id {config-schema-id}
     ```
+
+    ```powershell PowerShell
+    miru config validate {file} `
+      --schema-id {config-schema-id}
+    ```
+
+    </CodeGroup>
   </Tab>
 
   <Tab title="Release and config type">
-    ```bash wrap
-    miru config validate {file} --release {release-version} --config-type {config-type}
+    <CodeGroup>
+
+    ```bash Unix
+    miru config validate {file} \
+      --release {release-version} \
+      --config-type {config-type}
     ```
+
+    ```powershell PowerShell
+    miru config validate {file} `
+      --release {release-version} `
+      --config-type {config-type}
+    ```
+
+    </CodeGroup>
   </Tab>
 </Tabs>
 
