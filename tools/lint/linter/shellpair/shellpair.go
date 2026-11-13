@@ -127,8 +127,7 @@ func checkGroup(file string, group []*block) []analysis.Violation {
 			"multi-line PowerShell command needs a Unix twin")
 	case (unixMulti || psMulti) && unix != nil && ps != nil &&
 		normalize(unix.body, '\\') != normalize(ps.body, '`'):
-		return violation(file, ps.line,
-			"PowerShell command differs from its Unix twin")
+		return violation(file, ps.line, "PowerShell command differs from its Unix twin")
 	}
 	return nil
 }
