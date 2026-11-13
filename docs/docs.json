@@ -15,7 +15,7 @@
     "eyebrows": "section",
     "codeblocks": {
       "languages": {
-        "custom": ["languages/pwsh.json"]
+        "custom": ["/languages/pwsh.json"]
       }
     }
   },
