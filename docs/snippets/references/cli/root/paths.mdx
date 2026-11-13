@@ -4,14 +4,14 @@ Each config file sits under `--root` at its device path.
 
 | `--root` | Device path | Local path |
 |----------|-------------|------------|
-| `./robot-42-fs` | `/srv/miru/mobility.json` | `./robot-42-fs/srv/miru/mobility.json` |
-| `/` | `/srv/miru/mobility.json` | `/srv/miru/mobility.json` |
+| `./robot-42-fs` | `/srv/app.json` | `./robot-42-fs/srv/app.json` |
+| `/` | `/srv/app.json` | `/srv/app.json` |
 
 **Windows paths** keep their drive letter as a top-level folder, so files on different drives never collide. The drive folder is left out when `--root` is the root of that drive.
 
 | `--root` | Device path | Local path |
 |----------|-------------|------------|
-| `.\robot-42-fs` | `C:\Miru\mobility.json` | `.\robot-42-fs\C\Miru\mobility.json` |
-| `C:\` | `C:\Miru\mobility.json` | `C:\Miru\mobility.json` |
+| `.\robot-42-fs` | `C:\srv\app.json` | `.\robot-42-fs\C\srv\app.json` |
+| `C:\` | `C:\srv\app.json` | `C:\srv\app.json` |
 
 On Windows, `--root /` is the root of the current drive, usually `C:\`.
