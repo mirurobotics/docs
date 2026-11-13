@@ -65,27 +65,75 @@ Navigate to the root of the [getting-started](https://github.com/mirurobotics/ge
 
 <Tabs>
   <Tab title="Linux">
+    **Empty Schemas**
+
     <CodeGroup>
 
-    ```bash Empty Schemas wrap
-    miru release create --version "v1.0.0" --schemas ./linux/cue/empty-schemas/
+    ```bash Unix
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./linux/cue/empty-schemas/
     ```
 
-    ```bash Strict Schemas wrap
-    miru release create --version "v1.0.0" --schemas ./linux/cue/strict-schemas/
+    ```powershell PowerShell
+    miru release create `
+      --version "v1.0.0" `
+      --schemas ./linux/cue/empty-schemas/
+    ```
+
+    </CodeGroup>
+
+    **Strict Schemas**
+
+    <CodeGroup>
+
+    ```bash Unix
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./linux/cue/strict-schemas/
+    ```
+
+    ```powershell PowerShell
+    miru release create `
+      --version "v1.0.0" `
+      --schemas ./linux/cue/strict-schemas/
     ```
 
     </CodeGroup>
   </Tab>
   <Tab title="Windows">
+    **Empty Schemas**
+
     <CodeGroup>
 
-    ```bash Empty Schemas wrap
-    miru release create --version "v1.0.0" --schemas ./windows/cue/empty-schemas/
+    ```bash Unix
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./windows/cue/empty-schemas/
     ```
 
-    ```bash Strict Schemas wrap
-    miru release create --version "v1.0.0" --schemas ./windows/cue/strict-schemas/
+    ```powershell PowerShell
+    miru release create `
+      --version "v1.0.0" `
+      --schemas ./windows/cue/empty-schemas/
+    ```
+
+    </CodeGroup>
+
+    **Strict Schemas**
+
+    <CodeGroup>
+
+    ```bash Unix
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./windows/cue/strict-schemas/
+    ```
+
+    ```powershell PowerShell
+    miru release create `
+      --version "v1.0.0" `
+      --schemas ./windows/cue/strict-schemas/
     ```
 
     </CodeGroup>
@@ -94,8 +142,10 @@ Navigate to the root of the [getting-started](https://github.com/mirurobotics/ge
 
 Upon a successful creation, you'll see a confirmation message similar to the following:
 
-```bash nocopy wrap
-$ miru release create --version v1.0.0 --schemas ./{os}/cue/{schema-type}/
+```bash nocopy
+$ miru release create \
+  --version v1.0.0 \
+  --schemas ./{os}/cue/{schema-type}/
 
 ◐ Creating release v1.0.0
 
@@ -155,27 +205,75 @@ Navigate to the root of the [getting-started](https://github.com/mirurobotics/ge
 
 <Tabs>
   <Tab title="Linux">
+    **Empty Schemas**
+
     <CodeGroup>
 
-    ```bash Empty Schemas wrap
-    miru release create --version "v1.0.0" --schemas ./linux/jsonschema/empty-schemas/
+    ```bash Unix
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./linux/jsonschema/empty-schemas/
     ```
 
-    ```bash Strict Schemas wrap
-    miru release create --version "v1.0.0" --schemas ./linux/jsonschema/strict-schemas/
+    ```powershell PowerShell
+    miru release create `
+      --version "v1.0.0" `
+      --schemas ./linux/jsonschema/empty-schemas/
+    ```
+
+    </CodeGroup>
+
+    **Strict Schemas**
+
+    <CodeGroup>
+
+    ```bash Unix
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./linux/jsonschema/strict-schemas/
+    ```
+
+    ```powershell PowerShell
+    miru release create `
+      --version "v1.0.0" `
+      --schemas ./linux/jsonschema/strict-schemas/
     ```
 
     </CodeGroup>
   </Tab>
   <Tab title="Windows">
+    **Empty Schemas**
+
     <CodeGroup>
 
-    ```bash Empty Schemas wrap
-    miru release create --version "v1.0.0" --schemas ./windows/jsonschema/empty-schemas/
+    ```bash Unix
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./windows/jsonschema/empty-schemas/
     ```
 
-    ```bash Strict Schemas wrap
-    miru release create --version "v1.0.0" --schemas ./windows/jsonschema/strict-schemas/
+    ```powershell PowerShell
+    miru release create `
+      --version "v1.0.0" `
+      --schemas ./windows/jsonschema/empty-schemas/
+    ```
+
+    </CodeGroup>
+
+    **Strict Schemas**
+
+    <CodeGroup>
+
+    ```bash Unix
+    miru release create \
+      --version "v1.0.0" \
+      --schemas ./windows/jsonschema/strict-schemas/
+    ```
+
+    ```powershell PowerShell
+    miru release create `
+      --version "v1.0.0" `
+      --schemas ./windows/jsonschema/strict-schemas/
     ```
 
     </CodeGroup>
@@ -184,8 +282,10 @@ Navigate to the root of the [getting-started](https://github.com/mirurobotics/ge
 
 Upon a successful creation, you'll see a confirmation message similar to the following:
 
-```bash nocopy wrap
-$ miru release create --version v1.0.0 --schemas ./{os}/jsonschema/{schema-type}/
+```bash nocopy
+$ miru release create \
+  --version v1.0.0 \
+  --schemas ./{os}/jsonschema/{schema-type}/
 
 ◐ Creating release v1.0.0
 
