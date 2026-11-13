@@ -1,7 +1,7 @@
 import SetupApt from '/snippets/apt/setup.mdx';
 import GithubDownload from '/snippets/references/cli/install/github-download.mdx';
 
-The CLI is only available on macOS and Linux. Windows is not supported.
+The CLI is available on macOS, Linux, and Windows (x64).
 
 <Tabs>
   <Tab title="macOS">
@@ -62,5 +62,31 @@ The CLI is only available on macOS and Linux. Windows is not supported.
         </Steps>
       </Tab>
     </Tabs>
+  </Tab>
+
+  <Tab title="Windows">
+    The CLI is distributed to Windows as a zip archive. Run these commands in PowerShell; administrator rights are not required.
+
+    <Steps>
+      <Step title="Download and extract">
+        Download the latest release from [GitHub](https://github.com/mirurobotics/cli/releases/latest) and extract `miru.exe`.
+
+        ```powershell PowerShell wrap
+        $dir = "$env:LOCALAPPDATA\Programs\Miru\CLI"
+        Invoke-WebRequest https://github.com/mirurobotics/cli/releases/latest/download/cli_Windows_x86_64.zip -UseBasicParsing -OutFile "$env:TEMP\miru.zip"
+        Expand-Archive "$env:TEMP\miru.zip" -DestinationPath $dir -Force
+        Remove-Item "$env:TEMP\miru.zip"
+        ```
+      </Step>
+      <Step title="Add to PATH">
+        Add the folder to your user `PATH`, then open a new PowerShell window.
+
+        ```powershell PowerShell wrap
+        $dir = "$env:LOCALAPPDATA\Programs\Miru\CLI"
+        $path = [Environment]::GetEnvironmentVariable('Path', 'User')
+        if (($path -split ';') -notcontains $dir) { [Environment]::SetEnvironmentVariable('Path', (@($path -split ';' | Where-Object { $_ }) + $dir) -join ';', 'User') }
+        ```
+      </Step>
+    </Steps>
   </Tab>
 </Tabs>
