@@ -1,5 +1,6 @@
 {
   "name": "pwsh",
+  "displayName": "PowerShell",
   "scopeName": "source.pwsh",
   "patterns": [
     { "include": "#comment" },
