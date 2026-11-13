@@ -79,7 +79,7 @@ The CLI is available on macOS, Linux, and Windows (x64).
         ```
       </Step>
       <Step title="Verify the signature">
-        Check that `miru.exe` has a valid code signature. The status should be `Valid`, and the subject should start with `CN="Clips AI, Inc."`, the company that signs Miru releases. If either doesn't match, delete `miru.exe` and stop.
+        Check that `miru.exe` has a valid code signature. The status should be `Valid`, and the subject should start with `CN="Clips AI, Inc."`, Miru's official legal entity. If either doesn't match, delete `miru.exe` and stop.
 
         ```powershell PowerShell wrap
         $sig = Get-AuthenticodeSignature "$env:LOCALAPPDATA\Programs\Miru\CLI\miru.exe"
