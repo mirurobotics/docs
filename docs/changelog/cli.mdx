@@ -26,7 +26,7 @@ CLI `v0.12.5` adds support for Windows. See [install](/developers/cli/install) f
 ## Fixes
 
 - Refuse a release whose config files' device filepaths differ only in case on Windows and macOS, where they would name the same local file
-- Refuse device filepaths that contain a backslash, so a path such as `/srv\..\..\etc` can't escape the `--root` folder on Windows
+- Refuse POSIX device filepaths (starting with `/`) that contain a backslash, so a path such as `/srv\..\..\etc` can't escape the `--root` folder on Windows
 - Record a schema's path inside its git repository with forward slashes on Windows, and without `../` when reached through a symlinked folder
 
 ---
