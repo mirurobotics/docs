@@ -36,7 +36,9 @@ func TestCheck(t *testing.T) {
 				"```bash Unix\nmiru create \\\n  --version v1\n```\n" +
 				"```powershell PowerShell\nmiru create \\\n  --version v1\n```\n" +
 				"</CodeGroup>",
-			wantLines: []int{6},
+			wantLines: []int{6, 6},
+			wantMsg: "shell-pair: powershell block continues a line " +
+				"with a Unix backslash",
 		},
 		{
 			name: "multi-line Unix without twin",
@@ -71,6 +73,18 @@ func TestCheck(t *testing.T) {
 		{
 			name:    "blocks outside a CodeGroup are ignored",
 			content: "```bash Unix\nmiru create \\\n  --version v1\n```\n</CodeGroup>",
+		},
+		{
+			name:      "powershell block with a backslash continuation",
+			content:   "```powershell\nmiru create \\\n  --version v1\n```",
+			wantLines: []int{1},
+		},
+		{
+			name:      "bash block with a backtick continuation",
+			content:   "```bash\nmiru create `\n  --version v1\n```",
+			wantLines: []int{1},
+			wantMsg: "shell-pair: bash block continues a line " +
+				"with PowerShell's backtick",
 		},
 		{
 			name: "each CodeGroup is checked on its own",
