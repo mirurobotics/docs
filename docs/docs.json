@@ -12,12 +12,7 @@
     "dark": "/favicon-white.svg"
   },
   "styling": {
-    "eyebrows": "section",
-    "codeblocks": {
-      "languages": {
-        "custom": ["/languages/pwsh.json"]
-      }
-    }
+    "eyebrows": "section"
   },
   "fonts": {
     "family": "Inter",

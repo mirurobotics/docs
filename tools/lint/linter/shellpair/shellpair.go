@@ -1,7 +1,7 @@
 // Package shellpair keeps the Unix and PowerShell versions of a
 // multi-line command correct and in step. A bash block must not continue
-// lines with PowerShell's trailing "`", and a powershell or pwsh block
-// must not continue them with a trailing "\". Inside a <CodeGroup>, a fenced block
+// lines with PowerShell's trailing "`", and a powershell block must not
+// continue them with a trailing "\". Inside a <CodeGroup>, a fenced block
 // titled "Unix" that continues lines with "\" needs a block titled
 // "PowerShell" with the same command, and a "PowerShell" block that
 // continues lines with "`" needs a "Unix" twin. The two match when they
@@ -103,15 +103,11 @@ func wrongContinuation(b *block) string {
 	switch {
 	case b.lang == "bash" && hasContinuation(b.body, '`'):
 		return "bash block continues a line with PowerShell's backtick"
-	case isPowerShell(b.lang) && hasContinuation(b.body, '\\'):
-		return b.lang + " block continues a line with a Unix backslash"
+	case b.lang == "powershell" && hasContinuation(b.body, '\\'):
+		return "powershell block continues a line with a Unix backslash"
 	}
 	return ""
 }
-
-// isPowerShell reports whether the fence language is PowerShell: the
-// built-in grammar, or the docs' pwsh grammar that also colors miru commands.
-func isPowerShell(lang string) bool { return lang == "powershell" || lang == "pwsh" }
 
 func checkGroup(file string, group []*block) []analysis.Violation {
 	unix := findBlock(group, unixTitle)

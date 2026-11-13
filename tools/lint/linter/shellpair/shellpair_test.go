@@ -99,12 +99,6 @@ func TestCheck(t *testing.T) {
 			wantLines: []int{1},
 		},
 		{
-			name:      "pwsh block with a backslash continuation",
-			content:   "```pwsh PowerShell\nmiru create \\\n  --version v1\n```",
-			wantLines: []int{1},
-			wantMsg:   "shell-pair: pwsh block continues a line with a Unix backslash",
-		},
-		{
 			name:      "bash block with a backtick continuation",
 			content:   "```bash\nmiru create `\n  --version v1\n```",
 			wantLines: []int{1},
