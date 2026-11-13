@@ -21,6 +21,7 @@
   const COMMAND_LINE =
     /^\s*(\$\s+|\$[\w:]+\s+=\s+)?(?!(if|elif|elseif|else|then|fi|foreach|for|in|while|do|done|until|case|esac|switch|function|filter|param|begin|process|end|return|exit|break|continue|try|catch|finally|throw|trap|using)\b)[A-Za-z][\w.]*(\s|$)/i;
 
+  const PROMPT = /^\s*\$\s/;
   const CMDLET = /^[A-Za-z]+-[A-Za-z]+$/;
   const VARIABLE = /(\$\{?(?:env:)?\w+\}?)/;
 
@@ -91,10 +92,13 @@
     const shell = SHELLS[code.getAttribute("language")];
     if (shell === SHELLS.shellscript && !isUncolored(code)) return;
     const endsContinued = new RegExp(`[^;\\s]\\s+\\${shell.cont}\\s*$`);
+    const lines = [...code.querySelectorAll(".line")];
+    // In a block with "$ " prompts, the other lines are the command's output.
+    const hasPrompt = lines.some((line) => PROMPT.test(line.textContent));
     let inCommand = false;
-    for (const line of code.querySelectorAll(".line")) {
+    for (const line of lines) {
       const text = line.textContent;
-      const startsCommand = COMMAND_LINE.test(text);
+      const startsCommand = COMMAND_LINE.test(text) && (!hasPrompt || PROMPT.test(text));
       const isCommand = startsCommand || inCommand;
       if (isCommand && !line.dataset.highlighted) {
         line.replaceChildren(...tokenize(text, startsCommand, shell).map(toSpan));

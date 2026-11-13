@@ -76,6 +76,18 @@ func TestCheck(t *testing.T) {
 			wantMsg:   "shell-pair: multi-line PowerShell command needs a Bash twin",
 		},
 		{
+			name: "single-line Bash without twin",
+			content: "<CodeGroup>\n" +
+				"```bash Bash\nmiru a --b\n```\n" +
+				"</CodeGroup>",
+		},
+		{
+			name: "single-line PowerShell without twin",
+			content: "<CodeGroup>\n" +
+				"```powershell PowerShell\nmiru a --b\n```\n" +
+				"</CodeGroup>",
+		},
+		{
 			name: "single-line commands may differ",
 			content: "<CodeGroup>\n" +
 				"```bash Bash\nexport MIRU_API_KEY=<key>\n```\n" +
