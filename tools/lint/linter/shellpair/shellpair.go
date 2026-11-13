@@ -35,7 +35,9 @@ func Check(file string, lines []string) []analysis.Violation {
 	blocks, groups := scan(lines)
 	var violations []analysis.Violation
 	for _, b := range blocks {
-		violations = append(violations, checkContinuation(file, b)...)
+		if msg := wrongContinuation(b); msg != "" {
+			violations = append(violations, violation(file, b.line, msg)...)
+		}
 	}
 	for _, group := range groups {
 		violations = append(violations, checkGroup(file, group)...)
@@ -95,16 +97,16 @@ func fenceInfo(trimmed, fence string) (lang, title string) {
 	return lang, title
 }
 
-func checkContinuation(file string, b *block) []analysis.Violation {
+// wrongContinuation describes how a block continues lines with the other
+// shell's character, or returns "" when it doesn't.
+func wrongContinuation(b *block) string {
 	switch {
 	case b.lang == "bash" && hasContinuation(b.body, '`'):
-		return violation(file, b.line,
-			"bash block continues a line with PowerShell's backtick")
+		return "bash block continues a line with PowerShell's backtick"
 	case isPowerShell(b.lang) && hasContinuation(b.body, '\\'):
-		return violation(file, b.line,
-			b.lang+" block continues a line with a Unix backslash")
+		return b.lang + " block continues a line with a Unix backslash"
 	}
-	return nil
+	return ""
 }
 
 // isPowerShell reports whether the fence language is PowerShell: the
@@ -123,7 +125,9 @@ func checkGroup(file string, group []*block) []analysis.Violation {
 	case psMulti && unix == nil:
 		return violation(file, ps.line,
 			"multi-line PowerShell command needs a Unix twin")
+	// A twin with the wrong continuation is already flagged on its own.
 	case (unixMulti || psMulti) && unix != nil && ps != nil &&
+		wrongContinuation(unix) == "" && wrongContinuation(ps) == "" &&
 		normalize(unix.body, '\\') != normalize(ps.body, '`'):
 		return violation(file, ps.line, "PowerShell command differs from its Unix twin")
 	}

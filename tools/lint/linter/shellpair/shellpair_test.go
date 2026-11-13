@@ -44,7 +44,7 @@ func TestCheck(t *testing.T) {
 				"```bash Unix\nmiru create \\\n  --version v1\n```\n" +
 				"```powershell PowerShell\nmiru create \\\n  --version v1\n```\n" +
 				"</CodeGroup>",
-			wantLines: []int{6, 6},
+			wantLines: []int{6},
 			wantMsg: "shell-pair: powershell block continues a line " +
 				"with a Unix backslash",
 		},
