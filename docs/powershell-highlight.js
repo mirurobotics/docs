@@ -17,7 +17,7 @@
   // A line that runs a native command, optionally assigning its output. Cmdlets
   // (Verb-Noun) and keywords are left to Mintlify's grammar, which colors them.
   const COMMAND_LINE =
-    /^\s*(\$[\w:]+\s+=\s+)?(?!(if|elseif|else|foreach|for|while|do|switch|function|param|return|try|catch|finally|throw)\b)[A-Za-z][\w.]*(\s|$)/;
+    /^\s*(\$[\w:]+\s+=\s+)?(?!(if|elseif|else|foreach|for|while|do|until|switch|function|filter|param|begin|process|end|return|exit|break|continue|try|catch|finally|throw|trap|using)\b)[A-Za-z][\w.]*(\s|$)/i;
   const TOKEN =
     /(\s+)|(`(?=\s*$))|((?<=\s)=(?=\s)|\|)|(--?[A-Za-z][\w-]*)|("[^"]*"|'[^']*')|(\$(?:env:)?\w+)|([^\s`"'$|]+)|(.)/g;
 
@@ -58,7 +58,8 @@
         line.replaceChildren(...tokenize(text, startsCommand).map(toSpan));
         line.dataset.highlighted = "true";
       }
-      inCommand = isCommand && /\s`\s*$/.test(text);
+      // A backtick after ";" starts a new statement, not a continued command.
+      inCommand = isCommand && /[^;\s]\s+`\s*$/.test(text);
     }
   }
 
