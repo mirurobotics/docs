@@ -7,6 +7,30 @@ description: "Changelog and migration steps for the Miru CLI"
 import { Dropdown } from '/snippets/components/api-dropdown.jsx';
 
 
+# v0.12.5
+
+*November 13, 2026*
+
+CLI `v0.12.5` adds support for Windows. See [install](/developers/cli/install) for the Windows install, upgrade, and uninstall steps.
+
+## Features
+
+- Ship the CLI for Windows (x64) as a zip archive holding `miru.exe`, signed with Miru's Authenticode certificate
+- Accept Windows device filepaths, such as `C:\ProgramData\Miru\config.json`, when cloning, staging, and validating deployments
+
+## Improvements
+
+- Check the [`x-miru-type`](/cfg-mgmt/concepts/schemas/languages/jsonschema#custom-vocabulary) keyword before pushing JSON schemas, so `miru release create` rejects an unsupported `x-miru-type` value or a `default` of `1` under `x-miru-type: double` locally
+- [`miru deployment validate`](/references/cli/deployment-validate) now opens with `Validating deployment for release <version>`
+
+## Fixes
+
+- Refuse a release whose config files' device filepaths differ only in case on Windows and macOS, where they would name the same local file
+- Refuse device filepaths that contain a backslash, so a path such as `/srv\..\..\etc` can't escape the `--root` folder on Windows
+- Record a schema's path inside its git repository with forward slashes on Windows, and without `../` when reached through a symlinked folder
+
+---
+
 # v0.12.4
 
 *October 27, 2026*
