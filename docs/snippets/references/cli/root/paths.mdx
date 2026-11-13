@@ -1,0 +1,7 @@
+Each config file's device path maps to a path under `--root`:
+
+- A path like `/srv/miru/configs/mobility.json` drops its leading `/` and maps to `{--root}/srv/miru/configs/mobility.json`.
+- A Windows path keeps its drive letter as a top-level folder, so `C:\ProgramData\Miru\configs\mobility.json` maps to `{--root}\C\ProgramData\Miru\configs\mobility.json`. Files from different drives stay apart, and the same layout works on any computer.
+- When `--root` is the root of the file's own drive, such as `C:\`, the drive folder is left out and the file maps to its exact device path.
+
+Pass `/` to use the computer's root. On Windows, `/` is the root of the current drive, usually `C:\`.

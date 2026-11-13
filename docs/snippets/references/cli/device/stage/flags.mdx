@@ -1,3 +1,5 @@
+import RootPaths from "/snippets/references/cli/root/paths.mdx";
+
 <ParamField path="--release" type="string" required>
   Release version to stage, matched exactly.
 
@@ -7,9 +9,9 @@
 <ParamField path="--root" type="string">
   Directory to read the config files from. Defaults to the current directory.
 
-  Each slot is read from its device path relative to this directory, so `/srv/miru/configs/mobility.json` is read from `{--root}/srv/miru/configs/mobility.json`. Pass `/` to read at the computer's root.
+  <RootPaths />
 
-  Examples: `./robot-42-fs`, `/`
+  Examples: `./robot-42-fs`, `/`, `C:\`
 </ParamField>
 
 <ParamField path="--description" type="string">
