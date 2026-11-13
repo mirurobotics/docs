@@ -1,0 +1,29 @@
+---
+title: "File paths"
+---
+
+The `clone`, `stage`, and `validate` commands work with config files in a local directory, set by the `--root` flag. Each file sits under `--root` at its device path.
+
+## Linux paths
+
+A Linux device path drops its leading `/` and goes under `--root`.
+
+| `--root` | Device path | Local path |
+|----------|-------------|------------|
+| `./robot-42-fs` | `/srv/miru/mobility.json` | `./robot-42-fs/srv/miru/mobility.json` |
+| `/` | `/srv/miru/mobility.json` | `/srv/miru/mobility.json` |
+
+## Windows paths
+
+A Windows device path keeps its drive letter as a top-level folder, so files on different drives never collide.
+
+| `--root` | Device path | Local path |
+|----------|-------------|------------|
+| `.\robot-42-fs` | `C:\Miru\mobility.json` | `.\robot-42-fs\C\Miru\mobility.json` |
+| `C:\` | `C:\Miru\mobility.json` | `C:\Miru\mobility.json` |
+
+When `--root` is the root of the file's own drive, the drive folder is left out and the file goes to its exact device path.
+
+## Device paths
+
+To work with files at the exact paths they have on devices, pass `--root /`. On Windows, `/` is the root of the current drive, usually `C:\`.
