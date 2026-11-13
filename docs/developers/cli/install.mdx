@@ -101,7 +101,7 @@ To upgrade the Miru CLI to the latest version, run the upgrade command in your l
 
     ```powershell PowerShell wrap
     $dir = "$env:LOCALAPPDATA\Programs\Miru\CLI"
-    Remove-Item -Recurse -Force $dir, "$HOME\.miru" -ErrorAction SilentlyContinue
+    foreach ($p in $dir, "$HOME\.miru") { if (Test-Path $p) { Remove-Item -Recurse -Force $p } }
     $path = [Environment]::GetEnvironmentVariable('Path', 'User')
     [Environment]::SetEnvironmentVariable('Path', (($path -split ';') -ne $dir) -join ';', 'User')
     ```

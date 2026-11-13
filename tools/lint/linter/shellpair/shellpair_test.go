@@ -31,6 +31,14 @@ func TestCheck(t *testing.T) {
 			wantMsg:   "shell-pair: PowerShell command differs from its Unix twin",
 		},
 		{
+			name: "multi-line PowerShell differs from single-line Unix",
+			content: "<CodeGroup>\n" +
+				"```bash Unix\nmiru a --b\n```\n" +
+				"```powershell PowerShell\nmiru a `\n  --c\n```\n" +
+				"</CodeGroup>",
+			wantLines: []int{5},
+		},
+		{
 			name: "PowerShell twin still uses backslashes",
 			content: "<CodeGroup>\n" +
 				"```bash Unix\nmiru create \\\n  --version v1\n```\n" +
