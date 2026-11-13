@@ -109,9 +109,7 @@ func checkContinuation(file string, b *block) []analysis.Violation {
 
 // isPowerShell reports whether the fence language is PowerShell: the
 // built-in grammar, or the docs' pwsh grammar that also colors miru commands.
-func isPowerShell(lang string) bool {
-	return lang == "powershell" || lang == "pwsh"
-}
+func isPowerShell(lang string) bool { return lang == "powershell" || lang == "pwsh" }
 
 func checkGroup(file string, group []*block) []analysis.Violation {
 	unix := findBlock(group, unixTitle)
