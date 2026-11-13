@@ -210,8 +210,7 @@
                 "pages": [
                   "developers/cli/overview",
                   "developers/cli/install",
-                  "developers/cli/authentication",
-                  "developers/cli/file-paths"
+                  "developers/cli/authentication"
                 ]
               },
               {
