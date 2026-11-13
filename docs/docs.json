@@ -1489,7 +1489,8 @@
     "dark": "/logo/light.png"
   },
   "appearance": {
-    "default": "dark"
+    "default": "dark",
+    "strict": true
   },
   "navbar": {
     "links": [
