@@ -37,6 +37,7 @@ func TestCheck(t *testing.T) {
 				"```powershell PowerShell\nmiru a `\n  --c\n```\n" +
 				"</CodeGroup>",
 			wantLines: []int{5},
+			wantMsg:   "shell-pair: PowerShell command differs from its Unix twin",
 		},
 		{
 			name: "PowerShell twin still uses backslashes",
