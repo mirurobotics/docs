@@ -4,7 +4,8 @@
 // custom-language support does not load on hosted sites
 // (https://github.com/orgs/mintlify/discussions/3401).
 (() => {
-  // [light, dark] colors Mintlify's themes give the matching bash tokens.
+  // [light, dark] colors the code block themes pinned in docs.json give the
+  // matching bash tokens.
   const COLORS = {
     plain: ["#1F2328", "#D4D4D4"],
     command: ["#953800", "#DCDCAA"],

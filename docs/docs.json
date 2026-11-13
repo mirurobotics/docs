@@ -12,7 +12,13 @@
     "dark": "/favicon-white.svg"
   },
   "styling": {
-    "eyebrows": "section"
+    "eyebrows": "section",
+    "codeblocks": {
+      "theme": {
+        "light": "github-light-default",
+        "dark": "dark-plus"
+      }
+    }
   },
   "fonts": {
     "family": "Inter",
