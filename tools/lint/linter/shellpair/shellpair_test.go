@@ -50,6 +50,16 @@ func TestCheck(t *testing.T) {
 				"with a Unix backslash",
 		},
 		{
+			name: "Unix twin uses a backtick",
+			content: "<CodeGroup>\n" +
+				"```bash Unix\nmiru create `\n  --version v1\n```\n" +
+				"```powershell PowerShell\nmiru create `\n  --version v1\n```\n" +
+				"</CodeGroup>",
+			wantLines: []int{2},
+			wantMsg: "shell-pair: bash block continues a line " +
+				"with PowerShell's backtick",
+		},
+		{
 			name: "multi-line Unix without twin",
 			content: "  <CodeGroup>\n" +
 				"  ```bash Unix\n  miru create \\\n    --version v1\n  ```\n" +
