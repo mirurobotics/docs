@@ -1,17 +1,29 @@
-Each config file sits under `--root` at its device path.
+Config files are placed on your local machine relative to the path specified by `--root` in the CLI command. When not specified, `--root` defaults to the current directory.
 
-**Linux paths** drop their leading `/`.
+Below are examples of how config files are placed on your local machine when using the CLI.
 
-| `--root` | Device path | Local path |
-|----------|-------------|------------|
-| `./robot-42-fs` | `/srv/app.json` | `./robot-42-fs/srv/app.json` |
-| `/` | `/srv/app.json` | `/srv/app.json` |
+<Tabs>
+  <Tab title="Linux / MacOS">
 
-**Windows paths** keep their drive letter as a top-level folder, so files on different drives never collide. The drive folder is left out when `--root` is the root of that drive.
+    Linux paths are straightforward--they drop their leading `/` and are appended to the `--root` path.
 
-| `--root` | Device path | Local path |
-|----------|-------------|------------|
-| `.\robot-42-fs` | `C:\srv\app.json` | `.\robot-42-fs\C\srv\app.json` |
-| `C:\` | `C:\srv\app.json` | `C:\srv\app.json` |
+    | `--root` | Config instance path | Local path |
+    |----------|-------------|------------|
+    | `./robot-42-fs` | `/srv/app.json` | `./robot-42-fs/srv/app.json` |
+    | `/` | `/srv/app.json` | `/srv/app.json` |
+  </Tab>
+  <Tab title="Windows">
 
-On Windows, `--root /` is the root of the current drive, usually `C:\`.
+    Windows paths are a bit more complex. 
+    
+    When `--root` is the root of the current drive, the drive letter is left out. However, when `--root` is not the root of the current drive, the drive letter is included as it's own top-level folder.
+
+    | `--root` | Config instance path | Local path |
+    |----------|-------------|------------|
+    | `.\robot-42-fs` | `C:\srv\app.json` | `.\robot-42-fs\C\srv\app.json` |
+    | `C:\` | `C:\srv\app.json` | `C:\srv\app.json` |
+  </Tab>
+</Tabs>
+
+- **Config instance path**: the file path specified in the [config instance](/cfg-mgmt/concepts/config-instances#param-file-path) of a deployment.
+- **Local path**: the path on your local machine when interacting with the CLI.
