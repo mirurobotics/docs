@@ -1,0 +1,143 @@
+package shellpair
+
+import (
+	"strings"
+	"testing"
+)
+
+func TestCheck(t *testing.T) {
+	tests := []struct {
+		name      string
+		content   string
+		wantLines []int
+		wantMsg   string // if set, compared against the first violation
+	}{
+		{
+			name: "matching pair",
+			content: "<CodeGroup>\n" +
+				"```bash Bash highlight={3}\n" +
+				"miru create \\\n  --version v1 \\\n  --schemas ./s/\n```\n" +
+				"```powershell PowerShell highlight={3}\n" +
+				"miru create `\n  --version v1 `\n  --schemas .\\s\\\n```\n" +
+				"</CodeGroup>",
+		},
+		{
+			name: "pair differs",
+			content: "<CodeGroup>\n" +
+				"```bash Bash\nmiru create \\\n  --version v1\n```\n" +
+				"```powershell PowerShell\nmiru create `\n  --version v2\n```\n" +
+				"</CodeGroup>",
+			wantLines: []int{6},
+			wantMsg:   "shell-pair: PowerShell command differs from its Bash twin",
+		},
+		{
+			name: "multi-line PowerShell differs from single-line Bash",
+			content: "<CodeGroup>\n" +
+				"```bash Bash\nmiru a --b\n```\n" +
+				"```powershell PowerShell\nmiru a `\n  --c\n```\n" +
+				"</CodeGroup>",
+			wantLines: []int{5},
+			wantMsg:   "shell-pair: PowerShell command differs from its Bash twin",
+		},
+		{
+			name: "PowerShell twin still uses backslashes",
+			content: "<CodeGroup>\n" +
+				"```bash Bash\nmiru create \\\n  --version v1\n```\n" +
+				"```powershell PowerShell\nmiru create \\\n  --version v1\n```\n" +
+				"</CodeGroup>",
+			wantLines: []int{6},
+			wantMsg: "shell-pair: powershell block continues a line " +
+				"with a Bash backslash",
+		},
+		{
+			name: "Bash twin uses a backtick",
+			content: "<CodeGroup>\n" +
+				"```bash Bash\nmiru create `\n  --version v1\n```\n" +
+				"```powershell PowerShell\nmiru create `\n  --version v1\n```\n" +
+				"</CodeGroup>",
+			wantLines: []int{2},
+			wantMsg: "shell-pair: bash block continues a line " +
+				"with PowerShell's backtick",
+		},
+		{
+			name: "multi-line Bash without twin",
+			content: "  <CodeGroup>\n" +
+				"  ```bash Bash\n  miru create \\\n    --version v1\n  ```\n" +
+				"  </CodeGroup>",
+			wantLines: []int{2},
+			wantMsg:   "shell-pair: multi-line Bash command needs a PowerShell twin",
+		},
+		{
+			name: "multi-line PowerShell without twin",
+			content: "<CodeGroup>\n" +
+				"```powershell PowerShell\nmiru create `\n  --version v1\n```\n" +
+				"</CodeGroup>",
+			wantLines: []int{2},
+			wantMsg:   "shell-pair: multi-line PowerShell command needs a Bash twin",
+		},
+		{
+			name: "single-line commands may differ",
+			content: "<CodeGroup>\n" +
+				"```bash Bash\nexport MIRU_API_KEY=<key>\n```\n" +
+				"```powershell PowerShell\n$env:MIRU_API_KEY = \"<key>\"\n```\n" +
+				"</CodeGroup>",
+		},
+		{
+			name: "other titles are ignored",
+			content: "<CodeGroup>\n" +
+				"```bash Empty Schemas (Bash)\nmiru create \\\n  --version v1\n```\n" +
+				"```bash\nmiru create \\\n  --version v1\n```\n" +
+				"</CodeGroup>",
+		},
+		{
+			name:    "blocks outside a CodeGroup are ignored",
+			content: "```bash Bash\nmiru create \\\n  --version v1\n```\n</CodeGroup>",
+		},
+		{
+			name:      "powershell block with a backslash continuation",
+			content:   "```powershell\nmiru create \\\n  --version v1\n```",
+			wantLines: []int{1},
+		},
+		{
+			name:      "bash block with a backtick continuation",
+			content:   "```bash\nmiru create `\n  --version v1\n```",
+			wantLines: []int{1},
+			wantMsg: "shell-pair: bash block continues a line " +
+				"with PowerShell's backtick",
+		},
+		{
+			name: "each CodeGroup is checked on its own",
+			content: "<CodeGroup>\n" +
+				"```bash Bash\nmiru a \\\n  --b\n```\n" +
+				"```powershell PowerShell\nmiru a `\n  --b\n```\n" +
+				"</CodeGroup>\n" +
+				"<CodeGroup>\n" +
+				"```bash Bash\nmiru c \\\n  --d\n```\n" +
+				"</CodeGroup>",
+			wantLines: []int{12},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			violations := Check("test.mdx", strings.Split(tt.content, "\n"))
+			if len(violations) != len(tt.wantLines) {
+				t.Fatalf("expected %d violations, got %d: %v",
+					len(tt.wantLines), len(violations), violations)
+			}
+			for i, wantLine := range tt.wantLines {
+				if violations[i].Line != wantLine {
+					t.Errorf("violation %d: expected line %d, got %d",
+						i, wantLine, violations[i].Line)
+				}
+				if violations[i].File != "test.mdx" || violations[i].Col != 1 {
+					t.Errorf("violation %d: unexpected position %+v", i, violations[i])
+				}
+			}
+			if tt.wantMsg != "" && violations[0].Message != tt.wantMsg {
+				t.Errorf("expected message %q, got %q",
+					tt.wantMsg, violations[0].Message)
+			}
+		})
+	}
+}

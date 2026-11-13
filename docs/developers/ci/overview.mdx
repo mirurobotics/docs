@@ -25,11 +25,17 @@ Since the Miru CLI is the engine behind CI tasks, any tasks supported by the CLI
 
 ## API key authentication
 
-When used in your CI pipeline, the CLI can be authenticated using an API key. Simply export the `MIRU_API_KEY` environment variable.
+When used in your CI pipeline, the CLI can be authenticated using an API key. Set the `MIRU_API_KEY` environment variable.
 
-```bash
+<CodeGroup>
+```bash Bash
 export MIRU_API_KEY=<your-api-key>
 ```
+
+```powershell PowerShell
+$env:MIRU_API_KEY = "<your-api-key>"
+```
+</CodeGroup>
 
 To create an API key for your CI pipeline, follow the instructions in the [API keys](/admin/apikeys#create-an-api-key) section.
 
