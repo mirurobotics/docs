@@ -16,16 +16,16 @@ func TestCheck(t *testing.T) {
 			name: "matching pair",
 			content: "<CodeGroup>\n" +
 				"```bash Unix highlight={3}\n" +
-				"miru release create \\\n  --version v1 \\\n  --schemas ./s/\n```\n" +
+				"miru create \\\n  --version v1 \\\n  --schemas ./s/\n```\n" +
 				"```powershell PowerShell highlight={3}\n" +
-				"miru release create `\n  --version v1 `\n  --schemas ./s/\n```\n" +
+				"miru create `\n  --version v1 `\n  --schemas ./s/\n```\n" +
 				"</CodeGroup>",
 		},
 		{
 			name: "pair differs",
 			content: "<CodeGroup>\n" +
-				"```bash Unix\nmiru release create \\\n  --version v1\n```\n" +
-				"```powershell PowerShell\nmiru release create `\n  --version v2\n```\n" +
+				"```bash Unix\nmiru create \\\n  --version v1\n```\n" +
+				"```powershell PowerShell\nmiru create `\n  --version v2\n```\n" +
 				"</CodeGroup>",
 			wantLines: []int{6},
 			wantMsg:   "shell-pair: PowerShell command differs from its Unix twin",
@@ -33,15 +33,15 @@ func TestCheck(t *testing.T) {
 		{
 			name: "PowerShell twin still uses backslashes",
 			content: "<CodeGroup>\n" +
-				"```bash Unix\nmiru release create \\\n  --version v1\n```\n" +
-				"```powershell PowerShell\nmiru release create \\\n  --version v1\n```\n" +
+				"```bash Unix\nmiru create \\\n  --version v1\n```\n" +
+				"```powershell PowerShell\nmiru create \\\n  --version v1\n```\n" +
 				"</CodeGroup>",
 			wantLines: []int{6},
 		},
 		{
 			name: "multi-line Unix without twin",
 			content: "  <CodeGroup>\n" +
-				"  ```bash Unix\n  miru release create \\\n    --version v1\n  ```\n" +
+				"  ```bash Unix\n  miru create \\\n    --version v1\n  ```\n" +
 				"  </CodeGroup>",
 			wantLines: []int{2},
 			wantMsg:   "shell-pair: multi-line Unix command needs a PowerShell twin",
@@ -49,7 +49,7 @@ func TestCheck(t *testing.T) {
 		{
 			name: "multi-line PowerShell without twin",
 			content: "<CodeGroup>\n" +
-				"```powershell PowerShell\nmiru release create `\n  --version v1\n```\n" +
+				"```powershell PowerShell\nmiru create `\n  --version v1\n```\n" +
 				"</CodeGroup>",
 			wantLines: []int{2},
 			wantMsg:   "shell-pair: multi-line PowerShell command needs a Unix twin",
@@ -64,13 +64,13 @@ func TestCheck(t *testing.T) {
 		{
 			name: "other titles are ignored",
 			content: "<CodeGroup>\n" +
-				"```bash Empty Schemas (Unix)\nmiru release create \\\n  --version v1\n```\n" +
-				"```bash\nmiru release create \\\n  --version v1\n```\n" +
+				"```bash Empty Schemas (Unix)\nmiru create \\\n  --version v1\n```\n" +
+				"```bash\nmiru create \\\n  --version v1\n```\n" +
 				"</CodeGroup>",
 		},
 		{
 			name:    "blocks outside a CodeGroup are ignored",
-			content: "```bash Unix\nmiru release create \\\n  --version v1\n```\n</CodeGroup>",
+			content: "```bash Unix\nmiru create \\\n  --version v1\n```\n</CodeGroup>",
 		},
 		{
 			name: "each CodeGroup is checked on its own",
@@ -102,7 +102,8 @@ func TestCheck(t *testing.T) {
 				}
 			}
 			if tt.wantMsg != "" && violations[0].Message != tt.wantMsg {
-				t.Errorf("expected message %q, got %q", tt.wantMsg, violations[0].Message)
+				t.Errorf("expected message %q, got %q",
+					tt.wantMsg, violations[0].Message)
 			}
 		})
 	}
