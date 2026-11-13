@@ -15,13 +15,15 @@
     variable: ["#1F2328", "#9CDCFE"],
     continuation: ["#CF222E", "#D7BA7D"],
   };
-  // A line that runs a native command, after an optional "$ " prompt or an
-  // assignment of its output. Lines that start with a cmdlet (Verb-Noun) or
-  // keyword are left to Mintlify's grammar, which colors them.
+  // A line that runs a native command, after an optional assignment of its
+  // output. Lines that start with a cmdlet (Verb-Noun) or keyword are left to
+  // Mintlify's grammar, which colors them.
   const COMMAND_LINE =
-    /^\s*(\$\s+|\$[\w:]+\s+=\s+)?(?!(if|elif|elseif|else|then|fi|foreach|for|in|while|do|done|until|case|esac|switch|function|filter|param|begin|process|end|return|exit|break|continue|try|catch|finally|throw|trap|using)\b)[A-Za-z][\w.]*(\s|$)/i;
+    /^\s*(\$[\w:]+\s+=\s+)?(?!(if|elif|elseif|else|then|fi|foreach|for|in|while|do|done|until|case|esac|switch|function|filter|param|begin|process|end|return|exit|break|continue|try|catch|finally|throw|trap|using)\b)[A-Za-z][\w.]*(\s|$)/i;
 
-  const PROMPT = /^\s*\$\s/;
+  // A "$ " prompt. Shiki's bash grammar colors it as the command, and the word
+  // after it as an argument.
+  const PROMPT = /^\s*\$\s+/;
   const CMDLET = /^[A-Za-z]+-[A-Za-z]+$/;
   const VARIABLE = /(\$\{?(?:env:)?\w+\}?)/;
 
@@ -39,9 +41,14 @@
     );
   }
 
-  function tokenize(text, startsCommand, shell) {
+  function tokenize(text, startsCommand, isPrompt, shell) {
     const tokens = [];
-    let isFirst = startsCommand;
+    if (isPrompt) {
+      const [prompt] = text.match(PROMPT);
+      tokens.push([prompt, "command"]);
+      text = text.slice(prompt.length);
+    }
+    let isFirst = startsCommand && !isPrompt;
     for (const match of text.matchAll(shell.token)) {
       const [tok, space, cont, operator, option, string, variable, word] = match;
       let kind = "plain";
@@ -50,9 +57,6 @@
       else if (variable) kind = "variable";
       else if (word && isFirst && shell.hasCmdlets && CMDLET.test(word)) kind = "cmdlet";
       else if (word) kind = isFirst ? "command" : "argument";
-      // A "$ " prompt takes the command color, as in Shiki's bash grammar.
-      else if (tok === "$" && isFirst && tokens.every(([, k]) => k === "plain"))
-        kind = "command";
       if (string) tokens.push(...stringTokens(string));
       else tokens.push([tok, kind]);
       // The word after "=" or "|" is the next command, as in bash.
@@ -98,10 +102,12 @@
     let inCommand = false;
     for (const line of lines) {
       const text = line.textContent;
-      const startsCommand = COMMAND_LINE.test(text) && (!hasPrompt || PROMPT.test(text));
+      const isPrompt = PROMPT.test(text);
+      const startsCommand =
+        (!hasPrompt || isPrompt) && COMMAND_LINE.test(text.replace(PROMPT, ""));
       const isCommand = startsCommand || inCommand;
       if (isCommand && !line.dataset.highlighted) {
-        line.replaceChildren(...tokenize(text, startsCommand, shell).map(toSpan));
+        line.replaceChildren(...tokenize(text, startsCommand, isPrompt, shell).map(toSpan));
         line.dataset.highlighted = "true";
       }
       // A continuation after ";" starts a new statement, not a continued command.
