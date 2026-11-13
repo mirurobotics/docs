@@ -39,29 +39,31 @@ func Check(file string, lines []string) []analysis.Violation {
 func codeGroups(lines []string) [][]block {
 	var groups [][]block
 	var current []block
-	inGroup, inFence := false, false
+	inGroup, fence := false, ""
 	for i, line := range lines {
 		trimmed := strings.TrimSpace(line)
-		switch {
-		case inFence && trimmed == "```":
-			inFence = false
-		case inFence:
-			if inGroup {
+		if fence != "" {
+			if trimmed == fence {
+				fence = ""
+			} else if inGroup {
 				last := &current[len(current)-1]
 				last.body = append(last.body, line)
 			}
-		case strings.HasPrefix(trimmed, "```"):
-			inFence = true
+			continue
+		}
+		if open, ok := analysis.CodeFenceOpen(line); ok {
+			fence = open
 			if inGroup {
-				b := block{title: fenceTitle(trimmed), line: i + 1}
+				b := block{title: fenceTitle(trimmed, open), line: i + 1}
 				current = append(current, b)
 			}
+			continue
+		}
+		switch {
 		case strings.HasPrefix(trimmed, "<CodeGroup"):
 			inGroup, current = true, nil
-		case trimmed == "</CodeGroup>":
-			if inGroup {
-				groups = append(groups, current)
-			}
+		case trimmed == "</CodeGroup>" && inGroup:
+			groups = append(groups, current)
 			inGroup = false
 		}
 	}
@@ -70,8 +72,8 @@ func codeGroups(lines []string) [][]block {
 
 // fenceTitle returns the title of an opening fence such as
 // "```bash Unix highlight={3}", which is the word after the language.
-func fenceTitle(fence string) string {
-	fields := strings.Fields(strings.TrimPrefix(fence, "```"))
+func fenceTitle(trimmed, fence string) string {
+	fields := strings.Fields(strings.TrimPrefix(trimmed, fence))
 	if len(fields) < 2 {
 		return ""
 	}
@@ -101,6 +103,8 @@ func checkGroup(file string, group []block) []analysis.Violation {
 	}}
 }
 
+// findBlock returns the group's first block with the title. Titles name
+// a CodeGroup's tabs, so each appears once.
 func findBlock(group []block, title string) (block, bool) {
 	for _, b := range group {
 		if b.title == title {
