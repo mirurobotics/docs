@@ -1,7 +1,8 @@
-// Colors miru commands in PowerShell code blocks the way the bash grammar
-// colors them in Unix blocks. Mintlify's PowerShell grammar leaves native
-// commands and their flags uncolored, and its custom-language support does
-// not load on hosted sites (https://github.com/orgs/mintlify/discussions/3401).
+// Colors native commands in PowerShell code blocks, such as miru, icacls and
+// aws, the way the bash grammar colors them in Unix blocks. Mintlify's
+// PowerShell grammar leaves native commands and their flags uncolored, and its
+// custom-language support does not load on hosted sites
+// (https://github.com/orgs/mintlify/discussions/3401).
 (() => {
   // [light, dark] colors Mintlify's themes give the matching bash tokens.
   const COLORS = {
@@ -12,13 +13,18 @@
     variable: ["#1F2328", "#9CDCFE"],
     continuation: ["#CF222E", "#D7BA7D"],
   };
+  // A line that runs a native command, optionally assigning its output. Cmdlets
+  // (Verb-Noun) and keywords are left to Mintlify's grammar, which colors them.
+  const COMMAND_LINE =
+    /^\s*(\$[\w:]+\s+=\s+)?(?!(if|elseif|else|foreach|for|while|do|switch|function|param|return|try|catch|finally|throw)\b)[A-Za-z][\w.]*(\s|$)/;
   const TOKEN =
-    /(\s+)|(`(?=\s*$))|(--?[A-Za-z][\w-]*)|("[^"]*"|'[^']*')|(\$(?:env:)?\w+)|([^\s`"'$]+)|(.)/g;
+    /(\s+)|(`(?=\s*$))|((?<=\s)=(?=\s)|\|)|(--?[A-Za-z][\w-]*)|("[^"]*"|'[^']*')|(\$(?:env:)?\w+)|([^\s`"'$|]+)|(.)/g;
 
   function tokenize(text, startsCommand) {
     const tokens = [];
     let isFirst = startsCommand;
-    for (const [tok, space, cont, option, string, variable, word] of text.matchAll(TOKEN)) {
+    for (const match of text.matchAll(TOKEN)) {
+      const [tok, space, cont, operator, option, string, variable, word] = match;
       let kind = "plain";
       if (cont) kind = "continuation";
       else if (option) kind = "option";
@@ -26,7 +32,9 @@
       else if (variable) kind = "variable";
       else if (word) kind = isFirst ? "command" : "argument";
       tokens.push([tok, kind]);
-      if (!space) isFirst = false;
+      // The word after "=" or "|" is the next command, as in bash.
+      if (operator) isFirst = true;
+      else if (!space) isFirst = false;
     }
     return tokens;
   }
@@ -43,11 +51,11 @@
     let inCommand = false;
     for (const line of code.querySelectorAll(".line")) {
       const text = line.textContent;
-      const startsCommand = /^\s*miru(\s|$)/.test(text);
+      const startsCommand = COMMAND_LINE.test(text);
       const isCommand = startsCommand || inCommand;
-      if (isCommand && !line.dataset.miruHighlighted) {
+      if (isCommand && !line.dataset.highlighted) {
         line.replaceChildren(...tokenize(text, startsCommand).map(toSpan));
-        line.dataset.miruHighlighted = "true";
+        line.dataset.highlighted = "true";
       }
       inCommand = isCommand && /\s`\s*$/.test(text);
     }
