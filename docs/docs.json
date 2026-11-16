@@ -118,7 +118,8 @@
                   },
                   "cfg-mgmt/concepts/config-instances",
                   "cfg-mgmt/concepts/components",
-                  "cfg-mgmt/concepts/calibrations"
+                  "cfg-mgmt/concepts/calibrations",
+                  "cfg-mgmt/concepts/hardware-manifests"
                 ]
               },
               {

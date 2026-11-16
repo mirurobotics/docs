@@ -1,0 +1,82 @@
+---
+title: "Hardware manifests"
+---
+
+import { EditableBadge } from '/snippets/components/field-badges.jsx';
+import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
+import { ProvisionerBadge, PublisherBadge } from '/snippets/components/role-badges.jsx';
+import HardwareManifestDef from '/snippets/definitions/hardware-manifest.mdx';
+
+<HardwareManifestDef />
+
+A device has at most one hardware manifest. Miru compares the device's
+[calibrations](/cfg-mgmt/concepts/calibrations) with its manifest to show which
+components are calibrated.
+
+## Properties
+
+<ParamField path="name" type="string">
+  <EditableBadge />
+
+  The name of the kind of device the manifest describes. Unique within the workspace.
+
+  Example: `Picker v2`
+</ParamField>
+
+<ParamField path="components" type="[] Component">
+  <EditableBadge />
+
+  The [components](/cfg-mgmt/concepts/components) a device with this manifest should
+  have calibrated. A manifest lists at most 100 components, each at most once.
+
+  Examples: `kuka-arm`, `realsense-d435`
+</ParamField>
+
+## Calibration status
+
+For each component in a device's manifest, Miru shows a status based on the device's
+latest calibration of that component:
+
+| Status | Meaning |
+|--------|---------|
+| Not calibrated | The device hasn't reported a calibration for the component |
+| Calibrated | The latest calibration is valid |
+| Invalid | The latest calibration was marked invalid |
+
+A new calibration becomes the latest, so it clears **Invalid**. Calibrations for
+components that aren't in the manifest are listed under **Not in manifest**.
+
+Applications on the device mark a calibration invalid, which requires an upcoming
+Miru Agent release.
+
+## Create a hardware manifest  <PublisherBadge />
+
+<PlatformUnsupportedBadge />
+
+To create a hardware manifest in the dashboard, name it and choose its components. A
+manifest can only list components that already exist, so
+[create a component](/cfg-mgmt/concepts/components) first if no device has reported a
+calibration for it.
+
+## Edit a hardware manifest  <PublisherBadge />
+
+<PlatformUnsupportedBadge />
+
+You can rename a hardware manifest or change its components. The change applies to
+every device that uses the manifest.
+
+## Set a device's hardware manifest  <ProvisionerBadge />
+
+<PlatformUnsupportedBadge />
+
+Set a device's hardware manifest when you
+[edit the device](/concepts/devices/manage#edit-a-device), or set it on up to 100
+devices at once with [bulk actions](/concepts/devices/manage#bulk-actions). Clearing
+the manifest leaves the device without one.
+
+## Delete a hardware manifest  <PublisherBadge />
+
+<PlatformUnsupportedBadge />
+
+A hardware manifest can't be deleted while any device uses it. Change or clear the
+manifest on those devices first.
