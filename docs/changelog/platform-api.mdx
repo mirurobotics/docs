@@ -21,7 +21,7 @@ The only breaking change from `everglades` is to calibrations. Every `everglades
 
 ## New endpoints
 
-Archiving and deleting devices need the new `devices:archive` and `devices:delete` [scopes](/developers/platform-api/authz#scopes-by-resource), and uploads have their own `uploads:read` scope.
+Archiving and deleting devices need the new `devices:archive` and `devices:delete` [scopes](/developers/platform-api/authz#scopes-by-resource), and reading uploads needs the new `uploads:read` scope. Reading upload collections and file rules needs the existing `upload_collections:read` and `file_rules:read` scopes.
 
 <Dropdown title="Devices">
   * <POST /> `/devices/{device_id}/archive` — archive a device
