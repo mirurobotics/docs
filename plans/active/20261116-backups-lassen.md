@@ -43,7 +43,9 @@ Backend PRs mirurobotics/backend#1276 and #1277 (merged 2026-11-16) changed nigh
 
 ## Decision Log
 
-(Add entries as you go.)
+- 2026-11-16, design review finding 1: the overview says lassen is in beta and may change, matching `versioning.mdx` and the lassen changelog on the base branch. Plain text rather than `BetaBadge`, to keep the page free of components.
+- 2026-11-16, design review finding 2: the calibrations paragraph is replaced by one sentence after the resources intro. It names the lassen calibration change as the example, since the task asked for the new shape, and points to the Platform API changelog for the details, so the two pages can't drift. This also drops the `meca` word that failed CSpell.
+- 2026-11-16, design review finding 3: the overview's uploads item says only "records only, not the uploaded files". The archive-format Contents note stays the one place that says where the files are, since "your bucket" on the overview means the backup bucket.
 
 ## Outcomes & Retrospective
 

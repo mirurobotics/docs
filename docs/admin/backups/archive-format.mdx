@@ -127,7 +127,7 @@ The manifest is a JSON file that describes the archive.
 
 ## Resources
 
-Each file in `resources/` is a [JSON Lines](https://jsonlines.org) file containing one Platform API resource per line. Resources use the Platform API version named in the manifest's `platform_api_version`.
+Each file in `resources/` is a [JSON Lines](https://jsonlines.org) file containing one Platform API resource per line. Resources use the Platform API version named in the manifest's `platform_api_version`, so a resource's shape can differ between archives. For example, `2026-11-16.lassen` calibrations have no `role` or `aspect`, and their `component` is the flat component slug. The [Platform API changelog](/changelog/platform-api) lists what each version changed.
 
 | File | Resource | Expansions |
 | ---- | -------- | ---------- |
@@ -154,12 +154,6 @@ pushed from, with the schema's file paths in each commit. While config schema gi
 
 Archived devices, releases, config types and upload collections are included in the archive. Deleted API
 keys are also included, as resources may have been created from an API key that has since been deleted.
-
-Calibrations changed shape in `2026-11-16.lassen`. A lassen calibration has no `role`
-or `aspect` field, and its `component` is the flat component slug: a calibration
-reported as component `meca500` with role `aligner-1` reads `meca500-aligner-1`.
-Archives written in `2026-11-04.everglades` keep the separate fields. Check the
-manifest's `platform_api_version` to know which shape `calibrations.jsonl` uses.
 
 ## Contents
 
