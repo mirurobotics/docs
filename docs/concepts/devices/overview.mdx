@@ -143,6 +143,14 @@ Configurations are deployed to devices via the Miru Agent, a lightweight backgro
   Examples: `grp_123`
 </ParamField>
 
+<ParamField path="hardware manifest" type="HardwareManifest">
+  <EditableBadge /> {' '} <NullableBadge />
+
+  The [hardware manifest](/cfg-mgmt/concepts/hardware-manifests) listing the components the device should have calibrated. If the device has no hardware manifest, the hardware manifest id is `null`.
+
+  Examples: `hw_mnf_123`
+</ParamField>
+
 ## Status
 
 Devices leverage several states to track their registration and connectivity with the Miru control plane.
