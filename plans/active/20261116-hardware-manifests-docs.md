@@ -53,8 +53,9 @@ Hardware manifests are new in the dashboard. A hardware manifest is the set of c
 
 ## Progress
 
-- [ ] Milestone 1: concept page, definition snippet, nav entry; commit.
-- [ ] Milestone 2: access control, device bulk actions, changelog; commit.
+- [x] Milestone 1: concept page, definition snippet, nav entry; commit.
+- [x] Milestone 2: access control, device bulk actions, changelog; commit.
+- [x] Source written
 - [ ] Milestone 3 (tests): content check against the openapi spec and cross-reference check; commit any fixes.
 - [ ] Preflight `CLEAN` on the pushed head.
 
@@ -64,7 +65,7 @@ Hardware manifests are new in the dashboard. A hardware manifest is the set of c
 
 ## Decision Log
 
-(Add entries as work proceeds.)
+- Source stage: Milestones 1 and 2 written exactly as the Plan of Work describes, with no deviations. All four open questions kept their defaults (no "Delete a component" line; "Picker v2" with `kuka-arm` and `realsense-d435`; no agent version for invalidation; bulk action labeled **Set hardware manifest**).
 
 ## Outcomes & Retrospective
 
