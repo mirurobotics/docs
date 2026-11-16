@@ -67,7 +67,9 @@ Edits mirror docs#315: the `v0.3.0` dropdown is a copy of `v0.2.5`'s, the change
 
 ## Decision Log
 
-(Add entries as work proceeds.)
+- 2026-11-16, design review: the breaking-change diffs now move `role` and `aspect` into `component`, joined with `-` (`kuka-arm-front-left-pose`), as the backend agent spec joins them, so following the diff keeps reporting to the same component. The latest calibration diff shows the joined slug too, since the v0.3 `Calibration.component` is the component's slug, not the reported one.
+- 2026-11-16, design review: "agent `v0.13.0` also serves `v0.2.5` at `/v0.2`" is kept only in the first migration step. Dropped from the Device API intro and the agent Features list, and the `versions.mdx` paragraph is cut to one version-free sentence, so a release edits one place.
+- 2026-11-16, design review: that `/v0.2` behaves unchanged on the new agent is not yet backed by code (agent `main` has no `/v0.3` module). Checking it against the agent PR that adds `/v0.3` is a "Before merging" item.
 
 ## Outcomes & Retrospective
 

@@ -14,7 +14,6 @@ Miru Agent `v0.13.0` adds Device API `v0.3.0` at `/v0.3`, next to `v0.2.5` at `/
 
 ## Features
 
-- The Device API is served at `/v0.3` (`v0.3.0`) as well as `/v0.2` (`v0.2.5`); `/v0.2` routes are unchanged, so existing clients keep working
 - Added `POST /v0.3/calibrations/latest/{report_id}/invalidate`, which marks a latest calibration invalid with a reason and uploads the invalidation to Miru
 - `GET /v0.3/calibrations/latest` lists the latest calibration for each component, with `invalidated_at` set once it's marked invalid
 

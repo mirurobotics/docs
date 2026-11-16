@@ -70,7 +70,7 @@ Be careful when updating your client application to a new API version. Even if A
 
 As rule of thumb, use the API version of the oldest agent version that is deployed to your fleet in your client application. This ensures that the agent was compiled with all the features of the API version you are using.
 
-An agent can serve more than one API version, each at its own breaking change alias. For example, agent `v0.13.0` serves `v0.2.5` at `/v0.2` and `v0.3.0` at `/v0.3`. Keep your client on `/v0.2` until every device in your fleet runs agent `v0.13.0` or later, then move it to `/v0.3` to use `v0.3.0`'s features.
+An agent can serve more than one API version, each at its own breaking change alias, as the matrix above shows.
 
 ## Changelog and migrations
 
