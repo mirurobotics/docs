@@ -23,26 +23,18 @@ To provision a device, see the [Provision a device](/provision-devices) guide.
 
 ## Components
 
-A [component](/cfg-mgmt/concepts/components) is a kind of hardware that devices report calibrations for, such as an arm, a camera, or a Robotiq 2F-85. A calibration names its component with a [slug](/cfg-mgmt/concepts/components#param-slug), such as `kuka-arm`, `realsense-d435`, or `robotiq-2f-85`. 
+A [component](/cfg-mgmt/concepts/components) is a kind of hardware that devices report calibrations for, such as an arm, a camera, or a Robotiq 2F-85. A calibration names its component with a [slug](/cfg-mgmt/concepts/components#param-slug), such as `kuka-arm`, `realsense-d435`, or `robotiq-2f-85`.
 
 When a calibration is reported, Miru checks if its component exists and creates it if it doesn't.
 
-### Roles
+### Multiple units and parts
 
-Oftentimes devices have multiple units of the same component, such as multiple arms. 
+Devices often have several units of the same hardware, such as two arms, or calibrate parts of a unit separately, such as a camera's intrinsics and extrinsics. Give each its own component slug, such as `arm-left`, `arm-right`, or `realsense-d435-intrinsics`. A device keeps a separate history for each component it reports.
 
-Roles distinguish components that are identical except for their purpose in the overall system. For example, a device with two arms might distinguish them as `left` and `right`.
+For older clients, create calibration in Device API v0.2 still accepts the optional `role` and `aspect` parameters. Miru joins the component, role and aspect with `-`, skipping any that are unset, and reports the calibration to that component. For example, component `arm` with role `left` becomes `arm-left`, and adding aspect `pose` makes `arm-left-pose`.
 
-### Aspects
+We recommend reporting the full slug in `component` and leaving `role` and `aspect` unset. Keep a joined slug within 48 characters so it fits the component [slug](/cfg-mgmt/concepts/components#param-slug) limit.
 
-Separately, some components have multiple calibrations. 
-
-An [aspect](/cfg-mgmt/concepts/components#param-aspects) distinguishes parts of a unit that are calibrated separately. For example, a camera might report both `intrinsics` and `extrinsics`. These calibrations belong to the same unit, but are used for different purposes within the unit itself.
-
-Both aspects and roles are optional. A device with one arm, calibrated one way, reports only the component. 
-
-Each device keeps a separate history for a given component, role, and aspect. Miru creates a role or aspect the first time a calibration reports it.
- 
 ## Send a calibration
 
 Calibrations are sent to the Miru Agent via the <DeviceApiLink endpoint="calibrations/create">create calibration</DeviceApiLink> endpoint in the Device API.
@@ -76,13 +68,13 @@ The Miru dashboard shows the `content.data` string exactly as it was uploaded. P
 In addition to the required parameters, you can also set the following optional parameters:
 
 <ParamField body="role" type="string">
-  The slug of the unit's [role](/cfg-mgmt/concepts/components#param-roles).
+  Joined into the component slug after `component`. We recommend putting the full slug in `component` instead. See [multiple units and parts](#multiple-units-and-parts).
 
-  Example: `front-left`
+  Example: `left`
 </ParamField>
 
 <ParamField body="aspect" type="string">
-  The slug of the calibrated [aspect](/cfg-mgmt/concepts/components#param-aspects).
+  Joined into the component slug after `component` and `role`. We recommend putting the full slug in `component` instead. See [multiple units and parts](#multiple-units-and-parts).
 
   Example: `pose`
 </ParamField>
