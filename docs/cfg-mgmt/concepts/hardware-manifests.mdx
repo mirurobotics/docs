@@ -4,14 +4,15 @@ title: "Hardware manifests"
 
 import { EditableBadge } from '/snippets/components/field-badges.jsx';
 import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
-import { ProvisionerBadge, PublisherBadge } from '/snippets/components/role-badges.jsx';
+import { PublisherBadge } from '/snippets/components/role-badges.jsx';
 import HardwareManifestDef from '/snippets/definitions/hardware-manifest.mdx';
 
 <HardwareManifestDef />
 
-A device has at most one hardware manifest. Miru compares the device's
-[calibrations](/cfg-mgmt/concepts/calibrations) with its manifest to show which
-components are calibrated.
+A device has at most one hardware manifest, which you
+[set on the device](/concepts/devices/manage#set-a-devices-hardware-manifest). Miru
+compares the device's [calibrations](/cfg-mgmt/concepts/calibrations) with its manifest
+to show which components are calibrated.
 
 ## Properties
 
@@ -34,8 +35,9 @@ components are calibrated.
 
 ## Calibration status
 
-For each component in a device's manifest, Miru shows a status based on the device's
-latest calibration of that component:
+For each component in a device's manifest, the device's
+[Calibrations](/cfg-mgmt/concepts/calibrations#view-calibrations) page shows a status
+based on the device's latest calibration of that component:
 
 | Status | Meaning |
 |--------|---------|
@@ -55,8 +57,8 @@ Miru Agent release.
 
 To create a hardware manifest in the dashboard, name it and choose its components. A
 manifest can only list components that already exist, so
-[create a component](/cfg-mgmt/concepts/components) first if no device has reported a
-calibration for it.
+[create a component](/cfg-mgmt/concepts/components#create-a-component) first if no
+device has reported a calibration for it.
 
 ## Edit a hardware manifest  <PublisherBadge />
 
@@ -64,15 +66,6 @@ calibration for it.
 
 You can rename a hardware manifest or change its components. The change applies to
 every device that uses the manifest.
-
-## Set a device's hardware manifest  <ProvisionerBadge />
-
-<PlatformUnsupportedBadge />
-
-Set a device's hardware manifest when you
-[edit the device](/concepts/devices/manage#edit-a-device), or set it on up to 100
-devices at once with [bulk actions](/concepts/devices/manage#bulk-actions). Clearing
-the manifest leaves the device without one.
 
 ## Delete a hardware manifest  <PublisherBadge />
 

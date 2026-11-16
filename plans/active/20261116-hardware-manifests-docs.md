@@ -67,6 +67,22 @@ Hardware manifests are new in the dashboard. A hardware manifest is the set of c
 
 - Source stage: Milestones 1 and 2 written exactly as the Plan of Work describes, with no deviations. All four open questions kept their defaults (no "Delete a component" line; "Picker v2" with `kuka-arm` and `realsense-d435`; no agent version for invalidation; bulk action labeled **Set hardware manifest**).
 
+- Decision: Move "Set a device's hardware manifest" to its own section on `concepts/devices/manage.mdx`, after Edit a device, and have the bulk bullet, the concept page and access control point there.
+  Rationale: Design review finding 3: the sibling, moving a device, has its own section on the Manage devices page, and `#edit-a-device` says nothing about manifests.
+  Date/Author: 2026-11-16, Claude (design review).
+
+- Decision: Say where the calibration status appears (the device's Calibrations page) and add a one-sentence cross-link in `calibrations.mdx` View calibrations.
+  Rationale: Design review finding 4: readers start from the calibrations page and had no path to manifests.
+  Date/Author: 2026-11-16, Claude (design review).
+
+- Decision: Keep Publisher component creation in this PR and rewrite `components.mdx` "Create a component" here, rather than move it to the flat-components PR (docs#337).
+  Rationale: Design review finding 1 and the AI design review: the page said components can't be created. Creating components in the dashboard ships with the manifest UI, so its docs ship with this PR; docs#337 covers flat slugs only. Merge docs#337 first; this PR then takes main and resolves the one-line overlap in `components.mdx` and `calibrations.mdx`.
+  Date/Author: 2026-11-16, Claude (design review).
+
+- Decision: Keep the Provisioner badge on setting a device's manifest.
+  Rationale: Design review finding 2 cited the openapi plan's earlier note that Publishers assign. Backend #1257 and #1266 later moved setting a manifest onto device update (`devices:update`), which Provisioners hold, workspace or group scoped.
+  Date/Author: 2026-11-16, Claude (design review).
+
 ## Outcomes & Retrospective
 
 (Summarize at completion.)

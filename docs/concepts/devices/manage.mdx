@@ -49,6 +49,14 @@ To edit a device, click the ellipses (...) on the device you want to edit and hi
 
 A dialog will appear. Update the name or description, then click **Save**.
 
+## Set a device's hardware manifest  <ProvisionerBadge />
+
+<PlatformUnsupportedBadge />
+
+A device's [hardware manifest](/cfg-mgmt/concepts/hardware-manifests) lists the
+components it should have calibrated. Set or clear it when you edit the device, or set
+it on many devices at once with [bulk actions](#bulk-actions).
+
 ## Ping a device  <ViewerBadge />
 
 <PlatformApiBadge endpoint="devices/ping" />
@@ -135,5 +143,6 @@ can do with them:
 - **Archive** <ProvisionerBadge />: archive the devices, up to 100 at a time. If only
   some of them can be archived, the button shows how many, for example **Archive (3)**.
   See [Archive a device](#archive-a-device).
-- **Set hardware manifest** <ProvisionerBadge />: set or clear the devices'
-  [hardware manifest](/cfg-mgmt/concepts/hardware-manifests), up to 100 at a time.
+- **Set hardware manifest** <ProvisionerBadge />: set or clear the devices' hardware
+  manifest, up to 100 at a time. See
+  [Set a device's hardware manifest](#set-a-devices-hardware-manifest).
