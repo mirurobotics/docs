@@ -4,6 +4,7 @@ title: "Report calibrations"
 
 import { DeviceApiLink } from '/snippets/components/api-links.jsx';
 import CalibrationDef from '/snippets/definitions/calibration.mdx';
+import ComponentDef from '/snippets/definitions/component.mdx';
 
 This guide details how to report [calibrations](/cfg-mgmt/concepts/calibrations) through the Miru Agent's [Device API](/developers/device-api/overview).
 
@@ -23,7 +24,9 @@ To provision a device, see the [Provision a device](/provision-devices) guide.
 
 ## Components
 
-A [component](/cfg-mgmt/concepts/components) is any part of a system that is calibrated separately, such as the left arm, a camera's intrinsics, or a gripper. A calibration names its component with a [slug](/cfg-mgmt/concepts/components#param-slug), such as `kuka-arm`, `realsense-d435`, or `robotiq-2f-85`.
+<ComponentDef />
+
+A calibration names its [component](/cfg-mgmt/concepts/components) with a [slug](/cfg-mgmt/concepts/components#param-slug), such as `kuka-arm`, `realsense-d435`, or `robotiq-2f-85`.
 
 When a calibration is reported, Miru checks if its component exists and creates it if it doesn't.
 
