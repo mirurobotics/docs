@@ -33,7 +33,8 @@ Backend PRs mirurobotics/backend#1276 and #1277 (merged 2026-11-16) changed nigh
 
 ## Progress
 
-- [ ] Milestone 1: edit `overview.mdx` and `archive-format.mdx`, commit.
+- [x] Milestone 1: edit `overview.mdx` and `archive-format.mdx`, commit.
+- [x] Source written
 - [ ] Milestone 2: push, open draft PR, fix CI findings, preflight reports `CLEAN`.
 
 ## Surprises & Discoveries
