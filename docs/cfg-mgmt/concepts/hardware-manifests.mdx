@@ -42,14 +42,10 @@ based on the device's latest calibration of that component:
 | Status | Meaning |
 |--------|---------|
 | Not calibrated | The device hasn't reported a calibration for the component |
-| Calibrated | The latest calibration is valid |
-| Invalid | The latest calibration was marked invalid |
+| Calibrated | The device has reported a calibration for the component |
 
-A new calibration becomes the latest, so it clears **Invalid**. Calibrations for
-components that aren't in the manifest are listed under **Not in manifest**.
-
-Applications on the device mark a calibration invalid, which requires an upcoming
-Miru Agent release.
+Calibrations for components that aren't in the manifest are listed under
+**Not in manifest**.
 
 ## Create a hardware manifest  <PublisherBadge />
 

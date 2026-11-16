@@ -83,6 +83,10 @@ Hardware manifests are new in the dashboard. A hardware manifest is the set of c
   Rationale: Design review finding 2 cited the openapi plan's earlier note that Publishers assign. Backend #1257 and #1266 later moved setting a manifest onto device update (`devices:update`), which Provisioners hold, workspace or group scoped.
   Date/Author: 2026-11-16, Claude (design review).
 
+- Decision: Drop the **Invalid** status from this PR; the invalidation PR (docs plan PR 6) adds it with the calibration's invalidation fields.
+  Rationale: AI design review (D5): Invalid reads a calibration property `calibrations.mdx` doesn't document yet, and needs an agent release that hasn't shipped, so this page and the changelog had to promise "an upcoming release".
+  Date/Author: 2026-11-16, Claude (AI design review).
+
 ## Outcomes & Retrospective
 
 (Summarize at completion.)
