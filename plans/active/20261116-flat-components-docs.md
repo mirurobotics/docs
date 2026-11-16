@@ -38,7 +38,8 @@ Components are flat now: roles and aspects no longer exist as resources, and a c
 
 ## Progress
 
-- [ ] Milestone 1: edit the three pages, grep shows no role or aspect anchors, commit.
+- [x] Milestone 1: edit the three pages, grep shows no role or aspect anchors, commit.
+- [x] Source written
 - [ ] Milestone 2: push, open draft PR, `$preflight` reports `CLEAN`.
 
 ## Surprises & Discoveries
@@ -47,7 +48,7 @@ Components are flat now: roles and aspects no longer exist as resources, and a c
 
 ## Decision Log
 
-(Add entries as work proceeds.)
+- The required `component` parameter's example in `report-calibrations.mdx` stays `kuka-arm`, resolving the open question with its default; the "Multiple units and parts" subsection already shows joined slugs.
 
 ## Outcomes & Retrospective
 
