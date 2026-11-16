@@ -35,7 +35,7 @@ The URL version prefix changed from `/v0.2` to `/v0.3`. Update all request URLs 
 </Dropdown>
 <Separator />
 <Dropdown title="Create calibration request">
-The `POST /calibrations` request removed `role` and `aspect`. To keep reporting to the same component, put them in `component`, joined with `-`.
+The `POST /calibrations` request removed `role` and `aspect`. On `v0.2`, Miru joins `component`, `role` and `aspect` with `-`, skipping any that are unset, so `kuka-arm` with role `front-left` and aspect `pose` reports to `kuka-arm-front-left-pose`. To keep the same calibration history, put that joined slug in `component`, and keep it within the 48-character slug limit.
 
 ```diff nocopy
  {

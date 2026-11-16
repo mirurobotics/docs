@@ -67,6 +67,7 @@ Edits mirror docs#315: the `v0.3.0` dropdown is a copy of `v0.2.5`'s, the change
 
 ## Decision Log
 
+- 2026-11-16: per the flat components PR's review (docs#337), the v0.2 to v0.3 migration lives only in the Device API docs. The create request dropdown now states the backend's join rule (`JoinSlug`: `-`, unset parts skipped, same history as reporting the joined slug) and advises staying within 48 characters, since the joined length isn't validated.
 - 2026-11-16: openapi tagged `device/v0.3.0-beta.1` at `dcf7e1b`. Its `apis/` and `tools/` match `fe03a87`, which `api.yaml` was rendered from, so only `x-git-commit` changes to the tagged commit. `x-release-version` stays `v0.3.0`, the final version, until GA. The tag has no GitHub release asset yet.
 - 2026-11-16, design review: the breaking-change diffs now move `role` and `aspect` into `component`, joined with `-` (`kuka-arm-front-left-pose`), as the backend agent spec joins them, so following the diff keeps reporting to the same component. The latest calibration diff shows the joined slug too, since the v0.3 `Calibration.component` is the component's slug, not the reported one.
 - 2026-11-16, design review: "agent `v0.13.0` also serves `v0.2.5` at `/v0.2`" is kept only in the first migration step. Dropped from the Device API intro and the agent Features list, and the `versions.mdx` paragraph is cut to one version-free sentence, so a release edits one place.
