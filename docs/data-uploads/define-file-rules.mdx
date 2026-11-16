@@ -77,11 +77,22 @@ For more detailed information and advanced bundling examples, see the [upload bu
 
 To include file rules in a release, use the `--file-rule` or `--file-rules` flags when running the `miru release create` command.
 
-```bash highlight={4}
-$ miru release create \
+<CodeGroup>
+
+```bash Bash highlight={4}
+miru release create \
   --version v1.0.0 \
-  --schemas ./schemas/ \
+  --schemas ./schemas \
   --file-rule ./file-rules/robot-logs.yaml
 ```
+
+```powershell PowerShell highlight={4}
+miru release create `
+  --version v1.0.0 `
+  --schemas .\schemas `
+  --file-rule .\file-rules\robot-logs.yaml
+```
+
+</CodeGroup>
 
 See the [CLI reference](/references/cli/release-create) for the full flag list.

@@ -21,11 +21,12 @@ jobs:
       contents: read
       pull-requests: read
     outputs:
-      custom-linter: ${{ steps.filter.outputs.custom-linter }}
+      custom-linter: ${{ github.event_name != 'pull_request' || steps.filter.outputs.custom-linter == 'true' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: filter
+        if: github.event_name == 'pull_request'
         with:
           filters: |
             custom-linter:
@@ -85,7 +86,7 @@ jobs:
 
   lint-custom-linter:
     needs: changes
-    if: github.event_name != 'pull_request' || needs.changes.outputs.custom-linter == 'true'
+    # Gate steps, not the job, so this required check always reports a result.
     timeout-minutes: 10
     runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
@@ -93,19 +94,21 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Go
+        if: needs.changes.outputs.custom-linter == 'true'
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: tools/lint/go.mod
           cache-dependency-path: tools/lint/go.sum
 
       - name: Run Go lint on tools/lint
+        if: needs.changes.outputs.custom-linter == 'true'
         env:
           LINT_FIX: "0"
         run: ./tools/lint/scripts/lint.sh
 
   test-custom-linter:
     needs: changes
-    if: github.event_name != 'pull_request' || needs.changes.outputs.custom-linter == 'true'
+    # Gate steps, not the job, so this required check always reports a result.
     timeout-minutes: 10
     runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
@@ -113,10 +116,12 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Go
+        if: needs.changes.outputs.custom-linter == 'true'
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: tools/lint/go.mod
           cache-dependency-path: tools/lint/go.sum
 
       - name: Run coverage gate for tools/lint
+        if: needs.changes.outputs.custom-linter == 'true'
         run: ./tools/lint/scripts/covgate.sh

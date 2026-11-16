@@ -14,6 +14,7 @@ import (
 	"github.com/mirurobotics/docs/tools/lint/linter/importused"
 	"github.com/mirurobotics/docs/tools/lint/linter/mdxstyle"
 	"github.com/mirurobotics/docs/tools/lint/linter/nodoubledash"
+	"github.com/mirurobotics/docs/tools/lint/linter/shellpair"
 )
 
 // maxScanTokenSize caps bufio.Scanner's per-line buffer. Docs MDX
@@ -36,6 +37,7 @@ const (
 	RuleMDXStyle       Rule = "mdx-style"
 	RuleImportBlock    Rule = "import-block"
 	RuleImageDomain    Rule = "image-domain"
+	RuleShellPair      Rule = "shell-pair"
 	RuleRedirects      Rule = "redirects"
 )
 
@@ -46,7 +48,7 @@ func AllRules() []Rule {
 		RuleHeadingCase,
 		RuleImportResolves, RuleImportUsed, RuleImportSorted,
 		RuleComponentStyle, RuleMDXStyle, RuleImportBlock,
-		RuleImageDomain, RuleRedirects,
+		RuleImageDomain, RuleShellPair, RuleRedirects,
 	}
 }
 
@@ -92,6 +94,9 @@ func ruleCheckers() []ruleEntry {
 		}},
 		{RuleImageDomain, func(in checkInput) []analysis.Violation {
 			return imagedomain.Check(in.path, in.lines)
+		}},
+		{RuleShellPair, func(in checkInput) []analysis.Violation {
+			return shellpair.Check(in.path, in.lines)
 		}},
 	}
 }

@@ -12,24 +12,42 @@
 
     Use the `--root` flag to write the config files to a custom root directory.
 
-    ```bash
+    <CodeGroup>
+
+    ```bash Bash
     miru deployment clone {deployment-id} \
       --root ./robot-42-fs
     ```
+
+    ```powershell PowerShell
+    miru deployment clone {deployment-id} `
+      --root .\robot-42-fs
+    ```
+
+    </CodeGroup>
   </Tab>
 
   <Tab title="Device paths">
 
     Use `--root /` to write config files to the exact location they are written to on production devices.
 
-    ```bash
+    <CodeGroup>
+
+    ```bash Bash
     miru deployment clone {deployment-id} \
       --root /
     ```
+
+    ```powershell PowerShell
+    miru deployment clone {deployment-id} `
+      --root /
+    ```
+
+    </CodeGroup>
 
   </Tab>
 </Tabs>
 
 <Tip>
-  Use `sudo miru ...` to write config files to restricted paths.
+  Use `sudo miru ...`, or run PowerShell as Administrator, to write config files to restricted paths.
 </Tip>

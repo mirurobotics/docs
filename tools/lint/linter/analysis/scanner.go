@@ -63,7 +63,7 @@ func (s *Scanner) ScanLine(line string) []ProseSpan {
 		return nil
 	}
 
-	if fence, ok := codeFenceOpen(line); ok {
+	if fence, ok := CodeFenceOpen(line); ok {
 		s.zone = zoneCodeBlock
 		s.codeFence = fence
 		return nil
@@ -84,11 +84,11 @@ func (s *Scanner) ScanLine(line string) []ProseSpan {
 	return s.maskInlineRegions(line, 0)
 }
 
-// codeFenceOpen checks if a line opens a fenced code block.
+// CodeFenceOpen reports whether a line opens a fenced code block.
 // Returns the bare fence string (e.g. "```") and true, or ("", false).
 // MDX allows code fences at any indentation level (nested inside JSX),
 // so we don't enforce the CommonMark 0-3 space indentation limit.
-func codeFenceOpen(line string) (string, bool) {
+func CodeFenceOpen(line string) (string, bool) {
 	trimmed := strings.TrimLeft(line, " \t")
 
 	count := 0

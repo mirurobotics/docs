@@ -88,6 +88,29 @@ func TestProcessFile(t *testing.T) {
 		}
 	})
 
+	t.Run("shell-pair rule violation", func(t *testing.T) {
+		dir := t.TempDir()
+		path := filepath.Join(dir, "test.mdx")
+		content := "# Title\n\n<CodeGroup>\n" +
+			"```bash Bash\nmiru a \\\n  --b\n```\n</CodeGroup>\n"
+		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		vs, err := ProcessFile(path, dir)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		found := false
+		for _, v := range vs {
+			if v.Line == 4 && strings.HasPrefix(v.Message, "shell-pair:") {
+				found = true
+			}
+		}
+		if !found {
+			t.Errorf("expected shell-pair violation on line 4, got %v", vs)
+		}
+	})
+
 	t.Run("file rule violation", func(t *testing.T) {
 		dir := t.TempDir()
 		path := filepath.Join(dir, "test.mdx")

@@ -119,7 +119,7 @@ jq -r '[.id, .name] | @tsv' resources/devices.jsonl
 ```
 
 ```powershell Windows
-Get-Content resources/devices.jsonl -Encoding UTF8 |
+Get-Content resources\devices.jsonl -Encoding UTF8 |
   ForEach-Object { $_ | ConvertFrom-Json } |
   ForEach-Object { "$($_.id)`t$($_.name)" }
 ```
@@ -137,7 +137,7 @@ jq 'select(.id == "dpl_123")' resources/deployments.jsonl
 ```
 
 ```powershell Windows
-Get-Content resources/deployments.jsonl -Encoding UTF8 |
+Get-Content resources\deployments.jsonl -Encoding UTF8 |
   ForEach-Object { $_ | ConvertFrom-Json } |
   Where-Object id -eq "dpl_123" |
   ConvertTo-Json -Depth 10
