@@ -23,7 +23,7 @@ To provision a device, see the [Provision a device](/provision-devices) guide.
 
 ## Components
 
-A [component](/cfg-mgmt/concepts/components) is a piece of hardware, or a separately calibrated part of one, that devices report calibrations for, such as an arm, a camera, or a camera's intrinsics. A calibration names its component with a [slug](/cfg-mgmt/concepts/components#param-slug), such as `kuka-arm`, `realsense-d435`, or `robotiq-2f-85`.
+A [component](/cfg-mgmt/concepts/components) is any part of a system that is calibrated separately, such as the left arm, a camera's intrinsics, or a gripper. A calibration names its component with a [slug](/cfg-mgmt/concepts/components#param-slug), such as `kuka-arm`, `realsense-d435`, or `robotiq-2f-85`.
 
 When a calibration is reported, Miru checks if its component exists and creates it if it doesn't.
 
