@@ -9,6 +9,97 @@ import { DeviceApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
+# v0.3.0
+
+*November 30, 2026*
+
+The `v0.3.0` release keeps one latest [calibration](/cfg-mgmt/concepts/calibrations) for each component and lets on-device applications mark it invalid. It removes roles and aspects from calibrations and moves the Device API to `/v0.3`. Agents that serve `v0.3.0` also serve `v0.2.5` at `/v0.2`, so existing clients keep working until they migrate.
+
+<DeviceApiReleaseLinks version="v0.3.0" />
+
+## New endpoints
+
+<Dropdown title="Calibrations">
+  - <POST /> `/calibrations/latest/{report_id}/invalidate` — mark a latest calibration invalid
+</Dropdown>
+
+## Breaking changes
+
+<Dropdown title="Base path change">
+The URL version prefix changed from `/v0.2` to `/v0.3`. Update all request URLs in your client application.
+
+```diff nocopy
+- http://localhost/v0.2/{endpoint}
++ http://localhost/v0.3/{endpoint}
+```
+</Dropdown>
+<Separator />
+<Dropdown title="Create calibration request">
+The `POST /calibrations` request removed `role` and `aspect`.
+
+```diff nocopy
+ {
+   "component": "kuka-arm",
+-  "role": "front-left",
+-  "aspect": "pose",
+   "serial_number": "SN-1234",
+   "content": {
+     "format": "json",
+     "data": "{\"x\": 0.12, \"y\": -0.03}"
+   }
+ }
+```
+</Dropdown>
+<Separator />
+<Dropdown title="Latest calibrations">
+`GET /calibrations/latest` returns one calibration for each component, instead of one for each component, role and aspect. It removed the `role` and `aspect` filters, and its calibrations removed `role` and `aspect`.
+
+```diff nocopy
+ {
+   "object": "calibration",
+   "report_id": "0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10",
+   "component": "kuka-arm",
+-  "role": "front-left",
+-  "aspect": null,
+   "serial_number": "SN-1234",
+   ...
+ }
+```
+</Dropdown>
+
+## Additive changes
+
+<Dropdown title="Calibration response">
+Calibrations added `invalidated_at`, when an on-device application marked the calibration invalid, or `null` if it's valid.
+
+```diff nocopy
+ {
+   "object": "calibration",
+   ...
+   "reported_at": "2026-03-10T12:00:00Z",
++  "invalidated_at": null
+ }
+```
+</Dropdown>
+
+## Migration steps
+
+<Steps>
+  <Step title="Verify agent compatibility">
+    Ensure all devices are running Miru Agent `v0.13.0` or later. See [compatibility matrix](/developers/device-api/versions#agent-compatibility-matrix). Agent `v0.13.0` also serves `v0.2.5` at `/v0.2`, so clients on `/v0.2` keep working while you migrate.
+  </Step>
+
+  <Step title="Migrate breaking changes">
+    Migrate your client application according to the breaking changes listed above. If you are using the [Python SDK](/developers/device-api/sdks#python), upgrade to version `v0.11.0` or later.
+  </Step>
+
+  <Step title="Optionally integrate the new endpoint">
+    Integrate the invalidate endpoint to mark a latest calibration invalid from the device.
+  </Step>
+</Steps>
+
+---
+
 # v0.2.5
 
 *November 10, 2026*
