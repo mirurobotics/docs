@@ -42,6 +42,7 @@ Below is a list of the currently supported versions:
 
 | API Version | Released     |     EOL      |       Status       |
 |-------------|--------------|--------------|---------------------|
+| <LinkNewTab href="/references/device-api/v0.3.0">v0.3.0</LinkNewTab>    | 2026-11-30   | —            | <SupportedBadge /> |
 | <LinkNewTab href="/references/device-api/v0.2.5">v0.2.5</LinkNewTab>    | 2026-11-10   | —            | <SupportedBadge /> |
 | <LinkNewTab href="/references/device-api/v0.2.4">v0.2.4</LinkNewTab>    | 2026-10-29   | —            | <SupportedBadge /> |
 | <LinkNewTab href="/references/device-api/v0.2.3">v0.2.3</LinkNewTab>    | 2026-10-25   | —            | <SupportedBadge /> |
@@ -56,7 +57,8 @@ Each Miru Agent is compiled with a set of one or more API versions, which is doc
 
 | API Version(s) | Agent Version      |
 |----------------|--------------------|
-| `v0.2.5`       | `v0.12.4+`         |
+| `v0.2.5`, `v0.3.0` | `v0.13.0+`     |
+| `v0.2.5`       | `v0.12.4`          |
 | `v0.2.4`       | `v0.12.3`          |
 | `v0.2.3`       | `v0.12.0 - v0.12.2` |
 | `v0.2.2`       | `v0.11.1`          |
@@ -67,6 +69,8 @@ Each Miru Agent is compiled with a set of one or more API versions, which is doc
 Be careful when updating your client application to a new API version. Even if API changes are backward-compatible, if the agent is not compiled with the new features, your client may not work as expected.
 
 As rule of thumb, use the API version of the oldest agent version that is deployed to your fleet in your client application. This ensures that the agent was compiled with all the features of the API version you are using.
+
+An agent can serve more than one API version, each at its own breaking change alias. For example, agent `v0.13.0` serves `v0.2.5` at `/v0.2` and `v0.3.0` at `/v0.3`. Keep your client on `/v0.2` until every device in your fleet runs agent `v0.13.0` or later, then move it to `/v0.3` to use `v0.3.0`'s features.
 
 ## Changelog and migrations
 

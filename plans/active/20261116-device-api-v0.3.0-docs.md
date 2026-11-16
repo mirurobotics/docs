@@ -57,8 +57,9 @@ Edits mirror docs#315: the `v0.3.0` dropdown is a copy of `v0.2.5`'s, the change
 
 - [x] Milestone 1: vendor the `v0.3.0` reference, add the dropdown and redirect, commit.
 - [x] Milestone 2: add the Device API `v0.3.0` and agent `v0.13.0` changelog entries, commit.
-- [ ] Milestone 3: add the version-table rows, commit.
+- [x] Milestone 3: add the version-table rows, commit.
 - [ ] Milestone 4: push, open the draft PR, `$preflight` reports `CLEAN`.
+- [x] Source written
 
 ## Surprises & Discoveries
 
