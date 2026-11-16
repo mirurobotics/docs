@@ -15,3 +15,8 @@ export const EndOfLifeBadge = ({ size = "sm" }) => (
         <Badge icon="ban" color="red" size={size}>End of life</Badge>
     </Tooltip>
 );
+export const BetaBadge = ({ size = "sm" }) => (
+    <Tooltip tip="Supported, but may still change before it becomes generally available">
+        <Badge icon="flask-conical" color="blue" size={size}>Beta</Badge>
+    </Tooltip>
+);
