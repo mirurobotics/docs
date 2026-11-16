@@ -50,6 +50,11 @@ Components are flat now: roles and aspects no longer exist as resources, and a c
 
 - The required `component` parameter's example in `report-calibrations.mdx` stays `kuka-arm`, resolving the open question with its default; the "Multiple units and parts" subsection already shows joined slugs.
 
+- Design review (subagent and the AI design review on #337): the role/aspect join rule now lives only in the "Multiple units and parts" subsection, and the slug note and the `role`/`aspect` ParamFields link to it. "For older clients" is dropped because v0.2 is the current Device API. The subsection says that `arm` + role `left` and `arm-left` share one history. The component definition (snippet and guide) now says "a piece of hardware, or a separately calibrated part of one", since `realsense-d435-intrinsics` is not a kind of hardware.
+- `calibrations.mdx` notes that Platform API versions before `2026-11-16.lassen` return the reported `component`, `role` and `aspect`, because the published everglades reference still shows them and this PR may merge before the lassen reference.
+- The 48-character advice stays advisory ("keep the joined slug, hyphens included, within 48 characters"); making the backend reject longer joined slugs is a proposed follow-up, not part of this PR.
+- Follow-up: the vendored Device API v0.2.5 spec still says role and aspect resolve to a component's roles and aspects; that fix belongs in openapi via `$api-change`.
+
 ## Outcomes & Retrospective
 
 (Summarize at completion.)
