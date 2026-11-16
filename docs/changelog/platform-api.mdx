@@ -79,7 +79,7 @@ Archiving and deleting devices need the new `devices:archive` and `devices:delet
     Set `Miru-Version: 2026-11-16.lassen` on API requests. Requests that send an `everglades` version keep working.
   </Step>
   <Step title="Use joined component slugs for calibrations">
-    Stop reading `role` and `aspect` from calibrations, and replace `role` and `aspect` filters with a `component` filter on the joined slug. Visit [multiple units and parts](/cfg-mgmt/report-calibrations#multiple-units-and-parts) to see how slugs are joined.
+    Stop reading `role` and `aspect` from calibrations, and replace `role` and `aspect` filters with a `component` filter on the joined slug. The joined slug is the component, role and aspect slugs joined with `-`, skipping empty ones, so `component=arm&role=left` becomes `component=arm-left`.
   </Step>
   <Step title="Optionally integrate new endpoints">
     Optionally integrate the new device, upload collection, file rule and upload endpoints listed above, and grant your API keys the `devices:archive`, `devices:delete`, `uploads:read`, `upload_collections:read` or `file_rules:read` scopes they need.
