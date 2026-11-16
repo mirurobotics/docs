@@ -54,6 +54,7 @@ Components are flat now: roles and aspects no longer exist as resources, and a c
 - `calibrations.mdx` notes that Platform API versions up to `2026-11-04.everglades` return the reported `component`, `role` and `aspect`, because the published everglades reference still shows them and this PR may merge before the lassen reference.
 - The 48-character advice stays advisory ("keep the joined slug, hyphens included, within 48 characters"); making the backend reject longer joined slugs is a proposed follow-up, not part of this PR.
 - Follow-up: the vendored Device API v0.2.5 spec still says role and aspect resolve to a component's roles and aspects; that fix belongs in openapi via `$api-change`.
+- Review (ben-miru): dropped the note about Platform API versions returning `role` and `aspect`; no one relies on it.
 
 ## Outcomes & Retrospective
 
