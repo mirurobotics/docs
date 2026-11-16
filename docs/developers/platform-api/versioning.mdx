@@ -4,7 +4,7 @@ title: "Versioning"
 
 import { CardNewTab } from '/snippets/components/card.jsx';
 import { LinkNewTab } from '/snippets/components/link.jsx';
-import { SupportedBadge, EndOfLifeBadge } from '/snippets/components/support.jsx';
+import { DeprecatedBadge, EndOfLifeBadge, SupportedBadge } from '/snippets/components/support.jsx';
 import BreakingChanges from '/snippets/references/apis/breaking.mdx';
 import NonBreakingChanges from '/snippets/references/apis/non-breaking.mdx';
 
@@ -34,16 +34,16 @@ The `Miru-Version` header is required. Requests without the header will be rejec
 
 ## Supported versions
 
-Below is a list of the currently supported versions:
+Below is a list of the Platform API versions and their support status:
 
 | API Version   | EOL | Status       |
 |---------------|-----|--------------|
 | <LinkNewTab href="/references/platform-api/2026-11-16">2026-11-16.lassen</LinkNewTab> | — | <SupportedBadge />  |
-| <LinkNewTab href="/references/platform-api/2026-11-04">2026-11-04.everglades</LinkNewTab> | — | <SupportedBadge />  |
-| <LinkNewTab href="/references/platform-api/2026-10-29">2026-10-29.everglades</LinkNewTab> | — | <SupportedBadge />  |
-| <LinkNewTab href="/references/platform-api/2026-08-17">2026-08-17.everglades</LinkNewTab> | — | <SupportedBadge />  |
-| <LinkNewTab href="/references/platform-api/2026-05-06">2026-05-06.rainier</LinkNewTab> | — | <SupportedBadge />  |
-| <LinkNewTab href="/references/platform-api/2026-03-09">2026-03-09.tetons</LinkNewTab> | — | <SupportedBadge />  |
+| <LinkNewTab href="/references/platform-api/2026-11-04">2026-11-04.everglades</LinkNewTab> | 2027-11-16 | <DeprecatedBadge />  |
+| <LinkNewTab href="/references/platform-api/2026-10-29">2026-10-29.everglades</LinkNewTab> | 2027-11-04 | <DeprecatedBadge />  |
+| <LinkNewTab href="/references/platform-api/2026-08-17">2026-08-17.everglades</LinkNewTab> | 2027-10-29 | <DeprecatedBadge />  |
+| <LinkNewTab href="/references/platform-api/2026-05-06">2026-05-06.rainier</LinkNewTab> | 2027-08-17 | <DeprecatedBadge />  |
+| <LinkNewTab href="/references/platform-api/2026-03-09">2026-03-09.tetons</LinkNewTab> | 2027-05-06 | <DeprecatedBadge />  |
 | <LinkNewTab href="/references/platform-api/2025-10-21">2025-10-21.zion</LinkNewTab>        | 2026-06-16 | <EndOfLifeBadge />  |
 
 ## Changelog and migrations
@@ -67,24 +67,13 @@ Each version of the spec is available for download as a YAML file from the [Plat
 
 ## Support policy
 
-Miru provides three levels of support for the Platform API
+Miru provides three levels of support for the Platform API:
 
-- Supported
-- Deprecated
-- End of life
+- **Supported**: the newest version. It receives new features and fixes.
+- **Deprecated**: a version is deprecated the day a newer version is released. It continues to function normally, but receives no new features.
+- **End of life**: a version reaches end of life one year after it is deprecated. Requests that send an end-of-life version return a `400 Bad Request` error.
 
-When a new API version epoch is released (e.g. `zion` to `tetons`), previous API epochs may enter a deprecation period. During this period:
-
-- The deprecated version continues to function normally
-- No new features will be added to the deprecated epoch
-
-Once the deprecation period ends, the API epoch is considered **end-of-life** and is no longer supported. Requests to an end-of-life epoch will return a `400 Bad Request` error.
-
-## Deprecation notice
-
-Since the Miru Platform API is still in beta, a fixed support schedule for beta releases is not established. 
-
-Nonetheless, we are committed to ensuring that all users are migrated to a supported version before sunsetting an API version. Reasonable notice will be provided before deprecating and sunsetting any API versions.
+Each version's end-of-life date is listed in the [supported versions](#supported-versions) table.
 
 ## Stability guarantees
 
