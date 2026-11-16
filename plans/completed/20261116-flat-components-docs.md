@@ -55,6 +55,7 @@ Components are flat now: roles and aspects no longer exist as resources, and a c
 - The 48-character advice stays advisory ("keep the joined slug, hyphens included, within 48 characters"); making the backend reject longer joined slugs is a proposed follow-up, not part of this PR.
 - Follow-up: the vendored Device API v0.2.5 spec still says role and aspect resolve to a component's roles and aspects; that fix belongs in openapi via `$api-change`.
 - Review (ben-miru): dropped the note about Platform API versions returning `role` and `aspect`; no one relies on it.
+- Review (ben-miru): the guide documents only the current model. The role/aspect join explanation and the `role` and `aspect` optional parameters are removed; the v0.2 to v0.3 migration belongs in the Device API docs.
 
 ## Outcomes & Retrospective
 

@@ -31,10 +31,6 @@ When a calibration is reported, Miru checks if its component exists and creates 
 
 A device often has several units of the same hardware, such as two arms, or calibrates parts of one unit separately, such as a camera's intrinsics and extrinsics. Give each its own component slug, such as `arm-left`, `arm-right`, or `realsense-d435-intrinsics`, and Miru keeps a separate [history](/cfg-mgmt/concepts/calibrations#history) for each.
 
-The <DeviceApiLink endpoint="calibrations/create">create calibration</DeviceApiLink> endpoint also accepts optional `role` and `aspect` parameters. Miru joins `component`, `role` and `aspect` with `-`, skipping any that are unset, and records the calibration under the component with that slug. For example, `arm` with role `left` becomes `arm-left`, and adding aspect `pose` makes `arm-left-pose`. A calibration reported as `arm` with role `left` and one reported as `arm-left` share one history, so you can switch to full slugs at any time.
-
-We recommend putting the full slug in `component` and leaving `role` and `aspect` unset. If you do set them, keep the joined slug, hyphens included, within 48 characters, the [slug](/cfg-mgmt/concepts/components#param-slug) limit.
-
 ## Send a calibration
 
 Calibrations are sent to the Miru Agent via the <DeviceApiLink endpoint="calibrations/create">create calibration</DeviceApiLink> endpoint in the Device API.
@@ -66,18 +62,6 @@ The Miru dashboard shows the `content.data` string exactly as it was uploaded. P
 ### Optional parameters
 
 In addition to the required parameters, you can also set the following optional parameters:
-
-<ParamField body="role" type="string">
-  A slug appended to `component` with `-`, such as `left` in `arm-left`. Put the full slug in `component` instead. See [multiple units and parts](#multiple-units-and-parts).
-
-  Example: `left`
-</ParamField>
-
-<ParamField body="aspect" type="string">
-  A slug appended after `component` and `role` with `-`, such as `pose` in `arm-left-pose`. Put the full slug in `component` instead. See [multiple units and parts](#multiple-units-and-parts).
-
-  Example: `pose`
-</ParamField>
 
 <ParamField body="serial_number" type="string">
   The serial number of the calibrated unit. At most 255 characters.
