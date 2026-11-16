@@ -55,14 +55,14 @@ Edits mirror docs#315: the `v0.3.0` dropdown is a copy of `v0.2.5`'s, the change
 
 ## Progress
 
-- [ ] Milestone 1: vendor the `v0.3.0` reference, add the dropdown and redirect, commit.
+- [x] Milestone 1: vendor the `v0.3.0` reference, add the dropdown and redirect, commit.
 - [ ] Milestone 2: add the Device API `v0.3.0` and agent `v0.13.0` changelog entries, commit.
 - [ ] Milestone 3: add the version-table rows, commit.
 - [ ] Milestone 4: push, open the draft PR, `$preflight` reports `CLEAN`.
 
 ## Surprises & Discoveries
 
-(Add entries as work proceeds.)
+- The local openapi `main` (`fe03a87`) was one commit behind `origin/main` (`dcf7e1b`, a CI-only change). The device spec and `tools/release/` are identical in both, so the render used the local checkout and `x-git-commit` names `fe03a87`. Re-vendoring from the `device/v0.3.0` release asset replaces it.
 
 ## Decision Log
 
