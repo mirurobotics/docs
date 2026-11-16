@@ -13,9 +13,9 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 _November 16, 2026_
 
-`lassen` is a new train, released in beta. It flattens calibration components: a calibration belongs to one component and no longer has a role or an aspect. It also lets API keys archive and delete devices, and adds read access to uploads, upload collections and file rules.
+`lassen` is a new train. It flattens calibration components: a calibration belongs to one component and no longer has a role or an aspect. It also lets API keys archive and delete devices, and adds read access to uploads, upload collections and file rules.
 
-`lassen` is in beta and may change before it's generally available. `2026-11-04.everglades` remains the latest generally available version, and every `everglades` version remains supported.
+The only breaking change from `everglades` is to calibrations. Every `everglades` version remains supported, so existing integrations keep working without changes.
 
 <PlatformApiReleaseLinks version="2026-11-16.lassen" />
 
@@ -76,7 +76,7 @@ Archiving and deleting devices need the new `devices:archive` and `devices:delet
 
 <Steps>
   <Step title="Update the Miru-Version header">
-    To try the beta, set `Miru-Version: 2026-11-16.lassen` on API requests. Requests that send an `everglades` version keep working.
+    Set `Miru-Version: 2026-11-16.lassen` on API requests. Requests that send an `everglades` version keep working.
   </Step>
   <Step title="Use joined component slugs for calibrations">
     Stop reading `role` and `aspect` from calibrations, and replace `role` and `aspect` filters with a `component` filter on the joined slug. Visit [multiple units and parts](/cfg-mgmt/report-calibrations#multiple-units-and-parts) to see how slugs are joined.

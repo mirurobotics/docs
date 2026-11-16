@@ -805,7 +805,7 @@
         "product": "Platform API Reference",
         "dropdowns": [
           {
-            "dropdown": "2026-11-16.lassen (beta)",
+            "dropdown": "2026-11-16.lassen",
             "openapi": {
               "source": "references/platform-api/2026-11-16.yaml",
               "directory": "references/platform-api/2026-11-16/endpoints"
