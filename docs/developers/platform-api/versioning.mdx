@@ -38,12 +38,12 @@ Below is a list of the Platform API versions and their support status:
 
 | API Version   | EOL | Status       |
 |---------------|-----|--------------|
-| <LinkNewTab href="/references/platform-api/2026-11-16">2026-11-16.lassen</LinkNewTab> | — | <SupportedBadge />  |
-| <LinkNewTab href="/references/platform-api/2026-11-04">2026-11-04.everglades</LinkNewTab> | 2027-11-16 | <DeprecatedBadge />  |
-| <LinkNewTab href="/references/platform-api/2026-10-29">2026-10-29.everglades</LinkNewTab> | 2027-11-04 | <DeprecatedBadge />  |
-| <LinkNewTab href="/references/platform-api/2026-08-17">2026-08-17.everglades</LinkNewTab> | 2027-10-29 | <DeprecatedBadge />  |
-| <LinkNewTab href="/references/platform-api/2026-05-06">2026-05-06.rainier</LinkNewTab> | 2027-08-17 | <DeprecatedBadge />  |
-| <LinkNewTab href="/references/platform-api/2026-03-09">2026-03-09.tetons</LinkNewTab> | 2027-05-06 | <DeprecatedBadge />  |
+| <LinkNewTab href="/references/platform-api/2026-11-16">2026-11-16.lassen</LinkNewTab> | 2027-11-16 | <SupportedBadge />  |
+| <LinkNewTab href="/references/platform-api/2026-11-04">2026-11-04.everglades</LinkNewTab> | 2027-11-04 | <SupportedBadge />  |
+| <LinkNewTab href="/references/platform-api/2026-10-29">2026-10-29.everglades</LinkNewTab> | 2027-10-29 | <SupportedBadge />  |
+| <LinkNewTab href="/references/platform-api/2026-08-17">2026-08-17.everglades</LinkNewTab> | 2027-08-17 | <SupportedBadge />  |
+| <LinkNewTab href="/references/platform-api/2026-05-06">2026-05-06.rainier</LinkNewTab> | 2027-05-06 | <DeprecatedBadge />  |
+| <LinkNewTab href="/references/platform-api/2026-03-09">2026-03-09.tetons</LinkNewTab> | 2027-03-09 | <DeprecatedBadge />  |
 | <LinkNewTab href="/references/platform-api/2025-10-21">2025-10-21.zion</LinkNewTab>        | 2026-06-16 | <EndOfLifeBadge />  |
 
 ## Changelog and migrations
@@ -69,9 +69,9 @@ Each version of the spec is available for download as a YAML file from the [Plat
 
 Miru provides three levels of support for the Platform API:
 
-- **Supported**: the newest version. It receives new features and fixes.
-- **Deprecated**: a version is deprecated the day a newer version is released. It continues to function normally, but receives no new features.
-- **End of life**: a version reaches end of life one year after it is deprecated. Requests that send an end-of-life version return a `400 Bad Request` error.
+- **Supported**: a version is supported for its first six months. It continues to function normally and receives fixes.
+- **Deprecated**: a version is deprecated six months before its end of life. It continues to function normally, but receives no new features. Migrate to a newer version before its end of life.
+- **End of life**: a version reaches end of life one year after its release date. Requests that send an end-of-life version return a `400 Bad Request` error.
 
 Each version's end-of-life date is listed in the [supported versions](#supported-versions) table.
 
