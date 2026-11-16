@@ -9,11 +9,11 @@ info:
     url: https://opensource.org/licenses/MIT
   x-release-version: v0.3.0
   x-git-commit:
-    sha: fe03a87a0910a214ad836d8a26cd8a6945fda4b7
-    url: https://github.com/mirurobotics/openapi/commit/fe03a87a0910a214ad836d8a26cd8a6945fda4b7
-    message: 'docs(frontend): describe the component endpoint as an update (#508)'
+    sha: dcf7e1bd6b8ca022af9591454618fe70bfe488d8
+    url: https://github.com/mirurobotics/openapi/commit/dcf7e1bd6b8ca022af9591454618fe70bfe488d8
+    message: 'ci: bump the workflows pin to 1eab2d1 (#510)'
     author: Ben's Agent
-    branch: main
+    branch: HEAD
     dirty: false
   x-build:
     built_at: '2026-11-16T20:39:50.328534+00:00'
