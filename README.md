@@ -28,10 +28,11 @@ None.
 
 ### Overrides past a dependent's range
 
-These overrides force a newer major than the packages using them ask for, because no patched release exists in the requested range. Only linting uses them.
+These overrides force a version outside the range the packages using them ask for, because no patched release exists in the requested range. Only local tooling uses them.
 
 | Override | Dependents ask for | Remove when |
 |----------|--------------------|-------------|
+| `sharp` `>=0.35.5` | `0.33.5` (@mintlify/cli) | `@mintlify/cli` accepts a patched sharp |
 | `minimatch` `>=11.0.1` | `^10` (eslint, @eslint/config-array), `^9` (@npmcli/map-workspaces) | Those packages accept minimatch 11 |
 | `glob` `>=14.0.2` | `^10` (unified-engine via eslint-plugin-mdx, @npmcli packages) | Those packages accept glob 14 |
 
