@@ -47,7 +47,7 @@ Hardware manifests are new in the dashboard. A hardware manifest is the set of c
 ### Open questions
 
 - Can Publishers delete a component? The request asks to list "Delete a component" under Publisher, but the openapi spec has only `POST /components` and `PATCH /components/{component_id}`, and `Component`'s description says "components are never archived or deleted through the API." Default: list **Create a component** and **Edit a component** only, and say so in the PR body. Add the delete line if a reviewer confirms a delete exists.
-- Which example components? The request's example is "Picker v2" with `aligner1` and `gripper`; the sibling pages use `kuka-arm` and `realsense-d435`. Default: "Picker v2" with `kuka-arm` and `realsense-d435`, so the docs use one set of examples.
+- Which example components? Default: "Picker v2" with `kuka-arm` and `realsense-d435`, the examples the sibling pages use, so the docs use one set of examples.
 - How to word when invalidation is available? No agent version is known. Default: "Marking a calibration invalid requires an upcoming Miru Agent release," with no version or route.
 - Is the bulk action button labeled **Set hardware manifest**? Unverified against the dashboard. Default: use it.
 
