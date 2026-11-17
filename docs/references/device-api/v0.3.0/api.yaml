@@ -669,7 +669,7 @@ components:
     APIGitCommit:
       type: string
       enum:
-      - fe03a87a0910a214ad836d8a26cd8a6945fda4b7
+      - dcf7e1bd6b8ca022af9591454618fe70bfe488d8
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
