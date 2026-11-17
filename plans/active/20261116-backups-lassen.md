@@ -45,6 +45,8 @@ Backend PRs mirurobotics/backend#1276 and #1277 (merged 2026-11-16) changed nigh
 
 - 2026-11-16, design review finding 1 (beta label): not applied. The person decided to call the version lassen with no beta label everywhere; the release docs move to the official lassen API before merging.
 - 2026-11-16, design review finding 2: the calibrations paragraph is replaced by one sentence after the resources intro. It names the lassen calibration change as the example, since the task asked for the new shape, and points to the Platform API changelog for the details, so the two pages can't drift. This also drops the example word that failed CSpell.
+- 2026-11-17, review (ben-miru): the resources intro sentence is reverted to its original wording, so the pages no longer describe the calibration shape change; the Platform API changelog covers it.
+- 2026-11-17, review nit: pending uploads may have no file yet, so the Contents note says each record names the bucket and key its file is written to, not that every file exists.
 - 2026-11-16, design review finding 3: the overview's uploads item says only "records only, not the uploaded files". The archive-format Contents note stays the one place that says where the files are, since "your bucket" on the overview means the backup bucket.
 
 ## Outcomes & Retrospective

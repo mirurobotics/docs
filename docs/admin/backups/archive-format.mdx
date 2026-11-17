@@ -127,7 +127,7 @@ The manifest is a JSON file that describes the archive.
 
 ## Resources
 
-Each file in `resources/` is a [JSON Lines](https://jsonlines.org) file containing one Platform API resource per line. Resources use the Platform API version named in the manifest's `platform_api_version`, so a resource's shape can differ between archives. For example, `2026-11-16.lassen` calibrations have no `role` or `aspect`, and their `component` is the flat component slug. The [Platform API changelog](/changelog/platform-api) lists what each version changed.
+Each file in `resources/` is a [JSON Lines](https://jsonlines.org) file containing one Platform API resource per line. Resources use the Platform API version named in the manifest's `platform_api_version`.
 
 | File | Resource | Expansions |
 | ---- | -------- | ---------- |
@@ -167,5 +167,5 @@ named by the resource's ID:
 
 The bytes are exactly as they were stored, with no re-encoding.
 
-Uploaded files are not in the archive. `uploads.jsonl` holds only the upload records;
-each file stays in the bucket its upload names.
+Uploaded files are not in the archive. `uploads.jsonl` holds only the upload records,
+and each record names the bucket and key its file is written to.
