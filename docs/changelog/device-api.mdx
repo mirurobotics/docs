@@ -89,7 +89,7 @@ To keep a calibration's history, report it on `v0.3` under the joined slug. A sl
 </Dropdown>
 <Separator />
 <Dropdown title="Sync">
-`POST /device/sync` moved to `POST /sync`, next to `GET /health` and `GET /version`. In the Python SDK, `client.device.sync()` is now `client.agent.sync()`.
+`POST /device/sync` moved to `POST /sync`.
 
 The response reports durations the agent measures when it builds the response, instead of timestamps from the device clock, which may not be set. `last_synced_secs_ago` is `null` if the device hasn't synced since the agent last started. The response schema was renamed from `SyncDeviceResponse` to `SyncResponse`, and its `code` enum from `SyncDeviceResult` to `SyncResult`, with the same values.
 
