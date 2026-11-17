@@ -81,6 +81,9 @@ Archiving and deleting devices need the new `devices:archive` and `devices:delet
   <Step title="Use joined component slugs for calibrations">
     Stop reading `role` and `aspect` from calibrations, and replace `role` and `aspect` filters with a `component` filter on the joined slug. The joined slug is the component, role and aspect slugs joined with `-`, skipping empty ones, so `component=arm&role=left` becomes `component=arm-left`.
   </Step>
+  <Step title="Review device scopes">
+    API keys with `devices:manage` can now archive and delete devices. Narrow those keys' scopes if they shouldn't.
+  </Step>
   <Step title="Optionally integrate new endpoints">
     Optionally integrate the new device, upload collection, file rule and upload endpoints listed above, and grant your API keys the `devices:archive`, `devices:delete`, `uploads:read`, `upload_collections:read` or `file_rules:read` scopes they need.
   </Step>
