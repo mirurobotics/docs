@@ -153,7 +153,7 @@ Calibrations added `invalidated_at`, when an on-device application marked the ca
   </Step>
 
   <Step title="Use joined component slugs for calibrations">
-    Report each calibration under its joined component slug, and stop sending `role` and `aspect`. Replace `role` and `aspect` filters on `GET /calibrations/latest` with a `component` filter on the joined slug, so `component=arm&role=left` becomes `component=arm-left`. A `component` filter matches exact slugs only, so `component=arm` no longer returns `arm-left`; list each slug, as in `component=arm,arm-left,arm-right`.
+    Report each calibration under its joined component slug, and stop sending `role` and `aspect`. Replace `role` and `aspect` filters on `GET /calibrations/latest` with a `component` filter on the joined slug, so `component=arm&role=left&aspect=pose` becomes `component=arm-left-pose`. A `component` filter matches exact slugs only, so list every joined slug a filter used to match: `component=arm` no longer returns `arm-left`, and a `role` filter without an `aspect` filter matched every aspect, so `component=arm&role=left` becomes `component=arm-left,arm-left-pose`.
   </Step>
 
   <Step title="Optionally integrate the new endpoint">
