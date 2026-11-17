@@ -61,10 +61,10 @@ Archiving and deleting devices need the new `devices:archive` and `devices:delet
       "object": "calibration",
       "id": "cal_123",
       "device_id": "dvc_123",
-  -   "component": "optic-flipper",
+  -   "component": "camera",
   -   "role": null,
-  -   "aspect": "pose",
-  +   "component": "optic-flipper-pose",
+  -   "aspect": "intrinsics",
+  +   "component": "camera-intrinsics",
       "serial_number": "SN-1234",
       "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "format": "json",
@@ -78,14 +78,14 @@ Archiving and deleting devices need the new `devices:archive` and `devices:delet
   |---|---|---|---|
   | `arm` | null | null | `arm` |
   | `arm` | `left` | null | `arm-left` |
-  | `optic-flipper` | null | `pose` | `optic-flipper-pose` |
+  | `camera` | null | `intrinsics` | `camera-intrinsics` |
   | `arm` | `left` | `pose` | `arm-left-pose` |
 
   <GET /> `/calibrations` no longer accepts the `role` or `aspect` filters. Filter by the joined `component` slug instead.
 
   ```diff nocopy
-  - GET /calibrations?component=optic-flipper&aspect=pose
-  + GET /calibrations?component=optic-flipper-pose
+  - GET /calibrations?component=camera&aspect=intrinsics
+  + GET /calibrations?component=camera-intrinsics
   ```
 </Dropdown>
 
