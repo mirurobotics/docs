@@ -29,7 +29,7 @@ Backend PRs mirurobotics/backend#1276 and #1277 (merged 2026-11-16) changed nigh
 ### Open questions
 
 - Should the PR base be PR 2's branch (the sibling PR that publishes `/references/platform-api/2026-11-16` and points the `latest` redirect there) or `main`? Default: when PR 2's branch exists on origin, rebase `docs/backups-lassen` onto it and open this PR against it; otherwise open against `main`, and say in the PR body that it depends on PR 2 and must merge after it.
-- Do the words `lassen` and `meca` need adding to `cspell.json`? Neither appears in the repo today. Default: do not add them up front; add exactly the words the CI CSpell step flags (see Milestone 2). If PR 2's branch is the base and already lists a word, do not add it again.
+- Does the word `lassen` need adding to `cspell.json`? It doesn't appear in the repo today. Default: do not add it up front; add exactly the words the CI CSpell step flags (see Milestone 2). If PR 2's branch is the base and already lists a word, do not add it again.
 
 ## Progress
 
@@ -44,7 +44,7 @@ Backend PRs mirurobotics/backend#1276 and #1277 (merged 2026-11-16) changed nigh
 ## Decision Log
 
 - 2026-11-16, design review finding 1 (beta label): not applied. The person decided to call the version lassen with no beta label everywhere; the release docs move to the official lassen API before merging.
-- 2026-11-16, design review finding 2: the calibrations paragraph is replaced by one sentence after the resources intro. It names the lassen calibration change as the example, since the task asked for the new shape, and points to the Platform API changelog for the details, so the two pages can't drift. This also drops the `meca` word that failed CSpell.
+- 2026-11-16, design review finding 2: the calibrations paragraph is replaced by one sentence after the resources intro. It names the lassen calibration change as the example, since the task asked for the new shape, and points to the Platform API changelog for the details, so the two pages can't drift. This also drops the example word that failed CSpell.
 - 2026-11-16, design review finding 3: the overview's uploads item says only "records only, not the uploaded files". The archive-format Contents note stays the one place that says where the files are, since "your bucket" on the overview means the backup bucket.
 
 ## Outcomes & Retrospective
@@ -66,7 +66,7 @@ Verified facts from the backend (`backend/internal/backups/export/`):
 - `export.go` sets `platform_api_version` from the lassen models package, whose `API_VERSION` is `2026-11-16.lassen` (`backend/internal/servers/platform/lassen/models/model_api_version.go`).
 - `db_tables.go`, `getUploadTables`: file rules and uploads are listed with no filter; upload collections with `ArchivedAny`, so archived ones are included, like devices, releases and config types. None of the three has expansions.
 - Uploads are records only. The archive does not copy uploaded files; each stays in the bucket its upload names.
-- Lassen calibrations have no `role` or `aspect` fields (the everglades model has both). `component` is the flat component slug: the old component, role and aspect slugs joined with `-`, so a calibration reported as component `meca500` with role `aligner-1` reads `meca500-aligner-1`.
+- Lassen calibrations have no `role` or `aspect` fields (the everglades model has both). `component` is the flat component slug: the old component, role and aspect slugs joined with `-`, so a calibration reported as component `arm` with role `left` reads `arm-left`.
 
 Concept pages to link: `/data-uploads/concepts/file-rules/overview`, `/data-uploads/concepts/upload-collections`, `/data-uploads/concepts/uploads`.
 
@@ -103,7 +103,7 @@ Edit 2, `docs/admin/backups/archive-format.mdx`:
 
         Calibrations changed shape in `2026-11-16.lassen`. A lassen calibration has no `role`
         or `aspect` field, and its `component` is the flat component slug: a calibration
-        reported as component `meca500` with role `aligner-1` reads `meca500-aligner-1`.
+        reported as component `arm` with role `left` reads `arm-left`.
         Archives written in `2026-11-04.everglades` keep the separate fields. Check the
         manifest's `platform_api_version` to know which shape `calibrations.jsonl` uses.
 
@@ -139,7 +139,7 @@ Milestone 2 (from the docs repo root), via `$preflight`:
 
 1. Resolve the base per the open question: `git fetch origin` and look for PR 2's branch (`gh api 'repos/mirurobotics/docs/pulls?state=open' --jq '.[] | "\(.number) \(.head.ref) \(.title)"'`). If it exists, `git rebase origin/<pr2-branch>`.
 2. `git push -u origin docs/backups-lassen` and open a draft PR (`$pr`) with the Decisions section in the body, linking backend#1276, #1277 and PR 2.
-3. Watch CI on the pushed head (`gh run list --branch docs/backups-lassen`; on failure `gh run view <id> --log-failed`). If CSpell flags `lassen`, `meca` or another word from this diff, add exactly that word to `words` in `cspell.json` (the list is ASCII-sorted: `lassen` between `kuka` and `localtime`, `meca` between `mcap` and `mgmt`), commit as `docs(backups): add lassen terms to the spell list`, and push. Fix any other failure at its cause with a new commit; never amend or force-push pushed commits except `--force-with-lease` after a rebase onto the base branch.
+3. Watch CI on the pushed head (`gh run list --branch docs/backups-lassen`; on failure `gh run view <id> --log-failed`). If CSpell flags `lassen` or another word from this diff, add exactly that word to `words` in `cspell.json` (the list is ASCII-sorted: `lassen` between `kuka` and `localtime`), commit as `docs(backups): add lassen terms to the spell list`, and push. Fix any other failure at its cause with a new commit; never amend or force-push pushed commits except `--force-with-lease` after a rebase onto the base branch.
 4. Repeat until preflight reports `CLEAN`.
 
 ## Validation and Acceptance
