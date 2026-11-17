@@ -9,14 +9,15 @@ info:
     url: https://opensource.org/licenses/MIT
   x-release-version: v0.3.0
   x-git-commit:
-    sha: dcf7e1bd6b8ca022af9591454618fe70bfe488d8
-    url: https://github.com/mirurobotics/openapi/commit/dcf7e1bd6b8ca022af9591454618fe70bfe488d8
-    message: 'ci: bump the workflows pin to 1eab2d1 (#510)'
+    sha: 70b258d26115009608c8b51ff164f613717ecfe2
+    url: https://github.com/mirurobotics/openapi/commit/70b258d26115009608c8b51ff164f613717ecfe2
+    message: 'feat(device)!: invalidate a component''s latest calibration at /calibrations/latest/invalidate
+      (#515)'
     author: Ben's Agent
     branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-11-16T20:39:50.328534+00:00'
+    built_at: '2026-11-17T03:04:09.934204+00:00'
 servers:
 - url: http://localhost/v0.3
   description: localhost
@@ -96,6 +97,42 @@ paths:
           client = Miru()
           response = client.agent.version()
           print(response.api_git_commit)
+  /sync:
+    post:
+      tags:
+      - Agent
+      summary: Sync
+      description: Manually force a device sync with the edits made in the dashboard.
+      operationId: sync
+      responses:
+        '200':
+          description: Successfully synced the device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncResponse'
+      x-codeSamples:
+      - lang: curl
+        label: curl (Linux)
+        source: |-
+          curl \
+            --unix-socket /run/miru/miru.sock \
+            --request POST \
+            --url http://localhost/v0.3/sync
+      - lang: powershell
+        label: PowerShell (Windows)
+        source: |-
+          $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
+          Invoke-RestMethod -Method Post `
+            -Uri "http://127.0.0.1:$($api.port)/v0.3/sync" `
+            -Headers @{ Authorization = "Bearer $($api.token)" }
+      - lang: Python
+        source: |-
+          from miru_device_sdk import Miru
+
+          client = Miru()
+          response = client.agent.sync()
+          print(response.code)
   /calibrations:
     post:
       tags:
@@ -218,16 +255,14 @@ paths:
           Invoke-RestMethod -Method Get `
             -Uri "http://127.0.0.1:$($api.port)/v0.3/calibrations/latest/{report_id}/content" `
             -Headers @{ Authorization = "Bearer $($api.token)" }
-  /calibrations/latest/{report_id}/invalidate:
+  /calibrations/latest/invalidate:
     post:
       tags:
       - Calibrations
       summary: Invalidate Latest
       operationId: invalidateLatestCalibration
-      description: Mark a latest calibration invalid by its report ID. An older report
-        returns 404.
-      parameters:
-      - $ref: '#/components/parameters/report_id'
+      description: Mark a component's latest calibration invalid. A component with
+        no calibration returns 404.
       requestBody:
         required: true
         content:
@@ -250,16 +285,16 @@ paths:
           curl \
             --unix-socket /run/miru/miru.sock \
             --request POST \
-            --url http://localhost/v0.3/calibrations/latest/{report_id}/invalidate \
+            --url http://localhost/v0.3/calibrations/latest/invalidate \
             --header 'Content-Type: application/json' \
-            --data '{"reason": "power cycle"}'
+            --data '{"component": "kuka-arm", "reason": "power cycle"}'
       - lang: powershell
         label: PowerShell (Windows)
         source: |-
           $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
-          $body = @{ reason = "power cycle" } | ConvertTo-Json; `
+          $body = @{ component = "kuka-arm"; reason = "power cycle" } | ConvertTo-Json; `
           Invoke-RestMethod -Method Post `
-            -Uri "http://127.0.0.1:$($api.port)/v0.3/calibrations/latest/{report_id}/invalidate" `
+            -Uri "http://127.0.0.1:$($api.port)/v0.3/calibrations/latest/invalidate" `
             -Headers @{ Authorization = "Bearer $($api.token)" } `
             -ContentType "application/json" `
             -Body $body
@@ -375,42 +410,6 @@ paths:
           client = Miru()
           device = client.device.retrieve()
           print(device.id)
-  /device/sync:
-    post:
-      tags:
-      - Device
-      summary: Sync
-      description: Manually force a device sync with the edits made in the dashboard.
-      operationId: syncDevice
-      responses:
-        '200':
-          description: Successfully synced the device.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SyncDeviceResponse'
-      x-codeSamples:
-      - lang: curl
-        label: curl (Linux)
-        source: |-
-          curl \
-            --unix-socket /run/miru/miru.sock \
-            --request POST \
-            --url http://localhost/v0.3/device/sync
-      - lang: powershell
-        label: PowerShell (Windows)
-        source: |-
-          $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
-          Invoke-RestMethod -Method Post `
-            -Uri "http://127.0.0.1:$($api.port)/v0.3/device/sync" `
-            -Headers @{ Authorization = "Bearer $($api.token)" }
-      - lang: Python
-        source: |-
-          from miru_device_sdk import Miru
-
-          client = Miru()
-          response = client.device.sync()
-          print(response.code)
   /file_rules/{file_rule_id}:
     get:
       tags:
@@ -669,7 +668,7 @@ components:
     APIGitCommit:
       type: string
       enum:
-      - dcf7e1bd6b8ca022af9591454618fe70bfe488d8
+      - 70b258d26115009608c8b51ff164f613717ecfe2
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
@@ -844,6 +843,69 @@ components:
         build_date: '2026-02-24T10:30:00Z'
         os: linux
         arch: aarch64
+    SyncResult:
+      type: string
+      description: The result of attempting to sync the device.
+      enum:
+      - success
+      - network_connection_error
+      - in_cooldown
+      x-enum-varnames:
+      - SYNC_RESULT_SUCCESS
+      - SYNC_RESULT_NETWORK_CONNECTION_ERROR
+      - SYNC_RESULT_IN_COOLDOWN
+    SyncResponse:
+      title: Sync Response
+      type: object
+      required:
+      - code
+      - message
+      - last_synced_secs_ago
+      - last_attempted_sync_secs_ago
+      - in_cooldown
+      - cooldown_ends_in_secs
+      properties:
+        code:
+          $ref: '#/components/schemas/SyncResult'
+        message:
+          type: string
+          example: The device is in cooldown and can sync again in 25 seconds.
+          description: The message of the result.
+        last_synced_secs_ago:
+          type: integer
+          format: int64
+          minimum: 0
+          nullable: true
+          example: 120
+          description: Seconds since the device last synced, as measured by the agent
+            when it built this response, or null if it hasn't synced since the agent
+            last started.
+        last_attempted_sync_secs_ago:
+          type: integer
+          format: int64
+          minimum: 0
+          example: 5
+          description: Seconds since the device last *attempted* to sync, as measured
+            by the agent when it built this response.
+        in_cooldown:
+          type: boolean
+          example: true
+          description: Whether the device is currently in cooldown.
+        cooldown_ends_in_secs:
+          type: integer
+          format: int64
+          minimum: 0
+          example: 25
+          description: Seconds until the cooldown ends, rounded up, as measured by
+            the agent when it built this response. `0` exactly when `in_cooldown`
+            is false.
+      example:
+        code: in_cooldown
+        message: The device is in cooldown and can sync again in 25 seconds.
+        last_synced_secs_ago: 120
+        last_attempted_sync_secs_ago: 5
+        in_cooldown: true
+        cooldown_ends_in_secs: 25
     InstanceFormat:
       title: Instance Format
       type: string
@@ -1038,8 +1100,22 @@ components:
       title: Invalidate Calibration Request
       type: object
       required:
+      - component
       - reason
       properties:
+        component:
+          type: string
+          example: kuka-arm
+          description: Slug of the component whose latest calibration to invalidate,
+            such as `kuka-arm`.
+        report_id:
+          type: string
+          format: uuid
+          example: 0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10
+          description: Report ID of the calibration the caller expects to be `component`'s
+            latest. If it is not `component`'s current latest calibration, the agent
+            returns 404 and invalidates nothing. Leave it out to invalidate whatever
+            is latest.
         reason:
           type: string
           minLength: 1
@@ -1217,9 +1293,9 @@ components:
       - id
       - name
       - status
-      - last_synced_at
-      - last_connected_at
-      - last_disconnected_at
+      - last_synced_secs_ago
+      - last_connected_secs_ago
+      - last_disconnected_secs_ago
       properties:
         object:
           type: string
@@ -1238,85 +1314,41 @@ components:
           description: Name of the device.
         status:
           $ref: '#/components/schemas/DeviceStatus'
-        last_synced_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: Timestamp of when the device was last synced.
-        last_connected_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: Timestamp of the last successful connection event with the
-            backend.
-        last_disconnected_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: Timestamp of the last successful disconnection event with the
-            backend.
+        last_synced_secs_ago:
+          type: integer
+          format: int64
+          minimum: 0
+          nullable: true
+          example: 42
+          description: Seconds since the device last synced, as measured by the agent
+            when it built this response, or null if it hasn't synced since the agent
+            last started.
+        last_connected_secs_ago:
+          type: integer
+          format: int64
+          minimum: 0
+          nullable: true
+          example: 3600
+          description: Seconds since the device last connected to the backend, as
+            measured by the agent when it built this response, or null if it hasn't
+            connected since the agent last started.
+        last_disconnected_secs_ago:
+          type: integer
+          format: int64
+          minimum: 0
+          nullable: true
+          example: 3605
+          description: Seconds since the device last disconnected from the backend,
+            as measured by the agent when it built this response, or null if it hasn't
+            disconnected since the agent last started.
       example:
         object: device
         id: dvc_123
         name: My Device
         status: online
-        last_synced_at: '2021-01-01T00:00:00Z'
-        last_connected_at: '2021-01-01T00:00:00Z'
-        last_disconnected_at: '2021-01-01T00:00:00Z'
-    SyncDeviceResult:
-      type: string
-      description: The result of attempting to sync the device.
-      enum:
-      - success
-      - network_connection_error
-      - in_cooldown
-      x-enum-varnames:
-      - SYNC_DEVICE_RESULT_SUCCESS
-      - SYNC_DEVICE_RESULT_NETWORK_CONNECTION_ERROR
-      - SYNC_DEVICE_RESULT_IN_COOLDOWN
-    SyncDeviceResponse:
-      title: Sync Device Response
-      type: object
-      required:
-      - code
-      - message
-      - last_synced_at
-      - last_attempted_sync_at
-      - in_cooldown
-      - cooldown_ends_at
-      properties:
-        code:
-          $ref: '#/components/schemas/SyncDeviceResult'
-        message:
-          type: string
-          example: Device is not connected to the backend.
-          description: The message of the result.
-        last_synced_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: Timestamp of when the device was last synced.
-        last_attempted_sync_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: Timestamp of when the last *attempted* sync occurred.
-        in_cooldown:
-          type: boolean
-          example: true
-          description: Whether the device is currently in cooldown.
-        cooldown_ends_at:
-          type: string
-          format: date-time
-          example: '2021-01-01T00:00:00Z'
-          description: Timestamp of when the cooldown will end.
-      example:
-        code: in_cooldown
-        message: Device is not connected to the backend.
-        last_synced_at: '2021-01-01T00:00:00Z'
-        last_attempted_sync_at: '2021-01-01T00:00:00Z'
-        in_cooldown: true
-        cooldown_ends_at: '2021-01-01T00:00:00Z'
+        last_synced_secs_ago: 42
+        last_connected_secs_ago: 3600
+        last_disconnected_secs_ago: 3605
     OS:
       title: OS
       type: string

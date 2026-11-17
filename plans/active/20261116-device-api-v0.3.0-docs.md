@@ -14,7 +14,7 @@ This plan lives in `docs/plans/` because every write is in the docs repo. Work o
 
 ## Purpose / Big Picture
 
-Device API `v0.3.0` removes calibration roles and aspects, keeps one latest calibration per component, adds `invalidated_at`, and adds `POST /calibrations/latest/{report_id}/invalidate`. It is served at `/v0.3`. The next agent release (placeholder `v0.13.0`) serves it next to `v0.2.5` at `/v0.2`. After this change a reader can pick `v0.3.0` in the Device API Reference dropdown (the default), see the new **Invalidate Latest** page under Calibrations, read `v0.3.0` and `v0.13.0` entries in the changelogs, and find both versions in the version tables, including which agent serves which API versions and when to move from `/v0.2` to `/v0.3`.
+Device API `v0.3.0` removes calibration roles and aspects, keeps one latest calibration per component, adds `invalidated_at`, and adds `POST /calibrations/latest/invalidate`. It is served at `/v0.3`. The next agent release (placeholder `v0.13.0`) serves it next to `v0.2.5` at `/v0.2`. After this change a reader can pick `v0.3.0` in the Device API Reference dropdown (the default), see the new **Invalidate Latest** page under Calibrations, read `v0.3.0` and `v0.13.0` entries in the changelogs, and find both versions in the version tables, including which agent serves which API versions and when to move from `/v0.2` to `/v0.3`.
 
 Nothing is released yet. All versions and the date are placeholders, listed in the PR's "Before merging" checklist, and the PR stays a draft until the agent ships.
 
@@ -67,6 +67,7 @@ Edits mirror docs#315: the `v0.3.0` dropdown is a copy of `v0.2.5`'s, the change
 
 ## Decision Log
 
+- 2026-11-17: openapi tagged `device/v0.3.0-beta.3` at `70b258d`, and `api.yaml` is re-rendered from it. It brings #511 (sync moves to `POST /sync` under Agent, sync and `Device` times become `*_secs_ago` durations) and #515 (invalidate moves to `POST /calibrations/latest/invalidate`, keyed by `component` in the body, with an optional `report_id` check). The nav moves both pages, and the Device API changelog gains **Sync** and **Device response** breaking changes. #513 changed only Agent API wording, so the `kuka-arm` examples stay. `x-release-version` stays `v0.3.0` until GA.
 - 2026-11-17, review (ben-miru): the agent compatibility matrix is keyed by agent version, with one column per API release line (`v0.3.x`, `v0.2.x`, `v0.1.x`), so an agent serving two lines reads as one row. The separate sentence about serving more than one version is dropped as the columns show it.
 - 2026-11-16: per the flat components PR's review (docs#337), the v0.2 to v0.3 migration lives only in the Device API docs. The create request dropdown now states the backend's join rule (`JoinSlug`: `-`, unset parts skipped, same history as reporting the joined slug) and advises staying within 48 characters, since the joined length isn't validated.
 - 2026-11-16: openapi tagged `device/v0.3.0-beta.1` at `dcf7e1b`. Its `apis/` and `tools/` match `fe03a87`, which `api.yaml` was rendered from, so only `x-git-commit` changes to the tagged commit. `x-release-version` stays `v0.3.0`, the final version, until GA. The tag has no GitHub release asset yet.
@@ -92,14 +93,15 @@ The source spec is openapi `main`, `apis/apps/device-server/openapi.gen.yaml` (`
 
 - Breaking: `role` and `aspect` removed from `CreateCalibrationRequest` and `Calibration`; the `role` and `aspect` query filters removed from `GET /calibrations/latest`, which now returns one calibration per component.
 - Additive: `Calibration.invalidated_at` (required, nullable date-time).
-- New: `POST /calibrations/latest/{report_id}/invalidate` (`invalidateLatestCalibration`, summary "Invalidate Latest"), body `InvalidateCalibrationRequest { reason }` (1–512 characters), returns the `Calibration`. An older report returns 404; an already invalid one is returned unchanged.
+- New: `POST /calibrations/latest/invalidate` (`invalidateLatestCalibration`, summary "Invalidate Latest"), body `InvalidateCalibrationRequest { component, report_id?, reason }` (reason 1–512 characters), returns the `Calibration`. A component with no calibration, or a `report_id` that isn't the component's latest, returns 404; an already invalid one is returned unchanged.
+- Breaking: `POST /device/sync` (tag Device) moves to `POST /sync` (tag Agent, `client.agent.sync()`), and its response and `Device` report `*_secs_ago` durations instead of timestamps.
 - Description only: file rule `upload.path`. Not in the changelog.
 
 Agent facts: the latest release is `v0.12.4` (2026-11-10), serving only `/v0.2` (`v0.2.5`). Agent `main` vendors the `v0.3` spec but does not serve it yet. The release that serves both `/v0.2` and `/v0.3` is the placeholder `v0.13.0`; its `/v0.2` routes are unchanged.
 
 ## Plan of Work
 
-Milestone 1, reference. Render openapi `main`'s spec the way a `device/v0.3.0` release would, into `docs/references/device-api/v0.3.0/api.yaml`. Run both sample scripts on it, which gives the new invalidate route curl and PowerShell samples with `/v0.3` URLs. Then carry over `v0.2.5`'s `x-codeSamples` for every operation that exists in both, with `/v0.2/` changed to `/v0.3/` and, in `createCalibration`, the `role` and `aspect` lines removed. Add the request body to the invalidate samples in the shape of the `POST /calibrations` samples. Change calibration `component` examples from `arm` to `kuka-arm` in the same five places `v0.2.5` does. Copy `events/` from `v0.2.5`. In `docs/docs.json`, insert a `v0.3.0` dropdown before `v0.2.5`'s, as a copy of it with every `v0.2.5` path changed to `v0.3.0` and `"POST /calibrations/latest/{report_id}/invalidate"` added to the Calibrations group after the content download. Change the `latest` redirect destination to `/references/device-api/v0.3.0/:slug*`.
+Milestone 1, reference. Render openapi `main`'s spec the way a `device/v0.3.0` release would, into `docs/references/device-api/v0.3.0/api.yaml`. Run both sample scripts on it, which gives the new invalidate route curl and PowerShell samples with `/v0.3` URLs. Then carry over `v0.2.5`'s `x-codeSamples` for every operation that exists in both, with `/v0.2/` changed to `/v0.3/` and, in `createCalibration`, the `role` and `aspect` lines removed. Add the request body to the invalidate samples in the shape of the `POST /calibrations` samples. Change calibration `component` examples from `arm` to `kuka-arm` in the same five places `v0.2.5` does. Copy `events/` from `v0.2.5`. In `docs/docs.json`, insert a `v0.3.0` dropdown before `v0.2.5`'s, as a copy of it with every `v0.2.5` path changed to `v0.3.0` and `"POST /calibrations/latest/invalidate"` added to the Calibrations group after the content download. Change the `latest` redirect destination to `/references/device-api/v0.3.0/:slug*`.
 
 Milestone 2, changelogs. Insert the `# v0.3.0` entry at the top of `docs/changelog/device-api.mdx` and the `# v0.13.0` entry at the top of `docs/changelog/agent.mdx`, with the text in Concrete Steps.
 
@@ -160,15 +162,15 @@ Save this as `$SCRATCH/finish_v030.py`:
             op["x-codeSamples"] = samples
 
     # The invalidate route takes a body, like POST /calibrations.
-    op = spec["paths"]["/calibrations/latest/{report_id}/invalidate"]["post"]
+    op = spec["paths"]["/calibrations/latest/invalidate"]["post"]
     for s in op["x-codeSamples"]:
         if s["lang"] == "curl":
-            s["source"] += " \\\n  --header 'Content-Type: application/json' \\\n  --data '{\"reason\": \"power cycle\"}'"
+            s["source"] += " \\\n  --header 'Content-Type: application/json' \\\n  --data '{\"component\": \"kuka-arm\", \"reason\": \"power cycle\"}'"
         elif s["lang"] == "powershell":
             first, *rest = s["source"].split("\n")
             rest[-1] += " `"
             s["source"] = "\n".join(
-                [first, '$body = @{ reason = "power cycle" } | ConvertTo-Json; `', *rest,
+                [first, '$body = @{ component = "kuka-arm"; reason = "power cycle" } | ConvertTo-Json; `', *rest,
                  '  -ContentType "application/json" `', "  -Body $body"]
             )
 
@@ -214,14 +216,14 @@ The head of the file reads `version: v0.3`, `x-release-version: v0.3.0`, `server
     curl \
       --unix-socket /run/miru/miru.sock \
       --request POST \
-      --url http://localhost/v0.3/calibrations/latest/{report_id}/invalidate \
+      --url http://localhost/v0.3/calibrations/latest/invalidate \
       --header 'Content-Type: application/json' \
-      --data '{"reason": "power cycle"}'
+      --data '{"component": "kuka-arm", "reason": "power cycle"}'
 
     $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
-    $body = @{ reason = "power cycle" } | ConvertTo-Json; `
+    $body = @{ component = "kuka-arm"; reason = "power cycle" } | ConvertTo-Json; `
     Invoke-RestMethod -Method Post `
-      -Uri "http://127.0.0.1:$($api.port)/v0.3/calibrations/latest/{report_id}/invalidate" `
+      -Uri "http://127.0.0.1:$($api.port)/v0.3/calibrations/latest/invalidate" `
       -Headers @{ Authorization = "Bearer $($api.token)" } `
       -ContentType "application/json" `
       -Body $body
@@ -231,7 +233,7 @@ Edit `docs/docs.json`: under `"product": "Device API Reference"`, insert a copy 
     "POST /calibrations",
     "GET /calibrations/latest",
     "GET /calibrations/latest/{report_id}/content",
-    "POST /calibrations/latest/{report_id}/invalidate"
+    "POST /calibrations/latest/invalidate"
 
 In `redirects`, change the destination of `/references/device-api/latest/:slug*` to `/references/device-api/v0.3.0/:slug*`.
 
@@ -253,7 +255,7 @@ Milestone 2. Insert at the top of `docs/changelog/device-api.mdx`, after the imp
     ## New endpoints
 
     <Dropdown title="Calibrations">
-      - <POST /> `/calibrations/latest/{report_id}/invalidate` — mark a latest calibration invalid
+      - <POST /> `/calibrations/latest/invalidate` — mark a latest calibration invalid
     </Dropdown>
 
     ## Breaking changes
@@ -348,7 +350,7 @@ Insert at the top of `docs/changelog/agent.mdx`, after the front matter and befo
     ## Features
 
     - The Device API is served at `/v0.3` (`v0.3.0`) as well as `/v0.2` (`v0.2.5`); `/v0.2` routes are unchanged, so existing clients keep working
-    - Added `POST /v0.3/calibrations/latest/{report_id}/invalidate`, which marks a latest calibration invalid with a reason and uploads the invalidation to Miru
+    - Added `POST /v0.3/calibrations/latest/invalidate`, which marks a latest calibration invalid with a reason and uploads the invalidation to Miru
     - `GET /v0.3/calibrations/latest` lists the latest calibration for each component, with `invalidated_at` set once it's marked invalid
 
     ---

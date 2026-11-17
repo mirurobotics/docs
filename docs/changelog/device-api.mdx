@@ -13,14 +13,14 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 *November 30, 2026*
 
-The `v0.3.0` release lets on-device applications mark a latest [calibration](/cfg-mgmt/concepts/calibrations) invalid. It removes roles and aspects from calibrations, so the device keeps one latest calibration for each component, and moves the Device API to `/v0.3`.
+The `v0.3.0` release lets on-device applications mark a latest [calibration](/cfg-mgmt/concepts/calibrations) invalid. It removes roles and aspects from calibrations, so the device keeps one latest calibration for each component. It reports sync and connection times as seconds ago instead of timestamps, moves sync to `POST /sync`, and moves the Device API to `/v0.3`.
 
 <DeviceApiReleaseLinks version="v0.3.0" />
 
 ## New endpoints
 
 <Dropdown title="Calibrations">
-  - <POST /> `/calibrations/latest/{report_id}/invalidate` — mark a latest calibration invalid
+  - <POST /> `/calibrations/latest/invalidate` — mark a component's latest calibration invalid
 </Dropdown>
 
 ## Breaking changes
@@ -68,6 +68,44 @@ The `POST /calibrations` request removed `role` and `aspect`. On `v0.2`, Miru jo
  }
 ```
 </Dropdown>
+<Separator />
+<Dropdown title="Sync">
+`POST /device/sync` moved to `POST /sync`, next to `GET /health` and `GET /version`. In the Python SDK, `client.device.sync()` is now `client.agent.sync()`.
+
+The response reports durations the agent measures when it builds the response, instead of timestamps from the device clock, which may not be set. `last_synced_secs_ago` is `null` if the device hasn't synced since the agent last started. The `code` enum was renamed from `SyncDeviceResult` to `SyncResult`, with the same values.
+
+```diff nocopy
+ {
+   "code": "in_cooldown",
+   "message": "The device is in cooldown and can sync again in 25 seconds.",
+-  "last_synced_at": "2026-03-10T12:00:00Z",
+-  "last_attempted_sync_at": "2026-03-10T12:01:55Z",
++  "last_synced_secs_ago": 120,
++  "last_attempted_sync_secs_ago": 5,
+   "in_cooldown": true,
+-  "cooldown_ends_at": "2026-03-10T12:02:25Z"
++  "cooldown_ends_in_secs": 25
+ }
+```
+</Dropdown>
+<Separator />
+<Dropdown title="Device response">
+`GET /device` reports how many seconds ago the device last synced, connected and disconnected, instead of timestamps. Each is `null` if it hasn't happened since the agent last started.
+
+```diff nocopy
+ {
+   "object": "device",
+   ...
+   "status": "online",
+-  "last_synced_at": "2026-03-10T12:00:00Z",
+-  "last_connected_at": "2026-03-10T11:01:00Z",
+-  "last_disconnected_at": "2026-03-10T11:00:55Z"
++  "last_synced_secs_ago": 42,
++  "last_connected_secs_ago": 3600,
++  "last_disconnected_secs_ago": 3605
+ }
+```
+</Dropdown>
 
 ## Additive changes
 
@@ -96,7 +134,7 @@ Calibrations added `invalidated_at`, when an on-device application marked the ca
   </Step>
 
   <Step title="Optionally integrate the new endpoint">
-    Integrate the invalidate endpoint to mark a latest calibration invalid from the device.
+    Integrate the invalidate endpoint to mark a component's latest calibration invalid from the device.
   </Step>
 </Steps>
 

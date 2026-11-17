@@ -344,7 +344,8 @@
                 },
                 "pages": [
                   "GET /health",
-                  "GET /version"
+                  "GET /version",
+                  "POST /sync"
                 ]
               },
               {
@@ -357,7 +358,7 @@
                   "POST /calibrations",
                   "GET /calibrations/latest",
                   "GET /calibrations/latest/{report_id}/content",
-                  "POST /calibrations/latest/{report_id}/invalidate"
+                  "POST /calibrations/latest/invalidate"
                 ]
               },
               {
@@ -378,8 +379,7 @@
                   "directory": "references/device-api/v0.3.0/endpoints"
                 },
                 "pages": [
-                  "GET /device",
-                  "POST /device/sync"
+                  "GET /device"
                 ]
               },
               {
