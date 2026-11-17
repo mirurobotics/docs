@@ -67,6 +67,7 @@ Edits mirror docs#315: the `v0.3.0` dropdown is a copy of `v0.2.5`'s, the change
 
 ## Decision Log
 
+- 2026-11-17, review (ben-miru): the agent Features list drops the `GET /v0.3/calibrations/latest` bullet, since that endpoint already existed in `v0.2.5`; `invalidated_at` is covered in the Device API changelog.
 - 2026-11-17: openapi tagged `device/v0.3.0-beta.3` at `70b258d`, and `api.yaml` is re-rendered from it. It brings #511 (sync moves to `POST /sync` under Agent, sync and `Device` times become `*_secs_ago` durations) and #515 (invalidate moves to `POST /calibrations/latest/invalidate`, keyed by `component` in the body, with an optional `report_id` check). The nav moves both pages, and the Device API changelog gains **Sync** and **Device response** breaking changes. #513 changed only Agent API wording, so the `kuka-arm` examples stay. `x-release-version` stays `v0.3.0` until GA.
 - 2026-11-17, review (ben-miru): the agent compatibility matrix is keyed by agent version, with one column per API release line (`v0.3.x`, `v0.2.x`, `v0.1.x`), so an agent serving two lines reads as one row. The separate sentence about serving more than one version is dropped as the columns show it.
 - 2026-11-16: per the flat components PR's review (docs#337), the v0.2 to v0.3 migration lives only in the Device API docs. The create request dropdown now states the backend's join rule (`JoinSlug`: `-`, unset parts skipped, same history as reporting the joined slug) and advises staying within 48 characters, since the joined length isn't validated.
@@ -351,7 +352,6 @@ Insert at the top of `docs/changelog/agent.mdx`, after the front matter and befo
 
     - The Device API is served at `/v0.3` (`v0.3.0`) as well as `/v0.2` (`v0.2.5`); `/v0.2` routes are unchanged, so existing clients keep working
     - Added `POST /v0.3/calibrations/latest/invalidate`, which marks a latest calibration invalid with a reason and uploads the invalidation to Miru
-    - `GET /v0.3/calibrations/latest` lists the latest calibration for each component, with `invalidated_at` set once it's marked invalid
 
     ---
 
