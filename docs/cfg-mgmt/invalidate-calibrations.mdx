@@ -3,13 +3,10 @@ title: "Invalidate calibrations"
 ---
 
 import { DeviceApiLink } from '/snippets/components/api-links.jsx';
-import CalibrationDef from '/snippets/definitions/calibration.mdx';
 
 This guide details how to mark [calibrations](/cfg-mgmt/concepts/calibrations) invalid through the Miru Agent's [Device API](/developers/device-api/overview).
 
 ## Overview
-
-<CalibrationDef />
 
 A calibration can stop being valid after it's reported, for example when a power cycle moves a component out of calibration. Miru allows on-device applications to mark a component's latest calibration invalid using the <DeviceApiLink endpoint="calibrations/invalidate-latest">invalidate latest calibration</DeviceApiLink> endpoint in the Device API.
 
