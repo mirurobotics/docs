@@ -2,7 +2,7 @@
 title: "Calibrations"
 ---
 
-import { ImmutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
+import { ImmutableBadge, MutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
 import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import CalibrationDef from '/snippets/definitions/calibration.mdx';
 
@@ -69,7 +69,7 @@ Calibrations flow one way, from the device to Miru. Editing calibrations is not 
 </ParamField>
 
 <ParamField path="invalidated at" type="datetime">
-  <NullableBadge />
+  <MutableBadge /> {' '} <NullableBadge />
 
   When the device marked the calibration [invalid](/cfg-mgmt/invalidate-calibrations), or `null` if it's valid. Once set, it never changes.
 </ParamField>
