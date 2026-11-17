@@ -21,7 +21,7 @@ The only breaking change from `everglades` is to calibrations. Every `everglades
 
 ## New endpoints
 
-Archiving and deleting devices need the new `devices:archive` and `devices:delete` [scopes](/developers/platform-api/authz#scopes-by-resource). Reading uploads, upload collections and file rules needs the new `uploads:read` scope and the existing `upload_collections:read` and `file_rules:read` scopes.
+Archiving and deleting devices need the new `devices:archive` and `devices:delete` [scopes](/developers/platform-api/authz#scopes-by-resource). Reading uploads, upload collections and file rules needs the new `uploads:read` scope and the existing `upload_collections:read` and `file_rules:read` scopes, respectively.
 
 <Dropdown title="Devices">
   * <POST /> `/devices/{device_id}/archive` — archive a device
@@ -96,7 +96,7 @@ Archiving and deleting devices need the new `devices:archive` and `devices:delet
     Set `Miru-Version: 2026-11-16.lassen` on API requests. Requests that send an `everglades` version keep working.
   </Step>
   <Step title="Use joined component slugs for calibrations">
-    Stop reading `role` and `aspect` from calibrations, and replace `role` and `aspect` filters with a `component` filter on the joined slug. The joined slug is the component, role and aspect slugs joined with `-`, skipping empty ones, so `component=arm&role=left` becomes `component=arm-left`. A `component` filter matches exact slugs only, so `component=arm` no longer returns `arm-left` calibrations; list each joined slug to get them all, as in `component=arm,arm-left,arm-right`.
+    Stop reading `role` and `aspect` from calibrations, and replace `role` and `aspect` filters with a `component` filter on the joined slug shown in the table above, so `component=arm&role=left` becomes `component=arm-left`. A `component` filter matches exact slugs only, so `component=arm` no longer returns `arm-left` calibrations. To get them all, [list each slug](/developers/platform-api/query-params/filtering#multi-value-filters), as in `component=arm|arm-left|arm-right`.
   </Step>
   <Step title="Review device scopes">
     API keys with `devices:manage` can now archive and delete devices. Narrow those keys' scopes if they shouldn't.
