@@ -52,17 +52,34 @@ Archiving and deleting devices need the new `devices:archive` and `devices:delet
 ## Breaking changes
 
 <Dropdown title="Calibration roles and aspects removed">
-  Calibrations no longer return `role` or `aspect`. A calibration reported with a role or an aspect belongs to the component whose slug joins the component, role and aspect slugs with `-`, skipping empty ones.
+  Calibrations no longer have a `role` or an `aspect` field. Each calibration belongs to exactly one component, identified by its `component` slug.
 
   **Calibration Response**
 
   ```diff nocopy
+    {
+      "object": "calibration",
       "id": "cal_123",
+      "device_id": "dvc_123",
   -   "component": "optic-flipper",
   -   "role": null,
   -   "aspect": "pose",
   +   "component": "optic-flipper-pose",
+      "serial_number": "SN-1234",
+      "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format": "json",
+      ...
+    }
   ```
+
+  Calibrations reported with a role or an aspect have been folded into a single component. Its slug joins the previous `component`, `role` and `aspect` slugs with `-`, in that order, and skips any that were null:
+
+  | `component` | `role` | `aspect` | `lassen` `component` |
+  |---|---|---|---|
+  | `arm` | null | null | `arm` |
+  | `arm` | `left` | null | `arm-left` |
+  | `optic-flipper` | null | `pose` | `optic-flipper-pose` |
+  | `arm` | `left` | `pose` | `arm-left-pose` |
 
   <GET /> `/calibrations` no longer accepts the `role` or `aspect` filters. Filter by the joined `component` slug instead.
 
