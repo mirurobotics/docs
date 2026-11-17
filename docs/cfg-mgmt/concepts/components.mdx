@@ -39,7 +39,16 @@ import ComponentDef from '/snippets/definitions/component.mdx';
 
 <PlatformUnsupportedBadge />
 
-Publishers can create a component in the dashboard, for example to list it in a [hardware manifest](/cfg-mgmt/concepts/hardware-manifests) before any device has calibrated it. A device also creates a component when it first [reports a calibration](/cfg-mgmt/report-calibrations) that uses it.
+**Agent**
+
+A device creates a component when it first [reports a calibration](/cfg-mgmt/report-calibrations) that uses it. The component's name is derived from its slug.
+
+**Dashboard**
+
+Publishers can create a component in the dashboard, for example to list it in a [hardware manifest](/cfg-mgmt/concepts/hardware-manifests) before any device has calibrated it. To create a component, enter:
+
+- **Slug** (required): must follow the [slug rules](#param-slug) and be unique within the workspace. It can't be changed later, and a device reporting a calibration with the same slug uses this component.
+- **Name** (optional): leave it blank to use a name derived from the slug, so `realsense-d435` becomes `Realsense D435`. You can [change it](#edit-a-component) later.
 
 ## Edit a component  <PublisherBadge />
 
