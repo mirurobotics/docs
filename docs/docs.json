@@ -142,7 +142,8 @@
                       "cfg-mgmt/audit/compare-devices"
                     ]
                   },
-                  "cfg-mgmt/report-calibrations"
+                  "cfg-mgmt/report-calibrations",
+                  "cfg-mgmt/invalidate-calibrations"
                 ]
               }
             ]

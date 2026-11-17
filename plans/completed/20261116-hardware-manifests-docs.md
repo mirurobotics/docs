@@ -91,6 +91,8 @@ Hardware manifests are new in the dashboard. A hardware manifest is the set of c
   Rationale: Reviewer: statuses belong with the calibration docs, in their own section, like the device page's Status section. No `status` property yet: no calibration stores one today, and the invalidation PR adds `invalidated at` with the Invalid row.
   Date/Author: 2026-11-17, reviewer on docs#340.
 
+- Review (person, in thread): calibration status no longer has its own section. `calibrations.mdx` lists an `invalidated at` property (nullable; set once) and an "Invalidate a calibration" operation, and a new `cfg-mgmt/invalidate-calibrations.mdx` guide, modeled on `report-calibrations.mdx`, documents Device API v0.3.0's `POST /calibrations/latest/invalidate`. The property follows the page's spaced naming (`reported at`) rather than the wire name `invalidated_at`.
+
 ## Outcomes & Retrospective
 
 (Summarize at completion.)

@@ -68,20 +68,17 @@ Calibrations flow one way, from the device to Miru. Editing calibrations is not 
   When the device reported the calibration. A device that was offline uploads its calibrations later, so this can be well before Miru received them.
 </ParamField>
 
+<ParamField path="invalidated at" type="datetime">
+  <NullableBadge />
+
+  When the device marked the calibration [invalid](/cfg-mgmt/invalidate-calibrations), or `null` if it's valid. Once set, it never changes.
+</ParamField>
+
 ## History
 
-Calibrations are append-only. Every report adds a new calibration, even if its content matches an earlier one, and calibrations are never edited or deleted.
+Calibrations are append-only. Every report adds a new calibration, even if its content matches an earlier one, and calibrations are never deleted. A device can [mark](#invalidate-a-calibration) its current calibration invalid, but can't otherwise change it.
 
 A device keeps a separate history for each component it reports. The most recently reported calibration in a history is that component's current calibration.
-
-## Status
-
-Each component in a device's [hardware manifest](/cfg-mgmt/concepts/hardware-manifests) has a calibration status, based on the device's current calibration of that component.
-
-| Status         | Description                                                 |
-| -------------- | ----------------------------------------------------------- |
-| Not calibrated | The device hasn't reported a calibration for the component |
-| Calibrated     | The device has reported a calibration for the component    |
 
 ## Report a calibration
 
@@ -89,11 +86,17 @@ Each component in a device's [hardware manifest](/cfg-mgmt/concepts/hardware-man
 
 Calibrations can only be created on-device using the Miru Agent. Visit the [report calibrations](/cfg-mgmt/report-calibrations) guide for more information.
 
+## Invalidate a calibration
+
+<PlatformUnsupportedBadge />
+
+Calibrations can only be invalidated on-device using the Miru Agent. Visit the [invalidate calibrations](/cfg-mgmt/invalidate-calibrations) guide for more information.
+
 ## View calibrations
 
 <PlatformApiBadge endpoint="calibrations/list" />
 
 To view a device's calibrations, open the device and navigate to the **Calibrations** page on the left.
 
-If the device has a [hardware manifest](/cfg-mgmt/concepts/hardware-manifests), its components are listed first with their [status](#status), and other components are listed under **Not in manifest**.
+If the device has a [hardware manifest](/cfg-mgmt/concepts/hardware-manifests), its components are listed first, including any the device hasn't calibrated, and other components are listed under **Not in manifest**.
 
