@@ -15,7 +15,7 @@ import { Separator } from '/snippets/components/separator.jsx';
 
 The `v0.3.0` release lets on-device applications mark a latest [calibration](/cfg-mgmt/concepts/calibrations) invalid. It removes roles and aspects from calibrations, so the device keeps one latest calibration for each component.
 
-`v0.3.0` also reports sync and connection times as seconds ago instead of timestamps, moves sync to `POST /sync`, and moves the Device API to `/v0.3`.
+`v0.3.0` also reports synchronization and connection times as deltas from now instead of absolute timestamps, moves sync to `POST /sync`, and moves the Device API to `/v0.3`.
 
 <DeviceApiReleaseLinks version="v0.3.0" />
 
@@ -91,7 +91,7 @@ To keep a calibration's history, report it on `v0.3` under the joined slug. A sl
 <Dropdown title="Sync">
 `POST /device/sync` moved to `POST /sync`.
 
-The response reports durations the agent measures when it builds the response, instead of timestamps from the device clock, which may not be set. `last_synced_secs_ago` is `null` if the device hasn't synced since the agent last started. The response schema was renamed from `SyncDeviceResponse` to `SyncResponse`, and its `code` enum from `SyncDeviceResult` to `SyncResult`, with the same values.
+Synchronization times are reported as deltas from now instead of absolute timestamps. The response schema was renamed from `SyncDeviceResponse` to `SyncResponse`, and its `code` enum from `SyncDeviceResult` to `SyncResult`, with the same values.
 
 ```diff nocopy
  {
@@ -109,7 +109,7 @@ The response reports durations the agent measures when it builds the response, i
 </Dropdown>
 <Separator />
 <Dropdown title="Device response">
-`GET /device` reports how many seconds ago the device last synced, connected and disconnected, instead of timestamps. Each is `null` if it hasn't happened since the agent last started.
+`GET /device` reports synchronization and connection times as deltas from now instead of absolute timestamps.
 
 ```diff nocopy
  {
