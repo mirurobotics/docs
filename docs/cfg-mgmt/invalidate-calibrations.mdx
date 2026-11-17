@@ -43,12 +43,16 @@ The following parameters are required.
 In addition to the required parameters, you can also set the following optional parameters:
 
 <ParamField body="report_id" type="string">
-  The report ID of the calibration you expect to be the component's latest, as read from the <DeviceApiLink endpoint="calibrations/list-latest">list latest calibrations</DeviceApiLink> endpoint. If it isn't the component's latest calibration, the agent invalidates nothing. Leave it out to invalidate whatever calibration is latest.
+  The report ID of the calibration to invalidate, as read from the <DeviceApiLink endpoint="calibrations/list-latest">list latest calibrations</DeviceApiLink> endpoint. If it isn't the component's latest calibration, the agent invalidates nothing.
 
   Example: `0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10`
 </ParamField>
 
-We recommend sending `report_id`, so that a calibration reported in the meantime isn't marked invalid.
+### Latest or a specific calibration
+
+To invalidate whatever calibration is the component's latest, leave out `report_id`.
+
+To invalidate a specific calibration, send its `report_id`. The agent invalidates it only while it's still the component's latest, so a calibration reported in the meantime isn't marked invalid by mistake.
 
 ## Response
 
