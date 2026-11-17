@@ -3,7 +3,7 @@ title: "Overview"
 ---
 
 import { ImmutableBadge } from '/snippets/components/field-badges.jsx';
-import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
+import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import { PublisherBadge } from '/snippets/components/role-badges.jsx';
 import FileRuleDef from '/snippets/definitions/file-rule.mdx';
 
@@ -86,7 +86,7 @@ rules and releases.
 
 ## View a file rule
 
-<PlatformUnsupportedBadge />
+<PlatformApiBadge endpoint="file-rules/get" />
 
 To view a file rule, click into its release from the
 [Releases page](https://app.mirurobotics.com/releases). The release's file rules are

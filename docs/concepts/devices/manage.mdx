@@ -83,7 +83,7 @@ On the other hand, <Tooltip tip={OFFLINE_TOOLTIP.tip} cta={OFFLINE_TOOLTIP.cta} 
 
 ## Archive a device  <ProvisionerBadge />
 
-<PlatformUnsupportedBadge />
+<PlatformApiBadge endpoint="devices/archive" />
 
 Archiving a device:
 
@@ -113,13 +113,14 @@ Restoring a device counts toward your plan's device limit and will be billed acc
 
 ## Delete a device  <ProvisionerBadge />
 
-<PlatformUnsupportedBadge />
+<PlatformApiBadge endpoint="devices/delete" />
 
 Deleting a device permanently removes it from Miru and immediately invalidates its
 authentication session. This action is irreversible. Please proceed with caution.
 
-A device can only be deleted if it has never had a deployment. Devices with
-deployment history must be [archived](#archive-a-device) instead.
+A device can only be deleted if it has never had a deployment or reported a
+[calibration](/cfg-mgmt/concepts/calibrations). Devices with deployment or calibration
+history must be [archived](#archive-a-device) instead.
 
 To delete a device, click the ellipses (...) on the device you want to delete and hit **Delete**.
 
