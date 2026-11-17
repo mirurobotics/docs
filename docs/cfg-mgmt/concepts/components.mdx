@@ -41,14 +41,14 @@ import ComponentDef from '/snippets/definitions/component.mdx';
 
 **Agent**
 
-If no component has the slug yet, Miru creates one when a device [reports a calibration](/cfg-mgmt/report-calibrations) that uses it. The component's name is derived from its slug.
+If no component has the slug yet, Miru creates one when a device [reports a calibration](/cfg-mgmt/report-calibrations) that uses it.
 
 **Dashboard**
 
 Publishers can create a component in the dashboard, for example to list it in a [hardware manifest](/cfg-mgmt/concepts/hardware-manifests) before any device has calibrated it. To create a component, enter:
 
 - **Slug** (required): must follow the [slug rules](#param-slug) and be unique within the workspace. It can't be changed later, and a device reporting a calibration with the same slug uses this component.
-- **Name** (optional): leave it blank to use a name derived from the slug, so `realsense-d435` becomes `Realsense D435`. You can [change it](#edit-a-component) later.
+- **Name** (optional): leave it blank to use the [default name](#param-name). You can [change it](#edit-a-component) later.
 
 ## Edit a component  <PublisherBadge />
 
