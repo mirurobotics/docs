@@ -9,6 +9,164 @@ import { DeviceApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
+# v0.3.0
+
+*November 30, 2026*
+
+The `v0.3.0` release lets on-device applications mark a latest [calibration](/cfg-mgmt/concepts/calibrations) invalid. It removes roles and aspects from calibrations, so the device keeps one latest calibration for each component.
+
+`v0.3.0` also moves the Device API to `/v0.3`, moves sync to `POST /sync`, and reports synchronization and connection times as deltas from now instead of absolute timestamps.
+
+<DeviceApiReleaseLinks version="v0.3.0" />
+
+## New endpoints
+
+<Dropdown title="Calibrations">
+  - <POST /> `/calibrations/latest/invalidate` — mark a component's latest calibration invalid
+</Dropdown>
+
+## Breaking changes
+
+<Dropdown title="Base path change">
+The URL version prefix changed from `/v0.2` to `/v0.3`. Update all request URLs in your client application.
+
+```diff nocopy
+- http://localhost/v0.2/{endpoint}
++ http://localhost/v0.3/{endpoint}
+```
+</Dropdown>
+<Separator />
+<Dropdown title="Calibration roles and aspects removed">
+Calibrations no longer have a `role` or an `aspect` field. Each calibration belongs to exactly one component, identified by its `component` slug.
+
+**Create Calibration Request**
+
+```diff nocopy
+ {
+-  "component": "camera",
+-  "aspect": "intrinsics",
++  "component": "camera-intrinsics",
+   "serial_number": "SN-1234",
+   "content": {
+     "format": "json",
+     "data": "{\"x\": 0.12, \"y\": -0.03}"
+   }
+ }
+```
+
+**Calibration Response**
+
+```diff nocopy
+ {
+   "object": "calibration",
+   "report_id": "0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10",
+-  "component": "camera",
+-  "role": null,
+-  "aspect": "intrinsics",
++  "component": "camera-intrinsics",
+   "serial_number": "SN-1234",
+   ...
+ }
+```
+
+Calibrations reported with a role or an aspect are folded into a single component. Its slug joins the `v0.2` `component`, `role` and `aspect` slugs with `-`, in that order, and skips any that were null:
+
+| `component` | `role` | `aspect` | `v0.3` `component` |
+|---|---|---|---|
+| `arm` | null | null | `arm` |
+| `arm` | `left` | null | `arm-left` |
+| `camera` | null | `intrinsics` | `camera-intrinsics` |
+| `arm` | `left` | `pose` | `arm-left-pose` |
+
+To keep a calibration's history, report it on `v0.3` under the joined slug.
+
+<GET /> `/calibrations/latest` returns one calibration for each component, and no longer accepts the `role` or `aspect` filters. Filter by the joined `component` slug instead.
+
+```diff nocopy
+- GET /calibrations/latest?component=camera&aspect=intrinsics
++ GET /calibrations/latest?component=camera-intrinsics
+```
+</Dropdown>
+<Separator />
+<Dropdown title="Sync">
+`POST /device/sync` moved to `POST /sync`.
+
+Synchronization times are reported as deltas from now instead of absolute timestamps. The response schema was renamed from `SyncDeviceResponse` to `SyncResponse`, and its `code` enum from `SyncDeviceResult` to `SyncResult`, with the same values.
+
+```diff nocopy
+ {
+   "code": "in_cooldown",
+   "message": "The device is in cooldown and can sync again in 25 seconds.",
+-  "last_synced_at": "2026-03-10T12:00:00Z",
+-  "last_attempted_sync_at": "2026-03-10T12:01:55Z",
++  "last_synced_secs_ago": 120,
++  "last_attempted_sync_secs_ago": 5,
+   "in_cooldown": true,
+-  "cooldown_ends_at": "2026-03-10T12:02:25Z"
++  "cooldown_ends_in_secs": 25
+ }
+```
+</Dropdown>
+<Separator />
+<Dropdown title="Device response">
+`GET /device` reports synchronization and connection times as deltas from now instead of absolute timestamps.
+
+```diff nocopy
+ {
+   "object": "device",
+   ...
+   "status": "online",
+-  "last_synced_at": "2026-03-10T12:00:18Z",
+-  "last_connected_at": "2026-03-10T11:01:00Z",
+-  "last_disconnected_at": "2026-03-10T11:00:55Z"
++  "last_synced_secs_ago": 42,
++  "last_connected_secs_ago": 3600,
++  "last_disconnected_secs_ago": 3605
+ }
+```
+</Dropdown>
+
+## Additive changes
+
+<Dropdown title="Calibration response">
+Calibrations added `invalidated_at`, when an on-device application marked the calibration invalid, or `null` if it's valid.
+
+```diff nocopy
+ {
+   "object": "calibration",
+   ...
+   "reported_at": "2026-03-10T12:00:00Z",
++  "invalidated_at": null
+ }
+```
+</Dropdown>
+
+## Migration steps
+
+<Steps>
+  <Step title="Verify agent compatibility">
+    Ensure all devices are running Miru Agent `v0.13.0` or later. See [compatibility matrix](/developers/device-api/versions#agent-compatibility-matrix). Agent `v0.13.0` also serves `v0.2.5` at `/v0.2`, so clients on `/v0.2` keep working while you migrate.
+  </Step>
+
+  <Step title="Migrate breaking changes">
+    Migrate your client application according to the breaking changes listed above. If you are using the [Python SDK](/developers/device-api/sdks#python), upgrade to version `v0.11.0` or later.
+  </Step>
+
+  <Step title="Use joined component slugs for calibrations">
+    Report each calibration under its joined component slug, and stop sending `role` and `aspect`.
+
+    Replace `role` and `aspect` filters on `GET /calibrations/latest` with a `component` filter on the joined slug, so `component=arm&role=left&aspect=pose` becomes `component=arm-left-pose`.
+
+    A `component` filter matches exact slugs only, so list every joined slug a filter used to match. `component=arm` no longer returns `arm-left`. A `role` filter without an `aspect` filter matched every aspect, so `component=arm&role=left` becomes `component=arm-left,arm-left-pose`.
+  </Step>
+
+  <Step title="Optionally integrate the new endpoint">
+    Integrate the invalidate endpoint to mark a component's latest calibration invalid from the device. Send the `report_id` you read from `GET /calibrations/latest`, so a calibration reported in the meantime isn't marked invalid.
+  </Step>
+</Steps>
+
+---
+
 # v0.2.5
 
 *November 10, 2026*

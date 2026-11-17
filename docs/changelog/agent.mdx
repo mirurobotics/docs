@@ -4,6 +4,20 @@ mode: "center"
 description: "Changelog and migration steps for the Miru Agent"
 ---
 
+# v0.13.0
+
+*November 30, 2026*
+
+Miru Agent `v0.13.0` adds Device API `v0.3.0` at `/v0.3`, next to `v0.2.5` at `/v0.2`. `v0.3.0` lets on-device applications mark a latest [calibration](/cfg-mgmt/concepts/calibrations) invalid.
+
+[Device API v0.3.0 changelog »](/changelog/device-api#v0-3-0)
+
+## Features
+
+- Added `POST /v0.3/calibrations/latest/invalidate`, which marks a component's latest calibration invalid with a reason and uploads the invalidation to Miru
+
+---
+
 # v0.12.4
 
 *November 10, 2026*
