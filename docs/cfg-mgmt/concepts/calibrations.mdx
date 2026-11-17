@@ -2,7 +2,7 @@
 title: "Calibrations"
 ---
 
-import { ImmutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
+import { ImmutableBadge, MutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
 import { PlatformApiBadge, PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
 import CalibrationDef from '/snippets/definitions/calibration.mdx';
 
@@ -68,9 +68,15 @@ Calibrations flow one way, from the device to Miru. Editing calibrations is not 
   When the device reported the calibration. A device that was offline uploads its calibrations later, so this can be well before Miru received them.
 </ParamField>
 
+<ParamField path="invalidated at" type="datetime">
+  <MutableBadge /> {' '} <NullableBadge />
+
+  When the device marked the calibration [invalid](/cfg-mgmt/invalidate-calibrations), or `null` if it's valid. Once set, it never changes.
+</ParamField>
+
 ## History
 
-Calibrations are append-only. Every report adds a new calibration, even if its content matches an earlier one, and calibrations are never edited or deleted.
+Calibrations are append-only. Every report adds a new calibration, even if its content matches an earlier one, and calibrations are never deleted. A device can mark its current calibration [invalid](#invalidate-a-calibration), but can't otherwise change it.
 
 A device keeps a separate history for each component it reports. The most recently reported calibration in a history is that component's current calibration.
 
@@ -79,6 +85,12 @@ A device keeps a separate history for each component it reports. The most recent
 <PlatformUnsupportedBadge />
 
 Calibrations can only be created on-device using the Miru Agent. Visit the [report calibrations](/cfg-mgmt/report-calibrations) guide for more information.
+
+## Invalidate a calibration
+
+<PlatformUnsupportedBadge />
+
+Calibrations can only be invalidated on-device using the Miru Agent. Visit the [invalidate calibrations](/cfg-mgmt/invalidate-calibrations) guide for more information.
 
 ## View calibrations
 

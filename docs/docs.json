@@ -118,7 +118,8 @@
                   },
                   "cfg-mgmt/concepts/config-instances",
                   "cfg-mgmt/concepts/components",
-                  "cfg-mgmt/concepts/calibrations"
+                  "cfg-mgmt/concepts/calibrations",
+                  "cfg-mgmt/concepts/hardware-manifests"
                 ]
               },
               {
@@ -141,7 +142,8 @@
                       "cfg-mgmt/audit/compare-devices"
                     ]
                   },
-                  "cfg-mgmt/report-calibrations"
+                  "cfg-mgmt/report-calibrations",
+                  "cfg-mgmt/invalidate-calibrations"
                 ]
               }
             ]
