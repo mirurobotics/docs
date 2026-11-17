@@ -93,7 +93,7 @@ Archiving and deleting devices need the new `devices:archive` and `devices:delet
 
 <Steps>
   <Step title="Update the Miru-Version header">
-    Set `Miru-Version: 2026-11-16.lassen` on API requests. Requests that send an `everglades` version keep working.
+    Set `Miru-Version: 2026-11-16.lassen` on API requests. Requests that send an `everglades` version keep working. [Python SDK](/developers/platform-api/sdks#python) `v0.15.0` marks the major version rollout of the `2026-11-16.lassen` API. For the latest SDK version compatibility information, visit the [Platform SDKs](/developers/platform-api/sdks) page.
   </Step>
   <Step title="Use joined component slugs for calibrations">
     Stop reading `role` and `aspect` from calibrations. Each calibration's `component` is now the joined slug shown in the table under **Calibration roles and aspects removed**.
