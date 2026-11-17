@@ -8,9 +8,11 @@ This guide details how to mark [calibrations](/cfg-mgmt/concepts/calibrations) i
 
 ## Overview
 
-A calibration can stop being valid after it's reported, for example when a power cycle moves a component out of calibration. Miru allows on-device applications to mark a component's latest calibration invalid using the <DeviceApiLink endpoint="calibrations/invalidate-latest">invalidate latest calibration</DeviceApiLink> endpoint in the Device API.
+Every calibration is valid when it's reported. It can stop being valid later, for example when a power cycle moves a component out of calibration. Miru allows on-device applications to mark a component's latest calibration invalid using the <DeviceApiLink endpoint="calibrations/invalidate-latest">invalidate latest calibration</DeviceApiLink> endpoint in the Device API.
 
 When a calibration is invalidated, the agent marks it invalid on the device and immediately returns a `200` response, regardless of whether the device is online or offline. Once a device is online, the agent uploads the invalidation to Miru, which sets the calibration's [invalidated at](/cfg-mgmt/concepts/calibrations#param-invalidated-at).
+
+There's no need to mark an invalid calibration valid again. [Report a new calibration](/cfg-mgmt/report-calibrations) for the component instead, and the dashboard shows the new one as the component's valid, latest calibration.
 
 ## Prerequisites
 
@@ -71,7 +73,3 @@ The agent responds with `200 OK` and the invalidated calibration:
 ```
 
 If the calibration is already invalid, the agent returns it unchanged, so a calibration keeps the time of its first invalidation.
-
-## Replace an invalid calibration
-
-A calibration stays invalid. To replace it, [report a new calibration](/cfg-mgmt/report-calibrations) for the component, which becomes the component's latest calibration.
