@@ -9,15 +9,14 @@ info:
     url: https://opensource.org/licenses/MIT
   x-release-version: v0.3.0
   x-git-commit:
-    sha: 70b258d26115009608c8b51ff164f613717ecfe2
-    url: https://github.com/mirurobotics/openapi/commit/70b258d26115009608c8b51ff164f613717ecfe2
-    message: 'feat(device)!: invalidate a component''s latest calibration at /calibrations/latest/invalidate
-      (#515)'
+    sha: 5b59059ad0b45c4afaea8dcc7cea214dad04c346
+    url: https://github.com/mirurobotics/openapi/commit/5b59059ad0b45c4afaea8dcc7cea214dad04c346
+    message: 'docs(device): drop 404 statements from calibration descriptions (#516)'
     author: Ben's Agent
     branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-11-17T03:04:09.934204+00:00'
+    built_at: '2026-11-17T03:30:19.970723+00:00'
 servers:
 - url: http://localhost/v0.3
   description: localhost
@@ -219,7 +218,6 @@ paths:
       summary: Download Latest
       operationId: getLatestCalibrationContent
       description: Download the content of a latest calibration by its report ID.
-        An older report returns 404.
       parameters:
       - $ref: '#/components/parameters/report_id'
       responses:
@@ -261,8 +259,7 @@ paths:
       - Calibrations
       summary: Invalidate Latest
       operationId: invalidateLatestCalibration
-      description: Mark a component's latest calibration invalid. A component with
-        no calibration returns 404.
+      description: Mark a component's latest calibration invalid.
       requestBody:
         required: true
         content:
@@ -668,7 +665,7 @@ components:
     APIGitCommit:
       type: string
       enum:
-      - 70b258d26115009608c8b51ff164f613717ecfe2
+      - 5b59059ad0b45c4afaea8dcc7cea214dad04c346
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
@@ -1114,8 +1111,7 @@ components:
           example: 0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10
           description: Report ID of the calibration the caller expects to be `component`'s
             latest. If it is not `component`'s current latest calibration, the agent
-            returns 404 and invalidates nothing. Leave it out to invalidate whatever
-            is latest.
+            invalidates nothing. Leave it out to invalidate whatever is latest.
         reason:
           type: string
           minLength: 1

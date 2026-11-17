@@ -67,6 +67,7 @@ Edits mirror docs#315: the `v0.3.0` dropdown is a copy of `v0.2.5`'s, the change
 
 ## Decision Log
 
+- 2026-11-17: openapi tagged `device/v0.3.0-beta.4` at `5b59059` (#516, which drops the 404 statements from the calibration descriptions), and `api.yaml` is re-rendered from it. Only descriptions and the commit fields change.
 - 2026-11-17, review (ben-miru): the **Create calibration request** and **Latest calibrations** breaking changes become one **Calibration roles and aspects removed** dropdown modeled on the Platform API `lassen` entry: request and response diffs, the join table (same rows as `lassen`), the 48-character rule, and the filter change. A "Use joined component slugs for calibrations" migration step follows, as in `lassen`.
 - 2026-11-17, review (ben-miru): the agent Features list drops the `GET /v0.3/calibrations/latest` bullet, since that endpoint already existed in `v0.2.5`; `invalidated_at` is covered in the Device API changelog.
 - 2026-11-17: openapi tagged `device/v0.3.0-beta.3` at `70b258d`, and `api.yaml` is re-rendered from it. It brings #511 (sync moves to `POST /sync` under Agent, sync and `Device` times become `*_secs_ago` durations) and #515 (invalidate moves to `POST /calibrations/latest/invalidate`, keyed by `component` in the body, with an optional `report_id` check). The nav moves both pages, and the Device API changelog gains **Sync** and **Device response** breaking changes. #513 changed only Agent API wording, so the `kuka-arm` examples stay. `x-release-version` stays `v0.3.0` until GA.
