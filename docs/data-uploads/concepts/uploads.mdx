@@ -3,6 +3,7 @@ title: "Uploads"
 ---
 
 import { ImmutableBadge, MutableBadge, NullableBadge } from '/snippets/components/field-badges.jsx';
+import { PlatformApiBadge } from '/snippets/components/platform-api-link.jsx';
 import UploadDef from '/snippets/definitions/upload.mdx';
 
 <UploadDef />
@@ -155,3 +156,9 @@ written to the destination bucket.
 Uploads begin in the `pending` state. A device may retry or resume the transfer while
 the upload remains pending. After the device confirms the durable write, the upload
 transitions to `uploaded`, which is its terminal state.
+
+## View uploads
+
+<PlatformApiBadge endpoint="uploads/list" />
+
+Uploads can be listed and retrieved through the Platform API.
