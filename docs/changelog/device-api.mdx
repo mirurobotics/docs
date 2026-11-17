@@ -78,7 +78,7 @@ Calibrations reported with a role or an aspect are folded into a single componen
 | `camera` | null | `intrinsics` | `camera-intrinsics` |
 | `arm` | `left` | `pose` | `arm-left-pose` |
 
-To keep a calibration's history, report it on `v0.3` under the joined slug. A slug is at most 48 characters. If the joined slug is longer, report under a new, shorter slug, whose calibration history starts fresh.
+To keep a calibration's history, report it on `v0.3` under the joined slug.
 
 <GET /> `/calibrations/latest` returns one calibration for each component, and no longer accepts the `role` or `aspect` filters. Filter by the joined `component` slug instead.
 

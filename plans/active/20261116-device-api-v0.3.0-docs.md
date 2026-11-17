@@ -67,6 +67,7 @@ Edits mirror docs#315: the `v0.3.0` dropdown is a copy of `v0.2.5`'s, the change
 
 ## Decision Log
 
+- 2026-11-17, review (ben-miru): the 48-character note is dropped from the changelog, since the joined slugs in use are shorter.
 - 2026-11-17: openapi tagged `device/v0.3.0-beta.4` at `5b59059` (#516, which drops the 404 statements from the calibration descriptions), and `api.yaml` is re-rendered from it. Only descriptions and the commit fields change.
 - 2026-11-17, review (ben-miru): the **Create calibration request** and **Latest calibrations** breaking changes become one **Calibration roles and aspects removed** dropdown modeled on the Platform API `lassen` entry: request and response diffs, the join table (same rows as `lassen`), the 48-character rule, and the filter change. A "Use joined component slugs for calibrations" migration step follows, as in `lassen`.
 - 2026-11-17, review (ben-miru): the agent Features list drops the `GET /v0.3/calibrations/latest` bullet, since that endpoint already existed in `v0.2.5`; `invalidated_at` is covered in the Device API changelog.
