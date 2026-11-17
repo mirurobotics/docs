@@ -8,25 +8,25 @@ This guide details how to mark [calibrations](/cfg-mgmt/concepts/calibrations) i
 
 ## Overview
 
-Every calibration is valid when it's reported. It can stop being valid later, for example when a power cycle moves a component out of calibration. Miru allows on-device applications to mark a component's latest calibration invalid using the <DeviceApiLink endpoint="calibrations/invalidate-latest">invalidate latest calibration</DeviceApiLink> endpoint in the Device API.
+By default, all calibrations are valid when they're reported. 
 
-When a calibration is invalidated, the agent marks it invalid on the device and immediately returns a `200` response, regardless of whether the device is online or offline. Once a device is online, the agent uploads the invalidation to Miru, which sets the calibration's [invalidated at](/cfg-mgmt/concepts/calibrations#param-invalidated-at).
+However, calibrations can stop being valid, for example when a power cycle moves a component out of calibration. On-device applications can mark a component's latest calibration invalid using the <DeviceApiLink endpoint="calibrations/invalidate-latest">invalidate latest calibration</DeviceApiLink> endpoint in the Device API.
 
-There's no need to mark an invalid calibration valid again. [Report a new calibration](/cfg-mgmt/report-calibrations) for the component instead, and the dashboard shows the new one as the component's valid, latest calibration.
+Once a calibration is invalidated, it cannot be marked valid again. Instead, simply [report a new calibration](/cfg-mgmt/report-calibrations) for that component, which is valid be default, and the dashboard shows the latest calibration for that component as valid again.
 
 ## Prerequisites
 
 To follow this guide, you must have a device installed with a Miru Agent [v0.13.0](/changelog/agent#v0-13-0) or later, and call Device API [v0.3.0](/changelog/device-api#v0-3-0) at `/v0.3`. With the Python Device SDK, use `v0.11.0` or later.
 
-To provision a device, see the [Provision a device](/provision-devices) guide.
-
 ## Invalidate a calibration
 
 Calibrations are invalidated via the <DeviceApiLink endpoint="calibrations/invalidate-latest">invalidate latest calibration</DeviceApiLink> endpoint in the Device API. Only a component's latest calibration can be invalidated.
 
-The following parameters are required.
+When a calibration is invalidated, the agent marks it invalid on the device and immediately returns a `200` response, regardless of whether the device is online or offline. Once a device is online, the agent uploads the invalidation to Miru, which sets the calibration's [invalidated at](/cfg-mgmt/concepts/calibrations#param-invalidated-at).
 
 ### Required parameters
+
+To invalidate a calibration, the following parameters are required:
 
 <ParamField body="component" type="string" required>
   The [slug](/cfg-mgmt/concepts/components#param-slug) of the component whose latest calibration to invalidate.
@@ -40,9 +40,11 @@ The following parameters are required.
   Example: `power cycle`
 </ParamField>
 
+The agent resolves the latest calibration for the provided component and invalidates it once the agent is online.
+
 ### Optional parameters
 
-In addition to the required parameters, you can also set the following optional parameters:
+In some cases, you may want to invalidate a specific calibration instead of whatever the latest resolves to be. To do so, send the `report_id` of the calibration to invalidate. 
 
 <ParamField body="report_id" type="string">
   The report ID of the calibration to invalidate, as read from the <DeviceApiLink endpoint="calibrations/list-latest">list latest calibrations</DeviceApiLink> endpoint. If it isn't the component's latest calibration, the agent invalidates nothing.
@@ -50,11 +52,7 @@ In addition to the required parameters, you can also set the following optional 
   Example: `0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10`
 </ParamField>
 
-### Latest or a specific calibration
-
-To invalidate whatever calibration is the component's latest, leave out `report_id`.
-
-To invalidate a specific calibration, send its `report_id`. The agent invalidates it only while it's still the component's latest, so a calibration reported in the meantime isn't marked invalid by mistake.
+The agent invalidates it only while it's still the component's latest, so a calibration reported in the meantime isn't marked invalid by mistake.
 
 ## Response
 
@@ -72,4 +70,4 @@ The agent responds with `200 OK` and the invalidated calibration:
 }
 ```
 
-If the calibration is already invalid, the agent returns it unchanged, so a calibration keeps the time of its first invalidation.
+If the calibration is already invalid, the agent returns it unchanged. So a calibration keeps the time of its first invalidation.
