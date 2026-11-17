@@ -6,17 +6,17 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  x-release-version: 2026-11-16.lassen-beta.1
+  x-release-version: 2026-11-16.lassen
   x-git-commit:
-    sha: 73c7390ae01e89bbd50b29bd49b472e4455250ba
-    url: https://github.com/mirurobotics/openapi/commit/73c7390ae01e89bbd50b29bd49b472e4455250ba
-    message: 'feat(platform): add read-only uploads, upload collections and file rules
-      (#490)'
+    sha: 43d8e1c797e43bb869b8f349c2383bdd5274445f
+    url: https://github.com/mirurobotics/openapi/commit/43d8e1c797e43bb869b8f349c2383bdd5274445f
+    message: 'docs: replace customer-specific calibration examples with generic ones
+      (#513)'
     author: Ben's Agent
     branch: HEAD
     dirty: false
   x-build:
-    built_at: '2026-11-16T20:32:20.883595+00:00'
+    built_at: '2026-11-17T00:22:51.314973+00:00'
 servers:
 - url: https://api.mirurobotics.com/beta
   description: Miru Platform API
@@ -1415,14 +1415,14 @@ components:
     ReleaseVersion:
       type: string
       enum:
-      - 2026-11-16.lassen-beta.1
+      - 2026-11-16.lassen
       x-enum-varnames:
       - RELEASE_VERSION
       x-stainless-const: true
     APIGitCommit:
       type: string
       enum:
-      - 73c7390ae01e89bbd50b29bd49b472e4455250ba
+      - 43d8e1c797e43bb869b8f349c2383bdd5274445f
       x-enum-varnames:
       - API_GIT_COMMIT
       x-stainless-const: true
