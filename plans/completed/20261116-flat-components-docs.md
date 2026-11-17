@@ -72,7 +72,7 @@ Terms: a **component** is a kind of hardware a device reports calibrations for, 
 Facts (verified against `backend/`):
 
 1. Roles and aspects no longer exist as resources; a component is one slug.
-2. Device API v0.2 create calibration still accepts optional `role` and `aspect`. Miru joins component, role and aspect with `-`, skipping absent ones, and finds or creates the component with that slug: `arm` + role `left` is `arm-left`; `optic-flipper` + aspect `pose` is `optic-flipper-pose`; `arm` + `left` + `pose` is `arm-left-pose`.
+2. Device API v0.2 create calibration still accepts optional `role` and `aspect`. Miru joins component, role and aspect with `-`, skipping absent ones, and finds or creates the component with that slug: `arm` + role `left` is `arm-left`; `camera` + aspect `intrinsics` is `camera-intrinsics`; `arm` + `left` + `pose` is `arm-left-pose`.
 3. Component, role and aspect are each validated as a slug of 1 to 48 characters. The joined slug's length is not validated, so it can exceed 48.
 4. A device keeps a separate history per component.
 
