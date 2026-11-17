@@ -36,15 +36,16 @@ The URL version prefix changed from `/v0.2` to `/v0.3`. Update all request URLs 
 ```
 </Dropdown>
 <Separator />
-<Dropdown title="Create calibration request">
-The `POST /calibrations` request removed `role` and `aspect`. On `v0.2`, Miru joins `component`, `role` and `aspect` with `-`, skipping any that are unset, so `kuka-arm` with role `front-left` and aspect `pose` reports to `kuka-arm-front-left-pose`. To keep the same calibration history, put that joined slug in `component`. Keep it within the 48-character slug limit; if it's longer, report a new, shorter slug, whose calibration history starts fresh.
+<Dropdown title="Calibration roles and aspects removed">
+Calibrations no longer have a `role` or an `aspect` field. Each calibration belongs to exactly one component, identified by its `component` slug.
+
+**Create Calibration Request**
 
 ```diff nocopy
  {
--  "component": "kuka-arm",
--  "role": "front-left",
--  "aspect": "pose",
-+  "component": "kuka-arm-front-left-pose",
+-  "component": "camera",
+-  "aspect": "intrinsics",
++  "component": "camera-intrinsics",
    "serial_number": "SN-1234",
    "content": {
      "format": "json",
@@ -52,22 +53,38 @@ The `POST /calibrations` request removed `role` and `aspect`. On `v0.2`, Miru jo
    }
  }
 ```
-</Dropdown>
-<Separator />
-<Dropdown title="Latest calibrations">
-`GET /calibrations/latest` returns one calibration for each component, instead of one for each component, role and aspect. It removed the `role` and `aspect` filters, and its calibrations removed `role` and `aspect`.
+
+**Calibration Response**
 
 ```diff nocopy
  {
    "object": "calibration",
    "report_id": "0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10",
--  "component": "kuka-arm",
--  "role": "front-left",
--  "aspect": null,
-+  "component": "kuka-arm-front-left",
+-  "component": "camera",
+-  "role": null,
+-  "aspect": "intrinsics",
++  "component": "camera-intrinsics",
    "serial_number": "SN-1234",
    ...
  }
+```
+
+Calibrations reported with a role or an aspect are folded into a single component. Its slug joins the `v0.2` `component`, `role` and `aspect` slugs with `-`, in that order, and skips any that were null:
+
+| `component` | `role` | `aspect` | `v0.3` `component` |
+|---|---|---|---|
+| `arm` | null | null | `arm` |
+| `arm` | `left` | null | `arm-left` |
+| `camera` | null | `intrinsics` | `camera-intrinsics` |
+| `arm` | `left` | `pose` | `arm-left-pose` |
+
+To keep a calibration's history, report it on `v0.3` under the joined slug. A slug is at most 48 characters. If the joined slug is longer, report under a new, shorter slug, whose calibration history starts fresh.
+
+<GET /> `/calibrations/latest` returns one calibration for each component, and no longer accepts the `role` or `aspect` filters. Filter by the joined `component` slug instead.
+
+```diff nocopy
+- GET /calibrations/latest?component=camera&aspect=intrinsics
++ GET /calibrations/latest?component=camera-intrinsics
 ```
 </Dropdown>
 <Separator />
@@ -133,6 +150,10 @@ Calibrations added `invalidated_at`, when an on-device application marked the ca
 
   <Step title="Migrate breaking changes">
     Migrate your client application according to the breaking changes listed above. If you are using the [Python SDK](/developers/device-api/sdks#python), upgrade to version `v0.11.0` or later.
+  </Step>
+
+  <Step title="Use joined component slugs for calibrations">
+    Report each calibration under its joined component slug, and stop sending `role` and `aspect`. Replace `role` and `aspect` filters on `GET /calibrations/latest` with a `component` filter on the joined slug, so `component=arm&role=left` becomes `component=arm-left`. A `component` filter matches exact slugs only, so `component=arm` no longer returns `arm-left`; list each slug, as in `component=arm,arm-left,arm-right`.
   </Step>
 
   <Step title="Optionally integrate the new endpoint">
