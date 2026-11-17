@@ -56,7 +56,7 @@ Hardware manifests are new in the dashboard. A hardware manifest is the set of c
 - [x] Milestone 1: concept page, definition snippet, nav entry; commit.
 - [x] Milestone 2: access control, device bulk actions, changelog; commit.
 - [x] Source written
-- [ ] Milestone 3 (tests): content check against the openapi spec and cross-reference check; commit any fixes.
+- [x] Milestone 3 (tests): content check against the openapi spec and cross-reference check; every new link and anchor resolves.
 - [ ] Preflight `CLEAN` on the pushed head.
 
 ## Surprises & Discoveries
