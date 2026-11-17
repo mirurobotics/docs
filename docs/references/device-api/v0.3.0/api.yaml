@@ -287,12 +287,12 @@ paths:
             --request POST \
             --url http://localhost/v0.3/calibrations/latest/invalidate \
             --header 'Content-Type: application/json' \
-            --data '{"component": "kuka-arm", "reason": "power cycle"}'
+            --data '{"component": "kuka-arm", "report_id": "0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10", "reason": "power cycle"}'
       - lang: powershell
         label: PowerShell (Windows)
         source: |-
           $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
-          $body = @{ component = "kuka-arm"; reason = "power cycle" } | ConvertTo-Json; `
+          $body = @{ component = "kuka-arm"; report_id = "0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10"; reason = "power cycle" } | ConvertTo-Json; `
           Invoke-RestMethod -Method Post `
             -Uri "http://127.0.0.1:$($api.port)/v0.3/calibrations/latest/invalidate" `
             -Headers @{ Authorization = "Bearer $($api.token)" } `

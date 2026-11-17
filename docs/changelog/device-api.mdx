@@ -74,7 +74,7 @@ The `POST /calibrations` request removed `role` and `aspect`. On `v0.2`, Miru jo
 <Dropdown title="Sync">
 `POST /device/sync` moved to `POST /sync`, next to `GET /health` and `GET /version`. In the Python SDK, `client.device.sync()` is now `client.agent.sync()`.
 
-The response reports durations the agent measures when it builds the response, instead of timestamps from the device clock, which may not be set. `last_synced_secs_ago` is `null` if the device hasn't synced since the agent last started. The `code` enum was renamed from `SyncDeviceResult` to `SyncResult`, with the same values.
+The response reports durations the agent measures when it builds the response, instead of timestamps from the device clock, which may not be set. `last_synced_secs_ago` is `null` if the device hasn't synced since the agent last started. The response schema was renamed from `SyncDeviceResponse` to `SyncResponse`, and its `code` enum from `SyncDeviceResult` to `SyncResult`, with the same values.
 
 ```diff nocopy
  {
@@ -99,7 +99,7 @@ The response reports durations the agent measures when it builds the response, i
    "object": "device",
    ...
    "status": "online",
--  "last_synced_at": "2026-03-10T12:00:00Z",
+-  "last_synced_at": "2026-03-10T12:00:18Z",
 -  "last_connected_at": "2026-03-10T11:01:00Z",
 -  "last_disconnected_at": "2026-03-10T11:00:55Z"
 +  "last_synced_secs_ago": 42,
@@ -136,7 +136,7 @@ Calibrations added `invalidated_at`, when an on-device application marked the ca
   </Step>
 
   <Step title="Optionally integrate the new endpoint">
-    Integrate the invalidate endpoint to mark a component's latest calibration invalid from the device.
+    Integrate the invalidate endpoint to mark a component's latest calibration invalid from the device. Send the `report_id` you read from `GET /calibrations/latest`, so a calibration reported in the meantime isn't marked invalid.
   </Step>
 </Steps>
 

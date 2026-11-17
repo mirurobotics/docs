@@ -166,12 +166,12 @@ Save this as `$SCRATCH/finish_v030.py`:
     op = spec["paths"]["/calibrations/latest/invalidate"]["post"]
     for s in op["x-codeSamples"]:
         if s["lang"] == "curl":
-            s["source"] += " \\\n  --header 'Content-Type: application/json' \\\n  --data '{\"component\": \"kuka-arm\", \"reason\": \"power cycle\"}'"
+            s["source"] += " \\\n  --header 'Content-Type: application/json' \\\n  --data '{\"component\": \"kuka-arm\", \"report_id\": \"0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10\", \"reason\": \"power cycle\"}'"
         elif s["lang"] == "powershell":
             first, *rest = s["source"].split("\n")
             rest[-1] += " `"
             s["source"] = "\n".join(
-                [first, '$body = @{ component = "kuka-arm"; reason = "power cycle" } | ConvertTo-Json; `', *rest,
+                [first, '$body = @{ component = "kuka-arm"; report_id = "0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10"; reason = "power cycle" } | ConvertTo-Json; `', *rest,
                  '  -ContentType "application/json" `', "  -Body $body"]
             )
 
@@ -219,10 +219,10 @@ The head of the file reads `version: v0.3`, `x-release-version: v0.3.0`, `server
       --request POST \
       --url http://localhost/v0.3/calibrations/latest/invalidate \
       --header 'Content-Type: application/json' \
-      --data '{"component": "kuka-arm", "reason": "power cycle"}'
+      --data '{"component": "kuka-arm", "report_id": "0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10", "reason": "power cycle"}'
 
     $api = Get-Content -Raw "$env:ProgramData\Miru\device-api\device-api.json" | ConvertFrom-Json; `
-    $body = @{ component = "kuka-arm"; reason = "power cycle" } | ConvertTo-Json; `
+    $body = @{ component = "kuka-arm"; report_id = "0b6f3c2e-6a51-4e0f-9a43-2f1d7c9e8b10"; reason = "power cycle" } | ConvertTo-Json; `
     Invoke-RestMethod -Method Post `
       -Uri "http://127.0.0.1:$($api.port)/v0.3/calibrations/latest/invalidate" `
       -Headers @{ Authorization = "Bearer $($api.token)" } `
