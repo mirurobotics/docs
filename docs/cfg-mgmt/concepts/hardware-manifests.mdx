@@ -13,7 +13,7 @@ A device has at most one
 [hardware manifest](/concepts/devices/overview#param-hardware-manifest), which you
 [set on the device](/concepts/devices/manage#set-hardware-manifest). Miru
 compares the device's [calibrations](/cfg-mgmt/concepts/calibrations) with its manifest
-to show which components are calibrated.
+to show each component's [calibration status](/cfg-mgmt/concepts/calibrations#status).
 
 ## Properties
 
@@ -33,20 +33,6 @@ to show which components are calibrated.
 
   Examples: `kuka-arm`, `realsense-d435`
 </ParamField>
-
-## Calibration status
-
-For each component in a device's manifest, the device's
-[Calibrations](/cfg-mgmt/concepts/calibrations#view-calibrations) page shows a status
-based on the device's latest calibration of that component:
-
-| Status | Meaning |
-|--------|---------|
-| Not calibrated | The device hasn't reported a calibration for the component |
-| Calibrated | The device has reported a calibration for the component |
-
-Calibrations for components that aren't in the manifest are listed under
-**Not in manifest**.
 
 ## Create a hardware manifest  <PublisherBadge />
 

@@ -87,6 +87,10 @@ Hardware manifests are new in the dashboard. A hardware manifest is the set of c
   Rationale: AI design review (D5): Invalid reads a calibration property `calibrations.mdx` doesn't document yet, and needs an agent release that hasn't shipped, so this page and the changelog had to promise "an upcoming release".
   Date/Author: 2026-11-16, Claude (AI design review).
 
+- Decision: Move the calibration status table from the manifest page to a `## Status` section on `calibrations.mdx`; the manifest page links to it.
+  Rationale: Reviewer: statuses belong with the calibration docs, in their own section, like the device page's Status section. No `status` property yet: no calibration stores one today, and the invalidation PR adds `invalidated at` with the Invalid row.
+  Date/Author: 2026-11-17, reviewer on docs#340.
+
 ## Outcomes & Retrospective
 
 (Summarize at completion.)

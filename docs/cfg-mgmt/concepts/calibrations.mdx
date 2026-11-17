@@ -74,6 +74,15 @@ Calibrations are append-only. Every report adds a new calibration, even if its c
 
 A device keeps a separate history for each component it reports. The most recently reported calibration in a history is that component's current calibration.
 
+## Status
+
+Each component in a device's [hardware manifest](/cfg-mgmt/concepts/hardware-manifests) has a calibration status, based on the device's current calibration of that component.
+
+| Status         | Description                                                 |
+| -------------- | ----------------------------------------------------------- |
+| Not calibrated | The device hasn't reported a calibration for the component |
+| Calibrated     | The device has reported a calibration for the component    |
+
 ## Report a calibration
 
 <PlatformUnsupportedBadge />
@@ -86,5 +95,5 @@ Calibrations can only be created on-device using the Miru Agent. Visit the [repo
 
 To view a device's calibrations, open the device and navigate to the **Calibrations** page on the left.
 
-If the device has a [hardware manifest](/cfg-mgmt/concepts/hardware-manifests), its components are listed first with their [calibration status](/cfg-mgmt/concepts/hardware-manifests#calibration-status), and other components are listed under **Not in manifest**.
+If the device has a [hardware manifest](/cfg-mgmt/concepts/hardware-manifests), its components are listed first with their [status](#status), and other components are listed under **Not in manifest**.
 
