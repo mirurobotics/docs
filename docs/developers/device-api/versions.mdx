@@ -42,6 +42,7 @@ Below is a list of the currently supported versions:
 
 | API Version | Released     |     EOL      |       Status       |
 |-------------|--------------|--------------|---------------------|
+| <LinkNewTab href="/references/device-api/v0.3.0">v0.3.0</LinkNewTab>    | 2026-11-16   | —            | <SupportedBadge /> |
 | <LinkNewTab href="/references/device-api/v0.2.5">v0.2.5</LinkNewTab>    | 2026-11-10   | —            | <SupportedBadge /> |
 | <LinkNewTab href="/references/device-api/v0.2.4">v0.2.4</LinkNewTab>    | 2026-10-29   | —            | <SupportedBadge /> |
 | <LinkNewTab href="/references/device-api/v0.2.3">v0.2.3</LinkNewTab>    | 2026-10-25   | —            | <SupportedBadge /> |
@@ -52,17 +53,18 @@ Below is a list of the currently supported versions:
 
 ## Agent compatibility matrix
 
-Each Miru Agent is compiled with a set of one or more API versions, which is documented in the following table:
+Each Miru Agent is compiled with one API version from each release line it serves, as documented in the following table:
 
-| API Version(s) | Agent Version      |
-|----------------|--------------------|
-| `v0.2.5`       | `v0.12.4+`         |
-| `v0.2.4`       | `v0.12.3`          |
-| `v0.2.3`       | `v0.12.0 - v0.12.2` |
-| `v0.2.2`       | `v0.11.1`          |
-| `v0.2.1`       | `v0.7.1 - v0.11.0` |
-| `v0.2.0`       | `v0.7.0`           |
-| `v0.1.0`       | `v0.5.x - v0.6.x`  |
+| Agent Version       | v0.3.x | v0.2.x | v0.1.x |
+|---------------------|----------|----------|----------|
+| v0.13.0+          | v0.3.0 | v0.2.5 | —        |
+| v0.12.4           | —        | v0.2.5 | —        |
+| v0.12.3           | —        | v0.2.4 | —        |
+| v0.12.0 - v0.12.2 | —        | v0.2.3 | —        |
+| v0.11.1           | —        | v0.2.2 | —        |
+| v0.7.1 - v0.11.0  | —        | v0.2.1 | —        |
+| v0.7.0            | —        | v0.2.0 | —        |
+| v0.5.x - v0.6.x   | —        | —        | v0.1.0 |
 
 Be careful when updating your client application to a new API version. Even if API changes are backward-compatible, if the agent is not compiled with the new features, your client may not work as expected.
 

@@ -4,6 +4,7 @@ title: "Components"
 
 import { ImmutableBadge, EditableBadge } from '/snippets/components/field-badges.jsx';
 import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
+import { PublisherBadge } from '/snippets/components/role-badges.jsx';
 import ComponentDef from '/snippets/definitions/component.mdx';
 
 <ComponentDef />
@@ -13,7 +14,7 @@ import ComponentDef from '/snippets/definitions/component.mdx';
 <ParamField path="name" type="string">
   <EditableBadge />
 
-  A human-readable display name, derived from the slug, so `realsense-d435` becomes `Realsense D435`.
+  A human-readable display name. It defaults to one derived from the slug, so `realsense-d435` becomes `Realsense D435`.
 
   Examples: `Kuka Arm`, `Realsense D435`, `Robotiq 2f 85`
 </ParamField>
@@ -27,34 +28,31 @@ import ComponentDef from '/snippets/definitions/component.mdx';
 
   - Contain only lowercase letters, digits, and hyphens (`-`)
   - Start and end with a lowercase letter or digit
-  - Contain between 1 and 32 characters
+  - Contain between 1 and 48 characters
 
   Examples: `kuka-arm`, `realsense-d435`, `robotiq-2f-85`
+
+  Give each unit or separately calibrated part its own slug, such as `arm-left` or `realsense-d435-intrinsics`. See [multiple units and parts](/cfg-mgmt/report-calibrations#multiple-units-and-parts).
 </ParamField>
 
-<ParamField path="roles" type="[] Role">
-  The purpose a unit of the component fills on a device, such as its position on the robot or which side of the gripper it is on.
-
-  A device with two arms might report them as `left` and `right`.
-
-  Roles are optional, so a device with one arm, calibrated one way, reports only the component.
-
-  Examples: `front-left`, `front-right`, `back-left`, `back-right`
-</ParamField>
-
-<ParamField path="aspects" type="[] Aspect">
-  The parts of a unit that are calibrated separately.
-
-  A RealSense D435 might have the aspects `intrinsics` and `extrinsics`.
-
-  Aspects are optional, so a device with one RealSense D435, calibrated one way, reports only the component.
-
-  Examples: `intrinsics`, `extrinsics`
-</ParamField>
-
-
-## Create a component
+## Create a component  <PublisherBadge />
 
 <PlatformUnsupportedBadge />
 
-Components, roles and aspects cannot be created directly. Instead, they are created when a device first [reports a calibration](/cfg-mgmt/report-calibrations) that uses them.
+**Agent**
+
+If no component has the slug yet, Miru creates one when a device [reports a calibration](/cfg-mgmt/report-calibrations) that uses it.
+
+**Dashboard**
+
+Navigate to the [Components page](https://app.mirurobotics.com/settings/components) and click **New Component** in the top right corner. Enter a slug and, optionally, a name.
+
+<Warning>
+  Component slugs are immutable and cannot be modified after creation.
+</Warning>
+
+## Edit a component  <PublisherBadge />
+
+<PlatformUnsupportedBadge />
+
+Navigate to the [Components page](https://app.mirurobotics.com/settings/components), click the ellipses (...) on the component you want to edit, and hit **Edit**. You can change its name, but its slug never changes.

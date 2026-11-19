@@ -1,0 +1,49 @@
+---
+title: "Hardware manifests"
+---
+
+import { EditableBadge } from '/snippets/components/field-badges.jsx';
+import { PlatformUnsupportedBadge } from '/snippets/components/platform-api-link.jsx';
+import { PublisherBadge } from '/snippets/components/role-badges.jsx';
+import HardwareManifestDef from '/snippets/definitions/hardware-manifest.mdx';
+
+<HardwareManifestDef />
+
+## Properties
+
+<ParamField path="name" type="string">
+  <EditableBadge />
+
+  The name of the manifest. Unique within the workspace.
+
+  Example: `Picker v2`
+</ParamField>
+
+<ParamField path="components" type="[] Component">
+  <EditableBadge />
+
+  The [components](/cfg-mgmt/concepts/components) a device with this manifest should
+  have. A manifest lists at most 100 components, each at most once.
+
+  Examples: `kuka-arm`, `realsense-d435`
+</ParamField>
+
+## Create a hardware manifest  <PublisherBadge />
+
+<PlatformUnsupportedBadge />
+
+Navigate to the [Hardware Manifests page](https://app.mirurobotics.com/settings/manifests) and click **New Hardware Manifest** in the top right corner. Enter a name and choose its components.
+
+## Edit a hardware manifest  <PublisherBadge />
+
+<PlatformUnsupportedBadge />
+
+Navigate to the [Hardware Manifests page](https://app.mirurobotics.com/settings/manifests), click the ellipses (...) on the manifest you want to edit, and hit **Edit**. Changes apply to every device that uses the manifest.
+
+## Delete a hardware manifest  <PublisherBadge />
+
+<PlatformUnsupportedBadge />
+
+Deleting a hardware manifest is only possible if no device uses it.
+
+To delete a hardware manifest, navigate to the [Hardware Manifests page](https://app.mirurobotics.com/settings/manifests), click the ellipses (...) on the manifest you want to delete, and select **Delete**.

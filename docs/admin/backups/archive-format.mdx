@@ -41,9 +41,12 @@ Every archive contains the entire state of the workspace at the time the backup 
       <Tree.File name="config_types.jsonl" />
       <Tree.File name="deployments.jsonl" />
       <Tree.File name="devices.jsonl" />
+      <Tree.File name="file_rules.jsonl" />
       <Tree.File name="git_commits.jsonl" />
       <Tree.File name="groups.jsonl" />
       <Tree.File name="releases.jsonl" />
+      <Tree.File name="upload_collections.jsonl" />
+      <Tree.File name="uploads.jsonl" />
       <Tree.File name="users.jsonl" />
     </Tree.Folder>
     <Tree.Folder name="contents" defaultOpen>
@@ -79,7 +82,7 @@ The manifest is a JSON file that describes the archive.
 ```json
 {
   "format_version": "0.1",
-  "platform_api_version": "2026-11-04.everglades",
+  "platform_api_version": "2026-11-16.lassen",
   "workspace_id": "wsp_123",
   "timestamp": "2026-11-02T03:00:00Z",
   "resource_counts": {
@@ -103,7 +106,7 @@ The manifest is a JSON file that describes the archive.
   The [Platform API version](/developers/platform-api/versioning) of every resource in
   the archive.
 
-  Example: `2026-11-04.everglades`
+  Example: `2026-11-16.lassen`
 </ParamField>
 
 <ParamField path="workspace_id" type="string">
@@ -136,9 +139,12 @@ Each file in `resources/` is a [JSON Lines](https://jsonlines.org) file containi
 | `config_types.jsonl` | Config type | |
 | `deployments.jsonl` | Deployment | `config_instances` |
 | `devices.jsonl` | Device | |
+| `file_rules.jsonl` | File rule | |
 | `git_commits.jsonl` | Git commit | |
 | `groups.jsonl` | Group | |
 | `releases.jsonl` | Release | `config_schemas` |
+| `upload_collections.jsonl` | Upload collection | |
+| `uploads.jsonl` | Upload | |
 | `users.jsonl` | User | |
 
 Some resources include expansion data that the Platform API does not include by default. For example, `config_schemas.jsonl` includes the schema documents, since there is no dedicated schema documents endpoint in the Platform API.
@@ -146,7 +152,7 @@ Some resources include expansion data that the Platform API does not include by 
 `config_schema_git_commits.jsonl` links each config schema to the git commits it was
 pushed from, with the schema's file paths in each commit. While config schema git commits are not returned as their own resource in the Platform API, they are given their own file in the archive because expanding the `config_schema_git_commits` expansion on config schemas returns only a singular page of results, which may loose data.
 
-Archived devices, releases and config types are included in the archive. Deleted API
+Archived devices, releases, config types and upload collections are included in the archive. Deleted API
 keys are also included, as resources may have been created from an API key that has since been deleted.
 
 ## Contents
@@ -160,3 +166,8 @@ named by the resource's ID:
 - `contents/calibrations/<id>`
 
 The bytes are exactly as they were stored, with no re-encoding.
+
+<Note>
+  Uploaded files are not in the archive. `uploads.jsonl` holds only the upload records,
+  and each record names the bucket and key its file is written to.
+</Note>

@@ -9,6 +9,109 @@ import { PlatformApiReleaseLinks } from '/snippets/components/api-links.jsx';
 import { GET, POST, PATCH, DELETE } from '/snippets/components/endpoint.jsx';
 import { Separator } from '/snippets/components/separator.jsx';
 
+# 2026-11-16.lassen
+
+_November 16, 2026_
+
+The `lassen` release introduces flat calibration components: a calibration belongs to one component and no longer has a role or an aspect. It also lets API keys archive and delete devices, and adds read access to uploads, upload collections and file rules.
+
+The only breaking change from `everglades` is to calibrations. Every `everglades` version remains supported, so existing integrations keep working without changes.
+
+<PlatformApiReleaseLinks version="2026-11-16.lassen" />
+
+## New endpoints
+
+Archiving and deleting devices need the new `devices:archive` and `devices:delete` [scopes](/developers/platform-api/authz#scopes-by-resource). Reading uploads, upload collections and file rules needs the new `uploads:read` scope and the existing `upload_collections:read` and `file_rules:read` scopes, respectively.
+
+<Dropdown title="Devices">
+  * <POST /> `/devices/{device_id}/archive` — archive a device
+  * <DELETE /> `/devices/{device_id}` — delete a device that has no deployments or calibrations
+</Dropdown>
+
+<Separator />
+
+<Dropdown title="Upload collections">
+  * <GET /> `/upload_collections` — list upload collections
+  * <GET /> `/upload_collections/{upload_collection_id}` — retrieve an upload collection
+</Dropdown>
+
+<Separator />
+
+<Dropdown title="File rules">
+  * <GET /> `/file_rules` — list file rules
+  * <GET /> `/file_rules/{file_rule_id}` — retrieve a file rule
+</Dropdown>
+
+<Separator />
+
+<Dropdown title="Uploads">
+  * <GET /> `/uploads` — list uploads
+  * <GET /> `/uploads/{upload_id}` — retrieve an upload
+</Dropdown>
+
+## Breaking changes
+
+<Dropdown title="Calibration roles and aspects removed">
+  Calibrations no longer have a `role` or an `aspect` field. Each calibration belongs to exactly one component, identified by its `component` slug.
+
+  **Calibration Response**
+
+  ```diff nocopy
+    {
+      "object": "calibration",
+      "id": "cal_123",
+      "device_id": "dvc_123",
+  -   "component": "camera",
+  -   "role": null,
+  -   "aspect": "intrinsics",
+  +   "component": "camera-intrinsics",
+      "serial_number": "SN-1234",
+      "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "format": "json",
+      ...
+    }
+  ```
+
+  Calibrations reported with a role or an aspect have been folded into a single component. Its slug joins the previous `component`, `role` and `aspect` slugs with `-`, in that order, and skips any that were null:
+
+  | `component` | `role` | `aspect` | `lassen` `component` |
+  |---|---|---|---|
+  | `arm` | null | null | `arm` |
+  | `arm` | `left` | null | `arm-left` |
+  | `camera` | null | `intrinsics` | `camera-intrinsics` |
+  | `arm` | `left` | `pose` | `arm-left-pose` |
+
+  <GET /> `/calibrations` no longer accepts the `role` or `aspect` filters. Filter by the joined `component` slug instead.
+
+  ```diff nocopy
+  - GET /calibrations?component=camera&aspect=intrinsics
+  + GET /calibrations?component=camera-intrinsics
+  ```
+</Dropdown>
+
+## Migration steps
+
+<Steps>
+  <Step title="Update the Miru-Version header">
+    Set `Miru-Version: 2026-11-16.lassen` on API requests. Requests that send an `everglades` version keep working. [Python SDK](/developers/platform-api/sdks#python) `v0.15.0` marks the major version rollout of the `2026-11-16.lassen` API. For the latest SDK version compatibility information, visit the [Platform SDKs](/developers/platform-api/sdks) page.
+  </Step>
+  <Step title="Use joined component slugs for calibrations">
+    Stop reading `role` and `aspect` from calibrations. Each calibration's `component` is now the joined slug shown in the table under **Calibration roles and aspects removed**.
+
+    Replace `role` and `aspect` filters with a `component` filter on the joined slug, so `component=arm&role=left` becomes `component=arm-left`.
+
+    A `component` filter matches exact slugs only, so `component=arm` no longer returns `arm-left` calibrations. To get them all, [list each slug](/developers/platform-api/query-params/filtering#multi-value-filters), as in `component=arm|arm-left|arm-right`.
+  </Step>
+  <Step title="Review device scopes">
+    API keys with `devices:manage` can now archive and delete devices. Narrow those keys' scopes if they shouldn't.
+  </Step>
+  <Step title="Optionally integrate new endpoints">
+    Optionally integrate the new device, upload collection, file rule and upload endpoints listed above, and grant your API keys the `devices:archive`, `devices:delete`, `uploads:read`, `upload_collections:read` or `file_rules:read` scopes they need.
+  </Step>
+</Steps>
+
+---
+
 # 2026-11-04.everglades
 
 _November 4, 2026_
