@@ -7,8 +7,6 @@ import (
 	"github.com/mirurobotics/docs/tools/lint/linter/analysis"
 )
 
-// build returns (lines, spans) for a multi-line file content string,
-// running the same Scanner the linter uses in production.
 func build(content string) ([]string, [][]analysis.ProseSpan) {
 	lines := strings.Split(content, "\n")
 	scanner := analysis.NewScanner()
@@ -113,18 +111,18 @@ func TestCheck_Headings(t *testing.T) {
 				)
 			}
 			if tc.wantCount == 1 {
-				v := violations[0]
-				if v.Line != tc.wantLine {
-					t.Errorf("Line = %d, want %d", v.Line, tc.wantLine)
+				got := violations[0]
+				if got.Line != tc.wantLine {
+					t.Errorf("Line = %d, want %d", got.Line, tc.wantLine)
 				}
-				if v.Col != tc.wantCol {
-					t.Errorf("Col = %d, want %d", v.Col, tc.wantCol)
+				if got.Col != tc.wantCol {
+					t.Errorf("Col = %d, want %d", got.Col, tc.wantCol)
 				}
-				if v.Message != Message {
-					t.Errorf("Message = %q, want %q", v.Message, Message)
+				if got.Message != Message {
+					t.Errorf("Message = %q, want %q", got.Message, Message)
 				}
-				if v.File != "test.mdx" {
-					t.Errorf("File = %q, want %q", v.File, "test.mdx")
+				if got.File != "test.mdx" {
+					t.Errorf("File = %q, want %q", got.File, "test.mdx")
 				}
 			}
 		})
@@ -216,18 +214,18 @@ func TestCheck_Allowlist(t *testing.T) {
 				)
 			}
 			if tc.wantCount == 1 {
-				v := violations[0]
-				if v.Line != tc.wantLine {
-					t.Errorf("Line = %d, want %d", v.Line, tc.wantLine)
+				got := violations[0]
+				if got.Line != tc.wantLine {
+					t.Errorf("Line = %d, want %d", got.Line, tc.wantLine)
 				}
-				if v.Col != tc.wantCol {
-					t.Errorf("Col = %d, want %d", v.Col, tc.wantCol)
+				if got.Col != tc.wantCol {
+					t.Errorf("Col = %d, want %d", got.Col, tc.wantCol)
 				}
-				if v.Message != Message {
-					t.Errorf("Message = %q, want %q", v.Message, Message)
+				if got.Message != Message {
+					t.Errorf("Message = %q, want %q", got.Message, Message)
 				}
-				if v.File != "test.mdx" {
-					t.Errorf("File = %q, want %q", v.File, "test.mdx")
+				if got.File != "test.mdx" {
+					t.Errorf("File = %q, want %q", got.File, "test.mdx")
 				}
 			}
 		})
@@ -312,18 +310,18 @@ func TestCheck_FrontmatterTitle(t *testing.T) {
 				)
 			}
 			if tc.wantCount == 1 {
-				v := violations[0]
-				if v.Line != tc.wantLine {
-					t.Errorf("Line = %d, want %d", v.Line, tc.wantLine)
+				got := violations[0]
+				if got.Line != tc.wantLine {
+					t.Errorf("Line = %d, want %d", got.Line, tc.wantLine)
 				}
-				if v.Col != tc.wantCol {
-					t.Errorf("Col = %d, want %d", v.Col, tc.wantCol)
+				if got.Col != tc.wantCol {
+					t.Errorf("Col = %d, want %d", got.Col, tc.wantCol)
 				}
-				if v.Message != Message {
-					t.Errorf("Message = %q, want %q", v.Message, Message)
+				if got.Message != Message {
+					t.Errorf("Message = %q, want %q", got.Message, Message)
 				}
-				if v.File != "test.mdx" {
-					t.Errorf("File = %q, want %q", v.File, "test.mdx")
+				if got.File != "test.mdx" {
+					t.Errorf("File = %q, want %q", got.File, "test.mdx")
 				}
 			}
 		})

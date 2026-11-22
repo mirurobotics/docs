@@ -1,12 +1,3 @@
-// Package shellpair keeps the Bash and PowerShell versions of a
-// multi-line command correct and in step. A bash block must not continue
-// lines with PowerShell's trailing "`", and a powershell block must not
-// continue them with a trailing "\". Inside a <CodeGroup>, a fenced block
-// titled "Bash" that continues lines with "\" needs a block titled
-// "PowerShell" with the same command, and a "PowerShell" block that
-// continues lines with "`" needs a "Bash" twin. The two match when they
-// are equal once each line's continuation character and surrounding
-// whitespace are removed, and PowerShell's "\" path separators read as "/".
 package shellpair
 
 import (
@@ -20,17 +11,14 @@ const (
 	powershellTitle = "PowerShell"
 )
 
-// block is a fenced code block.
 type block struct {
 	lang  string
 	title string
-	line  int // 1-based line of the opening fence
+	line  int
 	body  []string
 }
 
-// Check flags bash and PowerShell blocks that use the other shell's line
-// continuation, and Bash and PowerShell blocks in the same CodeGroup whose
-// multi-line command lacks a twin or differs from it.
+// Check flags wrong-shell continuations and missing or differing Bash/PowerShell twins.
 func Check(file string, lines []string) []analysis.Violation {
 	blocks, groups := scan(lines)
 	var violations []analysis.Violation
@@ -45,8 +33,6 @@ func Check(file string, lines []string) []analysis.Violation {
 	return violations
 }
 
-// scan returns every fenced block in the file, and the blocks of each
-// CodeGroup.
 func scan(lines []string) ([]*block, [][]*block) {
 	var blocks []*block
 	var groups [][]*block
@@ -63,9 +49,9 @@ func scan(lines []string) ([]*block, [][]*block) {
 			}
 			continue
 		}
-		if f, ok := analysis.CodeFenceOpen(line); ok {
-			fence = f
-			lang, title := fenceInfo(trimmed, f)
+		if marker, ok := analysis.CodeFenceOpen(line); ok {
+			fence = marker
+			lang, title := fenceInfo(trimmed, marker)
 			open = &block{lang: lang, title: title, line: i + 1}
 			blocks = append(blocks, open)
 			if inGroup {
@@ -84,8 +70,6 @@ func scan(lines []string) ([]*block, [][]*block) {
 	return blocks, groups
 }
 
-// fenceInfo returns the language and title of an opening fence such as
-// "```bash Bash highlight={3}", which are its first two words.
 func fenceInfo(trimmed, fence string) (lang, title string) {
 	fields := strings.Fields(strings.TrimPrefix(trimmed, fence))
 	if len(fields) > 0 {
@@ -97,8 +81,6 @@ func fenceInfo(trimmed, fence string) (lang, title string) {
 	return lang, title
 }
 
-// wrongContinuation describes how a block continues lines with the other
-// shell's character, or returns "" when it doesn't.
 func wrongContinuation(b *block) string {
 	switch {
 	case b.lang == "bash" && hasContinuation(b.body, '`'):
@@ -111,28 +93,26 @@ func wrongContinuation(b *block) string {
 
 func checkGroup(file string, group []*block) []analysis.Violation {
 	bash := findBlock(group, bashTitle)
-	ps := findBlock(group, powershellTitle)
+	pwsh := findBlock(group, powershellTitle)
 	bashMulti := bash != nil && hasContinuation(bash.body, '\\')
-	psMulti := ps != nil && hasContinuation(ps.body, '`')
+	pwshMulti := pwsh != nil && hasContinuation(pwsh.body, '`')
 	switch {
-	case bashMulti && ps == nil:
+	case bashMulti && pwsh == nil:
 		return violation(file, bash.line,
 			"multi-line Bash command needs a PowerShell twin")
-	case psMulti && bash == nil:
-		return violation(file, ps.line,
+	case pwshMulti && bash == nil:
+		return violation(file, pwsh.line,
 			"multi-line PowerShell command needs a Bash twin")
-	// A twin with the wrong continuation is already flagged on its own.
-	case (bashMulti || psMulti) && bash != nil && ps != nil &&
-		wrongContinuation(bash) == "" && wrongContinuation(ps) == "" &&
+	case (bashMulti || pwshMulti) && bash != nil && pwsh != nil &&
+		wrongContinuation(bash) == "" && wrongContinuation(pwsh) == "" &&
 		normalize(bash.body, '\\') !=
-			strings.ReplaceAll(normalize(ps.body, '`'), `\`, "/"):
-		return violation(file, ps.line, "PowerShell command differs from its Bash twin")
+			strings.ReplaceAll(normalize(pwsh.body, '`'), `\`, "/"):
+		return violation(file, pwsh.line,
+			"PowerShell command differs from its Bash twin")
 	}
 	return nil
 }
 
-// findBlock returns the group's first block with the title. Titles name
-// a CodeGroup's tabs, so each appears once.
 func findBlock(group []*block, title string) *block {
 	for _, b := range group {
 		if b.title == title {
@@ -142,8 +122,6 @@ func findBlock(group []*block, title string) *block {
 	return nil
 }
 
-// hasContinuation reports whether any line ends with a space and the
-// line-continuation character.
 func hasContinuation(body []string, cont byte) bool {
 	for _, line := range body {
 		if strings.HasSuffix(strings.TrimRight(line, " \t"), " "+string(cont)) {
@@ -153,8 +131,6 @@ func hasContinuation(body []string, cont byte) bool {
 	return false
 }
 
-// normalize joins the command's lines with single spaces, dropping
-// each line's continuation character and surrounding whitespace.
 func normalize(body []string, cont byte) string {
 	var parts []string
 	for _, line := range body {

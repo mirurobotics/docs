@@ -38,12 +38,11 @@ func run(args []string, stdout, stderr io.Writer) int {
 		allViolations = append(allViolations, violations...)
 	}
 
-	// Redirect violations are appended after the per-file pass so the
-	// per-file output order is preserved.
 	allViolations = append(allViolations, redirects.Check(contentRoot)...)
 
-	for _, v := range allViolations {
-		_, _ = fmt.Fprintf(stdout, "%s:%d:%d: %s\n", v.File, v.Line, v.Col, v.Message)
+	for _, violation := range allViolations {
+		_, _ = fmt.Fprintf(stdout, "%s:%d:%d: %s\n",
+			violation.File, violation.Line, violation.Col, violation.Message)
 	}
 
 	if len(allViolations) > 0 && exitCode == 0 {
@@ -52,8 +51,6 @@ func run(args []string, stdout, stderr io.Writer) int {
 	return exitCode
 }
 
-// findContentRoot walks up the directory tree from startPath until it finds
-// a directory that contains a "snippets/" subdirectory.
 func findContentRoot(startPath string) (string, error) {
 	dir := filepath.Dir(filepath.Clean(startPath))
 	for {

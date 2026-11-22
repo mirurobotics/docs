@@ -9,21 +9,21 @@ func TestCheck(t *testing.T) {
 	good := "import { Framed } from '/snippets/components/framed.jsx';"
 
 	t.Run("correct", func(t *testing.T) {
-		vs := Check("test.mdx", []string{good})
-		if len(vs) != 0 {
-			t.Errorf("expected 0 violations, got %d: %v", len(vs), vs)
+		violations := Check("test.mdx", []string{good})
+		if len(violations) != 0 {
+			t.Errorf("expected 0 violations, got %d: %v", len(violations), violations)
 		}
 	})
 
 	t.Run("missing space after brace", func(t *testing.T) {
 		line := "import {Framed} from '/snippets/components/framed.jsx';"
-		vs := Check("test.mdx", []string{line})
+		violations := Check("test.mdx", []string{line})
 		hasAfter, hasBefore := false, false
-		for _, v := range vs {
-			if strings.Contains(v.Message, "after '{'") {
+		for _, got := range violations {
+			if strings.Contains(got.Message, "after '{'") {
 				hasAfter = true
 			}
-			if strings.Contains(v.Message, "before '}'") {
+			if strings.Contains(got.Message, "before '}'") {
 				hasBefore = true
 			}
 		}
@@ -37,10 +37,10 @@ func TestCheck(t *testing.T) {
 
 	t.Run("missing space before close brace", func(t *testing.T) {
 		line := "import { Framed} from '/snippets/components/framed.jsx';"
-		vs := Check("test.mdx", []string{line})
+		violations := Check("test.mdx", []string{line})
 		found := false
-		for _, v := range vs {
-			if strings.Contains(v.Message, "before '}'") {
+		for _, got := range violations {
+			if strings.Contains(got.Message, "before '}'") {
 				found = true
 			}
 		}
@@ -51,106 +51,113 @@ func TestCheck(t *testing.T) {
 
 	t.Run("no comma-space", func(t *testing.T) {
 		line := "import { A,B } from '/snippets/components/field-badges.jsx';"
-		vs := Check("test.mdx", []string{line})
+		violations := Check("test.mdx", []string{line})
 		found := false
-		for _, v := range vs {
-			if strings.Contains(v.Message, "single space after ','") {
+		for _, got := range violations {
+			if strings.Contains(got.Message, "single space after ','") {
 				found = true
 			}
 		}
 		if !found {
-			t.Errorf("expected violation for missing space after ',', got %v", vs)
+			t.Errorf(
+				"expected violation for missing space after ',', got %v",
+				violations,
+			)
 		}
 	})
 
 	t.Run("space before comma", func(t *testing.T) {
 		line := "import { A , B } from '/snippets/components/field-badges.jsx';"
-		vs := Check("test.mdx", []string{line})
+		violations := Check("test.mdx", []string{line})
 		found := false
-		for _, v := range vs {
-			if strings.Contains(v.Message, "before ','") {
+		for _, got := range violations {
+			if strings.Contains(got.Message, "before ','") {
 				found = true
 			}
 		}
 		if !found {
-			t.Errorf("expected violation for space before ',', got %v", vs)
+			t.Errorf("expected violation for space before ',', got %v", violations)
 		}
 	})
 
 	t.Run("default import used", func(t *testing.T) {
 		line := "import Framed from '/snippets/components/framed.jsx';"
-		vs := Check("test.mdx", []string{line})
+		violations := Check("test.mdx", []string{line})
 		found := false
-		for _, v := range vs {
-			if strings.Contains(v.Message, "named import syntax") {
+		for _, got := range violations {
+			if strings.Contains(got.Message, "named import syntax") {
 				found = true
 			}
 		}
 		if !found {
-			t.Errorf("expected violation for default import of component, got %v", vs)
+			t.Errorf(
+				"expected violation for default import of component, got %v",
+				violations,
+			)
 		}
 	})
 
 	t.Run("path ends in .mdx not .jsx", func(t *testing.T) {
 		line := "import { Framed } from '/snippets/components/framed.mdx';"
-		vs := Check("test.mdx", []string{line})
+		violations := Check("test.mdx", []string{line})
 		found := false
-		for _, v := range vs {
-			if strings.Contains(v.Message, ".jsx") {
+		for _, got := range violations {
+			if strings.Contains(got.Message, ".jsx") {
 				found = true
 			}
 		}
 		if !found {
-			t.Errorf("expected violation for .mdx extension, got %v", vs)
+			t.Errorf("expected violation for .mdx extension, got %v", violations)
 		}
 	})
 
 	t.Run("missing semicolon", func(t *testing.T) {
 		line := "import { Framed } from '/snippets/components/framed.jsx'"
-		vs := Check("test.mdx", []string{line})
+		violations := Check("test.mdx", []string{line})
 		found := false
-		for _, v := range vs {
-			if strings.Contains(v.Message, "';'") {
+		for _, got := range violations {
+			if strings.Contains(got.Message, "';'") {
 				found = true
 			}
 		}
 		if !found {
-			t.Errorf("expected violation for missing semicolon, got %v", vs)
+			t.Errorf("expected violation for missing semicolon, got %v", violations)
 		}
 	})
 
 	t.Run("malformed brace order does not panic", func(t *testing.T) {
 		line := "import Foo} from '/snippets/components/x.jsx' // {Bar"
-		vs := Check("test.mdx", []string{line})
+		violations := Check("test.mdx", []string{line})
 		found := false
-		for _, v := range vs {
-			if strings.Contains(v.Message, "named import syntax") {
+		for _, got := range violations {
+			if strings.Contains(got.Message, "named import syntax") {
 				found = true
 			}
 		}
 		if !found {
-			t.Errorf("expected named-import-syntax violation, got %v", vs)
+			t.Errorf("expected named-import-syntax violation, got %v", violations)
 		}
 	})
 
 	t.Run("non-component import no violations", func(t *testing.T) {
 		line := "import Foo from '/snippets/definitions/foo.mdx';"
-		vs := Check("test.mdx", []string{line})
-		if len(vs) != 0 {
-			t.Errorf("non-component import: expected 0 violations, got %d", len(vs))
+		violations := Check("test.mdx", []string{line})
+		if len(violations) != 0 {
+			t.Errorf(
+				"non-component import: expected 0 violations, got %d",
+				len(violations),
+			)
 		}
 	})
 }
 
 func TestCheckBracketSpacingNoClosure(t *testing.T) {
-	// Raw has opening brace but no closing brace; should report
-	// "must use named import syntax { }" rather than spacing errors.
 	raw := "import {Foo from '/snippets/components/foo.jsx'"
-	vs := checkBracketSpacing("f.mdx", 1, raw, strings.Index(raw, "{"))
-	if len(vs) != 1 {
-		t.Fatalf("expected 1 violation, got %d: %v", len(vs), vs)
+	violations := checkBracketSpacing("f.mdx", 1, raw, strings.Index(raw, "{"))
+	if len(violations) != 1 {
+		t.Fatalf("expected 1 violation, got %d: %v", len(violations), violations)
 	}
-	if !strings.Contains(vs[0].Message, "named import syntax") {
-		t.Errorf("unexpected message: %q", vs[0].Message)
+	if !strings.Contains(violations[0].Message, "named import syntax") {
+		t.Errorf("unexpected message: %q", violations[0].Message)
 	}
 }

@@ -11,11 +11,10 @@ const (
 	zoneHTMLComment
 )
 
-// Scanner is a line-by-line state machine that classifies regions of an MDX
-// file as prose or excluded (frontmatter, code blocks, comments, etc.).
+// Scanner classifies MDX lines as prose or excluded (frontmatter, code, comments).
 type Scanner struct {
 	zone      zone
-	codeFence string // the fence marker (e.g. "```" or "~~~") to match for closing
+	codeFence string
 	lineNum   int
 }
 
@@ -25,8 +24,7 @@ func NewScanner() *Scanner { return &Scanner{} }
 // LineNum returns the 1-based line number of the most recently scanned line.
 func (s *Scanner) LineNum() int { return s.lineNum }
 
-// ScanLine processes the next line of input and returns the prose spans found
-// on that line. Returns nil if the entire line is excluded.
+// ScanLine returns the prose spans of the next line, or nil if all of it is excluded.
 func (s *Scanner) ScanLine(line string) []ProseSpan {
 	s.lineNum++
 
@@ -57,7 +55,6 @@ func (s *Scanner) ScanLine(line string) []ProseSpan {
 		return s.maskInlineRegions(rest, idx+3)
 	}
 
-	// zoneProse: check for zone entry
 	if s.lineNum == 1 && strings.TrimRight(line, " \t") == "---" {
 		s.zone = zoneFrontmatter
 		return nil
@@ -84,10 +81,7 @@ func (s *Scanner) ScanLine(line string) []ProseSpan {
 	return s.maskInlineRegions(line, 0)
 }
 
-// CodeFenceOpen reports whether a line opens a fenced code block.
-// Returns the bare fence string (e.g. "```") and true, or ("", false).
-// MDX allows code fences at any indentation level (nested inside JSX),
-// so we don't enforce the CommonMark 0-3 space indentation limit.
+// CodeFenceOpen returns the fence a line opens at any indent, as MDX nests them in JSX.
 func CodeFenceOpen(line string) (string, bool) {
 	trimmed := strings.TrimLeft(line, " \t")
 
@@ -110,35 +104,30 @@ func CodeFenceOpen(line string) (string, bool) {
 	return "", false
 }
 
-// isThematicBreak returns true for lines that are markdown thematic breaks
-// made of dashes (e.g. "---", "----", "  ---").
 func isThematicBreak(line string) bool {
 	trimmed := strings.TrimSpace(line)
 	if len(trimmed) < 3 {
 		return false
 	}
-	for _, c := range trimmed {
-		if c != '-' {
+	for _, char := range trimmed {
+		if char != '-' {
 			return false
 		}
 	}
 	return true
 }
 
-// isTableSeparator returns true for markdown table separator rows
-// (lines containing only |, -, :, and spaces with at least one |).
 func isTableSeparator(line string) bool {
 	trimmed := strings.TrimSpace(line)
 	if len(trimmed) == 0 {
 		return false
 	}
 	hasPipe := false
-	for _, c := range trimmed {
-		switch c {
+	for _, char := range trimmed {
+		switch char {
 		case '|':
 			hasPipe = true
 		case '-', ':', ' ':
-			// allowed
 		default:
 			return false
 		}
@@ -146,16 +135,10 @@ func isTableSeparator(line string) bool {
 	return hasPipe
 }
 
-// isImportExport returns true for MDX import/export statements.
 func isImportExport(line string) bool {
 	return strings.HasPrefix(line, "import ") || strings.HasPrefix(line, "export ")
 }
 
-// maskInlineRegions takes a prose line and returns spans with inline code,
-// HTML tags, and HTML comments masked out. baseCol is the 0-based byte
-// offset of line[0] within the original file line (used when processing
-// the tail of an HTML comment line). If an HTML comment opens but does not
-// close on this line, the scanner transitions to zoneHTMLComment.
 func (s *Scanner) maskInlineRegions(line string, baseCol int) []ProseSpan {
 	var spans []ProseSpan
 	i := 0
@@ -163,7 +146,6 @@ func (s *Scanner) maskInlineRegions(line string, baseCol int) []ProseSpan {
 
 	for i < len(line) {
 		switch {
-		// HTML comment start
 		case i+4 <= len(line) && line[i:i+4] == "<!--":
 			if i > spanStart {
 				spans = appendSpan(spans, line[spanStart:i], baseCol+spanStart)
@@ -172,13 +154,11 @@ func (s *Scanner) maskInlineRegions(line string, baseCol int) []ProseSpan {
 			if end >= 0 {
 				i = i + 4 + end + 3
 			} else {
-				// Comment doesn't close on this line — enter comment zone.
 				s.zone = zoneHTMLComment
 				return spans
 			}
 			spanStart = i
 
-		// HTML/JSX tag
 		case line[i] == '<':
 			if i > spanStart {
 				spans = appendSpan(spans, line[spanStart:i], baseCol+spanStart)
@@ -187,7 +167,6 @@ func (s *Scanner) maskInlineRegions(line string, baseCol int) []ProseSpan {
 			i = end
 			spanStart = i
 
-		// Inline code
 		case line[i] == '`':
 			if i > spanStart {
 				spans = appendSpan(spans, line[spanStart:i], baseCol+spanStart)
@@ -207,8 +186,6 @@ func (s *Scanner) maskInlineRegions(line string, baseCol int) []ProseSpan {
 	return spans
 }
 
-// findTagEnd returns the byte index just past the closing '>' of an HTML/JSX
-// tag starting at pos. If no closing '>' is found, returns len(line).
 func findTagEnd(line string, pos int) int {
 	i := pos + 1
 	for i < len(line) {
@@ -233,11 +210,7 @@ func findTagEnd(line string, pos int) int {
 	return len(line)
 }
 
-// findInlineCodeEnd returns the byte index just past the closing backtick(s)
-// of inline code starting at pos. Handles both single-backtick and
-// double-backtick inline code delimiters.
 func findInlineCodeEnd(line string, pos int) int {
-	// Count opening backticks
 	ticks := 0
 	i := pos
 	for i < len(line) && line[i] == '`' {
@@ -245,25 +218,23 @@ func findInlineCodeEnd(line string, pos int) int {
 		i++
 	}
 
-	// Find matching closing backticks
 	for i < len(line) {
 		if line[i] == '`' {
 			closeTicks := 0
-			j := i
-			for j < len(line) && line[j] == '`' {
+			end := i
+			for end < len(line) && line[end] == '`' {
 				closeTicks++
-				j++
+				end++
 			}
 			if closeTicks == ticks {
-				return j
+				return end
 			}
-			i = j
+			i = end
 		} else {
 			i++
 		}
 	}
 
-	// No closing backticks found; treat the opening backticks as literal text.
 	return pos + ticks
 }
 
@@ -272,7 +243,7 @@ func appendSpan(spans []ProseSpan, text string, col int) []ProseSpan {
 		return spans
 	}
 	return append(spans, ProseSpan{
-		StartCol: col + 1, // 1-based
+		StartCol: col + 1,
 		Text:     text,
 	})
 }

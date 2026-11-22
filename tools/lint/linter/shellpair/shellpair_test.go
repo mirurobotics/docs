@@ -10,7 +10,7 @@ func TestCheck(t *testing.T) {
 		name      string
 		content   string
 		wantLines []int
-		wantMsg   string // if set, compared against the first violation
+		wantMsg   string
 	}{
 		{
 			name: "matching pair",
@@ -130,14 +130,14 @@ func TestCheck(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			violations := Check("test.mdx", strings.Split(tt.content, "\n"))
-			if len(violations) != len(tt.wantLines) {
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			violations := Check("test.mdx", strings.Split(tc.content, "\n"))
+			if len(violations) != len(tc.wantLines) {
 				t.Fatalf("expected %d violations, got %d: %v",
-					len(tt.wantLines), len(violations), violations)
+					len(tc.wantLines), len(violations), violations)
 			}
-			for i, wantLine := range tt.wantLines {
+			for i, wantLine := range tc.wantLines {
 				if violations[i].Line != wantLine {
 					t.Errorf("violation %d: expected line %d, got %d",
 						i, wantLine, violations[i].Line)
@@ -146,9 +146,9 @@ func TestCheck(t *testing.T) {
 					t.Errorf("violation %d: unexpected position %+v", i, violations[i])
 				}
 			}
-			if tt.wantMsg != "" && violations[0].Message != tt.wantMsg {
+			if tc.wantMsg != "" && violations[0].Message != tc.wantMsg {
 				t.Errorf("expected message %q, got %q",
-					tt.wantMsg, violations[0].Message)
+					tc.wantMsg, violations[0].Message)
 			}
 		})
 	}

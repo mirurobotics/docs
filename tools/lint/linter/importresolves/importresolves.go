@@ -15,7 +15,7 @@ func Check(file string, lines []string, contentRoot string) []analysis.Violation
 	var violations []analysis.Violation
 	for _, imp := range imports {
 		if !strings.HasPrefix(imp.Path, "/") {
-			continue // relative path — skip
+			continue
 		}
 		absPath := filepath.Join(contentRoot, imp.Path)
 		if _, err := os.Stat(absPath); err != nil {
