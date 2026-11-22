@@ -242,8 +242,5 @@ func appendSpan(spans []ProseSpan, text string, col int) []ProseSpan {
 	if len(strings.TrimSpace(text)) == 0 {
 		return spans
 	}
-	return append(spans, ProseSpan{
-		StartCol: col + 1,
-		Text:     text,
-	})
+	return append(spans, ProseSpan{StartCol: col + 1, Text: text})
 }

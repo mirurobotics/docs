@@ -143,21 +143,13 @@ func TestValidate(t *testing.T) {
 			docsJSON: `[1,2,3]`,
 			wants:    []want{{line: 1, substr: "invalid JSON:"}},
 		},
-		{
-			name:     "no_redirects_key",
-			docsJSON: `{"name": "x"}`,
-			wants:    nil,
-		},
+		{name: "no_redirects_key", docsJSON: `{"name": "x"}`, wants: nil},
 		{
 			name:     "redirects_not_array",
 			docsJSON: `{"redirects": {"a": 1}}`,
 			wants:    nil,
 		},
-		{
-			name:     "redirects_empty",
-			docsJSON: `{"redirects": []}`,
-			wants:    nil,
-		},
+		{name: "redirects_empty", docsJSON: `{"redirects": []}`, wants: nil},
 		{
 			name:     "entry_not_object",
 			docsJSON: `{"redirects": ["bad"]}`,
