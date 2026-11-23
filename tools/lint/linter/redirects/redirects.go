@@ -66,6 +66,29 @@ func validate(docsJSONBytes []byte, contentRoot string) []analysis.Violation {
 	return violations
 }
 
+func collectOpenAPISources(parsed map[string]any) map[string]bool {
+	result := map[string]bool{}
+	walkOpenAPISources(parsed, result)
+	return result
+}
+
+func walkOpenAPISources(node any, result map[string]bool) {
+	switch node := node.(type) {
+	case map[string]any:
+		openapi, _ := node["openapi"].(map[string]any)
+		if src, ok := openapi["source"].(string); ok {
+			result[src] = true
+		}
+		for _, child := range node {
+			walkOpenAPISources(child, result)
+		}
+	case []any:
+		for _, item := range node {
+			walkOpenAPISources(item, result)
+		}
+	}
+}
+
 type entryFields struct {
 	i           int
 	line        int
@@ -108,6 +131,21 @@ func validateEntry(
 	return append(violations, fsViolations...)
 }
 
+func stringField(entry map[string]any, key string) (string, bool) {
+	raw, present := entry[key]
+	if !present || raw == nil {
+		return "", false
+	}
+	value, ok := raw.(string)
+	if !ok {
+		return "", false
+	}
+	if value == "" {
+		return "", false
+	}
+	return value, true
+}
+
 func validateRequiredFields(fields entryFields) []analysis.Violation {
 	const msg = "must be a non-empty string"
 	i, line := fields.i, fields.line
@@ -146,48 +184,10 @@ func entryViolation(i, line int, field, value, msg string) []analysis.Violation 
 	}}
 }
 
-func destIsHTTP(dest string) bool {
-	return strings.HasPrefix(dest, "http://") || strings.HasPrefix(dest, "https://")
-}
-
-func stringField(entry map[string]any, key string) (string, bool) {
-	raw, present := entry[key]
-	if !present || raw == nil {
-		return "", false
-	}
-	value, ok := raw.(string)
-	if !ok {
-		return "", false
-	}
-	if value == "" {
-		return "", false
-	}
-	return value, true
-}
-
-func collectOpenAPISources(parsed map[string]any) map[string]bool {
-	result := map[string]bool{}
-	walkOpenAPISources(parsed, result)
-	return result
-}
-
-func walkOpenAPISources(node any, result map[string]bool) {
-	switch node := node.(type) {
-	case map[string]any:
-		openapi, _ := node["openapi"].(map[string]any)
-		if src, ok := openapi["source"].(string); ok {
-			result[src] = true
-		}
-		for _, child := range node {
-			walkOpenAPISources(child, result)
-		}
-	case []any:
-		for _, item := range node {
-			walkOpenAPISources(item, result)
-		}
-	}
-}
-
 func formatMessage(i int, field, value, message string) string {
 	return fmt.Sprintf("redirects[%d] %s %q: %s", i, field, value, message)
+}
+
+func destIsHTTP(dest string) bool {
+	return strings.HasPrefix(dest, "http://") || strings.HasPrefix(dest, "https://")
 }

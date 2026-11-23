@@ -42,6 +42,47 @@ type checkInput struct {
 	contentRoot string
 }
 
+// ProcessFile lints a single file and returns violations.
+func ProcessFile(path, contentRoot string) ([]analysis.Violation, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = file.Close() }()
+
+	var lines []string
+	scanner := bufio.NewScanner(file)
+	scanner.Buffer(make([]byte, 0, 64*1024), maxScanTokenSize)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	mdxScanner := analysis.NewScanner()
+	spans := make([][]analysis.ProseSpan, len(lines))
+	for i, line := range lines {
+		spans[i] = mdxScanner.ScanLine(line)
+	}
+
+	in := checkInput{
+		path:        path,
+		lines:       lines,
+		spans:       spans,
+		contentRoot: contentRoot,
+	}
+	return runChecks(in), nil
+}
+
+func runChecks(in checkInput) []analysis.Violation {
+	var violations []analysis.Violation
+	for _, entry := range ruleCheckers() {
+		violations = append(violations, entry.check(in)...)
+	}
+	return violations
+}
+
 type ruleEntry struct {
 	rule  Rule
 	check func(checkInput) []analysis.Violation
@@ -80,45 +121,4 @@ func ruleCheckers() []ruleEntry {
 			return shellpair.Check(in.path, in.lines)
 		}},
 	}
-}
-
-func runChecks(in checkInput) []analysis.Violation {
-	var violations []analysis.Violation
-	for _, entry := range ruleCheckers() {
-		violations = append(violations, entry.check(in)...)
-	}
-	return violations
-}
-
-// ProcessFile lints a single file and returns violations.
-func ProcessFile(path, contentRoot string) ([]analysis.Violation, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = file.Close() }()
-
-	var lines []string
-	scanner := bufio.NewScanner(file)
-	scanner.Buffer(make([]byte, 0, 64*1024), maxScanTokenSize)
-	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
-	}
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	mdxScanner := analysis.NewScanner()
-	spans := make([][]analysis.ProseSpan, len(lines))
-	for i, line := range lines {
-		spans[i] = mdxScanner.ScanLine(line)
-	}
-
-	in := checkInput{
-		path:        path,
-		lines:       lines,
-		spans:       spans,
-		contentRoot: contentRoot,
-	}
-	return runChecks(in), nil
 }

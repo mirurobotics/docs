@@ -7,16 +7,6 @@ import (
 	"github.com/mirurobotics/docs/tools/lint/linter/analysis"
 )
 
-func build(content string) ([]string, [][]analysis.ProseSpan) {
-	lines := strings.Split(content, "\n")
-	scanner := analysis.NewScanner()
-	spans := make([][]analysis.ProseSpan, len(lines))
-	for i, line := range lines {
-		spans[i] = scanner.ScanLine(line)
-	}
-	return lines, spans
-}
-
 type checkCase struct {
 	name      string
 	content   string
@@ -262,4 +252,14 @@ func runCheckCases(t *testing.T, cases []checkCase) {
 			}
 		})
 	}
+}
+
+func build(content string) ([]string, [][]analysis.ProseSpan) {
+	lines := strings.Split(content, "\n")
+	scanner := analysis.NewScanner()
+	spans := make([][]analysis.ProseSpan, len(lines))
+	for i, line := range lines {
+		spans[i] = scanner.ScanLine(line)
+	}
+	return lines, spans
 }

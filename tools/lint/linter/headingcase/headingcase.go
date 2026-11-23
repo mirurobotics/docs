@@ -15,6 +15,49 @@ const trailingPunct = ".?!:"
 
 const outerPunct = ",;()[]{}\"'"
 
+// Check flags a frontmatter title or prose heading that is not in sentence case.
+func Check(
+	file string,
+	lines []string,
+	spans [][]analysis.ProseSpan,
+) []analysis.Violation {
+	chk := newChecker()
+	violations := chk.checkTitle(file, lines)
+	for i, line := range lines {
+		if i >= len(spans) || len(spans[i]) == 0 {
+			continue
+		}
+		match := chk.heading.FindStringSubmatch(line)
+		if match == nil {
+			continue
+		}
+		masked := chk.maskHeading(match[2])
+		if !chk.casingViolation(masked) {
+			continue
+		}
+		violations = append(violations, analysis.Violation{
+			File:    file,
+			Line:    i + 1,
+			Col:     headingTextCol(line),
+			Message: Message,
+		})
+	}
+	return violations
+}
+
+func newChecker() *checker {
+	return &checker{
+		title:      titleRe(),
+		heading:    headingRe(),
+		version:    versionTagRe(),
+		inlineCode: inlineCodeRe(),
+		htmlTag:    htmlTagRe(),
+		mdLink:     mdLinkRe(),
+		mdxComment: mdxCommentRe(),
+		allow:      allowlist(),
+	}
+}
+
 func titleRe() *regexp.Regexp { return regexp.MustCompile(`^title:\s*(.*)$`) }
 
 func headingRe() *regexp.Regexp {
@@ -80,54 +123,22 @@ func allowlist() map[string]struct{} {
 	}
 }
 
+func headingTextCol(line string) int {
+	i := 0
+	for i < len(line) && line[i] == '#' {
+		i++
+	}
+	for i < len(line) && (line[i] == ' ' || line[i] == '\t') {
+		i++
+	}
+	return i + 1
+}
+
 type checker struct {
 	title, heading, version *regexp.Regexp
 	inlineCode, htmlTag     *regexp.Regexp
 	mdLink, mdxComment      *regexp.Regexp
 	allow                   map[string]struct{}
-}
-
-func newChecker() *checker {
-	return &checker{
-		title:      titleRe(),
-		heading:    headingRe(),
-		version:    versionTagRe(),
-		inlineCode: inlineCodeRe(),
-		htmlTag:    htmlTagRe(),
-		mdLink:     mdLinkRe(),
-		mdxComment: mdxCommentRe(),
-		allow:      allowlist(),
-	}
-}
-
-// Check flags a frontmatter title or prose heading that is not in sentence case.
-func Check(
-	file string,
-	lines []string,
-	spans [][]analysis.ProseSpan,
-) []analysis.Violation {
-	chk := newChecker()
-	violations := chk.checkTitle(file, lines)
-	for i, line := range lines {
-		if i >= len(spans) || len(spans[i]) == 0 {
-			continue
-		}
-		match := chk.heading.FindStringSubmatch(line)
-		if match == nil {
-			continue
-		}
-		masked := chk.maskHeading(match[2])
-		if !chk.casingViolation(masked) {
-			continue
-		}
-		violations = append(violations, analysis.Violation{
-			File:    file,
-			Line:    i + 1,
-			Col:     headingTextCol(line),
-			Message: Message,
-		})
-	}
-	return violations
 }
 
 func (c *checker) checkTitle(file string, lines []string) []analysis.Violation {
@@ -150,44 +161,6 @@ func (c *checker) checkTitle(file string, lines []string) []analysis.Violation {
 	}
 	return nil
 }
-
-func titleValueAndOffset(line string) (string, int) {
-	idx := len("title:")
-	for idx < len(line) && (line[idx] == ' ' || line[idx] == '\t') {
-		idx++
-	}
-	value := line[idx:]
-	if len(value) >= 2 {
-		first := value[0]
-		last := value[len(value)-1]
-		if (first == '"' && last == '"') || (first == '\'' && last == '\'') {
-			value = value[1 : len(value)-1]
-			idx++
-		}
-	}
-	return value, idx
-}
-
-func headingTextCol(line string) int {
-	i := 0
-	for i < len(line) && line[i] == '#' {
-		i++
-	}
-	for i < len(line) && (line[i] == ' ' || line[i] == '\t') {
-		i++
-	}
-	return i + 1
-}
-
-func (c *checker) maskHeading(text string) string {
-	text = c.mdxComment.ReplaceAllString(text, "")
-	text = c.inlineCode.ReplaceAllString(text, "")
-	text = c.htmlTag.ReplaceAllString(text, "")
-	text = c.mdLink.ReplaceAllString(text, "$1")
-	return text
-}
-
-func stripOuterPunct(token string) string { return strings.Trim(token, outerPunct) }
 
 func (c *checker) casingViolation(text string) bool {
 	text = strings.TrimSpace(text)
@@ -215,6 +188,33 @@ func (c *checker) casingViolation(text string) bool {
 	}
 	return false
 }
+
+func (c *checker) maskHeading(text string) string {
+	text = c.mdxComment.ReplaceAllString(text, "")
+	text = c.inlineCode.ReplaceAllString(text, "")
+	text = c.htmlTag.ReplaceAllString(text, "")
+	text = c.mdLink.ReplaceAllString(text, "$1")
+	return text
+}
+
+func titleValueAndOffset(line string) (string, int) {
+	idx := len("title:")
+	for idx < len(line) && (line[idx] == ' ' || line[idx] == '\t') {
+		idx++
+	}
+	value := line[idx:]
+	if len(value) >= 2 {
+		first := value[0]
+		last := value[len(value)-1]
+		if (first == '"' && last == '"') || (first == '\'' && last == '\'') {
+			value = value[1 : len(value)-1]
+			idx++
+		}
+	}
+	return value, idx
+}
+
+func stripOuterPunct(token string) string { return strings.Trim(token, outerPunct) }
 
 func tokenViolatesLeading(token string) bool {
 	seenFirst := false

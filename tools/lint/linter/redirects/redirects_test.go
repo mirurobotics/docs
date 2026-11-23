@@ -10,98 +10,6 @@ import (
 	"github.com/mirurobotics/docs/tools/lint/linter/analysis"
 )
 
-func setupContentRoot(t *testing.T, files map[string]string) string {
-	t.Helper()
-	root := t.TempDir()
-	for rel, contents := range files {
-		full := filepath.Join(root, rel)
-		if !strings.HasSuffix(rel, "/") {
-			writeContentFile(t, full, contents)
-			continue
-		}
-		if err := os.MkdirAll(full, 0o755); err != nil {
-			t.Fatalf("mkdir %q: %v", full, err)
-		}
-	}
-	return root
-}
-
-func writeContentFile(t *testing.T, full, contents string) {
-	t.Helper()
-	if err := os.MkdirAll(filepath.Dir(full), 0o755); err != nil {
-		t.Fatalf("mkdir parent of %q: %v", full, err)
-	}
-	if err := os.WriteFile(full, []byte(contents), 0o644); err != nil {
-		t.Fatalf("write %q: %v", full, err)
-	}
-}
-
-func assertViolation(
-	t *testing.T,
-	got analysis.Violation,
-	wantLine int,
-	substr string,
-) {
-	t.Helper()
-	if got.File != "docs.json" {
-		t.Errorf("File: got %q, want %q", got.File, "docs.json")
-	}
-	if got.Col != 1 {
-		t.Errorf("Col: got %d, want 1", got.Col)
-	}
-	if wantLine > 0 && got.Line != wantLine {
-		t.Errorf("Line: got %d, want %d", got.Line, wantLine)
-	}
-	if !strings.Contains(got.Message, substr) {
-		t.Errorf("Message: %q does not contain %q", got.Message, substr)
-	}
-}
-
-type wantViolation struct {
-	line   int
-	substr string
-}
-
-type validateCase struct {
-	name     string
-	docsJSON string
-	files    map[string]string
-	wants    []wantViolation
-}
-
-func runValidateCases(t *testing.T, cases []validateCase) {
-	for _, tc := range cases {
-		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
-			files := map[string]string{}
-			for rel, contents := range tc.files {
-				files[rel] = contents
-			}
-			root := setupContentRoot(t, files)
-			violations := validate([]byte(tc.docsJSON), root)
-
-			if len(tc.wants) == 0 {
-				if len(violations) != 0 {
-					t.Errorf(
-						"expected no violations, got %d: %v",
-						len(violations), violations,
-					)
-				}
-				return
-			}
-			if len(violations) != len(tc.wants) {
-				t.Fatalf(
-					"expected %d violations, got %d: %v",
-					len(tc.wants), len(violations), violations,
-				)
-			}
-			for i, wanted := range tc.wants {
-				assertViolation(t, violations[i], wanted.line, wanted.substr)
-			}
-		})
-	}
-}
-
 func TestCheck_NoViolations(t *testing.T) {
 	t.Run("missing_docs_json", func(t *testing.T) {
 		root := t.TempDir()
@@ -280,5 +188,97 @@ func TestFormatMessage(t *testing.T) {
 	want := `redirects[2] source "/x": bad prefix`
 	if got != want {
 		t.Errorf("got %q, want %q", got, want)
+	}
+}
+
+type wantViolation struct {
+	line   int
+	substr string
+}
+
+type validateCase struct {
+	name     string
+	docsJSON string
+	files    map[string]string
+	wants    []wantViolation
+}
+
+func runValidateCases(t *testing.T, cases []validateCase) {
+	for _, tc := range cases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			files := map[string]string{}
+			for rel, contents := range tc.files {
+				files[rel] = contents
+			}
+			root := setupContentRoot(t, files)
+			violations := validate([]byte(tc.docsJSON), root)
+
+			if len(tc.wants) == 0 {
+				if len(violations) != 0 {
+					t.Errorf(
+						"expected no violations, got %d: %v",
+						len(violations), violations,
+					)
+				}
+				return
+			}
+			if len(violations) != len(tc.wants) {
+				t.Fatalf(
+					"expected %d violations, got %d: %v",
+					len(tc.wants), len(violations), violations,
+				)
+			}
+			for i, wanted := range tc.wants {
+				assertViolation(t, violations[i], wanted.line, wanted.substr)
+			}
+		})
+	}
+}
+
+func setupContentRoot(t *testing.T, files map[string]string) string {
+	t.Helper()
+	root := t.TempDir()
+	for rel, contents := range files {
+		full := filepath.Join(root, rel)
+		if !strings.HasSuffix(rel, "/") {
+			writeContentFile(t, full, contents)
+			continue
+		}
+		if err := os.MkdirAll(full, 0o755); err != nil {
+			t.Fatalf("mkdir %q: %v", full, err)
+		}
+	}
+	return root
+}
+
+func writeContentFile(t *testing.T, full, contents string) {
+	t.Helper()
+	if err := os.MkdirAll(filepath.Dir(full), 0o755); err != nil {
+		t.Fatalf("mkdir parent of %q: %v", full, err)
+	}
+	if err := os.WriteFile(full, []byte(contents), 0o644); err != nil {
+		t.Fatalf("write %q: %v", full, err)
+	}
+}
+
+func assertViolation(
+	t *testing.T,
+	got analysis.Violation,
+	wantLine int,
+	substr string,
+) {
+	t.Helper()
+	if got.File != "docs.json" {
+		t.Errorf("File: got %q, want %q", got.File, "docs.json")
+	}
+	if got.Col != 1 {
+		t.Errorf("Col: got %d, want 1", got.Col)
+	}
+	if wantLine > 0 && got.Line != wantLine {
+		t.Errorf("Line: got %d, want %d", got.Line, wantLine)
+	}
+	if !strings.Contains(got.Message, substr) {
+		t.Errorf("Message: %q does not contain %q", got.Message, substr)
 	}
 }
