@@ -7,4 +7,6 @@
 // continues lines with "`" needs a "Bash" twin. The two match when they
 // are equal once each line's continuation character and surrounding
 // whitespace are removed, and PowerShell's "\" path separators read as "/".
+// A pair is compared only when neither block uses the wrong continuation,
+// since that is already reported on its own.
 package shellpair

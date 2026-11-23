@@ -10,6 +10,4 @@
 //     registered as an openapi.source in docs.json.
 //   - Unsupported schemes / malformed paths, including '.' and '..'
 //     segments, which would resolve outside the content root.
-//
-// Diagnostic messages are stable strings asserted by tests/test-lint.sh.
 package redirects
