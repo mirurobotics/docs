@@ -128,18 +128,7 @@ func (s *Scanner) maskInlineRegions(line string, baseCol int) []ProseSpan {
 	i := 0
 	spanStart := 0
 	for i < len(line) {
-		var end int
-		var ok bool
-		isComment := strings.HasPrefix(line[i:], "<!--")
-		if isComment {
-			end, ok = commentEnd(line, i+4)
-		} else {
-			end, ok = inlineRegionEnd(line, i)
-		}
-		if isComment && !ok {
-			s.zone = zoneHTMLComment
-			return appendSpan(spans, line[spanStart:i], baseCol+spanStart)
-		}
+		end, ok := s.regionEnd(line, i)
 		if !ok {
 			i++
 			continue
@@ -152,6 +141,19 @@ func (s *Scanner) maskInlineRegions(line string, baseCol int) []ProseSpan {
 		spans = appendSpan(spans, line[spanStart:], baseCol+spanStart)
 	}
 	return spans
+}
+
+// regionEnd runs an unclosed comment to the line's end and into the next line.
+func (s *Scanner) regionEnd(line string, pos int) (int, bool) {
+	if !strings.HasPrefix(line[pos:], "<!--") {
+		return inlineRegionEnd(line, pos)
+	}
+	end, closed := commentEnd(line, pos+4)
+	if !closed {
+		s.zone = zoneHTMLComment
+		return len(line), true
+	}
+	return end, true
 }
 
 func inlineRegionEnd(line string, pos int) (int, bool) {
