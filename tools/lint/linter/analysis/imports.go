@@ -22,37 +22,44 @@ func ParseSingleImport(lineNum int, line string) *ParsedImport {
 		return nil
 	}
 	rest := strings.TrimLeft(strings.TrimPrefix(line, "import "), " \t")
-
-	var names []ImportedName
-	if strings.HasPrefix(rest, "{") {
-		end := strings.Index(rest, "}")
-		if end < 0 {
-			return nil
-		}
-		for _, part := range strings.Split(rest[1:end], ",") {
-			if name := strings.TrimSpace(part); name != "" {
-				names = append(names, ImportedName{Name: name, IsNamed: true})
-			}
-		}
-		rest = rest[end+1:]
-	} else {
-		fromIdx := strings.Index(rest, " from ")
-		if fromIdx < 0 {
-			return nil
-		}
-		token := strings.TrimSpace(rest[:fromIdx])
-		if token == "" {
-			return nil
-		}
-		names = append(names, ImportedName{Name: token})
-		rest = rest[fromIdx:]
+	names, rest, ok := parseImportBindings(rest)
+	if !ok {
+		return nil
 	}
-
 	path, ok := ExtractImportPath(rest)
 	if !ok {
 		return nil
 	}
 	return &ParsedImport{Line: lineNum, Raw: line, Names: names, Path: path}
+}
+
+func parseImportBindings(rest string) ([]ImportedName, string, bool) {
+	if strings.HasPrefix(rest, "{") {
+		return parseNamedBindings(rest)
+	}
+	fromIdx := strings.Index(rest, " from ")
+	if fromIdx < 0 {
+		return nil, "", false
+	}
+	token := strings.TrimSpace(rest[:fromIdx])
+	if token == "" {
+		return nil, "", false
+	}
+	return []ImportedName{{Name: token}}, rest[fromIdx:], true
+}
+
+func parseNamedBindings(rest string) ([]ImportedName, string, bool) {
+	end := strings.Index(rest, "}")
+	if end < 0 {
+		return nil, "", false
+	}
+	var names []ImportedName
+	for _, part := range strings.Split(rest[1:end], ",") {
+		if name := strings.TrimSpace(part); name != "" {
+			names = append(names, ImportedName{Name: name, IsNamed: true})
+		}
+	}
+	return names, rest[end+1:], true
 }
 
 // ExtractImportPath returns the contents of the last quoted string in rest, if any.

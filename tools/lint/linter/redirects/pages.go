@@ -16,124 +16,67 @@ func validateFileSystem(
 ) []analysis.Violation {
 	var violations []analysis.Violation
 	if strings.HasPrefix(fields.source, "/") {
-		srcPrefix, _ := splitWildcard(cleanPath(fields.source))
-		if containsTraversalSegment(srcPrefix) {
-			violations = append(violations, analysis.Violation{
-				File: "docs.json",
-				Line: fields.line,
-				Col:  1,
-				Message: formatMessage(
-					fields.i, "source", fields.source,
-					"bad path: contains '..' or '.' segment",
-				),
-			})
-		} else {
-			srcViolations := validateSource(
-				fields.i, fields.source, contentRoot, openAPISources, fields.line,
-			)
-			violations = append(violations, srcViolations...)
-		}
+		violations = validateSource(fields, contentRoot, openAPISources)
 	}
 	if !destIsHTTP(fields.destination) && strings.HasPrefix(fields.destination, "/") {
-		dstPrefix, _ := splitWildcard(cleanPath(fields.destination))
-		if containsTraversalSegment(dstPrefix) {
-			violations = append(violations, analysis.Violation{
-				File: "docs.json",
-				Line: fields.line,
-				Col:  1,
-				Message: formatMessage(
-					fields.i, "destination", fields.destination,
-					"bad path: contains '..' or '.' segment",
-				),
-			})
-		} else {
-			dstViolations := validateDestination(
-				fields.i, fields.destination, contentRoot, openAPISources, fields.line,
-			)
-			violations = append(violations, dstViolations...)
-		}
+		dst := validateDestination(fields, contentRoot, openAPISources)
+		violations = append(violations, dst...)
 	}
 	return violations
 }
 
 func validateSource(
-	i int,
-	source, contentRoot string,
+	fields entryFields,
+	contentRoot string,
 	openAPISources map[string]bool,
-	line int,
 ) []analysis.Violation {
-	cleaned := cleanPath(source)
-	prefix, hasWildcard := splitWildcard(cleaned)
+	prefix, hasWildcard := splitWildcard(cleanPath(fields.source))
 	prefixFs := filepath.Join(contentRoot, filepath.Join(prefix...))
-
-	if !hasWildcard {
-		if pageExists(prefixFs) {
-			return []analysis.Violation{{
-				File: "docs.json",
-				Line: line,
-				Col:  1,
-				Message: formatMessage(
-					i, "source", source,
-					"dead redirect (source resolves to a real page)",
-				),
-			}}
-		}
+	yamlRel := strings.Join(prefix, "/") + ".yaml"
+	var msg string
+	switch {
+	case containsTraversalSegment(prefix):
+		msg = "bad path: contains '..' or '.' segment"
+	case !hasWildcard && pageExists(prefixFs):
+		msg = "dead redirect (source resolves to a real page)"
+	case !hasWildcard:
+		return nil
+	case pageExists(prefixFs):
+		msg = "dead redirect (wildcard source prefix resolves to a real page)"
+	case dirExists(prefixFs) && dirHasPages(prefixFs):
+		msg = "dead redirect (wildcard source prefix has real pages)"
+	case openAPISources[yamlRel] && fileExists(prefixFs+".yaml"):
+		msg = "dead redirect (wildcard source prefix has Mintlify-generated pages)"
+	default:
 		return nil
 	}
-
-	return validateWildcardSource(wildcardSourceCtx{
-		i:              i,
-		source:         source,
-		prefix:         prefix,
-		prefixFs:       prefixFs,
-		openAPISources: openAPISources,
-		line:           line,
-	})
+	return entryViolation(fields.i, fields.line, "source", fields.source, msg)
 }
 
 func validateDestination(
-	i int,
-	destination, contentRoot string,
+	fields entryFields,
+	contentRoot string,
 	openAPISources map[string]bool,
-	line int,
 ) []analysis.Violation {
-	cleaned := cleanPath(destination)
-	prefix, hasWildcard := splitWildcard(cleaned)
-	prefixRel := strings.Join(prefix, "/")
+	prefix, hasWildcard := splitWildcard(cleanPath(fields.destination))
 	prefixFs := filepath.Join(contentRoot, filepath.Join(prefix...))
-
-	if !hasWildcard {
-		if pageExists(prefixFs) {
-			return nil
-		}
-		return []analysis.Violation{{
-			File: "docs.json",
-			Line: line,
-			Col:  1,
-			Message: formatMessage(
-				i, "destination", destination,
-				"missing destination (no .mdx or .md page exists)",
-			),
-		}}
-	}
-
-	if dirExists(prefixFs) {
+	yamlRel := strings.Join(prefix, "/") + ".yaml"
+	var msg string
+	switch {
+	case containsTraversalSegment(prefix):
+		msg = "bad path: contains '..' or '.' segment"
+	case !hasWildcard && pageExists(prefixFs):
 		return nil
-	}
-	yamlRel := prefixRel + ".yaml"
-	yamlFs := prefixFs + ".yaml"
-	if openAPISources[yamlRel] && fileExists(yamlFs) {
+	case !hasWildcard:
+		msg = "missing destination (no .mdx or .md page exists)"
+	case dirExists(prefixFs):
 		return nil
+	case openAPISources[yamlRel] && fileExists(prefixFs+".yaml"):
+		return nil
+	default:
+		msg = "wildcard prefix not a directory"
 	}
-	return []analysis.Violation{{
-		File: "docs.json",
-		Line: line,
-		Col:  1,
-		Message: formatMessage(
-			i, "destination", destination,
-			"wildcard prefix not a directory",
-		),
-	}}
+	return entryViolation(fields.i, fields.line, "destination", fields.destination, msg)
 }
 
 func cleanPath(raw string) string {
@@ -208,17 +151,17 @@ func dirHasPages(dir string) bool {
 		return false
 	}
 	for _, ent := range entries {
-		full := filepath.Join(dir, ent.Name())
-		if ent.IsDir() {
-			if dirHasPages(full) {
-				return true
-			}
-			continue
-		}
 		name := ent.Name()
-		if strings.HasSuffix(name, ".mdx") || strings.HasSuffix(name, ".md") {
+		if ent.IsDir() && dirHasPages(filepath.Join(dir, name)) {
+			return true
+		}
+		if !ent.IsDir() && isPageFile(name) {
 			return true
 		}
 	}
 	return false
+}
+
+func isPageFile(name string) bool {
+	return strings.HasSuffix(name, ".mdx") || strings.HasSuffix(name, ".md")
 }

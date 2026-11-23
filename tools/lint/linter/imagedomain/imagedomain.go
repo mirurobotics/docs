@@ -64,22 +64,28 @@ func Check(file string, lines []string) []analysis.Violation {
 		if inFence || suppressed(lines, i) {
 			continue
 		}
-		for _, cand := range chk.candidates(line) {
-			if !chk.violates(cand) {
-				continue
-			}
-			msg := fmt.Sprintf("image-domain: image must be hosted on "+
-				"https://assets.mirurobotics.com (got %q)", cand.url)
-			violations = append(violations, analysis.Violation{
-				File: file, Line: i + 1, Col: cand.col, Message: msg,
-			})
-		}
+		violations = append(violations, chk.checkLine(file, i, line)...)
 	}
 	return violations
 }
 
 func suppressed(lines []string, i int) bool {
 	return i > 0 && strings.TrimSpace(lines[i-1]) == ignoreDirective
+}
+
+func (c *checker) checkLine(file string, i int, line string) []analysis.Violation {
+	var violations []analysis.Violation
+	for _, cand := range c.candidates(line) {
+		if !c.violates(cand) {
+			continue
+		}
+		msg := fmt.Sprintf("image-domain: image must be hosted on "+
+			"https://assets.mirurobotics.com (got %q)", cand.url)
+		violations = append(violations, analysis.Violation{
+			File: file, Line: i + 1, Col: cand.col, Message: msg,
+		})
+	}
+	return violations
 }
 
 func (c *checker) candidates(line string) []candidate {

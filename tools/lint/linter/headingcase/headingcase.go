@@ -107,27 +107,7 @@ func Check(
 	spans [][]analysis.ProseSpan,
 ) []analysis.Violation {
 	chk := newChecker()
-	var violations []analysis.Violation
-
-	if end := analysis.FrontmatterEnd(lines); end >= 1 {
-		for i := 1; i < end; i++ {
-			line := lines[i]
-			if chk.title.FindStringSubmatch(line) == nil {
-				continue
-			}
-			value, valueByteOffset := titleValueAndOffset(line)
-			if chk.casingViolation(value) {
-				violations = append(violations, analysis.Violation{
-					File:    file,
-					Line:    i + 1,
-					Col:     valueByteOffset + 1,
-					Message: Message,
-				})
-			}
-			break
-		}
-	}
-
+	violations := chk.checkTitle(file, lines)
 	for i, line := range lines {
 		if i >= len(spans) || len(spans[i]) == 0 {
 			continue
@@ -147,8 +127,28 @@ func Check(
 			Message: Message,
 		})
 	}
-
 	return violations
+}
+
+func (c *checker) checkTitle(file string, lines []string) []analysis.Violation {
+	end := analysis.FrontmatterEnd(lines)
+	for i := 1; i < end; i++ {
+		line := lines[i]
+		if c.title.FindStringSubmatch(line) == nil {
+			continue
+		}
+		value, valueByteOffset := titleValueAndOffset(line)
+		if !c.casingViolation(value) {
+			return nil
+		}
+		return []analysis.Violation{{
+			File:    file,
+			Line:    i + 1,
+			Col:     valueByteOffset + 1,
+			Message: Message,
+		}}
+	}
+	return nil
 }
 
 func titleValueAndOffset(line string) (string, int) {
@@ -194,29 +194,22 @@ func (c *checker) casingViolation(text string) bool {
 	for len(text) > 0 && strings.ContainsRune(trailingPunct, rune(text[len(text)-1])) {
 		text = text[:len(text)-1]
 	}
-	if text == "" {
-		return false
-	}
-	if c.version.MatchString(text) {
+	if text == "" || c.version.MatchString(text) {
 		return false
 	}
 	tokens := strings.Fields(text)
 	for i, tok := range tokens {
 		core := stripOuterPunct(tok)
-		if core == "" {
-			continue
-		}
-		if c.version.MatchString(core) {
+		if core == "" || c.version.MatchString(core) {
 			continue
 		}
 		if _, ok := c.allow[core]; ok {
 			continue
 		}
-		if i == 0 {
-			if tokenViolatesLeading(core) {
-				return true
-			}
-		} else if tokenViolatesLater(core) {
+		if i == 0 && tokenViolatesLeading(core) {
+			return true
+		}
+		if i > 0 && tokenViolatesLater(core) {
 			return true
 		}
 	}
@@ -232,16 +225,13 @@ func tokenViolatesLeading(token string) bool {
 		if !isUpper && !isLower {
 			continue
 		}
-		if !seenFirst {
-			if !isUpper {
-				return true
-			}
-			seenFirst = true
-			continue
-		}
-		if isUpper {
+		if !seenFirst && !isUpper {
 			return true
 		}
+		if seenFirst && isUpper {
+			return true
+		}
+		seenFirst = true
 	}
 	return false
 }

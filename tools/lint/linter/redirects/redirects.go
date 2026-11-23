@@ -84,12 +84,7 @@ func validateEntry(
 ) []analysis.Violation {
 	entry, ok := raw.(map[string]any)
 	if !ok {
-		return []analysis.Violation{{
-			File:    "docs.json",
-			Line:    line,
-			Col:     1,
-			Message: formatMessage(i, "entry", "", "not an object"),
-		}}
+		return entryViolation(i, line, "entry", "", "not an object")
 	}
 
 	src, srcOk := stringField(entry, "source")
@@ -115,52 +110,44 @@ func validateEntry(
 
 func validateRequiredFields(fields entryFields) []analysis.Violation {
 	const msg = "must be a non-empty string"
+	i, line := fields.i, fields.line
 	var violations []analysis.Violation
 	if !fields.sourceOk {
-		violations = append(violations, analysis.Violation{
-			File:    "docs.json",
-			Line:    fields.line,
-			Col:     1,
-			Message: formatMessage(fields.i, "source", fields.source, msg),
-		})
+		violations = entryViolation(i, line, "source", fields.source, msg)
 	}
 	if !fields.destOk {
-		violations = append(violations, analysis.Violation{
-			File:    "docs.json",
-			Line:    fields.line,
-			Col:     1,
-			Message: formatMessage(fields.i, "destination", fields.destination, msg),
-		})
+		dst := entryViolation(i, line, "destination", fields.destination, msg)
+		violations = append(violations, dst...)
 	}
 	return violations
 }
 
 func validatePathFormat(fields entryFields) []analysis.Violation {
+	i, line := fields.i, fields.line
 	var violations []analysis.Violation
 	if !strings.HasPrefix(fields.source, "/") {
 		const msg = "bad path: must start with '/'"
-		violations = append(violations, analysis.Violation{
-			File:    "docs.json",
-			Line:    fields.line,
-			Col:     1,
-			Message: formatMessage(fields.i, "source", fields.source, msg),
-		})
+		violations = entryViolation(i, line, "source", fields.source, msg)
 	}
 	if !strings.HasPrefix(fields.destination, "/") && !destIsHTTP(fields.destination) {
 		const msg = "bad path: must start with '/' (or http(s)://)"
-		violations = append(violations, analysis.Violation{
-			File:    "docs.json",
-			Line:    fields.line,
-			Col:     1,
-			Message: formatMessage(fields.i, "destination", fields.destination, msg),
-		})
+		dst := entryViolation(i, line, "destination", fields.destination, msg)
+		violations = append(violations, dst...)
 	}
 	return violations
 }
 
-func destIsHTTP(destination string) bool {
-	return strings.HasPrefix(destination, "http://") ||
-		strings.HasPrefix(destination, "https://")
+func entryViolation(i, line int, field, value, msg string) []analysis.Violation {
+	return []analysis.Violation{{
+		File:    "docs.json",
+		Line:    line,
+		Col:     1,
+		Message: formatMessage(i, field, value, msg),
+	}}
+}
+
+func destIsHTTP(dest string) bool {
+	return strings.HasPrefix(dest, "http://") || strings.HasPrefix(dest, "https://")
 }
 
 func stringField(entry map[string]any, key string) (string, bool) {
@@ -178,56 +165,6 @@ func stringField(entry map[string]any, key string) (string, bool) {
 	return value, true
 }
 
-type wildcardSourceCtx struct {
-	i              int
-	source         string
-	prefix         []string
-	prefixFs       string
-	openAPISources map[string]bool
-	line           int
-}
-
-func validateWildcardSource(in wildcardSourceCtx) []analysis.Violation {
-	i, source, prefix, prefixFs := in.i, in.source, in.prefix, in.prefixFs
-	openAPISources, line := in.openAPISources, in.line
-	if pageExists(prefixFs) {
-		return []analysis.Violation{{
-			File: "docs.json",
-			Line: line,
-			Col:  1,
-			Message: formatMessage(
-				i, "source", source,
-				"dead redirect (wildcard source prefix resolves to a real page)",
-			),
-		}}
-	}
-	if dirExists(prefixFs) && dirHasPages(prefixFs) {
-		return []analysis.Violation{{
-			File: "docs.json",
-			Line: line,
-			Col:  1,
-			Message: formatMessage(
-				i, "source", source,
-				"dead redirect (wildcard source prefix has real pages)",
-			),
-		}}
-	}
-	yamlRel := strings.Join(prefix, "/") + ".yaml"
-	yamlFs := prefixFs + ".yaml"
-	if openAPISources[yamlRel] && fileExists(yamlFs) {
-		return []analysis.Violation{{
-			File: "docs.json",
-			Line: line,
-			Col:  1,
-			Message: formatMessage(
-				i, "source", source,
-				"dead redirect (wildcard source prefix has Mintlify-generated pages)",
-			),
-		}}
-	}
-	return nil
-}
-
 func collectOpenAPISources(parsed map[string]any) map[string]bool {
 	result := map[string]bool{}
 	walkOpenAPISources(parsed, result)
@@ -237,10 +174,9 @@ func collectOpenAPISources(parsed map[string]any) map[string]bool {
 func walkOpenAPISources(node any, result map[string]bool) {
 	switch node := node.(type) {
 	case map[string]any:
-		if openapi, ok := node["openapi"].(map[string]any); ok {
-			if src, ok := openapi["source"].(string); ok {
-				result[src] = true
-			}
+		openapi, _ := node["openapi"].(map[string]any)
+		if src, ok := openapi["source"].(string); ok {
+			result[src] = true
 		}
 		for _, child := range node {
 			walkOpenAPISources(child, result)

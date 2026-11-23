@@ -34,40 +34,53 @@ func Check(file string, lines []string) []analysis.Violation {
 }
 
 func scan(lines []string) ([]*block, [][]*block) {
-	var blocks []*block
-	var groups [][]*block
-	var current []*block
-	var open *block
-	inGroup, fence := false, ""
+	var scn scanner
 	for i, line := range lines {
-		trimmed := strings.TrimSpace(line)
-		if open != nil {
-			if trimmed == fence {
-				open = nil
-			} else {
-				open.body = append(open.body, line)
-			}
-			continue
-		}
-		if marker, ok := analysis.CodeFenceOpen(line); ok {
-			fence = marker
-			lang, title := fenceInfo(trimmed, marker)
-			open = &block{lang: lang, title: title, line: i + 1}
-			blocks = append(blocks, open)
-			if inGroup {
-				current = append(current, open)
-			}
-			continue
-		}
-		switch {
-		case strings.HasPrefix(trimmed, "<CodeGroup"):
-			inGroup, current = true, nil
-		case trimmed == "</CodeGroup>" && inGroup:
-			groups = append(groups, current)
-			inGroup = false
-		}
+		scn.scanLine(i+1, line)
 	}
-	return blocks, groups
+	return scn.blocks, scn.groups
+}
+
+type scanner struct {
+	blocks  []*block
+	groups  [][]*block
+	current []*block
+	open    *block
+	fence   string
+	inGroup bool
+}
+
+func (s *scanner) scanLine(lineNum int, line string) {
+	trimmed := strings.TrimSpace(line)
+	if s.open != nil && trimmed == s.fence {
+		s.open = nil
+		return
+	}
+	if s.open != nil {
+		s.open.body = append(s.open.body, line)
+		return
+	}
+	if marker, ok := analysis.CodeFenceOpen(line); ok {
+		s.openBlock(lineNum, trimmed, marker)
+		return
+	}
+	switch {
+	case strings.HasPrefix(trimmed, "<CodeGroup"):
+		s.inGroup, s.current = true, nil
+	case trimmed == "</CodeGroup>" && s.inGroup:
+		s.groups = append(s.groups, s.current)
+		s.inGroup = false
+	}
+}
+
+func (s *scanner) openBlock(lineNum int, trimmed, marker string) {
+	s.fence = marker
+	lang, title := fenceInfo(trimmed, marker)
+	s.open = &block{lang: lang, title: title, line: lineNum}
+	s.blocks = append(s.blocks, s.open)
+	if s.inGroup {
+		s.current = append(s.current, s.open)
+	}
 }
 
 func fenceInfo(trimmed, fence string) (lang, title string) {
@@ -103,14 +116,22 @@ func checkGroup(file string, group []*block) []analysis.Violation {
 	case pwshMulti && bash == nil:
 		return violation(file, pwsh.line,
 			"multi-line PowerShell command needs a Bash twin")
-	case (bashMulti || pwshMulti) && bash != nil && pwsh != nil &&
-		wrongContinuation(bash) == "" && wrongContinuation(pwsh) == "" &&
-		normalize(bash.body, '\\') !=
-			strings.ReplaceAll(normalize(pwsh.body, '`'), `\`, "/"):
+	case (bashMulti || pwshMulti) && areTwinsDifferent(bash, pwsh):
 		return violation(file, pwsh.line,
 			"PowerShell command differs from its Bash twin")
 	}
 	return nil
+}
+
+func areTwinsDifferent(bash, pwsh *block) bool {
+	if bash == nil || pwsh == nil {
+		return false
+	}
+	if wrongContinuation(bash) != "" || wrongContinuation(pwsh) != "" {
+		return false
+	}
+	pwshCommand := strings.ReplaceAll(normalize(pwsh.body, '`'), `\`, "/")
+	return normalize(bash.body, '\\') != pwshCommand
 }
 
 func findBlock(group []*block, title string) *block {

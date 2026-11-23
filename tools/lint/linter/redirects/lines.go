@@ -56,35 +56,29 @@ func scanRedirectEntries(
 		if err != nil {
 			return
 		}
-
-		if delim, ok := tok.(json.Delim); ok {
-			switch delim {
-			case '{', '[':
-				if arrayDepth == 1 && entryIdx < count {
-					result[entryIdx] = lineForOffset(
-						docsJSONText,
-						tokenStart(docsJSONText, int(offsetBefore)),
-					)
-					entryIdx++
-				}
-				arrayDepth++
-			case '}', ']':
-				arrayDepth--
-				if arrayDepth == 0 {
-					return
-				}
-			}
-			continue
-		}
-
-		if arrayDepth == 1 && entryIdx < count {
+		delta := depthDelta(tok)
+		if delta >= 0 && arrayDepth == 1 && entryIdx < count {
 			result[entryIdx] = lineForOffset(
 				docsJSONText,
 				tokenStart(docsJSONText, int(offsetBefore)),
 			)
 			entryIdx++
 		}
+		arrayDepth += delta
+		if arrayDepth == 0 {
+			return
+		}
 	}
+}
+
+func depthDelta(tok json.Token) int {
+	switch tok {
+	case json.Delim('{'), json.Delim('['):
+		return 1
+	case json.Delim('}'), json.Delim(']'):
+		return -1
+	}
+	return 0
 }
 
 func tokenStart(text string, offset int) int {
