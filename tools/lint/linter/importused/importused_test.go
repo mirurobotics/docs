@@ -10,9 +10,9 @@ func TestCheck(t *testing.T) {
 		content := `import Framed from '/snippets/components/framed.jsx';
 
 <Framed />`
-		vs := Check("test.mdx", strings.Split(content, "\n"))
-		if len(vs) != 0 {
-			t.Errorf("expected 0 violations, got %d: %v", len(vs), vs)
+		violations := Check("test.mdx", strings.Split(content, "\n"))
+		if len(violations) != 0 {
+			t.Errorf("expected 0 violations, got %d: %v", len(violations), violations)
 		}
 	})
 
@@ -20,9 +20,9 @@ func TestCheck(t *testing.T) {
 		content := `import Framed from '/snippets/components/framed.jsx';
 
 <Framed>some content</Framed>`
-		vs := Check("test.mdx", strings.Split(content, "\n"))
-		if len(vs) != 0 {
-			t.Errorf("expected 0 violations, got %d: %v", len(vs), vs)
+		violations := Check("test.mdx", strings.Split(content, "\n"))
+		if len(violations) != 0 {
+			t.Errorf("expected 0 violations, got %d: %v", len(violations), violations)
 		}
 	})
 
@@ -30,9 +30,9 @@ func TestCheck(t *testing.T) {
 		content := `import Unused from '/snippets/foo.mdx';
 
 Some text without the component.`
-		vs := Check("test.mdx", strings.Split(content, "\n"))
-		if len(vs) != 1 {
-			t.Errorf("expected 1 violation, got %d", len(vs))
+		violations := Check("test.mdx", strings.Split(content, "\n"))
+		if len(violations) != 1 {
+			t.Errorf("expected 1 violation, got %d", len(violations))
 		}
 	})
 
@@ -40,19 +40,19 @@ Some text without the component.`
 		content := `import { A, B } from '/snippets/components/field-badges.jsx';
 
 <A />`
-		vs := Check("test.mdx", strings.Split(content, "\n"))
-		if len(vs) != 1 {
-			t.Errorf("expected 1 violation, got %d: %v", len(vs), vs)
+		violations := Check("test.mdx", strings.Split(content, "\n"))
+		if len(violations) != 1 {
+			t.Errorf("expected 1 violation, got %d: %v", len(violations), violations)
 		}
-		if len(vs) > 0 && vs[0].Line != 1 {
-			t.Errorf("expected violation on line 1, got line %d", vs[0].Line)
+		if len(violations) > 0 && violations[0].Line != 1 {
+			t.Errorf("expected violation on line 1, got line %d", violations[0].Line)
 		}
 	})
 
 	t.Run("no imports", func(t *testing.T) {
-		vs := Check("test.mdx", []string{"# Hello"})
-		if len(vs) != 0 {
-			t.Errorf("expected 0 violations, got %d", len(vs))
+		violations := Check("test.mdx", []string{"# Hello"})
+		if len(violations) != 0 {
+			t.Errorf("expected 0 violations, got %d", len(violations))
 		}
 	})
 
@@ -63,11 +63,11 @@ title: "Framed content"
 import Framed from '/snippets/components/framed.jsx';
 
 No component used here.`
-		vs := Check("test.mdx", strings.Split(content, "\n"))
-		if len(vs) != 1 {
+		violations := Check("test.mdx", strings.Split(content, "\n"))
+		if len(violations) != 1 {
 			t.Errorf(
 				"expected 1 violation (frontmatter excluded), got %d: %v",
-				len(vs), vs,
+				len(violations), violations,
 			)
 		}
 	})

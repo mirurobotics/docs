@@ -135,7 +135,6 @@ func TestRun(t *testing.T) {
 		if err := os.WriteFile(file, []byte("# x\n"), 0o644); err != nil {
 			t.Fatal(err)
 		}
-		// docs.json with a redirect destined for a missing page
 		docsJSON := `{"redirects":[{"source":"/old",` +
 			`"destination":"/missing"}]}`
 		docsJSONPath := filepath.Join(root, "docs.json")

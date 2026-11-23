@@ -7,97 +7,97 @@ import (
 func TestParseSingleImport(t *testing.T) {
 	t.Run("named single", func(t *testing.T) {
 		line := "import { Framed } from '/snippets/components/framed.jsx';"
-		pi := ParseSingleImport(1, line)
-		if pi == nil {
+		imp := ParseSingleImport(1, line)
+		if imp == nil {
 			t.Fatal("expected non-nil ParsedImport")
 		}
-		if len(pi.Names) != 1 {
-			t.Fatalf("expected 1 name, got %d", len(pi.Names))
+		if len(imp.Names) != 1 {
+			t.Fatalf("expected 1 name, got %d", len(imp.Names))
 		}
-		if pi.Names[0].Name != "Framed" {
-			t.Errorf("expected name Framed, got %q", pi.Names[0].Name)
+		if imp.Names[0].Name != "Framed" {
+			t.Errorf("expected name Framed, got %q", imp.Names[0].Name)
 		}
-		if !pi.Names[0].IsNamed {
+		if !imp.Names[0].IsNamed {
 			t.Error("expected IsNamed=true")
 		}
-		if pi.Path != "/snippets/components/framed.jsx" {
-			t.Errorf("expected path /snippets/components/framed.jsx, got %q", pi.Path)
+		if imp.Path != "/snippets/components/framed.jsx" {
+			t.Errorf("expected path /snippets/components/framed.jsx, got %q", imp.Path)
 		}
 	})
 
 	t.Run("named multi", func(t *testing.T) {
 		line := "import { A, B } from '/snippets/components/field-badges.jsx'"
-		pi := ParseSingleImport(2, line)
-		if pi == nil {
+		imp := ParseSingleImport(2, line)
+		if imp == nil {
 			t.Fatal("expected non-nil ParsedImport")
 		}
-		if len(pi.Names) != 2 {
-			t.Fatalf("expected 2 names, got %d", len(pi.Names))
+		if len(imp.Names) != 2 {
+			t.Fatalf("expected 2 names, got %d", len(imp.Names))
 		}
-		if pi.Names[0].Name != "A" || pi.Names[1].Name != "B" {
-			t.Errorf("expected names [A, B], got %v", pi.Names)
+		if imp.Names[0].Name != "A" || imp.Names[1].Name != "B" {
+			t.Errorf("expected names [A, B], got %v", imp.Names)
 		}
 	})
 
 	t.Run("default import", func(t *testing.T) {
 		line := "import DeviceDef from '/snippets/definitions/device.mdx'"
-		pi := ParseSingleImport(3, line)
-		if pi == nil {
+		imp := ParseSingleImport(3, line)
+		if imp == nil {
 			t.Fatal("expected non-nil ParsedImport")
 		}
-		if len(pi.Names) != 1 {
-			t.Fatalf("expected 1 name, got %d", len(pi.Names))
+		if len(imp.Names) != 1 {
+			t.Fatalf("expected 1 name, got %d", len(imp.Names))
 		}
-		if pi.Names[0].Name != "DeviceDef" {
-			t.Errorf("expected name DeviceDef, got %q", pi.Names[0].Name)
+		if imp.Names[0].Name != "DeviceDef" {
+			t.Errorf("expected name DeviceDef, got %q", imp.Names[0].Name)
 		}
-		if pi.Names[0].IsNamed {
+		if imp.Names[0].IsNamed {
 			t.Error("expected IsNamed=false for default import")
 		}
 	})
 
 	t.Run("double quotes", func(t *testing.T) {
 		line := `import Usage from "/snippets/foo.mdx";`
-		pi := ParseSingleImport(1, line)
-		if pi == nil {
+		imp := ParseSingleImport(1, line)
+		if imp == nil {
 			t.Fatal("expected non-nil ParsedImport")
 		}
-		if pi.Path != "/snippets/foo.mdx" {
-			t.Errorf("expected path /snippets/foo.mdx, got %q", pi.Path)
+		if imp.Path != "/snippets/foo.mdx" {
+			t.Errorf("expected path /snippets/foo.mdx, got %q", imp.Path)
 		}
 	})
 
 	t.Run("non-import line returns nil", func(t *testing.T) {
-		pi := ParseSingleImport(1, "This is not an import")
-		if pi != nil {
+		imp := ParseSingleImport(1, "This is not an import")
+		if imp != nil {
 			t.Error("expected nil for non-import line")
 		}
 	})
 
 	t.Run("named import unclosed brace", func(t *testing.T) {
-		pi := ParseSingleImport(1, "import { Foo from '/snippets/a.mdx';")
-		if pi != nil {
+		imp := ParseSingleImport(1, "import { Foo from '/snippets/a.mdx';")
+		if imp != nil {
 			t.Error("expected nil for named import with no closing brace")
 		}
 	})
 
 	t.Run("default import missing from keyword", func(t *testing.T) {
-		pi := ParseSingleImport(1, "import Foo '/snippets/a.mdx';")
-		if pi != nil {
+		imp := ParseSingleImport(1, "import Foo '/snippets/a.mdx';")
+		if imp != nil {
 			t.Error("expected nil for import without 'from' keyword")
 		}
 	})
 
 	t.Run("no quotes in import path", func(t *testing.T) {
-		pi := ParseSingleImport(1, "import { Foo } from /snippets/a.mdx;")
-		if pi != nil {
+		imp := ParseSingleImport(1, "import { Foo } from /snippets/a.mdx;")
+		if imp != nil {
 			t.Error("expected nil when import path has no quotes")
 		}
 	})
 
 	t.Run("unmatched closing quote in path", func(t *testing.T) {
-		pi := ParseSingleImport(1, "import { Foo } from path.mdx';")
-		if pi != nil {
+		imp := ParseSingleImport(1, "import { Foo } from path.mdx';")
+		if imp != nil {
 			t.Error("expected nil for unmatched closing quote in path")
 		}
 	})

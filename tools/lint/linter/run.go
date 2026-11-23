@@ -17,11 +17,6 @@ import (
 	"github.com/mirurobotics/docs/tools/lint/linter/shellpair"
 )
 
-// maxScanTokenSize caps bufio.Scanner's per-line buffer. Docs MDX
-// files can contain a single very long line (embedded base64 data
-// URIs, inline SVG, wide HTML table rows) that exceeds bufio's
-// default 64KB token limit; 16 MB comfortably covers realistic
-// documentation lines without unbounded memory growth.
 const maxScanTokenSize = 16 * 1024 * 1024
 
 // Rule identifies a linter rule.
@@ -64,8 +59,6 @@ type ruleEntry struct {
 	check func(checkInput) []analysis.Violation
 }
 
-// Redirects is invoked once per run from main.go (calling redirects.Check),
-// not per-file via ruleCheckers, because it operates on docs.json once.
 func ruleCheckers() []ruleEntry {
 	return []ruleEntry{
 		{RuleNoDoubleDash, func(in checkInput) []analysis.Violation {
@@ -103,22 +96,22 @@ func ruleCheckers() []ruleEntry {
 
 func runChecks(in checkInput) []analysis.Violation {
 	var violations []analysis.Violation
-	for _, rc := range ruleCheckers() {
-		violations = append(violations, rc.check(in)...)
+	for _, entry := range ruleCheckers() {
+		violations = append(violations, entry.check(in)...)
 	}
 	return violations
 }
 
 // ProcessFile lints a single file and returns violations.
 func ProcessFile(path, contentRoot string) ([]analysis.Violation, error) {
-	f, err := os.Open(path)
+	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
-	defer func() { _ = f.Close() }()
+	defer func() { _ = file.Close() }()
 
 	var lines []string
-	scanner := bufio.NewScanner(f)
+	scanner := bufio.NewScanner(file)
 	scanner.Buffer(make([]byte, 0, 64*1024), maxScanTokenSize)
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())

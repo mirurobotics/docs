@@ -55,8 +55,7 @@ func ParseSingleImport(lineNum int, line string) *ParsedImport {
 	return &ParsedImport{Line: lineNum, Raw: line, Names: names, Path: path}
 }
 
-// ExtractImportPath finds the last quoted string in rest (the "from '...'" part).
-// Returns the unquoted path and true, or ("", false) if not found.
+// ExtractImportPath returns the contents of the last quoted string in rest, if any.
 func ExtractImportPath(rest string) (string, bool) {
 	lastQuote := -1
 	var quoteChar byte
@@ -85,8 +84,8 @@ func ParseImports(lines []string) []ParsedImport {
 		if !IsImportLine(line) {
 			continue
 		}
-		if pi := ParseSingleImport(i+1, line); pi != nil {
-			imports = append(imports, *pi)
+		if imp := ParseSingleImport(i+1, line); imp != nil {
+			imports = append(imports, *imp)
 		}
 	}
 	return imports
@@ -95,8 +94,7 @@ func ParseImports(lines []string) []ParsedImport {
 // IsImportLine returns true if the line starts with "import ".
 func IsImportLine(line string) bool { return strings.HasPrefix(line, "import ") }
 
-// FrontmatterEnd returns the 0-based index of the closing "---" line,
-// or -1 if no frontmatter block is present.
+// FrontmatterEnd returns the 0-based index of the closing "---" line, or -1 if none.
 func FrontmatterEnd(lines []string) int {
 	if len(lines) == 0 || strings.TrimRight(lines[0], " \t") != "---" {
 		return -1

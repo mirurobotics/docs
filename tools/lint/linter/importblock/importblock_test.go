@@ -8,9 +8,9 @@ import (
 func TestCheck(t *testing.T) {
 	t.Run("no blank lines between imports", func(t *testing.T) {
 		content := "import A from '/snippets/a.mdx';\nimport B from '/snippets/b.mdx';"
-		vs := Check("test.mdx", strings.Split(content, "\n"))
-		if len(vs) != 0 {
-			t.Errorf("expected 0 violations, got %d", len(vs))
+		violations := Check("test.mdx", strings.Split(content, "\n"))
+		if len(violations) != 0 {
+			t.Errorf("expected 0 violations, got %d", len(violations))
 		}
 	})
 
@@ -20,12 +20,12 @@ func TestCheck(t *testing.T) {
 			"",
 			"import B from '/snippets/b.mdx';",
 		}, "\n")
-		vs := Check("test.mdx", strings.Split(content, "\n"))
-		if len(vs) != 1 {
-			t.Errorf("expected 1 violation, got %d: %v", len(vs), vs)
+		violations := Check("test.mdx", strings.Split(content, "\n"))
+		if len(violations) != 1 {
+			t.Errorf("expected 1 violation, got %d: %v", len(violations), violations)
 		}
-		if len(vs) > 0 && vs[0].Line != 2 {
-			t.Errorf("expected violation on line 2, got line %d", vs[0].Line)
+		if len(violations) > 0 && violations[0].Line != 2 {
+			t.Errorf("expected violation on line 2, got line %d", violations[0].Line)
 		}
 	})
 
@@ -35,9 +35,12 @@ func TestCheck(t *testing.T) {
 			"import A from '/snippets/a.mdx';",
 			"import B from '/snippets/b.mdx';",
 		}, "\n")
-		vs := Check("test.mdx", strings.Split(content, "\n"))
-		if len(vs) != 0 {
-			t.Errorf("expected 0 violations (blank before first), got %d", len(vs))
+		violations := Check("test.mdx", strings.Split(content, "\n"))
+		if len(violations) != 0 {
+			t.Errorf(
+				"expected 0 violations (blank before first), got %d",
+				len(violations),
+			)
 		}
 	})
 
@@ -48,9 +51,12 @@ func TestCheck(t *testing.T) {
 			"",
 			"Some content",
 		}, "\n")
-		vs := Check("test.mdx", strings.Split(content, "\n"))
-		if len(vs) != 0 {
-			t.Errorf("expected 0 violations (blank after last), got %d", len(vs))
+		violations := Check("test.mdx", strings.Split(content, "\n"))
+		if len(violations) != 0 {
+			t.Errorf(
+				"expected 0 violations (blank after last), got %d",
+				len(violations),
+			)
 		}
 	})
 
@@ -61,23 +67,23 @@ func TestCheck(t *testing.T) {
 			"",
 			"import B from '/snippets/b.mdx';",
 		}, "\n")
-		vs := Check("test.mdx", strings.Split(content, "\n"))
-		if len(vs) != 2 {
-			t.Errorf("expected 2 violations, got %d: %v", len(vs), vs)
+		violations := Check("test.mdx", strings.Split(content, "\n"))
+		if len(violations) != 2 {
+			t.Errorf("expected 2 violations, got %d: %v", len(violations), violations)
 		}
 	})
 
 	t.Run("single import", func(t *testing.T) {
-		vs := Check("test.mdx", []string{"import A from '/snippets/a.mdx';"})
-		if len(vs) != 0 {
-			t.Errorf("expected 0 violations, got %d", len(vs))
+		violations := Check("test.mdx", []string{"import A from '/snippets/a.mdx';"})
+		if len(violations) != 0 {
+			t.Errorf("expected 0 violations, got %d", len(violations))
 		}
 	})
 
 	t.Run("no imports", func(t *testing.T) {
-		vs := Check("test.mdx", []string{"# Hello world"})
-		if len(vs) != 0 {
-			t.Errorf("expected 0 violations, got %d", len(vs))
+		violations := Check("test.mdx", []string{"# Hello world"})
+		if len(violations) != 0 {
+			t.Errorf("expected 0 violations, got %d", len(violations))
 		}
 	})
 
@@ -87,11 +93,11 @@ func TestCheck(t *testing.T) {
 			"## Heading",
 			"import B from '/snippets/b.mdx';",
 		}, "\n")
-		vs := Check("test.mdx", strings.Split(content, "\n"))
-		if len(vs) != 0 {
+		violations := Check("test.mdx", strings.Split(content, "\n"))
+		if len(violations) != 0 {
 			t.Errorf(
 				"expected 0 violations with non-blank content between imports, got %d",
-				len(vs),
+				len(violations),
 			)
 		}
 	})

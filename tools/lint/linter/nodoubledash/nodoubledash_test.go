@@ -12,7 +12,7 @@ func TestCheck(t *testing.T) {
 		name      string
 		input     string
 		wantCount int
-		wantCols  []int // 1-based columns of expected violations
+		wantCols  []int
 	}{
 		{
 			name:      "double dash in prose",
@@ -51,23 +51,23 @@ func TestCheck(t *testing.T) {
 		{name: "empty string", input: "", wantCount: 0},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
 			var spans [][]analysis.ProseSpan
-			if tt.input == "" {
+			if tc.input == "" {
 				spans = [][]analysis.ProseSpan{nil}
 			} else {
-				spans = [][]analysis.ProseSpan{{{StartCol: 1, Text: tt.input}}}
+				spans = [][]analysis.ProseSpan{{{StartCol: 1, Text: tc.input}}}
 			}
 			violations := Check("test.mdx", spans)
-			if len(violations) != tt.wantCount {
+			if len(violations) != tc.wantCount {
 				t.Errorf(
 					"expected %d violations, got %d: %v",
-					tt.wantCount, len(violations), violations,
+					tc.wantCount, len(violations), violations,
 				)
 				return
 			}
-			for i, wantCol := range tt.wantCols {
+			for i, wantCol := range tc.wantCols {
 				if violations[i].Col != wantCol {
 					t.Errorf(
 						"violation %d: expected col %d, got %d",
@@ -80,7 +80,6 @@ func TestCheck(t *testing.T) {
 }
 
 func TestCheckWithOffset(t *testing.T) {
-	// Simulate a span that starts at column 10 (e.g. after inline code)
 	spans := [][]analysis.ProseSpan{{{StartCol: 10, Text: "a--b"}}}
 	violations := Check("test.mdx", spans)
 	if len(violations) != 1 {
@@ -168,23 +167,23 @@ func TestCheckIntegration(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
 			scanner := analysis.NewScanner()
-			lines := strings.Split(tt.content, "\n")
+			lines := strings.Split(tc.content, "\n")
 			spans := make([][]analysis.ProseSpan, len(lines))
 			for i, line := range lines {
 				spans[i] = scanner.ScanLine(line)
 			}
 			violations := Check("test.mdx", spans)
-			if len(violations) != tt.wantCount {
+			if len(violations) != tc.wantCount {
 				t.Errorf(
 					"expected %d violations, got %d: %v",
-					tt.wantCount, len(violations), violations,
+					tc.wantCount, len(violations), violations,
 				)
 				return
 			}
-			for i, wantLine := range tt.wantLines {
+			for i, wantLine := range tc.wantLines {
 				if violations[i].Line != wantLine {
 					t.Errorf(
 						"violation %d: expected line %d, got %d",

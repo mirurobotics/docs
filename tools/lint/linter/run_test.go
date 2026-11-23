@@ -22,12 +22,12 @@ func TestProcessFile(t *testing.T) {
 		if err := os.WriteFile(path, content, 0o644); err != nil {
 			t.Fatal(err)
 		}
-		vs, err := ProcessFile(path, dir)
+		violations, err := ProcessFile(path, dir)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
-		if len(vs) != 0 {
-			t.Errorf("expected 0 violations, got %d: %v", len(vs), vs)
+		if len(violations) != 0 {
+			t.Errorf("expected 0 violations, got %d: %v", len(violations), violations)
 		}
 	})
 
@@ -38,18 +38,18 @@ func TestProcessFile(t *testing.T) {
 		if err := os.WriteFile(path, content, 0o644); err != nil {
 			t.Fatal(err)
 		}
-		vs, err := ProcessFile(path, dir)
+		violations, err := ProcessFile(path, dir)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 		found := false
-		for _, v := range vs {
-			if v.Message == "no-double-dash: use em dash '\u2014' instead of '--'" {
+		for _, got := range violations {
+			if got.Message == "no-double-dash: use em dash '\u2014' instead of '--'" {
 				found = true
 			}
 		}
 		if !found {
-			t.Errorf("expected no-double-dash violation, got %v", vs)
+			t.Errorf("expected no-double-dash violation, got %v", violations)
 		}
 	})
 
@@ -73,18 +73,18 @@ func TestProcessFile(t *testing.T) {
 		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
 			t.Fatal(err)
 		}
-		vs, err := ProcessFile(path, dir)
+		violations, err := ProcessFile(path, dir)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 		found := false
-		for _, v := range vs {
-			if v.Line == 3 && strings.HasPrefix(v.Message, "image-domain:") {
+		for _, got := range violations {
+			if got.Line == 3 && strings.HasPrefix(got.Message, "image-domain:") {
 				found = true
 			}
 		}
 		if !found {
-			t.Errorf("expected image-domain violation on line 3, got %v", vs)
+			t.Errorf("expected image-domain violation on line 3, got %v", violations)
 		}
 	})
 
@@ -96,18 +96,18 @@ func TestProcessFile(t *testing.T) {
 		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
 			t.Fatal(err)
 		}
-		vs, err := ProcessFile(path, dir)
+		violations, err := ProcessFile(path, dir)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 		found := false
-		for _, v := range vs {
-			if v.Line == 4 && strings.HasPrefix(v.Message, "shell-pair:") {
+		for _, got := range violations {
+			if got.Line == 4 && strings.HasPrefix(got.Message, "shell-pair:") {
 				found = true
 			}
 		}
 		if !found {
-			t.Errorf("expected shell-pair violation on line 4, got %v", vs)
+			t.Errorf("expected shell-pair violation on line 4, got %v", violations)
 		}
 	})
 
@@ -118,18 +118,18 @@ func TestProcessFile(t *testing.T) {
 		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
 			t.Fatal(err)
 		}
-		vs, err := ProcessFile(path, dir)
+		violations, err := ProcessFile(path, dir)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 		found := false
-		for _, v := range vs {
-			if v.Line == 1 {
+		for _, got := range violations {
+			if got.Line == 1 {
 				found = true
 			}
 		}
 		if !found {
-			t.Errorf("expected violation on line 1, got %v", vs)
+			t.Errorf("expected violation on line 1, got %v", violations)
 		}
 	})
 }

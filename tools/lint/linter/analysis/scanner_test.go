@@ -5,104 +5,101 @@ import (
 )
 
 func TestFrontmatter(t *testing.T) {
-	s := NewScanner()
+	scanner := NewScanner()
 
-	if spans := s.ScanLine("---"); spans != nil {
+	if spans := scanner.ScanLine("---"); spans != nil {
 		t.Errorf("frontmatter open: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine(`title: "Test"`); spans != nil {
+	if spans := scanner.ScanLine(`title: "Test"`); spans != nil {
 		t.Errorf("frontmatter body: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine("---"); spans != nil {
+	if spans := scanner.ScanLine("---"); spans != nil {
 		t.Errorf("frontmatter close: expected nil, got %v", spans)
 	}
 
-	spans := s.ScanLine("Hello world")
+	spans := scanner.ScanLine("Hello world")
 	if len(spans) != 1 || spans[0].Text != "Hello world" {
 		t.Errorf("after frontmatter: expected prose, got %v", spans)
 	}
 }
 
 func TestFencedCodeBlock(t *testing.T) {
-	s := NewScanner()
+	scanner := NewScanner()
 
-	if spans := s.ScanLine("```bash"); spans != nil {
+	if spans := scanner.ScanLine("```bash"); spans != nil {
 		t.Errorf("code fence open: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine("miru release create --version v1.0.0"); spans != nil {
+	if spans := scanner.ScanLine("miru release create --version v1.0.0"); spans != nil {
 		t.Errorf("code block body: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine("```"); spans != nil {
+	if spans := scanner.ScanLine("```"); spans != nil {
 		t.Errorf("code fence close: expected nil, got %v", spans)
 	}
 
-	spans := s.ScanLine("After code")
+	spans := scanner.ScanLine("After code")
 	if len(spans) != 1 || spans[0].Text != "After code" {
 		t.Errorf("after code block: expected prose, got %v", spans)
 	}
 }
 
 func TestTildeFence(t *testing.T) {
-	s := NewScanner()
+	scanner := NewScanner()
 
-	if spans := s.ScanLine("~~~"); spans != nil {
+	if spans := scanner.ScanLine("~~~"); spans != nil {
 		t.Errorf("tilde fence open: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine("--flag"); spans != nil {
+	if spans := scanner.ScanLine("--flag"); spans != nil {
 		t.Errorf("tilde block body: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine("~~~"); spans != nil {
+	if spans := scanner.ScanLine("~~~"); spans != nil {
 		t.Errorf("tilde fence close: expected nil, got %v", spans)
 	}
 }
 
 func TestFourBacktickFence(t *testing.T) {
-	s := NewScanner()
+	scanner := NewScanner()
 
-	if spans := s.ScanLine("````mdx"); spans != nil {
+	if spans := scanner.ScanLine("````mdx"); spans != nil {
 		t.Errorf("4-backtick fence open: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine("--flag"); spans != nil {
+	if spans := scanner.ScanLine("--flag"); spans != nil {
 		t.Errorf("4-backtick block body: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine("````"); spans != nil {
+	if spans := scanner.ScanLine("````"); spans != nil {
 		t.Errorf("4-backtick fence close: expected nil, got %v", spans)
 	}
 
-	spans := s.ScanLine("After 4-backtick block")
+	spans := scanner.ScanLine("After 4-backtick block")
 	if len(spans) != 1 || spans[0].Text != "After 4-backtick block" {
 		t.Errorf("after 4-backtick block: expected prose, got %v", spans)
 	}
 }
 
 func TestFourBacktickFenceInnerTriple(t *testing.T) {
-	s := NewScanner()
+	scanner := NewScanner()
 
-	if spans := s.ScanLine("````"); spans != nil {
+	if spans := scanner.ScanLine("````"); spans != nil {
 		t.Errorf("4-backtick open: expected nil, got %v", spans)
 	}
-	// A triple-backtick line inside must NOT close the block.
-	if spans := s.ScanLine("```"); spans != nil {
+	if spans := scanner.ScanLine("```"); spans != nil {
 		t.Errorf("inner triple backtick: expected nil (body), got %v", spans)
 	}
-	if spans := s.ScanLine("````"); spans != nil {
+	if spans := scanner.ScanLine("````"); spans != nil {
 		t.Errorf("4-backtick close: expected nil, got %v", spans)
 	}
 
-	spans := s.ScanLine("prose after")
+	spans := scanner.ScanLine("prose after")
 	if len(spans) != 1 || spans[0].Text != "prose after" {
 		t.Errorf("after block: expected prose, got %v", spans)
 	}
 }
 
 func TestInlineCode(t *testing.T) {
-	s := NewScanner()
-	// Skip frontmatter
-	s.ScanLine("---")
-	s.ScanLine("---")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
 
-	spans := s.ScanLine("Use the `--version` flag here")
-	// Should get: "Use the " and " flag here"
+	spans := scanner.ScanLine("Use the `--version` flag here")
 	if len(spans) != 2 {
 		t.Fatalf("inline code: expected 2 spans, got %d: %v", len(spans), spans)
 	}
@@ -118,11 +115,11 @@ func TestInlineCode(t *testing.T) {
 }
 
 func TestDoubleBacktickInlineCode(t *testing.T) {
-	s := NewScanner()
-	s.ScanLine("---")
-	s.ScanLine("---")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
 
-	spans := s.ScanLine("Use ``--flag`` here")
+	spans := scanner.ScanLine("Use ``--flag`` here")
 	if len(spans) != 2 {
 		t.Fatalf("double backtick: expected 2 spans, got %d: %v", len(spans), spans)
 	}
@@ -135,11 +132,11 @@ func TestDoubleBacktickInlineCode(t *testing.T) {
 }
 
 func TestHTMLComment(t *testing.T) {
-	s := NewScanner()
-	s.ScanLine("---")
-	s.ScanLine("---")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
 
-	spans := s.ScanLine("before <!-- --test --> after")
+	spans := scanner.ScanLine("before <!-- --test --> after")
 	if len(spans) != 2 {
 		t.Fatalf("html comment: expected 2 spans, got %d: %v", len(spans), spans)
 	}
@@ -152,31 +149,33 @@ func TestHTMLComment(t *testing.T) {
 }
 
 func TestMultilineHTMLComment(t *testing.T) {
-	s := NewScanner()
-	s.ScanLine("---")
-	s.ScanLine("---")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
 
-	spans := s.ScanLine("before <!-- start")
+	spans := scanner.ScanLine("before <!-- start")
 	if len(spans) != 1 || spans[0].Text != "before " {
 		t.Errorf("comment open line: expected 'before ', got %v", spans)
 	}
 
-	if spans := s.ScanLine("-- middle"); spans != nil {
+	if spans := scanner.ScanLine("-- middle"); spans != nil {
 		t.Errorf("comment body: expected nil, got %v", spans)
 	}
 
-	spans = s.ScanLine("--> after")
+	spans = scanner.ScanLine("--> after")
 	if len(spans) != 1 || spans[0].Text != " after" {
 		t.Errorf("comment close line: expected ' after', got %v", spans)
 	}
 }
 
 func TestJSXTag(t *testing.T) {
-	s := NewScanner()
-	s.ScanLine("---")
-	s.ScanLine("---")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
 
-	spans := s.ScanLine(`before <ParamField path="--version" type="string"> after`)
+	spans := scanner.ScanLine(
+		`before <ParamField path="--version" type="string"> after`,
+	)
 	if len(spans) != 2 {
 		t.Fatalf("jsx tag: expected 2 spans, got %d: %v", len(spans), spans)
 	}
@@ -189,107 +188,104 @@ func TestJSXTag(t *testing.T) {
 }
 
 func TestThematicBreak(t *testing.T) {
-	s := NewScanner()
-	s.ScanLine("---")
-	s.ScanLine("---")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
 
-	// Thematic break (not frontmatter since we're past it)
-	if spans := s.ScanLine("---"); spans != nil {
+	if spans := scanner.ScanLine("---"); spans != nil {
 		t.Errorf("thematic break: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine("----"); spans != nil {
+	if spans := scanner.ScanLine("----"); spans != nil {
 		t.Errorf("long thematic break: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine("  ---"); spans != nil {
+	if spans := scanner.ScanLine("  ---"); spans != nil {
 		t.Errorf("indented thematic break: expected nil, got %v", spans)
 	}
 }
 
 func TestTableSeparator(t *testing.T) {
-	s := NewScanner()
-	s.ScanLine("---")
-	s.ScanLine("---")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
 
-	if spans := s.ScanLine("|---|---|"); spans != nil {
+	if spans := scanner.ScanLine("|---|---|"); spans != nil {
 		t.Errorf("table separator: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine("| --- | --- |"); spans != nil {
+	if spans := scanner.ScanLine("| --- | --- |"); spans != nil {
 		t.Errorf("spaced table separator: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine("|:---:|:---:|"); spans != nil {
+	if spans := scanner.ScanLine("|:---:|:---:|"); spans != nil {
 		t.Errorf("aligned table separator: expected nil, got %v", spans)
 	}
 }
 
 func TestImportExport(t *testing.T) {
-	s := NewScanner()
-	s.ScanLine("---")
-	s.ScanLine("---")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
 
-	if spans := s.ScanLine("import Foo from './foo'"); spans != nil {
+	if spans := scanner.ScanLine("import Foo from './foo'"); spans != nil {
 		t.Errorf("import: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine("export default Bar"); spans != nil {
+	if spans := scanner.ScanLine("export default Bar"); spans != nil {
 		t.Errorf("export: expected nil, got %v", spans)
 	}
 }
 
 func TestIndentedCodeFence(t *testing.T) {
-	s := NewScanner()
-	s.ScanLine("---")
-	s.ScanLine("---")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
 
-	// MDX nests code blocks inside JSX at arbitrary indentation
-	if spans := s.ScanLine("    ```bash Empty Schemas"); spans != nil {
+	if spans := scanner.ScanLine("    ```bash Empty Schemas"); spans != nil {
 		t.Errorf("indented fence open: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine("      --version v1.0.0"); spans != nil {
+	if spans := scanner.ScanLine("      --version v1.0.0"); spans != nil {
 		t.Errorf("indented fence body: expected nil, got %v", spans)
 	}
-	if spans := s.ScanLine("    ```"); spans != nil {
+	if spans := scanner.ScanLine("    ```"); spans != nil {
 		t.Errorf("indented fence close: expected nil, got %v", spans)
 	}
 
-	spans := s.ScanLine("After indented code")
+	spans := scanner.ScanLine("After indented code")
 	if len(spans) != 1 || spans[0].Text != "After indented code" {
 		t.Errorf("after indented code: expected prose, got %v", spans)
 	}
 }
 
 func TestUnclosedQuoteInTag(t *testing.T) {
-	s := NewScanner()
-	s.ScanLine("---")
-	s.ScanLine("---")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
 
-	// Must not panic on malformed tags with unclosed quotes
-	spans := s.ScanLine(`<tag attr="unclosed`)
+	spans := scanner.ScanLine(`<tag attr="unclosed`)
 	if spans != nil {
 		t.Errorf("unclosed double quote tag: expected nil, got %v", spans)
 	}
 
-	spans = s.ScanLine(`<tag attr='unclosed`)
+	spans = scanner.ScanLine(`<tag attr='unclosed`)
 	if spans != nil {
 		t.Errorf("unclosed single quote tag: expected nil, got %v", spans)
 	}
 }
 
 func TestLineNum(t *testing.T) {
-	s := NewScanner()
-	s.ScanLine("---")
-	s.ScanLine("---")
-	s.ScanLine("line three")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
+	scanner.ScanLine("line three")
 
-	if s.LineNum() != 3 {
-		t.Errorf("expected LineNum 3, got %d", s.LineNum())
+	if scanner.LineNum() != 3 {
+		t.Errorf("expected LineNum 3, got %d", scanner.LineNum())
 	}
 }
 
 func TestProseLineColumns(t *testing.T) {
-	s := NewScanner()
-	s.ScanLine("---")
-	s.ScanLine("---")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
 
-	spans := s.ScanLine("plain prose line")
+	spans := scanner.ScanLine("plain prose line")
 	if len(spans) != 1 {
 		t.Fatalf("expected 1 span, got %d", len(spans))
 	}
@@ -301,15 +297,13 @@ func TestProseLineColumns(t *testing.T) {
 	}
 }
 
-// TestWhitespaceOnlyBeforeTag verifies that a whitespace-only span before a
-// JSX tag is silently dropped (appendSpan early-exit branch).
+// TestWhitespaceOnlyBeforeTag verifies a whitespace-only span before a tag is dropped.
 func TestWhitespaceOnlyBeforeTag(t *testing.T) {
-	s := NewScanner()
-	s.ScanLine("---")
-	s.ScanLine("---")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
 
-	// Three leading spaces before <Tag> — the spaces-only span must not appear.
-	spans := s.ScanLine("   <Tag> prose text")
+	spans := scanner.ScanLine("   <Tag> prose text")
 	if len(spans) != 1 {
 		t.Fatalf("expected 1 span (spaces dropped), got %d: %v", len(spans), spans)
 	}
@@ -318,14 +312,13 @@ func TestWhitespaceOnlyBeforeTag(t *testing.T) {
 	}
 }
 
-// TestUnclosedBacktick verifies that a backtick with no matching close is
-// treated as a literal character and the rest of the line is prose.
+// TestUnclosedBacktick verifies an unmatched backtick is literal and the rest is prose.
 func TestUnclosedBacktick(t *testing.T) {
-	s := NewScanner()
-	s.ScanLine("---")
-	s.ScanLine("---")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
 
-	spans := s.ScanLine("before `unclosed")
+	spans := scanner.ScanLine("before `unclosed")
 	if len(spans) != 2 {
 		t.Fatalf("expected 2 spans, got %d: %v", len(spans), spans)
 	}
@@ -337,15 +330,13 @@ func TestUnclosedBacktick(t *testing.T) {
 	}
 }
 
-// TestMismatchedBacktickCount verifies that a single backtick inside
-// double-backtick inline code does not close the span.
+// TestMismatchedBacktickCount verifies one backtick cannot close double-backtick code.
 func TestMismatchedBacktickCount(t *testing.T) {
-	s := NewScanner()
-	s.ScanLine("---")
-	s.ScanLine("---")
+	scanner := NewScanner()
+	scanner.ScanLine("---")
+	scanner.ScanLine("---")
 
-	// "``code`more``" — the interior single backtick must be skipped over.
-	spans := s.ScanLine("before ``code`more`` after")
+	spans := scanner.ScanLine("before ``code`more`` after")
 	if len(spans) != 2 {
 		t.Fatalf("expected 2 spans, got %d: %v", len(spans), spans)
 	}

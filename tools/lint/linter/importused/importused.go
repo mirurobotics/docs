@@ -17,12 +17,16 @@ func Check(file string, lines []string) []analysis.Violation {
 	body := strings.Join(analysis.BodyLines(lines), "\n")
 	var violations []analysis.Violation
 	for _, imp := range imports {
-		for _, n := range imp.Names {
-			re := regexp.MustCompile(fmt.Sprintf(`\b%s\b`, regexp.QuoteMeta(n.Name)))
-			if re.MatchString(body) {
+		for _, binding := range imp.Names {
+			pattern := regexp.MustCompile(
+				fmt.Sprintf(`\b%s\b`, regexp.QuoteMeta(binding.Name)),
+			)
+			if pattern.MatchString(body) {
 				continue
 			}
-			msg := fmt.Sprintf("import-used: %q is imported but never used", n.Name)
+			msg := fmt.Sprintf(
+				"import-used: %q is imported but never used", binding.Name,
+			)
 			violations = append(violations, analysis.Violation{
 				File: file, Line: imp.Line, Col: 1, Message: msg,
 			})

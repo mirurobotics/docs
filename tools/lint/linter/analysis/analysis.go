@@ -8,9 +8,7 @@ type Violation struct {
 	Message string
 }
 
-// ProseSpan represents a contiguous segment of prose text within a line.
-// StartCol is the 1-based byte offset of the span's first character in
-// the original line.
+// ProseSpan is a run of prose in a line, starting at 1-based byte column StartCol.
 type ProseSpan struct {
 	StartCol int
 	Text     string
