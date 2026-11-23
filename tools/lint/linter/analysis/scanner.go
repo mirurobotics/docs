@@ -143,7 +143,7 @@ func (s *Scanner) maskInlineRegions(line string, baseCol int) []ProseSpan {
 	return spans
 }
 
-// regionEnd runs an unclosed comment to the line's end and into the next line.
+// regionEnd returns where the region at pos ends; an unclosed comment opens the zone.
 func (s *Scanner) regionEnd(line string, pos int) (int, bool) {
 	if !strings.HasPrefix(line[pos:], "<!--") {
 		return inlineRegionEnd(line, pos)
