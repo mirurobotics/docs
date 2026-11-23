@@ -30,22 +30,20 @@ func validateSource(
 	contentRoot string,
 	openAPISources map[string]bool,
 ) []analysis.Violation {
-	prefix, hasWildcard := splitWildcard(cleanPath(fields.source))
-	prefixFs := filepath.Join(contentRoot, filepath.Join(prefix...))
-	yamlRel := strings.Join(prefix, "/") + ".yaml"
+	src := resolvePath(fields.source, contentRoot)
 	var msg string
 	switch {
-	case containsTraversalSegment(prefix):
+	case src.hasTraversal():
 		msg = "bad path: contains '..' or '.' segment"
-	case !hasWildcard && pageExists(prefixFs):
+	case !src.hasWildcard && src.hasPage():
 		msg = "dead redirect (source resolves to a real page)"
-	case !hasWildcard:
+	case !src.hasWildcard:
 		return nil
-	case pageExists(prefixFs):
+	case src.hasPage():
 		msg = "dead redirect (wildcard source prefix resolves to a real page)"
-	case dirExists(prefixFs) && dirHasPages(prefixFs):
+	case dirExists(src.fsPath) && dirHasPages(src.fsPath):
 		msg = "dead redirect (wildcard source prefix has real pages)"
-	case openAPISources[yamlRel] && fileExists(prefixFs+".yaml"):
+	case src.hasGeneratedPages(openAPISources):
 		msg = "dead redirect (wildcard source prefix has Mintlify-generated pages)"
 	default:
 		return nil
@@ -58,25 +56,51 @@ func validateDestination(
 	contentRoot string,
 	openAPISources map[string]bool,
 ) []analysis.Violation {
-	prefix, hasWildcard := splitWildcard(cleanPath(fields.destination))
-	prefixFs := filepath.Join(contentRoot, filepath.Join(prefix...))
-	yamlRel := strings.Join(prefix, "/") + ".yaml"
+	dst := resolvePath(fields.destination, contentRoot)
 	var msg string
 	switch {
-	case containsTraversalSegment(prefix):
+	case dst.hasTraversal():
 		msg = "bad path: contains '..' or '.' segment"
-	case !hasWildcard && pageExists(prefixFs):
+	case !dst.hasWildcard && dst.hasPage():
 		return nil
-	case !hasWildcard:
+	case !dst.hasWildcard:
 		msg = "missing destination (no .mdx or .md page exists)"
-	case dirExists(prefixFs):
+	case dirExists(dst.fsPath):
 		return nil
-	case openAPISources[yamlRel] && fileExists(prefixFs+".yaml"):
+	case dst.hasGeneratedPages(openAPISources):
 		return nil
 	default:
 		msg = "wildcard prefix not a directory"
 	}
 	return entryViolation(fields.i, fields.line, "destination", fields.destination, msg)
+}
+
+type resolvedPath struct {
+	prefix      []string
+	hasWildcard bool
+	fsPath      string
+}
+
+func resolvePath(raw, contentRoot string) resolvedPath {
+	prefix, hasWildcard := splitWildcard(cleanPath(raw))
+	return resolvedPath{
+		prefix:      prefix,
+		hasWildcard: hasWildcard,
+		fsPath:      filepath.Join(contentRoot, filepath.Join(prefix...)),
+	}
+}
+
+func (r resolvedPath) hasTraversal() bool {
+	return containsTraversalSegment(r.prefix)
+}
+
+func (r resolvedPath) hasPage() bool {
+	return pageExists(r.fsPath)
+}
+
+func (r resolvedPath) hasGeneratedPages(openAPISources map[string]bool) bool {
+	yamlRel := strings.Join(r.prefix, "/") + ".yaml"
+	return openAPISources[yamlRel] && fileExists(r.fsPath+".yaml")
 }
 
 func cleanPath(raw string) string {

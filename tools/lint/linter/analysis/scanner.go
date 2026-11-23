@@ -56,7 +56,11 @@ func (s *Scanner) scanZone(line string) []ProseSpan {
 			s.zone = zoneProse
 		}
 	case zoneHTMLComment:
-		return s.closeComment(line, 0)
+		end, ok := commentEnd(line, 0)
+		if ok {
+			s.zone = zoneProse
+			return s.maskInlineRegions(line[end:], end)
+		}
 	}
 	return nil
 }
@@ -124,12 +128,11 @@ func (s *Scanner) maskInlineRegions(line string, baseCol int) []ProseSpan {
 	i := 0
 	spanStart := 0
 	for i < len(line) {
-		if strings.HasPrefix(line[i:], "<!--") {
-			s.zone = zoneHTMLComment
-			spans = appendSpan(spans, line[spanStart:i], baseCol+spanStart)
-			return append(spans, s.closeComment(line[i+4:], baseCol+i+4)...)
-		}
 		end, ok := inlineRegionEnd(line, i)
+		if !ok && strings.HasPrefix(line[i:], "<!--") {
+			s.zone = zoneHTMLComment
+			return appendSpan(spans, line[spanStart:i], baseCol+spanStart)
+		}
 		if !ok {
 			i++
 			continue
@@ -144,16 +147,10 @@ func (s *Scanner) maskInlineRegions(line string, baseCol int) []ProseSpan {
 	return spans
 }
 
-func (s *Scanner) closeComment(line string, baseCol int) []ProseSpan {
-	idx := strings.Index(line, "-->")
-	if idx < 0 {
-		return nil
-	}
-	s.zone = zoneProse
-	return s.maskInlineRegions(line[idx+3:], baseCol+idx+3)
-}
-
 func inlineRegionEnd(line string, pos int) (int, bool) {
+	if strings.HasPrefix(line[pos:], "<!--") {
+		return commentEnd(line, pos+4)
+	}
 	switch line[pos] {
 	case '<':
 		return findTagEnd(line, pos), true
@@ -161,6 +158,14 @@ func inlineRegionEnd(line string, pos int) (int, bool) {
 		return findInlineCodeEnd(line, pos), true
 	}
 	return pos, false
+}
+
+func commentEnd(line string, pos int) (int, bool) {
+	idx := strings.Index(line[pos:], "-->")
+	if idx < 0 {
+		return pos, false
+	}
+	return pos + idx + 3, true
 }
 
 func findTagEnd(line string, pos int) int {
