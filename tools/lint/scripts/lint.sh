@@ -5,10 +5,10 @@ usage() {
 	cat <<'EOF'
 Usage: LINT_FIX=0 ./tools/lint/scripts/lint.sh
 
-Runs gotools (custom linter + gofumpt + golangci-lint) against
-docs/tools/lint/. Set LINT_FIX=0 to run in check-only mode (for CI
-and preflight); omit or set LINT_FIX=1 for auto-fix mode (default
-for local runs).
+Runs gotools (custom linter + gofumpt + golangci-lint + deadcode)
+against docs/tools/lint/, excluding the tempdir rule. Set LINT_FIX=0
+to run in check-only mode (for CI and preflight); omit or set
+LINT_FIX=1 for auto-fix mode (default for local runs).
 EOF
 }
 
@@ -28,4 +28,5 @@ if [ "${LINT_FIX:-1}" = "0" ]; then
 fi
 
 cd "${lint_dir}"
-exec go tool miru lint --paths="${lint_dir}" ${FIX}
+# tempdir requires core's test_dirs, which this public repo cannot import.
+exec go tool miru lint --paths="${lint_dir}" --exclude=tempdir ${FIX}
