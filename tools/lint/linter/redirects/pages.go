@@ -90,13 +90,9 @@ func resolvePath(raw, contentRoot string) resolvedPath {
 	}
 }
 
-func (r resolvedPath) hasTraversal() bool {
-	return containsTraversalSegment(r.prefix)
-}
+func (r resolvedPath) hasTraversal() bool { return containsTraversalSegment(r.prefix) }
 
-func (r resolvedPath) hasPage() bool {
-	return pageExists(r.fsPath)
-}
+func (r resolvedPath) hasPage() bool { return pageExists(r.fsPath) }
 
 func (r resolvedPath) hasGeneratedPages(openAPISources map[string]bool) bool {
 	yamlRel := strings.Join(r.prefix, "/") + ".yaml"
