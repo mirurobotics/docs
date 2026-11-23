@@ -3,6 +3,8 @@ package imagedomain
 import (
 	"strings"
 	"testing"
+
+	"github.com/mirurobotics/docs/tools/lint/linter/analysis"
 )
 
 func TestCheck(t *testing.T) {
@@ -205,22 +207,7 @@ func TestCheck(t *testing.T) {
 					tc.wantCount, len(violations), violations,
 				)
 			}
-			for i, wantLine := range tc.wantLines {
-				if violations[i].Line != wantLine {
-					t.Errorf(
-						"violation %d: expected line %d, got %d",
-						i, wantLine, violations[i].Line,
-					)
-				}
-			}
-			for i, wantCol := range tc.wantCols {
-				if violations[i].Col != wantCol {
-					t.Errorf(
-						"violation %d: expected col %d, got %d",
-						i, wantCol, violations[i].Col,
-					)
-				}
-			}
+			assertPositions(t, violations, tc.wantLines, tc.wantCols)
 			if tc.wantMsg != "" && violations[0].Message != tc.wantMsg {
 				t.Errorf(
 					"expected message %q, got %q",
@@ -231,5 +218,29 @@ func TestCheck(t *testing.T) {
 				t.Errorf("expected file test.mdx, got %q", violations[0].File)
 			}
 		})
+	}
+}
+
+func assertPositions(
+	t *testing.T,
+	violations []analysis.Violation,
+	wantLines, wantCols []int,
+) {
+	t.Helper()
+	for i, wantLine := range wantLines {
+		if violations[i].Line != wantLine {
+			t.Errorf(
+				"violation %d: expected line %d, got %d",
+				i, wantLine, violations[i].Line,
+			)
+		}
+	}
+	for i, wantCol := range wantCols {
+		if violations[i].Col != wantCol {
+			t.Errorf(
+				"violation %d: expected col %d, got %d",
+				i, wantCol, violations[i].Col,
+			)
+		}
 	}
 }

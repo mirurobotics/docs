@@ -33,19 +33,7 @@ const (
 	RuleImportBlock    Rule = "import-block"
 	RuleImageDomain    Rule = "image-domain"
 	RuleShellPair      Rule = "shell-pair"
-	RuleRedirects      Rule = "redirects"
 )
-
-// AllRules returns every valid rule name.
-func AllRules() []Rule {
-	return []Rule{
-		RuleNoDoubleDash,
-		RuleHeadingCase,
-		RuleImportResolves, RuleImportUsed, RuleImportSorted,
-		RuleComponentStyle, RuleMDXStyle, RuleImportBlock,
-		RuleImageDomain, RuleShellPair, RuleRedirects,
-	}
-}
 
 type checkInput struct {
 	path        string

@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestCheck(t *testing.T) {
+func TestCheck_NoViolations(t *testing.T) {
 	t.Run("single import", func(t *testing.T) {
 		violations := Check("test.mdx", []string{"import A from '/snippets/a.mdx';"})
 		if len(violations) != 0 {
@@ -21,6 +21,15 @@ func TestCheck(t *testing.T) {
 		}
 	})
 
+	t.Run("no imports", func(t *testing.T) {
+		violations := Check("test.mdx", []string{"# Hello"})
+		if len(violations) != 0 {
+			t.Errorf("expected 0 violations, got %d", len(violations))
+		}
+	})
+}
+
+func TestCheck_OutOfOrder(t *testing.T) {
 	t.Run("two imports out of order", func(t *testing.T) {
 		content := "import B from '/snippets/b.mdx';\nimport A from '/snippets/a.mdx';"
 		violations := Check("test.mdx", strings.Split(content, "\n"))
@@ -47,13 +56,6 @@ func TestCheck(t *testing.T) {
 		}
 		if len(violations) > 0 && violations[0].Line != 2 {
 			t.Errorf("expected violation on line 2, got line %d", violations[0].Line)
-		}
-	})
-
-	t.Run("no imports", func(t *testing.T) {
-		violations := Check("test.mdx", []string{"# Hello"})
-		if len(violations) != 0 {
-			t.Errorf("expected 0 violations, got %d", len(violations))
 		}
 	})
 }
