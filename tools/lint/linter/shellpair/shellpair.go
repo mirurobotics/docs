@@ -116,7 +116,11 @@ func checkGroup(file string, group []*block) []analysis.Violation {
 	case pwshMulti && bash == nil:
 		return violation(file, pwsh.line,
 			"multi-line PowerShell command needs a Bash twin")
-	case (bashMulti || pwshMulti) && areTwinsDifferent(bash, pwsh):
+	case !bashMulti && !pwshMulti:
+		return nil
+	case wrongContinuation(bash) != "" || wrongContinuation(pwsh) != "":
+		return nil
+	case areTwinsDifferent(bash, pwsh):
 		return violation(file, pwsh.line,
 			"PowerShell command differs from its Bash twin")
 	}
@@ -124,12 +128,6 @@ func checkGroup(file string, group []*block) []analysis.Violation {
 }
 
 func areTwinsDifferent(bash, pwsh *block) bool {
-	if bash == nil || pwsh == nil {
-		return false
-	}
-	if wrongContinuation(bash) != "" || wrongContinuation(pwsh) != "" {
-		return false
-	}
 	pwshCommand := strings.ReplaceAll(normalize(pwsh.body, '`'), `\`, "/")
 	return normalize(bash.body, '\\') != pwshCommand
 }
