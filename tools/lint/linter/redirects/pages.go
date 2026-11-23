@@ -51,6 +51,27 @@ func validateSource(
 	return entryViolation(fields.i, fields.line, "source", fields.source, msg)
 }
 
+func dirHasPages(dir string) bool {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return false
+	}
+	for _, ent := range entries {
+		name := ent.Name()
+		if ent.IsDir() && dirHasPages(filepath.Join(dir, name)) {
+			return true
+		}
+		if !ent.IsDir() && isPageFile(name) {
+			return true
+		}
+	}
+	return false
+}
+
+func isPageFile(name string) bool {
+	return strings.HasSuffix(name, ".mdx") || strings.HasSuffix(name, ".md")
+}
+
 func validateDestination(
 	fields entryFields,
 	contentRoot string,
@@ -75,12 +96,6 @@ func validateDestination(
 	return entryViolation(fields.i, fields.line, "destination", fields.destination, msg)
 }
 
-type resolvedPath struct {
-	prefix      []string
-	hasWildcard bool
-	fsPath      string
-}
-
 func resolvePath(raw, contentRoot string) resolvedPath {
 	prefix, hasWildcard := splitWildcard(cleanPath(raw))
 	return resolvedPath{
@@ -88,28 +103,6 @@ func resolvePath(raw, contentRoot string) resolvedPath {
 		hasWildcard: hasWildcard,
 		fsPath:      filepath.Join(contentRoot, filepath.Join(prefix...)),
 	}
-}
-
-func (r resolvedPath) hasTraversal() bool { return containsTraversalSegment(r.prefix) }
-
-func (r resolvedPath) hasPage() bool { return pageExists(r.fsPath) }
-
-func (r resolvedPath) hasGeneratedPages(openAPISources map[string]bool) bool {
-	yamlRel := strings.Join(r.prefix, "/") + ".yaml"
-	return openAPISources[yamlRel] && fileExists(r.fsPath+".yaml")
-}
-
-func cleanPath(raw string) string {
-	cleaned := raw
-	if idx := strings.Index(cleaned, "?"); idx != -1 {
-		cleaned = cleaned[:idx]
-	}
-	if idx := strings.Index(cleaned, "#"); idx != -1 {
-		cleaned = cleaned[:idx]
-	}
-	cleaned = strings.TrimPrefix(cleaned, "/")
-	cleaned = strings.TrimSuffix(cleaned, "/")
-	return cleaned
 }
 
 func splitWildcard(cleaned string) ([]string, bool) {
@@ -136,6 +129,42 @@ func wildcardSegment() *regexp.Regexp {
 	return regexp.MustCompile(`^:[A-Za-z][A-Za-z0-9]*\*?$`)
 }
 
+func cleanPath(raw string) string {
+	cleaned := raw
+	if idx := strings.Index(cleaned, "?"); idx != -1 {
+		cleaned = cleaned[:idx]
+	}
+	if idx := strings.Index(cleaned, "#"); idx != -1 {
+		cleaned = cleaned[:idx]
+	}
+	cleaned = strings.TrimPrefix(cleaned, "/")
+	cleaned = strings.TrimSuffix(cleaned, "/")
+	return cleaned
+}
+
+func dirExists(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return info.IsDir()
+}
+
+type resolvedPath struct {
+	prefix      []string
+	hasWildcard bool
+	fsPath      string
+}
+
+func (r resolvedPath) hasTraversal() bool { return containsTraversalSegment(r.prefix) }
+
+func (r resolvedPath) hasPage() bool { return pageExists(r.fsPath) }
+
+func (r resolvedPath) hasGeneratedPages(openAPISources map[string]bool) bool {
+	yamlRel := strings.Join(r.prefix, "/") + ".yaml"
+	return openAPISources[yamlRel] && fileExists(r.fsPath+".yaml")
+}
+
 func containsTraversalSegment(segments []string) bool {
 	for _, seg := range segments {
 		if seg == ".." || seg == "." {
@@ -155,33 +184,4 @@ func fileExists(path string) bool {
 		return false
 	}
 	return info.Mode().IsRegular()
-}
-
-func dirExists(path string) bool {
-	info, err := os.Stat(path)
-	if err != nil {
-		return false
-	}
-	return info.IsDir()
-}
-
-func dirHasPages(dir string) bool {
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		return false
-	}
-	for _, ent := range entries {
-		name := ent.Name()
-		if ent.IsDir() && dirHasPages(filepath.Join(dir, name)) {
-			return true
-		}
-		if !ent.IsDir() && isPageFile(name) {
-			return true
-		}
-	}
-	return false
-}
-
-func isPageFile(name string) bool {
-	return strings.HasSuffix(name, ".mdx") || strings.HasSuffix(name, ".md")
 }

@@ -12,41 +12,6 @@ const allowedPrefix = "https://assets.mirurobotics.com/"
 
 const ignoreDirective = "{/* lint-ignore image-domain */}"
 
-func mdImageRe() *regexp.Regexp {
-	return regexp.MustCompile(`!\[[^\]]*\]\(\s*([^)\s]+)`)
-}
-
-func attrRe() *regexp.Regexp {
-	return regexp.MustCompile(
-		`\b(src|image|background|poster)\s*=\s*\{?\s*["']([^"']*)["']`)
-}
-
-func imageExts() map[string]struct{} {
-	return map[string]struct{}{
-		".png":  {},
-		".jpg":  {},
-		".jpeg": {},
-		".gif":  {},
-		".svg":  {},
-		".webp": {},
-	}
-}
-
-type candidate struct {
-	url     string
-	col     int
-	srcOnly bool
-}
-
-type checker struct {
-	mdImage, attr *regexp.Regexp
-	exts          map[string]struct{}
-}
-
-func newChecker() *checker {
-	return &checker{mdImage: mdImageRe(), attr: attrRe(), exts: imageExts()}
-}
-
 // Check flags image references whose URL is not on the Miru assets domain.
 func Check(file string, lines []string) []analysis.Violation {
 	chk := newChecker()
@@ -69,8 +34,43 @@ func Check(file string, lines []string) []analysis.Violation {
 	return violations
 }
 
+func newChecker() *checker {
+	return &checker{mdImage: mdImageRe(), attr: attrRe(), exts: imageExts()}
+}
+
+func mdImageRe() *regexp.Regexp {
+	return regexp.MustCompile(`!\[[^\]]*\]\(\s*([^)\s]+)`)
+}
+
+func attrRe() *regexp.Regexp {
+	return regexp.MustCompile(
+		`\b(src|image|background|poster)\s*=\s*\{?\s*["']([^"']*)["']`)
+}
+
+func imageExts() map[string]struct{} {
+	return map[string]struct{}{
+		".png":  {},
+		".jpg":  {},
+		".jpeg": {},
+		".gif":  {},
+		".svg":  {},
+		".webp": {},
+	}
+}
+
 func suppressed(lines []string, i int) bool {
 	return i > 0 && strings.TrimSpace(lines[i-1]) == ignoreDirective
+}
+
+type candidate struct {
+	url     string
+	col     int
+	srcOnly bool
+}
+
+type checker struct {
+	mdImage, attr *regexp.Regexp
+	exts          map[string]struct{}
 }
 
 func (c *checker) checkLine(file string, i int, line string) []analysis.Violation {

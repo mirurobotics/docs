@@ -2,18 +2,26 @@ package analysis
 
 import "strings"
 
-// ImportedName represents a single binding from an import statement.
-type ImportedName struct {
-	Name    string
-	IsNamed bool // true if from { } syntax (named import)
-}
-
 // ParsedImport holds the parsed representation of one MDX import line.
 type ParsedImport struct {
 	Line  int            // 1-based line number
 	Raw   string         // original line text
 	Names []ImportedName // extracted bindings
 	Path  string         // import path without quotes or trailing semicolon
+}
+
+// ParseImports extracts all successfully parsed imports from a slice of lines.
+func ParseImports(lines []string) []ParsedImport {
+	var imports []ParsedImport
+	for i, line := range lines {
+		if !IsImportLine(line) {
+			continue
+		}
+		if imp := ParseSingleImport(i+1, line); imp != nil {
+			imports = append(imports, *imp)
+		}
+	}
+	return imports
 }
 
 // ParseSingleImport parses one import line. Returns nil if unparseable.
@@ -31,6 +39,12 @@ func ParseSingleImport(lineNum int, line string) *ParsedImport {
 		return nil
 	}
 	return &ParsedImport{Line: lineNum, Raw: line, Names: names, Path: path}
+}
+
+// ImportedName represents a single binding from an import statement.
+type ImportedName struct {
+	Name    string
+	IsNamed bool // true if from { } syntax (named import)
 }
 
 func parseImportBindings(rest string) ([]ImportedName, string, bool) {
@@ -84,36 +98,6 @@ func ExtractImportPath(rest string) (string, bool) {
 	return "", false
 }
 
-// ParseImports extracts all successfully parsed imports from a slice of lines.
-func ParseImports(lines []string) []ParsedImport {
-	var imports []ParsedImport
-	for i, line := range lines {
-		if !IsImportLine(line) {
-			continue
-		}
-		if imp := ParseSingleImport(i+1, line); imp != nil {
-			imports = append(imports, *imp)
-		}
-	}
-	return imports
-}
-
-// IsImportLine returns true if the line starts with "import ".
-func IsImportLine(line string) bool { return strings.HasPrefix(line, "import ") }
-
-// FrontmatterEnd returns the 0-based index of the closing "---" line, or -1 if none.
-func FrontmatterEnd(lines []string) int {
-	if len(lines) == 0 || strings.TrimRight(lines[0], " \t") != "---" {
-		return -1
-	}
-	for i := 1; i < len(lines); i++ {
-		if strings.TrimRight(lines[i], " \t") == "---" {
-			return i
-		}
-	}
-	return -1
-}
-
 // BodyLines returns non-frontmatter, non-import lines for word-search purposes.
 func BodyLines(lines []string) []string {
 	fmEnd := FrontmatterEnd(lines)
@@ -129,3 +113,19 @@ func BodyLines(lines []string) []string {
 	}
 	return body
 }
+
+// FrontmatterEnd returns the 0-based index of the closing "---" line, or -1 if none.
+func FrontmatterEnd(lines []string) int {
+	if len(lines) == 0 || strings.TrimRight(lines[0], " \t") != "---" {
+		return -1
+	}
+	for i := 1; i < len(lines); i++ {
+		if strings.TrimRight(lines[i], " \t") == "---" {
+			return i
+		}
+	}
+	return -1
+}
+
+// IsImportLine returns true if the line starts with "import ".
+func IsImportLine(line string) bool { return strings.HasPrefix(line, "import ") }

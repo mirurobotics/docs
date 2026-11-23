@@ -81,6 +81,16 @@ func depthDelta(tok json.Token) int {
 	return 0
 }
 
+func lineForOffset(text string, byteOffset int) int {
+	line := 1
+	for i := 0; i < byteOffset; i++ {
+		if text[i] == '\n' {
+			line++
+		}
+	}
+	return line
+}
+
 func tokenStart(text string, offset int) int {
 	for offset < len(text) {
 		char := text[offset]
@@ -91,14 +101,4 @@ func tokenStart(text string, offset int) int {
 		break
 	}
 	return offset
-}
-
-func lineForOffset(text string, byteOffset int) int {
-	line := 1
-	for i := 0; i < byteOffset; i++ {
-		if text[i] == '\n' {
-			line++
-		}
-	}
-	return line
 }

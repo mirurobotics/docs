@@ -11,15 +11,15 @@ const (
 	zoneHTMLComment
 )
 
+// NewScanner returns a scanner ready to process lines from the start of a file.
+func NewScanner() *Scanner { return &Scanner{} }
+
 // Scanner classifies MDX lines as prose or excluded (frontmatter, code, comments).
 type Scanner struct {
 	zone      zone
 	codeFence string
 	lineNum   int
 }
-
-// NewScanner returns a scanner ready to process lines from the start of a file.
-func NewScanner() *Scanner { return &Scanner{} }
 
 // LineNum returns the 1-based line number of the most recently scanned line.
 func (s *Scanner) LineNum() int { return s.lineNum }
@@ -63,6 +63,38 @@ func (s *Scanner) scanZone(line string) []ProseSpan {
 		}
 	}
 	return nil
+}
+
+func (s *Scanner) maskInlineRegions(line string, baseCol int) []ProseSpan {
+	var spans []ProseSpan
+	i := 0
+	spanStart := 0
+	for i < len(line) {
+		end, ok := s.regionEnd(line, i)
+		if !ok {
+			i++
+			continue
+		}
+		spans = appendSpan(spans, line[spanStart:i], baseCol+spanStart)
+		i = end
+		spanStart = i
+	}
+	if spanStart < len(line) {
+		spans = appendSpan(spans, line[spanStart:], baseCol+spanStart)
+	}
+	return spans
+}
+
+func (s *Scanner) regionEnd(line string, pos int) (int, bool) {
+	if !strings.HasPrefix(line[pos:], "<!--") {
+		return inlineRegionEnd(line, pos)
+	}
+	end, closed := commentEnd(line, pos+4)
+	if !closed {
+		s.zone = zoneHTMLComment
+		return len(line), true
+	}
+	return end, true
 }
 
 // CodeFenceOpen returns the fence a line opens at any indent, as MDX nests them in JSX.
@@ -123,37 +155,19 @@ func isImportExport(line string) bool {
 	return strings.HasPrefix(line, "import ") || strings.HasPrefix(line, "export ")
 }
 
-func (s *Scanner) maskInlineRegions(line string, baseCol int) []ProseSpan {
-	var spans []ProseSpan
-	i := 0
-	spanStart := 0
-	for i < len(line) {
-		end, ok := s.regionEnd(line, i)
-		if !ok {
-			i++
-			continue
-		}
-		spans = appendSpan(spans, line[spanStart:i], baseCol+spanStart)
-		i = end
-		spanStart = i
+func commentEnd(line string, pos int) (int, bool) {
+	idx := strings.Index(line[pos:], "-->")
+	if idx < 0 {
+		return pos, false
 	}
-	if spanStart < len(line) {
-		spans = appendSpan(spans, line[spanStart:], baseCol+spanStart)
-	}
-	return spans
+	return pos + idx + 3, true
 }
 
-// regionEnd returns where the region at pos ends; an unclosed comment opens the zone.
-func (s *Scanner) regionEnd(line string, pos int) (int, bool) {
-	if !strings.HasPrefix(line[pos:], "<!--") {
-		return inlineRegionEnd(line, pos)
+func appendSpan(spans []ProseSpan, text string, col int) []ProseSpan {
+	if len(strings.TrimSpace(text)) == 0 {
+		return spans
 	}
-	end, closed := commentEnd(line, pos+4)
-	if !closed {
-		s.zone = zoneHTMLComment
-		return len(line), true
-	}
-	return end, true
+	return append(spans, ProseSpan{StartCol: col + 1, Text: text})
 }
 
 func inlineRegionEnd(line string, pos int) (int, bool) {
@@ -164,14 +178,6 @@ func inlineRegionEnd(line string, pos int) (int, bool) {
 		return findInlineCodeEnd(line, pos), true
 	}
 	return pos, false
-}
-
-func commentEnd(line string, pos int) (int, bool) {
-	idx := strings.Index(line[pos:], "-->")
-	if idx < 0 {
-		return pos, false
-	}
-	return pos + idx + 3, true
 }
 
 func findTagEnd(line string, pos int) int {
@@ -221,11 +227,4 @@ func countRun(line string, pos int) int {
 		end++
 	}
 	return end - pos
-}
-
-func appendSpan(spans []ProseSpan, text string, col int) []ProseSpan {
-	if len(strings.TrimSpace(text)) == 0 {
-		return spans
-	}
-	return append(spans, ProseSpan{StartCol: col + 1, Text: text})
 }
