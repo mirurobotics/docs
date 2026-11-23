@@ -140,11 +140,11 @@ func TestHTMLComment(t *testing.T) {
 	if len(spans) != 2 {
 		t.Fatalf("html comment: expected 2 spans, got %d: %v", len(spans), spans)
 	}
-	if spans[0].Text != "before " {
-		t.Errorf("span 0: expected 'before ', got %q", spans[0].Text)
+	if spans[0] != (ProseSpan{StartCol: 1, Text: "before "}) {
+		t.Errorf("span 0: expected 'before ' at col 1, got %+v", spans[0])
 	}
-	if spans[1].Text != " after" {
-		t.Errorf("span 1: expected ' after', got %q", spans[1].Text)
+	if spans[1] != (ProseSpan{StartCol: 23, Text: " after"}) {
+		t.Errorf("span 1: expected ' after' at col 23, got %+v", spans[1])
 	}
 }
 
@@ -163,8 +163,8 @@ func TestMultilineHTMLComment(t *testing.T) {
 	}
 
 	spans = scanner.ScanLine("--> after")
-	if len(spans) != 1 || spans[0].Text != " after" {
-		t.Errorf("comment close line: expected ' after', got %v", spans)
+	if len(spans) != 1 || spans[0] != (ProseSpan{StartCol: 4, Text: " after"}) {
+		t.Errorf("comment close line: expected ' after' at col 4, got %+v", spans)
 	}
 }
 
