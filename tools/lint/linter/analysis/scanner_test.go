@@ -166,6 +166,15 @@ func TestMultilineHTMLComment(t *testing.T) {
 	if len(spans) != 1 || spans[0] != (ProseSpan{StartCol: 4, Text: " after"}) {
 		t.Errorf("comment close line: expected ' after' at col 4, got %+v", spans)
 	}
+
+	scanner.ScanLine("<!-- again")
+	spans = scanner.ScanLine("--> a  b <!-- y")
+	if len(spans) != 1 || spans[0] != (ProseSpan{StartCol: 4, Text: " a  b "}) {
+		t.Errorf("close and reopen line: expected ' a  b ' at col 4, got %+v", spans)
+	}
+	if spans := scanner.ScanLine("-- z"); spans != nil {
+		t.Errorf("reopened comment body: expected nil, got %v", spans)
+	}
 }
 
 func TestJSXTag(t *testing.T) {
