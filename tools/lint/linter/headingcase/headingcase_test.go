@@ -17,14 +17,16 @@ func build(content string) ([]string, [][]analysis.ProseSpan) {
 	return lines, spans
 }
 
+type checkCase struct {
+	name      string
+	content   string
+	wantCount int
+	wantLine  int
+	wantCol   int
+}
+
 func TestCheck_Headings(t *testing.T) {
-	tests := []struct {
-		name      string
-		content   string
-		wantCount int
-		wantLine  int
-		wantCol   int
-	}{
+	runCheckCases(t, []checkCase{
 		{
 			name:      "clean sentence-case",
 			content:   "## Configure deployments\n",
@@ -98,45 +100,11 @@ func TestCheck_Headings(t *testing.T) {
 			wantLine:  1,
 			wantCol:   4,
 		},
-	}
-
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			lines, spans := build(tc.content)
-			violations := Check("test.mdx", lines, spans)
-			if len(violations) != tc.wantCount {
-				t.Fatalf(
-					"violations count = %d, want %d; violations=%+v",
-					len(violations), tc.wantCount, violations,
-				)
-			}
-			if tc.wantCount == 1 {
-				got := violations[0]
-				if got.Line != tc.wantLine {
-					t.Errorf("Line = %d, want %d", got.Line, tc.wantLine)
-				}
-				if got.Col != tc.wantCol {
-					t.Errorf("Col = %d, want %d", got.Col, tc.wantCol)
-				}
-				if got.Message != Message {
-					t.Errorf("Message = %q, want %q", got.Message, Message)
-				}
-				if got.File != "test.mdx" {
-					t.Errorf("File = %q, want %q", got.File, "test.mdx")
-				}
-			}
-		})
-	}
+	})
 }
 
 func TestCheck_Allowlist(t *testing.T) {
-	tests := []struct {
-		name      string
-		content   string
-		wantCount int
-		wantLine  int
-		wantCol   int
-	}{
+	runCheckCases(t, []checkCase{
 		{
 			name:      "clean acronym leading",
 			content:   "## API reference\n",
@@ -201,45 +169,11 @@ func TestCheck_Allowlist(t *testing.T) {
 			wantLine:  1,
 			wantCol:   5,
 		},
-	}
-
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			lines, spans := build(tc.content)
-			violations := Check("test.mdx", lines, spans)
-			if len(violations) != tc.wantCount {
-				t.Fatalf(
-					"violations count = %d, want %d; violations=%+v",
-					len(violations), tc.wantCount, violations,
-				)
-			}
-			if tc.wantCount == 1 {
-				got := violations[0]
-				if got.Line != tc.wantLine {
-					t.Errorf("Line = %d, want %d", got.Line, tc.wantLine)
-				}
-				if got.Col != tc.wantCol {
-					t.Errorf("Col = %d, want %d", got.Col, tc.wantCol)
-				}
-				if got.Message != Message {
-					t.Errorf("Message = %q, want %q", got.Message, Message)
-				}
-				if got.File != "test.mdx" {
-					t.Errorf("File = %q, want %q", got.File, "test.mdx")
-				}
-			}
-		})
-	}
+	})
 }
 
 func TestCheck_FrontmatterTitle(t *testing.T) {
-	tests := []struct {
-		name      string
-		content   string
-		wantCount int
-		wantLine  int
-		wantCol   int
-	}{
+	runCheckCases(t, []checkCase{
 		{
 			name:      "quoted clean",
 			content:   "---\ntitle: \"Workspace\"\n---\n",
@@ -297,9 +231,11 @@ func TestCheck_FrontmatterTitle(t *testing.T) {
 			wantLine:  2,
 			wantCol:   9,
 		},
-	}
+	})
+}
 
-	for _, tc := range tests {
+func runCheckCases(t *testing.T, cases []checkCase) {
+	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			lines, spans := build(tc.content)
 			violations := Check("test.mdx", lines, spans)

@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestCheck(t *testing.T) {
+func TestCheck_NoViolations(t *testing.T) {
 	t.Run("name used as self-closing JSX", func(t *testing.T) {
 		content := `import Framed from '/snippets/components/framed.jsx';
 
@@ -26,6 +26,15 @@ func TestCheck(t *testing.T) {
 		}
 	})
 
+	t.Run("no imports", func(t *testing.T) {
+		violations := Check("test.mdx", []string{"# Hello"})
+		if len(violations) != 0 {
+			t.Errorf("expected 0 violations, got %d", len(violations))
+		}
+	})
+}
+
+func TestCheck_UnusedDefaultImport(t *testing.T) {
 	t.Run("name not in body", func(t *testing.T) {
 		content := `import Unused from '/snippets/foo.mdx';
 
@@ -33,26 +42,6 @@ Some text without the component.`
 		violations := Check("test.mdx", strings.Split(content, "\n"))
 		if len(violations) != 1 {
 			t.Errorf("expected 1 violation, got %d", len(violations))
-		}
-	})
-
-	t.Run("named import two names one unused", func(t *testing.T) {
-		content := `import { A, B } from '/snippets/components/field-badges.jsx';
-
-<A />`
-		violations := Check("test.mdx", strings.Split(content, "\n"))
-		if len(violations) != 1 {
-			t.Errorf("expected 1 violation, got %d: %v", len(violations), violations)
-		}
-		if len(violations) > 0 && violations[0].Line != 1 {
-			t.Errorf("expected violation on line 1, got line %d", violations[0].Line)
-		}
-	})
-
-	t.Run("no imports", func(t *testing.T) {
-		violations := Check("test.mdx", []string{"# Hello"})
-		if len(violations) != 0 {
-			t.Errorf("expected 0 violations, got %d", len(violations))
 		}
 	})
 
@@ -71,4 +60,17 @@ No component used here.`
 			)
 		}
 	})
+}
+
+func TestCheck_UnusedNamedImport(t *testing.T) {
+	content := `import { A, B } from '/snippets/components/field-badges.jsx';
+
+<A />`
+	violations := Check("test.mdx", strings.Split(content, "\n"))
+	if len(violations) != 1 {
+		t.Errorf("expected 1 violation, got %d: %v", len(violations), violations)
+	}
+	if len(violations) > 0 && violations[0].Line != 1 {
+		t.Errorf("expected violation on line 1, got line %d", violations[0].Line)
+	}
 }

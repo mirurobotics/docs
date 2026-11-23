@@ -27,7 +27,7 @@ func TestLineForOffset(t *testing.T) {
 	}
 }
 
-func TestLineLookup(t *testing.T) {
+func TestLineLookup_Fallback(t *testing.T) {
 	t.Run("count_zero", func(t *testing.T) {
 		got := lineLookup("{}", 0)
 		if len(got) != 0 {
@@ -58,7 +58,9 @@ func TestLineLookup(t *testing.T) {
 			t.Errorf("got %v, want %v", got, want)
 		}
 	})
+}
 
+func TestLineLookup_Entries(t *testing.T) {
 	t.Run("more_entries_than_count", func(t *testing.T) {
 		text := "{\n" +
 			"  \"redirects\": [\n" +
