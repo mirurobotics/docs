@@ -31,7 +31,7 @@ jobs:
       # successful run, so quiet repos don't rescan the same commit.
       - name: Check for commits since the last scan
         id: check
-        uses: mirurobotics/.github/actions/codeql-gate@d2aec010e6ce5c9dd65fb16e6d06a0f61e437734 # main
+        uses: mirurobotics/workflows/actions/codeql-gate@933d1b4bf17071ae9bb9f8120d57dce4381a37da
 
   codeql:
     needs: changes
@@ -46,21 +46,21 @@ jobs:
       # The Go code is the custom docs linter in tools/lint.
       - name: Setup Go
         id: setup-go
-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
         with:
           go-version-file: tools/lint/go.mod
 
       - name: Initialize CodeQL
         id: initialize
-        uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
+        uses: github/codeql-action/init@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4
         with:
           config-file: .github/codeql/codeql-config.yml
           languages: javascript, go, actions
 
       - name: Autobuild
         id: autobuild
-        uses: github/codeql-action/autobuild@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
+        uses: github/codeql-action/autobuild@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4
 
       - name: Perform CodeQL Analysis
         id: analyze
-        uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
+        uses: github/codeql-action/analyze@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4
