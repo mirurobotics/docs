@@ -33,7 +33,7 @@ These overrides force a version outside the range the packages using them ask fo
 | Override | Dependents ask for | Remove when |
 |----------|--------------------|-------------|
 | `sharp` `>=0.35.5` | `0.33.5` (@mintlify/cli) | `@mintlify/cli` accepts a patched sharp |
-| `minimatch` `>=11.0.1` | `^10` (eslint, @eslint/config-array), `^9` (@npmcli/map-workspaces) | Those packages accept minimatch 11 |
+| `minimatch` `>=11.0.1` | `^9` (@npmcli/map-workspaces) | `@npmcli/map-workspaces` accepts minimatch 11 |
 | `glob` `>=14.0.2` | `^10` (unified-engine via eslint-plugin-mdx, @npmcli packages) | Those packages accept glob 14 |
 
 To check whether an ignore still applies, temporarily remove it and run `./scripts/audit.sh`.
